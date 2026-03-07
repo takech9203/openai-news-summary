@@ -30,7 +30,7 @@ CI/CD の詳細なセットアップ手順は [docs/SETUP.md](docs/SETUP.md) を
 ### インストール
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/openai-news-summary.git
+git clone https://github.com/takech9203/openai-news-summary.git
 cd openai-news-summary
 pip install -r requirements.txt
 ```
