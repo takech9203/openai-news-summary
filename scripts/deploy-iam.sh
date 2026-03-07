@@ -1,62 +1,168 @@
-#!/bin/bash
-# OpenAI News Summary - IAM Role デプロイスクリプト
+#!/usr/bin/env bash
+# Deploy OIDC provider and IAM role for OpenAI News Summary CI/CD.
 #
-# 使用方法:
-#   ./scripts/deploy-iam.sh <GitHub Org> <GitHub Repo> [既存 OIDC Provider ARN]
+# Usage:
+#   # GitHub Actions (role: GitHubActions-OpenAINewsSummary, stack: openai-news-summary-github-iam)
+#   ./scripts/deploy-iam.sh -p github -o myorg
 #
-# 例:
-#   ./scripts/deploy-iam.sh myorg openai-news-summary
-#   ./scripts/deploy-iam.sh myorg openai-news-summary arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com
+#   # GitLab CI (role: GitLabCI-OpenAINewsSummary, stack: openai-news-summary-gitlab-iam)
+#   ./scripts/deploy-iam.sh -p gitlab -g mygroup
+#
+#   # Custom repository name and region
+#   ./scripts/deploy-iam.sh -p github -o myorg -r my-custom-repo -n MyRole -R us-west-2
 
-set -e
+set -euo pipefail
 
-if [ $# -lt 2 ]; then
-    echo "Usage: $0 <GitHub Org> <GitHub Repo> [OIDC Provider ARN]"
-    echo ""
-    echo "Examples:"
-    echo "  $0 myorg openai-news-summary"
-    echo "  $0 myorg openai-news-summary arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
-    exit 1
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+STACK_NAME=""
+REGION="us-east-1"
+ROLE_NAME=""
+PLATFORM=""
+ORG_OR_GROUP=""
+REPO_OR_PROJECT="openai-news-summary"
+OIDC_PROVIDER_ARN=""
+
+usage() {
+  cat <<EOF
+Usage: $0 -p PLATFORM [OPTIONS]
+
+Required:
+  -p, --platform PLATFORM   github or gitlab
+
+Platform-specific:
+  GitHub:
+    -o, --org ORG             GitHub owner/org
+
+  GitLab:
+    -g, --group GROUP         GitLab group/namespace
+
+Optional:
+  -r, --repo REPO             Repository/project name (default: openai-news-summary)
+  -n, --role-name NAME        IAM role name (default: GitHubActions-OpenAINewsSummary or GitLabCI-OpenAINewsSummary)
+  -s, --stack-name NAME       CloudFormation stack name (default: openai-news-summary-github-iam or openai-news-summary-gitlab-iam)
+  -R, --region REGION         AWS region (default: us-east-1)
+  -O, --oidc-provider-arn ARN Existing OIDC Provider ARN (auto-detected if not specified)
+  -h, --help                  Show this help
+
+Note:
+  The script automatically checks for existing OIDC provider.
+  If found, it will be used. Otherwise, a new provider will be created.
+  Use -O option to override auto-detection.
+EOF
+  exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -p|--platform)           PLATFORM="$2"; shift 2 ;;
+    -o|--org)                ORG_OR_GROUP="$2"; shift 2 ;;
+    -g|--group)              ORG_OR_GROUP="$2"; shift 2 ;;
+    -r|--repo)               REPO_OR_PROJECT="$2"; shift 2 ;;
+    -n|--role-name)          ROLE_NAME="$2"; shift 2 ;;
+    -s|--stack-name)         STACK_NAME="$2"; shift 2 ;;
+    -R|--region)             REGION="$2"; shift 2 ;;
+    -O|--oidc-provider-arn)  OIDC_PROVIDER_ARN="$2"; shift 2 ;;
+    -h|--help)               usage ;;
+    *)                       echo "Error: Unknown option: $1"; usage ;;
+  esac
+done
+
+# Validate
+if [[ -z "$PLATFORM" ]]; then
+  echo "Error: -p/--platform is required (github or gitlab)."
+  usage
 fi
 
-GITHUB_ORG=$1
-GITHUB_REPO=$2
-OIDC_PROVIDER_ARN=${3:-""}
+if [[ "$PLATFORM" != "github" && "$PLATFORM" != "gitlab" ]]; then
+  echo "Error: platform must be 'github' or 'gitlab'."
+  usage
+fi
 
-STACK_NAME="openai-news-summary-cicd"
-TEMPLATE_FILE="$(dirname "$0")/cfn-github-oidc-iam.yaml"
+if [[ -z "$ORG_OR_GROUP" ]]; then
+  if [[ "$PLATFORM" == "github" ]]; then
+    echo "Error: -o/--org is required for GitHub."
+  else
+    echo "Error: -g/--group is required for GitLab."
+  fi
+  usage
+fi
 
-echo "Deploying OpenAI News Summary CI/CD IAM Role..."
-echo "  GitHub Org:  $GITHUB_ORG"
-echo "  GitHub Repo: $GITHUB_REPO"
-echo "  Stack Name:  $STACK_NAME"
+# REPO_OR_PROJECT has a default value, so no validation needed
+
+# Auto-detect existing OIDC provider if not specified
+if [[ -z "$OIDC_PROVIDER_ARN" ]]; then
+  echo "Checking for existing OIDC provider..."
+  if [[ "$PLATFORM" == "github" ]]; then
+    DETECTED_ARN=$(aws iam list-open-id-connect-providers \
+      --region "$REGION" \
+      --query 'OpenIDConnectProviderList[?contains(Arn, `token.actions.githubusercontent.com`)].Arn' \
+      --output text 2>/dev/null || echo "")
+  else
+    DETECTED_ARN=$(aws iam list-open-id-connect-providers \
+      --region "$REGION" \
+      --query 'OpenIDConnectProviderList[?contains(Arn, `gitlab.com`)].Arn' \
+      --output text 2>/dev/null || echo "")
+  fi
+
+  if [[ -n "$DETECTED_ARN" ]]; then
+    OIDC_PROVIDER_ARN="$DETECTED_ARN"
+    echo "Found existing OIDC provider: ${OIDC_PROVIDER_ARN}"
+  else
+    echo "No existing OIDC provider found. Will create new one."
+  fi
+fi
+
+# Select template and parameters
+if [[ "$PLATFORM" == "github" ]]; then
+  [[ -z "$ROLE_NAME" ]] && ROLE_NAME="GitHubActions-OpenAINewsSummary"
+  [[ -z "$STACK_NAME" ]] && STACK_NAME="openai-news-summary-github-iam"
+  TEMPLATE="${SCRIPT_DIR}/cfn-github-oidc-iam.yaml"
+  PARAMS="RoleName=${ROLE_NAME} GitHubOrg=${ORG_OR_GROUP} GitHubRepo=${REPO_OR_PROJECT}"
+  LABEL="GitHub Actions"
+  REPO_DISPLAY="${ORG_OR_GROUP}/${REPO_OR_PROJECT}"
+else
+  [[ -z "$ROLE_NAME" ]] && ROLE_NAME="GitLabCI-OpenAINewsSummary"
+  [[ -z "$STACK_NAME" ]] && STACK_NAME="openai-news-summary-gitlab-iam"
+  TEMPLATE="${SCRIPT_DIR}/cfn-gitlab-oidc-iam.yaml"
+  PARAMS="RoleName=${ROLE_NAME} GitLabGroup=${ORG_OR_GROUP} GitLabProject=${REPO_OR_PROJECT}"
+  LABEL="GitLab CI"
+  REPO_DISPLAY="${ORG_OR_GROUP}/${REPO_OR_PROJECT}"
+fi
+
+if [[ -n "$OIDC_PROVIDER_ARN" ]]; then
+  PARAMS="${PARAMS} OIDCProviderArn=${OIDC_PROVIDER_ARN}"
+fi
+
+echo "=== OpenAI News Summary IAM Setup ==="
+echo "Platform: ${LABEL}"
+echo "Repo:     ${REPO_DISPLAY}"
+echo "Stack:    ${STACK_NAME}"
+echo "Region:   ${REGION}"
+echo "Role:     ${ROLE_NAME}"
+if [[ -n "$OIDC_PROVIDER_ARN" ]]; then
+  echo "OIDC:     ${OIDC_PROVIDER_ARN} (existing)"
+else
+  echo "OIDC:     Will create new provider"
+fi
 echo ""
 
-PARAMS="ParameterKey=GitHubOrg,ParameterValue=$GITHUB_ORG"
-PARAMS="$PARAMS ParameterKey=GitHubRepo,ParameterValue=$GITHUB_REPO"
+export AWS_PAGER=""
 
-if [ -n "$OIDC_PROVIDER_ARN" ]; then
-    echo "  Using existing OIDC Provider: $OIDC_PROVIDER_ARN"
-    PARAMS="$PARAMS ParameterKey=OIDCProviderArn,ParameterValue=$OIDC_PROVIDER_ARN"
-fi
-
+echo "Deploying CloudFormation stack..."
 aws cloudformation deploy \
-    --template-file "$TEMPLATE_FILE" \
-    --stack-name "$STACK_NAME" \
-    --parameter-overrides $PARAMS \
-    --capabilities CAPABILITY_NAMED_IAM
+  --template-file "$TEMPLATE" \
+  --stack-name "$STACK_NAME" \
+  --region "$REGION" \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameter-overrides $PARAMS
 
 echo ""
-echo "Deployment complete!"
-echo ""
-echo "Outputs:"
+echo "=== Stack Outputs ==="
 aws cloudformation describe-stacks \
-    --stack-name "$STACK_NAME" \
-    --query 'Stacks[0].Outputs' \
-    --output table
+  --stack-name "$STACK_NAME" \
+  --region "$REGION" \
+  --query 'Stacks[0].Outputs[*].[OutputKey,OutputValue]' \
+  --output table
 
 echo ""
-echo "Next steps:"
-echo "1. Copy the RoleArn from the outputs above"
-echo "2. Add it as a secret named 'AWS_ROLE_ARN' in your GitHub repository"
-echo "   Settings > Secrets and variables > Actions > New repository secret"
+echo "Done. Set the RoleArn above as AWS_ROLE_ARN in your ${LABEL} secrets."
