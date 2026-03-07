@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balyasny Asset Management が AI リサーチエンジンを構築した方法</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+  :root {
+    --openai-green: #10A37F;
+    --openai-green-dark: #0D8A6A;
+    --openai-dark: #343541;
+    --openai-light: #F7F7F8;
+    --openai-gray: #ECECF1;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background-color: var(--openai-light);
+    color: var(--openai-dark);
+    line-height: 1.8;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 100%);
+    color: white;
+    padding: 48px 40px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16,163,127,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--openai-green);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header h1 {
+    font-size: 1.9rem;
+    font-weight: 900;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header .date {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Section common */
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid var(--openai-gray);
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--openai-green);
+    display: inline-block;
+  }
+
+  .section p {
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  /* Key Points */
+  .key-points-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--openai-light);
+    padding: 18px 20px;
+    border-radius: 10px;
+    border-left: 4px solid var(--openai-green);
+  }
+
+  .key-point-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--openai-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .key-point-text {
+    font-size: 0.93rem;
+    color: #444;
+    line-height: 1.7;
+  }
+
+  /* Feature Cards */
+  .feature-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .feature-card {
+    background: var(--openai-light);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--openai-gray);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  .feature-card-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--openai-green), var(--openai-green-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    font-size: 1.3rem;
+  }
+
+  .feature-card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 8px;
+  }
+
+  .feature-card p {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  /* Agent cards */
+  .agent-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .agent-card {
+    background: var(--openai-dark);
+    color: white;
+    border-radius: 12px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .agent-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(16,163,127,0.3) 0%, transparent 70%);
+  }
+
+  .agent-card h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--openai-green);
+    margin-bottom: 8px;
+  }
+
+  .agent-card p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  /* GPT-5.4 highlight cards */
+  .gpt-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .gpt-feature {
+    text-align: center;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #2b2b3d 100%);
+    border-radius: 12px;
+    color: white;
+  }
+
+  .gpt-feature-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--openai-green);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .gpt-feature-text {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+
+  /* Evaluation list */
+  .eval-list {
+    list-style: none;
+    margin-top: 14px;
+  }
+
+  .eval-list li {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--openai-gray);
+    font-size: 0.9rem;
+    color: #444;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .eval-list li:last-child {
+    border-bottom: none;
+  }
+
+  .eval-check {
+    flex-shrink: 0;
+    color: var(--openai-green);
+    font-weight: 700;
+  }
+
+  /* Tech details */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+    margin-bottom: 24px;
+  }
+
+  .tech-item {
+    background: var(--openai-light);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--openai-gray);
+  }
+
+  .tech-item-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--openai-green);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+
+  .tech-item-value {
+    font-size: 0.88rem;
+    color: var(--openai-dark);
+  }
+
+  /* Code block */
+  .code-section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .code-section h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 10px;
+  }
+
+  .code-section pre {
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  .code-section pre code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  /* Mermaid */
+  .mermaid-section {
+    margin-top: 16px;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    overflow-x: auto;
+  }
+
+  /* Impact / Use Cases */
+  .impact-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .impact-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 20px;
+    background: var(--openai-light);
+    border-radius: 10px;
+    border: 1px solid var(--openai-gray);
+  }
+
+  .impact-card-marker {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--openai-green);
+    border-radius: 50%;
+    margin-top: 8px;
+  }
+
+  .impact-card strong {
+    color: var(--openai-dark);
+  }
+
+  .impact-card p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0;
+  }
+
+  /* Related links */
+  .links-list {
+    list-style: none;
+    margin-top: 14px;
+  }
+
+  .links-list li {
+    margin-bottom: 8px;
+  }
+
+  .links-list a {
+    color: var(--openai-green);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .links-list a:hover {
+    color: var(--openai-green-dark);
+    text-decoration: underline;
+  }
+
+  /* Summary */
+  .summary-box {
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 36px;
+    margin-bottom: 24px;
+  }
+
+  .summary-box .section-title {
+    color: white;
+    border-bottom-color: var(--openai-green);
+  }
+
+  .summary-box p {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.93rem;
+    line-height: 1.8;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: #888;
+    font-size: 0.82rem;
+  }
+
+  .footer a {
+    color: var(--openai-green);
+    text-decoration: none;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+  }
+
+  .footer .source-label {
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .container {
+      padding: 12px;
+    }
+    .header {
+      padding: 32px 24px;
+    }
+    .header h1 {
+      font-size: 1.4rem;
+    }
+    .section {
+      padding: 24px;
+    }
+    .feature-cards,
+    .agent-cards,
+    .tech-grid {
+      grid-template-columns: 1fr;
+    }
+    .gpt-features {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="badge">API</span>
+    <h1>Balyasny Asset Management が AI リサーチエンジンを構築した方法</h1>
+    <div class="date">2026-03-06 | OpenAI News/Blog</div>
+  </div>
+
+  <!-- 概要 (Key Points) -->
+  <div class="section">
+    <div class="section-title">概要</div>
+    <p>
+      Balyasny Asset Management (BAM) は、OpenAI の GPT-5.4 を活用し、投資分析を大規模に変革する AI リサーチシステムを構築した。このシステムは、厳格なモデル評価プロセスとエージェントワークフローを組み合わせることで、投資リサーチの効率と精度を飛躍的に向上させている。
+    </p>
+    <p>
+      BAM はマルチストラテジーヘッジファンドとして知られており、グローバルな投資判断を支援するために AI 技術を戦略的に導入した。本事例は、金融業界における大規模言語モデル (LLM) の実用的な活用方法を示す先進的な取り組みである。
+    </p>
+    <div class="key-points-grid">
+      <div class="key-point">
+        <div class="key-point-icon">1</div>
+        <div class="key-point-text">GPT-5.4 の高度な推論能力と長文コンテキスト処理能力を活用し、複雑な金融文書の分析精度を大幅に向上</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">2</div>
+        <div class="key-point-text">複数の AI エージェントが連携するワークフローにより、データ収集から分析、検証、レポート生成までを自律的に実行</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">3</div>
+        <div class="key-point-text">金融業界特有の厳格な評価基準によりモデルの精度、一貫性、バイアスの有無を定量的に測定</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主な機能 (Feature Cards) -->
+  <div class="section">
+    <div class="section-title">主な機能</div>
+    <p>
+      BAM が構築した AI リサーチエンジンは、投資アナリストやポートフォリオマネージャーの業務を支援するために設計されている。従来は手動で行っていた大量の企業レポート、決算資料、マクロ経済データの分析を、AI エージェントが自動的に処理し、投資判断に必要なインサイトを抽出する。
+    </p>
+    <div class="feature-cards">
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3>決算発表・SEC ファイリングの自動分析</h3>
+        <p>企業の決算発表や SEC ファイリングの自動要約と分析を実行</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </div>
+        <h3>リアルタイムアラート生成</h3>
+        <p>マクロ経済指標の変動に関するリアルタイムアラートを自動生成</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3>競合比較分析レポート</h3>
+        <p>競合他社の比較分析レポートを自動作成し、投資判断を支援</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <h3>データ駆動型リサーチ</h3>
+        <p>投資仮説の検証を支援するデータ駆動型リサーチを実現</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPT-5.4 の活用 -->
+  <div class="section">
+    <div class="section-title">GPT-5.4 の活用</div>
+    <p>
+      BAM は OpenAI の GPT-5.4 を中核モデルとして採用している。GPT-5.4 の高度な推論能力と長文コンテキスト処理能力により、複雑な金融文書の分析精度が大幅に向上した。
+    </p>
+    <div class="gpt-features">
+      <div class="gpt-feature">
+        <div class="gpt-feature-label">長文コンテキスト処理</div>
+        <div class="gpt-feature-text">数百ページに及ぶ年次報告書や目論見書を一度に処理し、重要な情報を抽出</div>
+      </div>
+      <div class="gpt-feature">
+        <div class="gpt-feature-label">高度な推論</div>
+        <div class="gpt-feature-text">財務データ間の複雑な関連性を分析し、投資リスクや機会を特定</div>
+      </div>
+      <div class="gpt-feature">
+        <div class="gpt-feature-label">構造化出力</div>
+        <div class="gpt-feature-text">分析結果を一貫したフォーマットで出力し、ワークフローに統合</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- エージェントワークフロー -->
+  <div class="section">
+    <div class="section-title">エージェントワークフロー</div>
+    <p>
+      BAM のシステムは、複数の AI エージェントが連携するワークフロー構成を採用している。各エージェントは特定のタスクに特化しており、データ収集、分析、レポート生成といった一連のプロセスを自律的に実行する。
+    </p>
+    <div class="agent-cards">
+      <div class="agent-card">
+        <h4>データ収集エージェント</h4>
+        <p>複数のデータソースから最新の市場データ、ニュース、企業情報を収集</p>
+      </div>
+      <div class="agent-card">
+        <h4>分析エージェント</h4>
+        <p>収集されたデータを GPT-5.4 で分析し、投資に関するインサイトを生成</p>
+      </div>
+      <div class="agent-card">
+        <h4>検証エージェント</h4>
+        <p>分析結果の整合性と正確性を検証し、ハルシネーションを防止</p>
+      </div>
+      <div class="agent-card">
+        <h4>レポート生成エージェント</h4>
+        <p>最終的な分析結果を投資チーム向けのレポートとして整形</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 厳格なモデル評価 -->
+  <div class="section">
+    <div class="section-title">厳格なモデル評価</div>
+    <p>
+      BAM は AI モデルの導入にあたり、金融業界特有の厳格な評価基準を設けている。モデルの精度、一貫性、バイアスの有無を定量的に測定し、投資判断に利用可能な品質水準を確保している。
+    </p>
+    <ul class="eval-list">
+      <li>
+        <span class="eval-check">&#10003;</span>
+        過去の投資事例を用いたバックテストによる精度検証
+      </li>
+      <li>
+        <span class="eval-check">&#10003;</span>
+        専門アナリストによるブラインドレビュー (AI 出力と人間の分析結果の比較)
+      </li>
+      <li>
+        <span class="eval-check">&#10003;</span>
+        エッジケースや市場急変時における出力の安定性テスト
+      </li>
+      <li>
+        <span class="eval-check">&#10003;</span>
+        継続的なモニタリングとモデルパフォーマンスの追跡
+      </li>
+    </ul>
+  </div>
+
+  <!-- 技術的な詳細 -->
+  <div class="section">
+    <div class="section-title">技術的な詳細</div>
+
+    <h3 style="font-size:1rem; font-weight:700; margin-bottom:14px; color:var(--openai-dark);">システム構成</h3>
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="tech-item-label">モデル</div>
+        <div class="tech-item-value">OpenAI GPT-5.4 (Chat Completions API / Assistants API)</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-item-label">エージェントフレームワーク</div>
+        <div class="tech-item-value">カスタムエージェントワークフロー (複数エージェントの協調動作)</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-item-label">データパイプライン</div>
+        <div class="tech-item-value">リアルタイムデータ取得と前処理の自動化</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-item-label">評価基盤</div>
+        <div class="tech-item-value">独自のモデル評価フレームワークによる継続的品質管理</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; font-weight:700; margin-bottom:10px; color:var(--openai-dark);">API 活用パターン</h3>
+    <div class="code-section">
+      <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 投資リサーチ分析の例
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a senior investment analyst. Analyze the provided "
+                "financial data and generate actionable investment insights. "
+                "Be precise, cite specific data points, and flag any risks."
+            )
+        },
+        {
+            "role": "user",
+            "content": "Analyze the following quarterly earnings report..."
+        }
+    ],
+    temperature=0.2,  # 低い temperature で一貫性のある分析を生成
+    response_format={"type": "json_object"}  # 構造化された出力
+)</code></pre>
+    </div>
+
+    <h3 style="font-size:1rem; font-weight:700; margin-bottom:10px; color:var(--openai-dark);">エージェントワークフローの実装例</h3>
+    <div class="code-section">
+      <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# エージェントワークフロー: データ収集 → 分析 → 検証 → レポート生成
+def run_research_pipeline(query: str) -> dict:
+    # Step 1: データ収集エージェント
+    collected_data = collect_agent(query)
+
+    # Step 2: 分析エージェント
+    analysis = analysis_agent(collected_data)
+
+    # Step 3: 検証エージェント
+    validated = validation_agent(analysis)
+
+    # Step 4: レポート生成エージェント
+    report = report_agent(validated)
+
+    return report</code></pre>
+    </div>
+  </div>
+
+  <!-- アーキテクチャ -->
+  <div class="section">
+    <div class="section-title">アーキテクチャ</div>
+    <div class="mermaid-section">
+      <pre class="mermaid">
+flowchart TD
+    subgraph DataSources["データソース"]
+        Market["市場データ"]
+        Filings["SEC ファイリング"]
+        News["ニュースフィード"]
+        Earnings["決算レポート"]
+    end
+
+    subgraph AgentWorkflow["エージェントワークフロー"]
+        Collector["データ収集\nエージェント"]
+        Analyzer["分析\nエージェント"]
+        Validator["検証\nエージェント"]
+        Reporter["レポート生成\nエージェント"]
+    end
+
+    subgraph OpenAIAPI["OpenAI API"]
+        GPT54["GPT-5.4"]
+        ChatAPI["Chat Completions"]
+    end
+
+    subgraph Output["出力"]
+        Dashboard["投資ダッシュボード"]
+        Alerts["アラート通知"]
+        Reports["分析レポート"]
+    end
+
+    Market --> Collector
+    Filings --> Collector
+    News --> Collector
+    Earnings --> Collector
+
+    Collector --> Analyzer
+    Analyzer --> GPT54
+    GPT54 --> Analyzer
+    Analyzer --> Validator
+    Validator --> Reporter
+
+    Reporter --> Dashboard
+    Reporter --> Alerts
+    Reporter --> Reports
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT54,ChatAPI openai
+    class Collector,Analyzer,Validator,Reporter dark
+    class Market,Filings,News,Earnings,Dashboard,Alerts,Reports light
+      </pre>
+    </div>
+  </div>
+
+  <!-- 開発者への影響 (Use Cases / Impact) -->
+  <div class="section">
+    <div class="section-title">開発者への影響</div>
+    <p>
+      BAM の事例は、金融業界で GPT-5.4 とエージェントワークフローを活用する際の実践的な指針を提供している。開発者が注目すべきポイントは以下の通り。
+    </p>
+    <div class="impact-cards">
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>エージェント設計パターン:</strong> 単一の大規模プロンプトではなく、タスクごとに特化したエージェントを連携させるアプローチが、複雑な分析タスクにおいて有効であることが示された</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>モデル評価の重要性:</strong> 特にミッションクリティカルな金融分野では、厳格な評価プロセスの構築が AI 導入の成功に不可欠である</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>構造化出力の活用:</strong> <code>response_format</code> パラメータを活用した構造化出力により、後続のシステムとの統合が容易になる</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>temperature 設定:</strong> 金融分析のような正確性が求められるタスクでは、低い temperature 値を設定することで一貫性のある出力を得られる</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>検証レイヤーの導入:</strong> AI の出力を検証するエージェントを設けることで、ハルシネーションのリスクを低減できる</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 関連リンク -->
+  <div class="section">
+    <div class="section-title">関連リンク</div>
+    <ul class="links-list">
+      <li><a href="https://platform.openai.com/docs" target="_blank">OpenAI API ドキュメント</a></li>
+      <li><a href="https://platform.openai.com/docs/guides/text-generation" target="_blank">OpenAI Chat Completions API</a></li>
+      <li><a href="https://platform.openai.com/docs/assistants/overview" target="_blank">OpenAI Assistants API</a></li>
+      <li><a href="https://www.bamfunds.com/" target="_blank">Balyasny Asset Management 公式サイト</a></li>
+    </ul>
+  </div>
+
+  <!-- まとめ -->
+  <div class="summary-box">
+    <div class="section-title">まとめ</div>
+    <p>
+      Balyasny Asset Management は、OpenAI の GPT-5.4 を核とした AI リサーチエンジンを構築し、投資分析のワークフローを大規模に変革した。エージェントワークフローによるタスクの分割と連携、厳格なモデル評価プロセス、そして構造化された出力フォーマットの活用が、金融業界における LLM 活用の成功要因として浮き彫りになった。この事例は、ミッションクリティカルな領域で AI を導入する際のベストプラクティスとして、他の金融機関や開発者にとっても参考になるだろう。
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="source-label">Source</div>
+    <a href="https://openai.com/index/balyasny-asset-management" target="_blank">
+      openai.com/index/balyasny-asset-management
+    </a>
+    <div style="margin-top: 12px; color: #aaa;">OpenAI News Summary | 2026-03-06</div>
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#10A37F',
+      primaryTextColor: '#fff',
+      primaryBorderColor: '#0D8A6A',
+      lineColor: '#343541',
+      secondaryColor: '#343541',
+      tertiaryColor: '#F7F7F8',
+      fontFamily: 'Zen Maru Gothic, sans-serif'
+    }
+  });
+  hljs.highlightAll();
+</script>
+
+</body>
+</html>

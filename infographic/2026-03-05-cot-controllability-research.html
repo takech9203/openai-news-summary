@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推論モデルは思考連鎖を制御できない -- それが AI 安全性にとって好ましい理由 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .feature-card ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Workflow Steps */
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Note Box */
+        .note-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 16px;
+        }
+
+        .note-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 8px;
+        }
+
+        .note-box ul {
+            padding-left: 20px;
+        }
+
+        .note-box ul li {
+            font-size: 14px;
+            color: #78350F;
+            padding: 2px 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Detail Grid */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .detail-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .detail-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links ul li a {
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Research</span>
+                <h1>推論モデルは思考連鎖を制御できない -- それが AI 安全性にとって好ましい理由</h1>
+                <p class="date">2026-03-05</p>
+            </div>
+        </header>
+
+        <!-- Key Points / 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-content">
+                        <h3>CoT-Control 評価手法の導入</h3>
+                        <p>OpenAI は推論モデルが自身の思考連鎖 (Chain of Thought; CoT) をどの程度制御・操作できるかを体系的に調査する「CoT-Control」と呼ばれる新たな評価フレームワークを開発した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>思考連鎖の制御は困難</h3>
+                        <p>推論モデルは自身の内部的な推論プロセスを意図的に隠蔽したり改ざんしたりすることが困難であることが明らかになった。指示に反しても実際の推論過程を思考連鎖に反映する傾向が強い。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>AI 安全性への好影響</h3>
+                        <p>思考連鎖が制御困難であることは、モデルの推論過程を外部から監視 (モニタリング) することが信頼性の高い安全策として機能し得ることを意味する。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CoT-Control 評価シナリオ -->
+        <section class="section">
+            <h2 class="section-title">CoT-Control 評価シナリオ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F648; 思考の隠蔽</h3>
+                    <p>モデルが特定の推論ステップを思考連鎖から除外できるかを検証。結果として、特定の情報や推論ステップを隠そうとしても、思考連鎖のどこかに痕跡が残ることが確認された。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F3AD; 思考の偽装</h3>
+                    <p>モデルが実際の推論とは異なる思考連鎖を生成できるかを検証。偽装を試みると一貫性が崩れたりパフォーマンスが低下したりすることが判明した。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6AB; 思考の抑制</h3>
+                    <p>モデルが特定のトピックについての推論を抑制できるかを検証。指示に反しても実際の推論過程を思考連鎖に反映する傾向が強いことが示された。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 研究の中核的発見 -->
+        <section class="section">
+            <h2 class="section-title">研究の中核的発見</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>忠実な推論の持続</h4>
+                        <p>モデルは指示に反しても、実際の推論過程を思考連鎖に反映する傾向が強い。思考連鎖の忠実性は外部からの制御介入に対して頑健 (robust) である。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>隠蔽の失敗</h4>
+                        <p>特定の情報や推論ステップを隠そうとしても、思考連鎖のどこかに痕跡が残る。完全な隠蔽は達成できない。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>偽装の困難さ</h4>
+                        <p>実際の推論とは異なる思考連鎖を生成しようとすると、一貫性が崩れたりパフォーマンスが低下したりする。推論と生成が密結合しているため、一方だけの変更は困難。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- モニタリングの有効性 -->
+        <section class="section">
+            <h2 class="section-title">モニタリングの有効性</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F50D; 意図の透明性</h3>
+                    <p>モデルの真の推論過程が思考連鎖に現れるため、不正な意図を検出しやすい。スキーマティック・アライメントのリスクへの防御策となる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; アライメント検証</h3>
+                    <p>モデルが人間の意図に沿った推論を行っているかを思考連鎖から確認可能。安全な AI 運用の基盤となる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A0; 早期警告</h3>
+                    <p>問題のある推論パターンを思考連鎖から早期に発見できる。不正な行動が実行される前に検知し対処が可能。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技術的な詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 16px;">評価の対象と手法</h3>
+            <div class="detail-grid" style="margin-bottom: 24px;">
+                <div class="detail-item">
+                    <h4>プロンプトベースの制御試行</h4>
+                    <p>システムプロンプトやユーザープロンプトを通じて、モデルに思考連鎖の内容を変更するよう指示</p>
+                </div>
+                <div class="detail-item">
+                    <h4>ファインチューニングによる制御試行</h4>
+                    <p>思考連鎖を制御するようにモデルを追加学習し、その効果を検証</p>
+                </div>
+                <div class="detail-item">
+                    <h4>定量的評価</h4>
+                    <p>思考連鎖の忠実性 (faithfulness) を数値的に測定し、制御の成功率を算出</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 16px;">制御困難性のメカニズム</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <h4>推論と生成の密結合</h4>
+                    <p>思考連鎖の生成プロセスが推論プロセスそのものと密接に結びついているため、一方だけを変更することが難しい</p>
+                </div>
+                <div class="detail-item">
+                    <h4>強化学習による最適化</h4>
+                    <p>正しい回答を導くための思考連鎖を強化学習で最適化しているため、改ざんすると性能が低下する</p>
+                </div>
+                <div class="detail-item">
+                    <h4>トークン間の依存関係</h4>
+                    <p>思考連鎖の各トークンは前のトークンに強く依存しているため、一部を変更すると連鎖全体の整合性が崩れる</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Evaluation["CoT-Control 評価フレームワーク"]
+        Prompt["制御プロンプト<br>(隠蔽・偽装・抑制)"]
+        Model["推論モデル<br>(o シリーズ)"]
+        CoT["思考連鎖 (CoT)"]
+        Answer["最終回答"]
+    end
+
+    subgraph Analysis["分析"]
+        Faithfulness["忠実性評価"]
+        Control["制御成功率測定"]
+        Safety["安全性評価"]
+    end
+
+    subgraph Monitoring["モニタリング"]
+        Monitor["CoT 監視システム"]
+        Alert["異常検知・警告"]
+    end
+
+    Prompt --> Model
+    Model --> CoT
+    CoT --> Answer
+    CoT --> Faithfulness
+    CoT --> Control
+    Faithfulness --> Safety
+    Control --> Safety
+    CoT --> Monitor
+    Monitor --> Alert
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Model,CoT openai
+    class Prompt,Faithfulness,Control,Safety dark
+    class Monitor,Alert,Answer light
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>安全性設計への指針</h4>
+                <ul>
+                    <li><strong>思考連鎖の監視を組み込む:</strong> 推論モデルを利用するアプリケーションでは、思考連鎖をログとして記録・監視する仕組みを設計に含めるべきである</li>
+                    <li><strong>CoT フィルタリングの実装:</strong> 思考連鎖の内容を分析し、不適切な推論パターンを自動検出するフィルタリング機構の導入が推奨される</li>
+                    <li><strong>透明性の確保:</strong> エンドユーザーに対して、モデルの推論過程を適切に開示する仕組みの検討が望ましい</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>推論モデル活用時の注意点</h4>
+                <ul>
+                    <li>思考連鎖の監視は有効な安全策であるが、唯一の安全策として依存すべきではない</li>
+                    <li>モデルの推論能力が向上するにつれて、将来的に思考連鎖の制御が可能になる可能性も排除できない</li>
+                    <li>本研究の結果は現時点の推論モデルに基づくものであり、継続的な検証が必要である</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>安全性研究コミュニティへの貢献</h4>
+                <p>CoT-Control フレームワークは、AI 安全性研究の分野に新たな評価基準を提供する。開発者やリサーチャーは、この手法を活用して自社のモデルやアプリケーションの安全性を評価できる。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI が発表した CoT-Control 研究は、推論モデルが自身の思考連鎖を制御することが困難であるという重要な発見を示した。この発見は、一見すると制約のように思えるが、AI 安全性の観点からは極めて好ましい特性である。モデルが思考過程を隠蔽できないということは、人間による監視 (モニタリング) が効果的なセーフガードとして機能することを意味する。AI システムの信頼性と安全性を確保する上で、思考連鎖の監視は今後ますます重要な役割を果たすと考えられる。本研究は、AI 安全性研究の新たなベンチマークとなり、推論モデルの開発と運用における安全性基準の確立に寄与するものである。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/reasoning-models-chain-of-thought-controllability" target="_blank" rel="noopener noreferrer">https://openai.com/index/reasoning-models-chain-of-thought-controllability</a></p>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="https://openai.com/index/reasoning-models-chain-of-thought-controllability" target="_blank" rel="noopener noreferrer">OpenAI 公式発表</a></li>
+                    <li><a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety Research</a></li>
+                    <li><a href="https://openai.com/index/learning-to-reason-with-llms" target="_blank" rel="noopener noreferrer">OpenAI o シリーズモデル</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+</body>
+</html>

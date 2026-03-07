@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.4 の発表: OpenAI 史上最も高性能かつ効率的なフロンティアモデル</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-10: rgba(16, 163, 127, 0.1);
+            --openai-green-20: rgba(16, 163, 127, 0.2);
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 50%, var(--openai-dark) 100%);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--openai-green-20) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: var(--openai-gray);
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        /* Key Points */
+        .key-points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-green-10);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--openai-green-20);
+            transition: transform 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+        }
+
+        .key-point-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .key-point-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .key-point-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--openai-dark);
+        }
+
+        /* Overview */
+        .overview-text {
+            font-size: 15px;
+            line-height: 2;
+            color: #444654;
+        }
+
+        /* Feature Cards */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px 24px;
+            border: 1px solid var(--openai-gray);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--openai-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .feature-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        .feature-card-desc {
+            font-size: 14px;
+            color: #6e6e80;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Code Blocks */
+        .code-section {
+            margin-top: 16px;
+        }
+
+        .code-block-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            margin-bottom: 8px;
+            margin-top: 20px;
+        }
+
+        .code-block-label:first-child {
+            margin-top: 0;
+        }
+
+        pre {
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        pre code {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-note {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #5d4037;
+            line-height: 1.7;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Migration notes */
+        .migration-section {
+            margin-top: 20px;
+        }
+
+        .migration-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .migration-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .migration-list li {
+            font-size: 13px;
+            color: #444654;
+            padding: 8px 12px;
+            padding-left: 32px;
+            position: relative;
+            background: #fff3e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        .migration-list li::before {
+            content: '!';
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            width: 16px;
+            height: 16px;
+            background: #ff9800;
+            border-radius: 50%;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Links */
+        .links-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 8px;
+        }
+
+        .links-list a {
+            font-size: 14px;
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .links-list a:hover {
+            color: var(--openai-green-dark);
+            text-decoration: underline;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            line-height: 2;
+            color: #444654;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--openai-gray);
+            margin-bottom: 4px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 11px;
+            color: #6e6e80;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px 10px 32px;
+            }
+
+            .header {
+                padding: 32px 24px;
+                border-radius: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 18px;
+            }
+
+            .feature-cards,
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .key-points-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">Product</span>
+            <h1>GPT-5.4 の発表: OpenAI 史上最も高性能かつ効率的なフロンティアモデル</h1>
+            <div class="header-date">2026-03-05 | OpenAI News/Blog</div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points-grid">
+                <div class="key-point">
+                    <div class="key-point-icon">&#128187;</div>
+                    <div class="key-point-label">Coding</div>
+                    <div class="key-point-value">最先端のコーディング能力</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128421;</div>
+                    <div class="key-point-label">Computer Use</div>
+                    <div class="key-point-value">GUI 直接操作</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128269;</div>
+                    <div class="key-point-label">Tool Search</div>
+                    <div class="key-point-value">自動ツール選択・実行</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128218;</div>
+                    <div class="key-point-label">Context</div>
+                    <div class="key-point-value">1M トークンウィンドウ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="overview-text">
+                OpenAI は 2026 年 3 月 5 日、最新のフロンティアモデル「GPT-5.4」を発表した。GPT-5.4 は、プロフェッショナルワーク向けに設計された OpenAI 史上最も高性能かつ効率的なモデルであり、コーディング、コンピュータ操作、ツール検索、そして 1M トークンのコンテキストウィンドウといった最先端の機能を備えている。
+            </p>
+            <br>
+            <p class="overview-text">
+                GPT-5.4 は、従来の GPT-5 シリーズから大幅な性能向上を実現し、特にプロフェッショナルな業務環境での利用を想定した最適化が施されている。コーディング能力の飛躍的向上、コンピュータ操作 (Computer Use) への対応、高度なツール検索機能、そして 100 万トークンという大規模なコンテキストウィンドウにより、複雑なタスクの処理能力が格段に強化されている。
+            </p>
+        </section>
+
+        <!-- Feature Cards -->
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128187;</div>
+                    <div class="feature-card-title">最先端のコーディング能力</div>
+                </div>
+                <p class="feature-card-desc">コーディングベンチマークにおいて最先端の性能を達成。ソフトウェア開発のあらゆる局面で高い精度を発揮する。</p>
+                <ul>
+                    <li><strong>マルチ言語対応:</strong> Python、JavaScript、TypeScript、Rust、Go、Java、C++ など主要なプログラミング言語に対応</li>
+                    <li><strong>コンテキスト理解の向上:</strong> 大規模コードベース全体を把握した上での的確なコード生成</li>
+                    <li><strong>テスト生成:</strong> 既存コードに対するユニットテストや統合テストの自動生成能力の向上</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128421;</div>
+                    <div class="feature-card-title">Computer Use (コンピュータ操作)</div>
+                </div>
+                <p class="feature-card-desc">コンピュータの GUI を直接操作する「Computer Use」機能を搭載。従来はテキストベースの指示では困難だったタスクを AI が直接実行可能に。</p>
+                <ul>
+                    <li><strong>ブラウザ操作:</strong> Web ページの閲覧、フォーム入力、ボタンクリックなどの自動化</li>
+                    <li><strong>デスクトップ操作:</strong> アプリケーションの起動、メニュー操作、データ入力の自動化</li>
+                    <li><strong>ワークフロー自動化:</strong> 複数のアプリケーションを横断する業務プロセスの自動化</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128269;</div>
+                    <div class="feature-card-title">ツール検索 (Tool Search)</div>
+                </div>
+                <p class="feature-card-desc">タスクに最適なツールや API を自動的に選択・実行する能力を持ち、複雑なマルチステップタスクの遂行が大幅に効率化。</p>
+                <ul>
+                    <li><strong>自動ツール選択:</strong> タスクの内容に応じて最適なツールを自動で判断</li>
+                    <li><strong>API 連携:</strong> 外部サービスの API を適切に呼び出し、結果を統合</li>
+                    <li><strong>チェーン実行:</strong> 複数のツールを連鎖的に実行し、複合的なタスクを完遂</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128218;</div>
+                    <div class="feature-card-title">1M トークンコンテキストウィンドウ</div>
+                </div>
+                <p class="feature-card-desc">100 万トークンのコンテキストウィンドウにより、大規模なドキュメント、コードベース全体、長時間の会話履歴を一度に処理可能。</p>
+                <ul>
+                    <li><strong>大規模コードベースの分析:</strong> リポジトリ全体をコンテキストに含めた包括的なコード分析</li>
+                    <li><strong>長文ドキュメントの処理:</strong> 書籍や論文全体を一度に読み込んでの要約・分析</li>
+                    <li><strong>長期的な会話の継続:</strong> 長時間にわたるセッションでも文脈を失わない対話</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <section class="section" style="margin-top: 24px;">
+            <h2 class="section-title">技術的な詳細</h2>
+            <div class="code-section">
+                <div class="code-block-label">API の利用 - 基本的な Chat Completions API の呼び出し</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 基本的な Chat Completions API の呼び出し
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Explain the architecture of a microservices system."}
+    ],
+    max_tokens=4096
+)
+
+print(response.choices[0].message.content)</code></pre>
+
+                <div class="code-block-label">大規模コンテキストの活用例 - コードベース全体のレビュー</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 大規模なコードベースを含むコンテキストでのコードレビュー
+with open("large_codebase.txt", "r") as f:
+    codebase_content = f.read()
+
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are an expert code reviewer. Analyze the entire codebase and identify potential issues."
+        },
+        {
+            "role": "user",
+            "content": f"Please review this codebase:\n\n{codebase_content}"
+        }
+    ],
+    max_tokens=8192
+)
+
+print(response.choices[0].message.content)</code></pre>
+
+                <div class="code-block-label">Computer Use の利用例</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Computer Use 機能を活用したタスク実行
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {
+            "role": "user",
+            "content": "Search for the latest Python release notes on python.org and summarize the key changes."
+        }
+    ],
+    tools=[{"type": "computer_use"}],
+    max_tokens=4096
+)
+
+print(response.choices[0].message.content)</code></pre>
+
+                <div class="code-note">
+                    <strong>注:</strong> 上記のコード例は一般的な利用パターンの想定であり、実際のパラメータやツール指定の詳細は公式ドキュメントを参照してください。
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー環境"]
+        App["アプリケーション"]
+        CLI["CLI / SDK"]
+    end
+
+    subgraph API["OpenAI API"]
+        Gateway["API Gateway"]
+        subgraph GPT54["GPT-5.4"]
+            Core["コアモデル"]
+            Coding["コーディングエンジン"]
+            CompUse["Computer Use エンジン"]
+            ToolSearch["ツール検索エンジン"]
+            Context["1M トークンコンテキスト"]
+        end
+    end
+
+    subgraph External["外部リソース"]
+        Browser["Web ブラウザ"]
+        Tools["外部ツール / API"]
+        Desktop["デスクトップ環境"]
+    end
+
+    App --> Gateway
+    CLI --> Gateway
+    Gateway --> Core
+    Core --> Coding
+    Core --> CompUse
+    Core --> ToolSearch
+    Core <--> Context
+    CompUse --> Browser
+    CompUse --> Desktop
+    ToolSearch --> Tools
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Core,Coding,CompUse,ToolSearch,Context openai
+    class Gateway dark
+    class App,CLI,Browser,Tools,Desktop light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-card-title">開発生産性の飛躍的向上</div>
+                    <p class="feature-card-desc">GPT-5.4 の高度なコーディング能力と 1M トークンコンテキストにより、開発者の生産性が大幅に向上することが期待される。</p>
+                    <ul>
+                        <li><strong>コードベース全体の理解:</strong> 大規模プロジェクトでも全体を把握した上での的確な支援が可能</li>
+                        <li><strong>開発サイクルの短縮:</strong> コード生成、テスト作成、デバッグの一連のプロセスを AI が加速</li>
+                        <li><strong>品質向上:</strong> コンテキストを踏まえた高精度なコードレビューにより、バグの早期発見が促進</li>
+                    </ul>
+                </div>
+
+                <div class="impact-card">
+                    <div class="impact-card-title">業務自動化の新しい可能性</div>
+                    <p class="feature-card-desc">Computer Use 機能とツール検索の組み合わせにより、従来は手作業で行っていた業務プロセスの自動化が可能に。</p>
+                    <ul>
+                        <li><strong>RPA の高度化:</strong> GUI 操作を含む複雑な業務フローの AI による自動化</li>
+                        <li><strong>マルチツール連携:</strong> 複数のサービスやツールを横断するワークフローの構築</li>
+                        <li><strong>エンドツーエンドの自動化:</strong> 情報収集から報告書作成までの一連の業務を自動化</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="migration-section">
+                <div class="migration-title">移行時の考慮事項</div>
+                <ul class="migration-list">
+                    <li>GPT-5 シリーズからの移行において、プロンプトの最適化が必要になる場合がある</li>
+                    <li>1M トークンコンテキストの活用にはトークン使用量の管理が重要</li>
+                    <li>Computer Use 機能はセキュリティポリシーとの整合性を確認した上で導入すべき</li>
+                    <li>料金体系の変更に伴うコスト影響の事前評価が推奨される</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="links-list">
+                <li><a href="https://openai.com/index/introducing-gpt-5-4" target="_blank" rel="noopener">GPT-5.4 公式発表ページ</a></li>
+                <li><a href="https://platform.openai.com/docs" target="_blank" rel="noopener">OpenAI API ドキュメント</a></li>
+                <li><a href="https://platform.openai.com/docs/models" target="_blank" rel="noopener">OpenAI モデル一覧</a></li>
+                <li><a href="https://openai.com/pricing" target="_blank" rel="noopener">OpenAI Pricing</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="summary-text">
+                GPT-5.4 は、OpenAI が発表した最新かつ最も高性能なフロンティアモデルであり、プロフェッショナルワークに特化した設計が最大の特徴である。最先端のコーディング能力、Computer Use によるコンピュータ操作、高度なツール検索機能、そして 100 万トークンのコンテキストウィンドウという 4 つの主要機能により、開発者の生産性向上と業務自動化の新たな可能性を切り開く。特に大規模コードベースの分析やマルチステップの複雑なタスク処理において、従来のモデルを大きく上回る性能を発揮することが期待される。今後、開発者コミュニティでの実践的な活用事例やベンチマーク結果の蓄積により、GPT-5.4 の真の実力がさらに明らかになるだろう。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-source">
+                Source: <a href="https://openai.com/index/introducing-gpt-5-4" target="_blank" rel="noopener">https://openai.com/index/introducing-gpt-5-4</a>
+            </div>
+            <div class="footer-branding">OpenAI News Summary | Generated on 2026-03-07</div>
+        </footer>
+
+    </div>
+
+    <script>
+        hljs.highlightAll();
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#343541',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            }
+        });
+    </script>
+</body>
+</html>

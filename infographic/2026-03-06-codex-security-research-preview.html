@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Security: リサーチプレビューとして公開 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Workflow Steps */
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Vulnerability List */
+        .vuln-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .vuln-item {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .vuln-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .vuln-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Note Box */
+        .note-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 16px;
+        }
+
+        .note-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 8px;
+        }
+
+        .note-box ul {
+            padding-left: 20px;
+        }
+
+        .note-box ul li {
+            font-size: 14px;
+            color: #78350F;
+            padding: 2px 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links ul li a {
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .vuln-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product</span>
+                <h1>Codex Security: リサーチプレビューとして公開</h1>
+                <p class="date">2026-03-06</p>
+            </div>
+        </header>
+
+        <!-- Key Points / 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>AI セキュリティエージェント</h3>
+                        <p>OpenAI は AI を活用したアプリケーションセキュリティエージェント「Codex Security」をリサーチプレビューとして公開。プロジェクトのコンテキストを分析し、複雑な脆弱性を検出・検証・パッチ適用する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>従来ツールとの差別化</h3>
+                        <p>従来の SAST / DAST と比較して、プロジェクト全体のコンテキストを深く理解することで、より高い精度での脆弱性検出を実現し、誤検知 (false positive) を大幅に削減する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F527;</div>
+                    <div class="key-point-content">
+                        <h3>自動パッチ生成</h3>
+                        <p>単なる脆弱性の指摘にとどまらず、修正パッチの自動生成までを一貫して行う点が大きな特徴。セキュリティ対応のライフサイクル全体をカバーする。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before / After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (従来の SAST / DAST)</h4>
+                    <ul>
+                        <li>パターンマッチングに依存</li>
+                        <li>コードの意図を考慮できない</li>
+                        <li>大量の誤検知 (false positive)</li>
+                        <li>脆弱性の指摘のみ</li>
+                        <li>手動でのパッチ作成が必要</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (Codex Security)</h4>
+                    <ul>
+                        <li>プロジェクト全体のコンテキスト理解</li>
+                        <li>データフロー追跡で攻撃経路を特定</li>
+                        <li>誤検知を大幅に削減</li>
+                        <li>検出・検証・パッチの一貫対応</li>
+                        <li>コーディング規約に準拠した自動修正</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主な機能 -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F9E0; コンテキスト認識型検出</h3>
+                    <p>リポジトリ全体のコード構造、依存関係、設定ファイルを分析し、コードの使用目的や実行環境を考慮した脆弱性の深刻度評価を行う。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50E; データフロー追跡</h3>
+                    <p>入力から出力までのデータの流れを追跡し、潜在的な攻撃経路を特定。従来のパターンマッチングでは見逃される脆弱性を検出する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; 脆弱性検証</h3>
+                    <p>検出された脆弱性が実際に悪用可能かどうかをコンテキストに基づいて検証し、誤検知を排除。本当に対処が必要な問題に集中できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1FA79; 自動パッチ生成</h3>
+                    <p>検証済みの脆弱性に対して、プロジェクトのコーディングスタイルや規約に準拠した修正パッチを自動生成する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F504; 低ノイズ・高信頼性</h3>
+                    <p>AI によるコンテキスト理解で従来ツールの大量の誤検知を大幅に削減。開発チームの対応負荷を軽減する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ワークフロー -->
+        <section class="section">
+            <h2 class="section-title">検出・検証・パッチの 3 段階ワークフロー</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>検出 (Detect)</h4>
+                        <p>AI がコードベース全体をスキャンし、SQL インジェクション、XSS、認証バイパスなどの脆弱性パターンを検出する。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>検証 (Validate)</h4>
+                        <p>検出された脆弱性が実際に悪用可能かどうかをコンテキストに基づいて検証し、誤検知を排除する。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>パッチ (Patch)</h4>
+                        <p>検証済みの脆弱性に対して、プロジェクトのコーディングスタイルや規約に準拠した修正パッチを自動生成する。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 対応する脆弱性カテゴリ -->
+        <section class="section">
+            <h2 class="section-title">対応する脆弱性カテゴリ</h2>
+            <div class="vuln-grid">
+                <div class="vuln-item">
+                    <h4>インジェクション攻撃</h4>
+                    <p>SQL インジェクション、コマンドインジェクション、LDAP インジェクション</p>
+                </div>
+                <div class="vuln-item">
+                    <h4>認証・認可の不備</h4>
+                    <p>認証バイパス、権限昇格、セッション管理の脆弱性</p>
+                </div>
+                <div class="vuln-item">
+                    <h4>XSS</h4>
+                    <p>Reflected XSS、Stored XSS、DOM-based XSS</p>
+                </div>
+                <div class="vuln-item">
+                    <h4>安全でないデシリアライゼーション</h4>
+                    <p>オブジェクトインジェクション、リモートコード実行</p>
+                </div>
+                <div class="vuln-item">
+                    <h4>依存関係の脆弱性</h4>
+                    <p>サードパーティライブラリの既知の脆弱性</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- コードサンプル -->
+        <section class="section">
+            <h2 class="section-title">利用イメージ</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">CLI 使用例</span>
+                </div>
+                <pre><code class="language-bash"># リポジトリ全体のセキュリティスキャン
+codex-security scan --project ./my-app
+
+# 特定のファイルやディレクトリを対象にスキャン
+codex-security scan --path ./src/auth
+
+# 検出された脆弱性に対するパッチの自動生成
+codex-security patch --vuln-id VULN-2026-001</code></pre>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;"><strong>注:</strong> 上記のコマンド例はリサーチプレビュー段階の想定であり、実際の CLI インターフェースは公式ドキュメントを参照してください。</p>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Dev["開発環境"]
+        Repo["コードリポジトリ"]
+        CI["CI/CD パイプライン"]
+    end
+
+    subgraph CodexSec["Codex Security"]
+        Scanner["コンテキスト分析エンジン"]
+        Detector["脆弱性検出"]
+        Validator["脆弱性検証"]
+        Patcher["パッチ生成"]
+    end
+
+    subgraph OpenAI["OpenAI API"]
+        Model["AI モデル"]
+    end
+
+    Repo --> Scanner
+    CI --> Scanner
+    Scanner --> Detector
+    Detector --> Validator
+    Validator --> Patcher
+    Scanner <--> Model
+    Patcher --> Repo
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Model openai
+    class Scanner,Detector,Validator,Patcher dark
+    class Repo,CI light
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>セキュリティ対応の効率化</h4>
+                <p>開発者はセキュリティレビューにかかる時間を大幅に削減できる可能性がある。</p>
+                <ul>
+                    <li><strong>誤検知対応の削減:</strong> コンテキスト認識による高精度な検出で、誤検知の確認作業が減少</li>
+                    <li><strong>パッチ作成の自動化:</strong> 修正コードの自動生成により、脆弱性対応のリードタイムを短縮</li>
+                    <li><strong>継続的なセキュリティ監視:</strong> CI/CD パイプラインへの統合により、コード変更のたびにセキュリティチェックを自動実行</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>セキュリティの民主化</h4>
+                <p>専門のセキュリティエンジニアが不在の開発チームでも、AI エージェントの支援により高品質なセキュリティ対応が可能になる。セキュリティ対策の格差が縮小することが期待される。</p>
+            </div>
+            <div class="note-box">
+                <h4>注意点</h4>
+                <ul>
+                    <li>リサーチプレビュー段階であるため、本番環境での利用には慎重な評価が必要</li>
+                    <li>AI による自動パッチは必ず人間のレビューを経てから適用すべき</li>
+                    <li>全ての脆弱性を検出できるわけではないため、他のセキュリティ対策との併用が推奨される</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI が発表した Codex Security は、AI を活用してアプリケーションセキュリティの課題に取り組む新しいアプローチである。プロジェクト全体のコンテキストを理解した上で脆弱性を検出・検証・修正する一貫したワークフローにより、従来のツールと比較して高い精度と低いノイズを実現する。現在はリサーチプレビュー段階であるが、開発ワークフローへのセキュリティ統合を大きく前進させる可能性を持つ製品として注目される。今後の正式リリースに向けた機能拡充や対応範囲の拡大に期待したい。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/codex-security-now-in-research-preview" target="_blank" rel="noopener noreferrer">https://openai.com/index/codex-security-now-in-research-preview</a></p>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="https://openai.com/codex" target="_blank" rel="noopener noreferrer">OpenAI Codex</a></li>
+                    <li><a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/bash.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
