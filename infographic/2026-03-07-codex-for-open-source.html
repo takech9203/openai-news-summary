@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex for Open Source: オープンソースメンテナー向け支援プログラム - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--openai-gray);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--openai-green);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Eligibility */
+        .eligibility-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .eligibility-card {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .eligibility-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--openai-dark);
+        }
+
+        .eligibility-card ul {
+            padding-left: 20px;
+        }
+
+        .eligibility-card ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+        }
+
+        .apply-link {
+            display: inline-block;
+            margin-top: 16px;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        .apply-link:hover {
+            opacity: 0.9;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Note Box */
+        .note-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 16px;
+        }
+
+        .note-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 8px;
+        }
+
+        .note-box ul {
+            padding-left: 20px;
+        }
+
+        .note-box ul li {
+            font-size: 14px;
+            color: #78350F;
+            padding: 2px 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links ul li a {
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .eligibility-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product</span>
+                <h1>Codex for Open Source: オープンソースメンテナー向け支援プログラム</h1>
+                <p class="date">2026-03-07</p>
+            </div>
+        </header>
+
+        <!-- 概要 (Key Points) -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                OpenAI は 2026 年 3 月 7 日、オープンソースプロジェクトのコアメンテナーを支援する新プログラム「Codex for Open Source」を発表した。本プログラムは、100 万ドル規模の Codex Open Source Fund を基盤として、主要なオープンソースプロジェクトのメンテナーに対し、ChatGPT Pro の無償提供、API クレジット、および Codex Security へのアクセスを提供する。
+            </p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4AC;</div>
+                    <div class="key-point-content">
+                        <h3>ChatGPT Pro 無償提供</h3>
+                        <p>Codex ツールを含む ChatGPT Pro プランへの 6 か月間のフルアクセス。コード生成、コードレビュー、ドキュメント作成など日常的な開発作業を AI で効率化できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4B3;</div>
+                    <div class="key-point-content">
+                        <h3>API クレジット無償提供</h3>
+                        <p>CI/CD パイプライン、プルリクエストの自動レビュー、イシューのトリアージなど、自動化ワークフローに活用可能な API クレジットを提供。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>Codex Security アクセス</h3>
+                        <p>AI を活用した高精度なコードセキュリティスキャン機能 (リサーチプレビュー)。従来の SAST/DAST ツールと比較して誤検知を大幅に削減する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4B0;</div>
+                    <div class="key-point-content">
+                        <h3>100 万ドルの Open Source Fund</h3>
+                        <p>プログラムは既存の 100 万ドル規模のオープンソース支援基金を拡張する形で展開。多様な規模や影響力のプロジェクトが対象となる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before / After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (従来のワークフロー)</h4>
+                    <ul>
+                        <li>大量のプルリクエストを手動レビュー</li>
+                        <li>イシューの優先度を手動でトリアージ</li>
+                        <li>セキュリティ対策はリソース不足で後回し</li>
+                        <li>ルーティン作業によるバーンアウトリスク</li>
+                        <li>限られたリソースでの持続困難な運営</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (Codex for Open Source)</h4>
+                    <ul>
+                        <li>Codex による自動コードレビューで効率化</li>
+                        <li>AI によるイシュー分類で優先度判定を自動化</li>
+                        <li>Codex Security で脆弱性の自動検出とパッチ提案</li>
+                        <li>ルーティン作業の自動化でバーンアウト防止</li>
+                        <li>メンテナーは高レベルの設計判断に集中</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主な機能 -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4AC; ChatGPT Pro (6 か月無償)</h3>
+                    <p>Codex ツールを含む ChatGPT Pro プランへのフルアクセス。コード生成、コードレビュー、ドキュメント作成など日常的な開発作業を AI で効率化。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F504; API クレジット</h3>
+                    <p>CI/CD パイプラインやワークフロー自動化に統合可能な Codex API のクレジット。プルリクエストの自動レビューやイシュートリアージに活用。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; Codex Security</h3>
+                    <p>AI を活用した高精度なセキュリティスキャン (リサーチプレビュー)。従来の SAST/DAST と比較して誤検知を大幅に削減し、パッチも自動生成。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9E0; GPT-5.3-Codex モデル</h3>
+                    <p>インタラクティブなマルチエージェントワークフローに対応したコード特化モデル。プロジェクトのコンテキストを深く理解したコード支援を提供。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 統計情報 -->
+        <section class="section">
+            <h2 class="section-title">統計情報</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">$1M</div>
+                    <div class="stat-label">Codex Open Source Fund の規模</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6 か月</div>
+                    <div class="stat-label">ChatGPT Pro 無償提供期間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 本柱</div>
+                    <div class="stat-label">Pro / API / Security の支援</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">多様</div>
+                    <div class="stat-label">大小問わずプロジェクト対象</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 対象と申請 -->
+        <section class="section">
+            <h2 class="section-title">対象と申請</h2>
+            <div class="eligibility-grid">
+                <div class="eligibility-card">
+                    <h4>対象プロジェクトの要件</h4>
+                    <ul>
+                        <li><strong>公開リポジトリ:</strong> アクティブに開発が行われている公開のオープンソースプロジェクト</li>
+                        <li><strong>実質的な利用実績:</strong> 意味のある利用実績とエコシステムへの影響力を持つプロジェクト</li>
+                        <li><strong>多様な規模:</strong> 大規模プロジェクトに限らず、多様な規模や影響力のプロジェクトが歓迎される</li>
+                    </ul>
+                </div>
+                <div class="eligibility-card">
+                    <h4>申請方法</h4>
+                    <ul>
+                        <li>Codex Open Source Fund 申請フォームから申請可能</li>
+                        <li>オープンソースプロジェクトのコアメンテナーが対象</li>
+                        <li>vLLM や Next.js などの主要プロジェクトも対象</li>
+                    </ul>
+                    <a href="https://openai.com/form/codex-open-source-fund/" target="_blank" rel="noopener noreferrer" class="apply-link">申請フォームへ</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- コードサンプル -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Codex API を活用してプルリクエストの自動レビューとイシュートリアージを行うワークフローの例。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">PR 自動レビュー / イシュートリアージ</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# プルリクエストの差分を Codex でレビュー
+def review_pull_request(diff_content: str, project_context: str) -&gt; str:
+    """プルリクエストの差分を AI でレビューし、フィードバックを生成する"""
+    response = client.chat.completions.create(
+        model="gpt-5.3-codex",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "あなたはオープンソースプロジェクトのコードレビューアーです。"
+                    "コードの品質、セキュリティ、パフォーマンスの観点から "
+                    "建設的なフィードバックを提供してください。"
+                ),
+            },
+            {
+                "role": "user",
+                "content": f"## プロジェクトコンテキスト\n{project_context}\n\n"
+                f"## プルリクエストの差分\n```diff\n{diff_content}\n```\n\n"
+                "このプルリクエストをレビューしてください。",
+            },
+        ],
+    )
+    return response.choices[0].message.content
+
+
+# イシューのトリアージを自動化
+def triage_issue(issue_title: str, issue_body: str, labels: list[str]) -&gt; dict:
+    """イシューを分析し、優先度とカテゴリを自動分類する"""
+    response = client.chat.completions.create(
+        model="gpt-5.3-codex",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "あなたはオープンソースプロジェクトのイシュートリアージ担当です。"
+                    "イシューの内容を分析し、優先度とカテゴリを判定してください。"
+                    "JSON 形式で回答してください。"
+                ),
+            },
+            {
+                "role": "user",
+                "content": f"タイトル: {issue_title}\n\n"
+                f"本文: {issue_body}\n\n"
+                f"既存ラベル: {', '.join(labels)}",
+            },
+        ],
+        response_format={"type": "json_object"},
+    )
+    import json
+
+    return json.loads(response.choices[0].message.content)</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">YAML</span>
+                    <span class="code-title">GitHub Actions CI/CD 統合</span>
+                </div>
+                <pre><code class="language-yaml"># .github/workflows/codex-review.yml
+name: Codex PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  codex-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR diff
+        id: diff
+        run: |
+          git diff origin/main...HEAD &gt; pr_diff.txt
+
+      - name: Run Codex Review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/codex_review.py \
+            --diff pr_diff.txt \
+            --output review_comments.json
+
+      - name: Post Review Comments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comments = require('./review_comments.json');
+            for (const comment of comments) {
+              await github.rest.pulls.createReviewComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                body: comment.body,
+                path: comment.path,
+                line: comment.line,
+              });
+            }</code></pre>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;"><strong>注:</strong> 上記のコード例は API の利用イメージを示すものであり、実際のモデル名やパラメータは公式ドキュメントを参照してください。</p>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph OSS["オープンソースプロジェクト"]
+        Repo["コードリポジトリ"]
+        Issues["イシュー / PR"]
+        CICD["CI/CD パイプライン"]
+    end
+
+    subgraph Program["Codex for Open Source"]
+        Pro["ChatGPT Pro&#10;(6 か月無償)"]
+        Credits["API クレジット"]
+        Security["Codex Security&#10;(リサーチプレビュー)"]
+        Fund["Open Source Fund&#10;($1M)"]
+    end
+
+    subgraph OpenAI["OpenAI プラットフォーム"]
+        CodexModel["GPT-5.3-Codex"]
+        API["Chat Completions API"]
+        SecEngine["セキュリティ分析エンジン"]
+    end
+
+    subgraph Tasks["自動化タスク"]
+        Review["コードレビュー"]
+        Triage["イシュートリアージ"]
+        SecScan["脆弱性スキャン"]
+        Patch["パッチ生成"]
+    end
+
+    Repo --> CICD
+    Issues --> Triage
+    CICD --> API
+    Pro --> CodexModel
+    Credits --> API
+    Security --> SecEngine
+    API --> CodexModel
+    CodexModel --> Review
+    CodexModel --> Triage
+    SecEngine --> SecScan
+    SecEngine --> Patch
+    Review --> Repo
+    Triage --> Issues
+    SecScan --> Repo
+    Patch --> Repo
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class CodexModel,API,SecEngine openai
+    class Pro,Credits,Security,Fund dark
+    class Repo,Issues,CICD light
+    class Review,Triage,SecScan,Patch accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>オープンソースメンテナーの負担軽減</h4>
+                <p>本プログラムにより、オープンソースメンテナーは AI ツールを活用して日常的な管理作業を効率化できる。</p>
+                <ul>
+                    <li><strong>コードレビューの効率化:</strong> Codex による自動レビューで、プルリクエストの初回レビュー時間を短縮し、メンテナーは高レベルの設計判断に集中できる</li>
+                    <li><strong>セキュリティ対応の強化:</strong> Codex Security により、専門のセキュリティチームを持たないプロジェクトでも高精度な脆弱性検出が可能に</li>
+                    <li><strong>プロジェクトの持続可能性向上:</strong> ルーティン作業の自動化により、メンテナーのバーンアウトリスクを低減</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>エコシステムへの波及効果</h4>
+                <p>vLLM や Next.js などの主要プロジェクトが恩恵を受けることで、それらに依存する下流のプロジェクトやアプリケーション全体のセキュリティと品質が向上する可能性がある。</p>
+            </div>
+        </section>
+
+        <!-- 懸念事項 -->
+        <section class="section">
+            <h2 class="section-title">懸念事項</h2>
+            <div class="note-box">
+                <h4>注意すべきポイント</h4>
+                <ul>
+                    <li><strong>選定基準への懸念:</strong> 一部では、大規模プロジェクトが優先される可能性が指摘されている。OpenAI は多様な規模のプロジェクトを歓迎するとしているが、実際の選定プロセスの透明性が求められる</li>
+                    <li><strong>ベンダーロックインのリスク:</strong> OpenAI のツールへの依存度が高まることで、将来的な移行コストが発生する可能性がある</li>
+                    <li><strong>リサーチプレビューの制約:</strong> Codex Security はリサーチプレビュー段階であり、本番環境での利用には十分な評価が必要</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI が発表した「Codex for Open Source」は、オープンソースエコシステムの持続可能性を AI で支援する包括的なプログラムである。ChatGPT Pro の無償提供、API クレジット、Codex Security へのアクセスという 3 つの柱により、メンテナーはコードレビュー、イシュー管理、セキュリティ対応を効率化できる。100 万ドルの Codex Open Source Fund を基盤とした本プログラムは、vLLM や Next.js をはじめとする主要プロジェクトへの支援を通じて、オープンソースエコシステム全体の品質とセキュリティの向上に貢献することが期待される。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/codex-for-open-source/" target="_blank" rel="noopener noreferrer">https://openai.com/index/codex-for-open-source/</a></p>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="https://openai.com/form/codex-open-source-fund/" target="_blank" rel="noopener noreferrer">Codex Open Source Fund 申請フォーム</a></li>
+                    <li><a href="https://openai.com/index/codex-security-now-in-research-preview" target="_blank" rel="noopener noreferrer">Codex Security リサーチプレビュー</a></li>
+                    <li><a href="https://openai.com/codex" target="_blank" rel="noopener noreferrer">OpenAI Codex</a></li>
+                    <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/yaml.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

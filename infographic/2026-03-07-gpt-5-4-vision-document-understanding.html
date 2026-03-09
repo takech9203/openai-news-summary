@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.4 Vision Cookbook: マルチモーダル文書理解の実践ガイド</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-10: rgba(16, 163, 127, 0.1);
+            --openai-green-20: rgba(16, 163, 127, 0.2);
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--openai-green-20) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: var(--openai-gray);
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        /* Key Points */
+        .key-points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-green-10);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--openai-green-20);
+            transition: transform 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+        }
+
+        .key-point-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .key-point-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .key-point-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--openai-dark);
+        }
+
+        /* Overview */
+        .overview-text {
+            font-size: 15px;
+            line-height: 2;
+            color: #444654;
+        }
+
+        /* Before/After */
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .before-box, .after-box {
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .before-box {
+            background: #fef3f2;
+            border: 1px solid #fecaca;
+        }
+
+        .after-box {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+
+        .before-after-label {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .before-box .before-after-label {
+            color: #dc2626;
+        }
+
+        .after-box .before-after-label {
+            color: var(--openai-green);
+        }
+
+        .before-after-arrow {
+            font-size: 28px;
+            color: var(--openai-green);
+            padding: 0 16px;
+            font-weight: 700;
+        }
+
+        .before-after-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .before-after-list li {
+            font-size: 14px;
+            color: #444654;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .before-box .before-after-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 8px;
+            height: 8px;
+            background: #dc2626;
+            border-radius: 50%;
+        }
+
+        .after-box .before-after-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Feature Cards */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px 24px;
+            border: 1px solid var(--openai-gray);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--openai-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .feature-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        .feature-card-desc {
+            font-size: 14px;
+            color: #6e6e80;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .param-code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            color: var(--openai-dark);
+        }
+
+        /* Table */
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 13px;
+        }
+
+        .config-table thead {
+            background: var(--openai-dark);
+            color: white;
+        }
+
+        .config-table thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .config-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .config-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .config-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            line-height: 1.6;
+            vertical-align: top;
+        }
+
+        .config-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .config-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .config-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .config-table code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* Code Blocks */
+        .code-section {
+            margin-top: 16px;
+        }
+
+        .code-block-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            margin-bottom: 8px;
+            margin-top: 20px;
+        }
+
+        .code-block-label:first-child {
+            margin-top: 0;
+        }
+
+        pre {
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        pre code {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-note {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #5d4037;
+            line-height: 1.7;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Case Cards */
+        .usecase-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .usecase-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px 20px;
+            border: 1px solid var(--openai-gray);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .usecase-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .usecase-card-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .usecase-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .usecase-card-desc {
+            font-size: 13px;
+            color: #6e6e80;
+            line-height: 1.7;
+        }
+
+        .usecase-card-config {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--openai-green-dark);
+            font-weight: 500;
+        }
+
+        /* Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Migration */
+        .migration-section {
+            margin-top: 20px;
+        }
+
+        .migration-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .migration-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .migration-list li {
+            font-size: 13px;
+            color: #444654;
+            padding: 8px 12px;
+            padding-left: 32px;
+            position: relative;
+            background: #fff3e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        .migration-list li::before {
+            content: '!';
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            width: 16px;
+            height: 16px;
+            background: #ff9800;
+            border-radius: 50%;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--openai-gray);
+            margin-bottom: 4px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 11px;
+            color: #6e6e80;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px 10px 32px;
+            }
+
+            .header {
+                padding: 32px 24px;
+                border-radius: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 18px;
+            }
+
+            .feature-cards,
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .key-points-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .before-after {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .before-after-arrow {
+                text-align: center;
+                padding: 4px 0;
+                transform: rotate(90deg);
+            }
+
+            .usecase-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .config-table {
+                font-size: 12px;
+            }
+
+            .config-table thead th,
+            .config-table tbody td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">Developer Guide</span>
+            <h1>GPT-5.4 Vision Cookbook: マルチモーダル文書理解の実践ガイド</h1>
+            <div class="header-date">2026-03-07 | OpenAI Cookbook (GitHub)</div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 (Key Points)</h2>
+            <p class="overview-text">
+                OpenAI は 2026 年 3 月 7 日、GPT-5.4 のマルチモーダル機能を活用した文書理解に関する包括的な Cookbook ガイド「Getting the Most out of GPT-5.4 for Vision and Document Understanding」を公開した。このガイドは、開発者が GPT-5.4 の Vision 機能を最大限に活用するための実践的なテクニックとパラメータ設定を解説している。
+            </p>
+            <div class="key-points-grid">
+                <div class="key-point">
+                    <div class="key-point-icon">&#128196;</div>
+                    <div class="key-point-label">Single Pass</div>
+                    <div class="key-point-value">単一モデルパスで文書を解釈</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#9881;</div>
+                    <div class="key-point-label">4 Parameters</div>
+                    <div class="key-point-value">4 つの主要パラメータで制御</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128268;</div>
+                    <div class="key-point-label">Responses API</div>
+                    <div class="key-point-value">新しい Responses API を使用</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128209;</div>
+                    <div class="key-point-label">Decision Guide</div>
+                    <div class="key-point-value">タスク別推奨設定ガイド付き</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="before-after">
+                <div class="before-box">
+                    <div class="before-after-label">Before</div>
+                    <ul class="before-after-list">
+                        <li>OCR エンジンでテキスト抽出</li>
+                        <li>レイアウト検出モデルで構造解析</li>
+                        <li>カスタムパーサーでデータ変換</li>
+                        <li>複数のモデル / サービスを統合</li>
+                        <li>パイプライン間のエラー伝播リスク</li>
+                    </ul>
+                </div>
+                <div class="before-after-arrow">&#8594;</div>
+                <div class="after-box">
+                    <div class="before-after-label">After (GPT-5.4 Vision)</div>
+                    <ul class="before-after-list">
+                        <li>単一の GPT-5.4 モデルパスで完結</li>
+                        <li>4 つのパラメータで柔軟に制御</li>
+                        <li>Responses API で統一的にアクセス</li>
+                        <li>エンドツーエンドのマルチモーダル理解</li>
+                        <li>カスタムモデルの学習が不要</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parameters -->
+        <section class="section">
+            <h2 class="section-title">主要パラメータ</h2>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128444;</div>
+                        <div class="feature-card-title">Image Detail (画像詳細度)</div>
+                    </div>
+                    <p class="feature-card-desc"><span class="param-code">input_image.detail</span> パラメータにより、モデルが画像をどの程度の解像度で処理するかを制御。</p>
+                    <ul>
+                        <li><strong><code>"auto"</code>:</strong> 大半のページに適したデフォルト設定。モデルが自動的に最適な解像度を選択</li>
+                        <li><strong><code>"original"</code>:</strong> テキストが非常に小さい場合、手書き文書、低品質スキャンなど、細かな視覚的信号の保持が必要な場合に使用</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128221;</div>
+                        <div class="feature-card-title">Verbosity (出力冗長性)</div>
+                    </div>
+                    <p class="feature-card-desc"><span class="param-code">text={"verbosity": ...}</span> パラメータにより、テキスト出力の圧縮度と忠実度を制御。</p>
+                    <ul>
+                        <li>冗長性を高く設定することで、レイアウトを維持した忠実な転写が可能</li>
+                        <li>パラフレーズ (言い換え) を最小限に抑え、原文に近い出力を取得</li>
+                        <li>文書の正確なマークダウン変換など、リテラルな転写が求められるユースケースに最適</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#129504;</div>
+                        <div class="feature-card-title">Reasoning Effort (推論努力量)</div>
+                    </div>
+                    <p class="feature-card-desc"><span class="param-code">reasoning={"effort": ...}</span> パラメータにより、マルチステップの視覚的推論に割り当てる計算リソースを制御。</p>
+                    <ul>
+                        <li><strong><code>low</code>:</strong> 単純な文書 QA など、基本的なタスク向け</li>
+                        <li><strong><code>medium</code>:</strong> 標準的な文書処理タスク向け</li>
+                        <li><strong><code>high</code>:</strong> チャート、テーブル、フォームの QA など複雑な推論向け</li>
+                        <li><strong><code>xhigh</code>:</strong> 最も複雑なマルチステップ推論タスク向け</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128295;</div>
+                        <div class="feature-card-title">Tool Use (ツール使用)</div>
+                    </div>
+                    <p class="feature-card-desc"><span class="param-code">tools=[...]</span> パラメータにより、モデルが回答前に Code Interpreter を使用して画像を検査することを許可。</p>
+                    <ul>
+                        <li><strong>Code Interpreter 有効化:</strong> マルチパスの視覚的検査が必要なシナリオ (ズーム / クロップ / 回転) に最適</li>
+                        <li><strong>ツール省略:</strong> 単一パスで十分な回答が得られる場合は、ツールを省略してレイテンシを削減</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Task Config Guide -->
+        <section class="section">
+            <h2 class="section-title">タスク別推奨設定ガイド</h2>
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>タスク</th>
+                        <th>推奨設定</th>
+                        <th>理由</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>一般的な文書 QA</td>
+                        <td><code>detail="auto"</code></td>
+                        <td>最も低摩擦なデフォルト設定</td>
+                    </tr>
+                    <tr>
+                        <td>高密度スキャン、手書き</td>
+                        <td><code>detail="original"</code></td>
+                        <td>微細な視覚信号を保持</td>
+                    </tr>
+                    <tr>
+                        <td>リテラルな転写</td>
+                        <td><code>text={"verbosity": "high"}</code></td>
+                        <td>レイアウト維持、パラフレーズ抑制</td>
+                    </tr>
+                    <tr>
+                        <td>領域ローカライゼーション</td>
+                        <td>0..999 グリッドで<br><code>[x_min, y_min, x_max, y_max]</code> を指示</td>
+                        <td>デバッグと後続処理が容易</td>
+                    </tr>
+                    <tr>
+                        <td>チャート / テーブル / フォーム QA</td>
+                        <td><code>reasoning={"effort": "high"}</code> または <code>"xhigh"</code></td>
+                        <td>マルチステップの視覚的推論を改善</td>
+                    </tr>
+                    <tr>
+                        <td>マルチパス視覚検査</td>
+                        <td>Code Interpreter を追加</td>
+                        <td>ズーム / クロップ / 回転シナリオに最適</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-section">
+                <div class="code-block-label">基本的な文書理解: 請求書から合計金額を抽出</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 基本的な文書理解: 請求書から合計金額を抽出
+response = client.responses.create(
+    model="gpt-5.4",
+    input=[
+        {
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": "Extract the total amount due."},
+                {
+                    "type": "input_image",
+                    "image_url": "data:image/png;base64,...",
+                    "detail": "auto",
+                },
+            ],
+        }
+    ],
+)
+
+print(response.output_text)</code></pre>
+
+                <div class="code-block-label">高冗長性による忠実な転写: 手書き文書の転写</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 手書き文書の忠実な転写
+response = client.responses.create(
+    model="gpt-5.4",
+    input=[
+        {
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": "Transcribe this handwritten document."},
+                {
+                    "type": "input_image",
+                    "image_url": "data:image/png;base64,...",
+                    "detail": "original",
+                },
+            ],
+        }
+    ],
+    text={"verbosity": "high"},
+)
+
+print(response.output_text)</code></pre>
+
+                <div class="code-block-label">高推論努力量によるチャート分析</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# チャートの詳細分析
+response = client.responses.create(
+    model="gpt-5.4",
+    input=[
+        {
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": "Analyze the trends shown in this chart."},
+                {
+                    "type": "input_image",
+                    "image_url": "data:image/png;base64,...",
+                    "detail": "auto",
+                },
+            ],
+        }
+    ],
+    reasoning={"effort": "high"},
+)
+
+print(response.output_text)</code></pre>
+
+                <div class="code-note">
+                    <strong>注:</strong> すべてのコードサンプルは Responses API (<code>client.responses.create</code>) を使用しています。従来の Chat Completions API とは異なるインターフェースです。
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["入力"]
+        Doc["文書画像\n(スキャン / PDF / 写真)"]
+        Prompt["テキストプロンプト"]
+    end
+
+    subgraph API["OpenAI Responses API"]
+        Gateway["API Gateway"]
+        subgraph GPT54["GPT-5.4 Vision"]
+            Params["パラメータ制御"]
+            Detail["Image Detail\nauto / original"]
+            Verbosity["Verbosity\nlow - high"]
+            Reasoning["Reasoning Effort\nlow - xhigh"]
+            Vision["Vision エンジン"]
+            CodeInterp["Code Interpreter\n(ズーム / クロップ / 検査)"]
+        end
+    end
+
+    subgraph Output["出力"]
+        Text["テキスト抽出"]
+        Analysis["チャート / テーブル分析"]
+        Localization["領域ローカライゼーション"]
+        Markdown["マークダウン変換"]
+    end
+
+    Doc --> Gateway
+    Prompt --> Gateway
+    Gateway --> Params
+    Params --> Detail
+    Params --> Verbosity
+    Params --> Reasoning
+    Detail --> Vision
+    Verbosity --> Vision
+    Reasoning --> Vision
+    Vision --> CodeInterp
+    Vision --> Text
+    Vision --> Analysis
+    Vision --> Localization
+    Vision --> Markdown
+    CodeInterp --> Vision
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Vision,Detail,Verbosity,Reasoning,CodeInterp openai
+    class Gateway,Params dark
+    class Doc,Prompt,Text,Analysis,Localization,Markdown light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="usecase-cards">
+                <div class="usecase-card">
+                    <div class="usecase-card-icon">&#9997;</div>
+                    <div class="usecase-card-title">手書きフォームのデジタル化</div>
+                    <p class="usecase-card-desc">
+                        <code>detail="original"</code> と高冗長性の組み合わせで、手書き文字の正確な転写が可能。微細な視覚信号を保持しつつ、レイアウトを維持した忠実な出力を実現。
+                    </p>
+                    <div class="usecase-card-config">
+                        detail="original" + verbosity="high"
+                    </div>
+                </div>
+                <div class="usecase-card">
+                    <div class="usecase-card-icon">&#128208;</div>
+                    <div class="usecase-card-title">エンジニアリング図面の解析</div>
+                    <p class="usecase-card-desc">
+                        推論努力量を <code>high</code> 以上に設定することで、複雑な技術図面の理解が向上。マルチステップの視覚的推論により高精度な解析を実現。
+                    </p>
+                    <div class="usecase-card-config">
+                        reasoning={"effort": "high"} 以上
+                    </div>
+                </div>
+                <div class="usecase-card">
+                    <div class="usecase-card-icon">&#128202;</div>
+                    <div class="usecase-card-title">チャート重視レポートの自動分析</div>
+                    <p class="usecase-card-desc">
+                        マルチステップの視覚的推論により、グラフやテーブルからのデータ抽出が高精度化。Code Interpreter でズーム / クロップも可能。
+                    </p>
+                    <div class="usecase-card-config">
+                        reasoning={"effort": "xhigh"} + Code Interpreter
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-card-title">文書処理パイプラインの大幅な簡素化</div>
+                    <ul>
+                        <li><strong>インフラの簡素化:</strong> 複数のモデルやサービスの統合が不要になり、運用コストが削減される</li>
+                        <li><strong>精度の向上:</strong> エンドツーエンドのマルチモーダル理解により、パイプライン間のエラー伝播が解消される</li>
+                        <li><strong>開発速度の向上:</strong> パラメータ調整のみで多様なユースケースに対応でき、カスタムモデルの学習が不要になる</li>
+                    </ul>
+                </div>
+
+                <div class="impact-card">
+                    <div class="impact-card-title">新しいユースケースの実現</div>
+                    <ul>
+                        <li><strong>手書きフォームのデジタル化:</strong> <code>detail="original"</code> と高冗長性の組み合わせで、手書き文字の正確な転写が可能</li>
+                        <li><strong>エンジニアリング図面の解析:</strong> 推論努力量を <code>high</code> 以上に設定することで、複雑な技術図面の理解が向上</li>
+                        <li><strong>チャート重視レポートの自動分析:</strong> マルチステップの視覚的推論により、グラフやテーブルからのデータ抽出が高精度化</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="migration-section">
+                <div class="migration-title">移行時の考慮事項</div>
+                <ul class="migration-list">
+                    <li>Responses API (<code>client.responses.create</code>) を使用するため、従来の Chat Completions API からの移行が必要な場合がある</li>
+                    <li><code>detail</code>、<code>verbosity</code>、<code>reasoning effort</code> の 3 つのパラメータの適切な組み合わせを、ユースケースごとにテストすることが推奨される</li>
+                    <li>Code Interpreter の使用はレイテンシとコストが増加するため、必要な場合にのみ有効化すべきである</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="overview-text">
+                OpenAI が公開した GPT-5.4 Vision and Document Understanding Cookbook は、マルチモーダル文書理解における実践的なベストプラクティスを体系的にまとめた開発者向けガイドである。画像詳細度 (<code>detail</code>)、出力冗長性 (<code>verbosity</code>)、推論努力量 (<code>reasoning effort</code>)、ツール使用 (<code>tools</code>) という 4 つの主要パラメータを適切に組み合わせることで、一般的な文書 QA から手書きフォームの転写、チャート分析まで、幅広いユースケースに対応できる。従来 OCR やレイアウト検出などの複数のコンポーネントを組み合わせる必要があった文書処理を、単一のモデルパスで実現できるようになった点は、開発者にとって大きなメリットである。タスク別推奨設定ガイドを参考に、各ユースケースに最適なパラメータ設定を見つけることが推奨される。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-source">
+                Source: <a href="https://github.com/openai/openai-cookbook/blob/main/examples/multimodal/document_and_multimodal_understanding_tips.ipynb" target="_blank" rel="noopener">GPT-5.4 Vision Cookbook (GitHub)</a>
+                 | <a href="https://github.com/openai/openai-cookbook/pull/2496" target="_blank" rel="noopener">PR #2496</a>
+            </div>
+            <div class="footer-branding">OpenAI News Summary | Generated on 2026-03-07</div>
+        </footer>
+
+    </div>
+
+    <script>
+        hljs.highlightAll();
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#343541',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            }
+        });
+    </script>
+</body>
+</html>
