@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-09](2026/2026-03-09-openai-to-acquire-promptfoo.md) - OpenAI が Promptfoo を買収: AI セキュリティプラットフォームの統合へ
 - [2026-03-07](2026/2026-03-07-gpt-5-4-vision-document-understanding.md) - GPT-5.4 Vision and Document Understanding Cookbook: マルチモーダル文書理解の実践ガイド
 - [2026-03-07](2026/2026-03-07-codex-for-open-source.md) - Codex for Open Source: オープンソースメンテナー向け支援プログラムを発表
 - [2026-03-06](2026/2026-03-06-descript-multilingual-dubbing.md) - Descript が OpenAI モデルを活用して多言語動画吹き替えを大規模に実現
