@@ -5,7 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-10](2026/2026-03-10-pentagon-deal-backlash-chatgpt-uninstalls.md) - Pentagon 契約への反発激化: ChatGPT アンインストールが米国で 295% 急増
 - [2026-03-09](2026/2026-03-09-openai-to-acquire-promptfoo.md) - OpenAI が Promptfoo を買収: AI セキュリティプラットフォームの統合へ
+- [2026-03-09](2026/2026-03-09-chatgpt-adult-mode-delayed.md) - ChatGPT Adult Mode が再び延期: 新たなリリース日は未定
+- [2026-03-08](2026/2026-03-08-kalinowski-resigns-pentagon-deal.md) - OpenAI ロボティクス責任者 Caitlin Kalinowski が Pentagon 契約に抗議して辞任
 - [2026-03-07](2026/2026-03-07-gpt-5-4-vision-document-understanding.md) - GPT-5.4 Vision and Document Understanding Cookbook: マルチモーダル文書理解の実践ガイド
 - [2026-03-07](2026/2026-03-07-codex-for-open-source.md) - Codex for Open Source: オープンソースメンテナー向け支援プログラムを発表
 - [2026-03-06](2026/2026-03-06-descript-multilingual-dubbing.md) - Descript が OpenAI モデルを活用して多言語動画吹き替えを大規模に実現
