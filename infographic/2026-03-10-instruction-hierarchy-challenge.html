@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フロンティア LLM における指示階層の改善 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .feature-card ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Workflow Steps */
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 2px 0;
+        }
+
+        .comparison-card.before ul li {
+            color: #991B1B;
+        }
+
+        .comparison-card.after ul li {
+            color: #065F46;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Detail Grid */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .detail-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .detail-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links ul li a {
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Research</span>
+                <h1>フロンティア LLM における指示階層の改善</h1>
+                <p class="date">2026-03-10</p>
+            </div>
+        </header>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-content">
+                        <h3>IH-Challenge ベンチマークの導入</h3>
+                        <p>LLM が指示階層を正しく理解し遵守できるかを評価・訓練するためのベンチマークおよび手法を導入。従来モデルがすべての入力を同等に扱う問題を体系的に改善する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>安全性の操縦可能性の向上</h3>
+                        <p>開発者がシステムプロンプトを通じてモデルの安全性設定を柔軟かつ確実にコントロールできるようになり、信頼境界の明確化とカスタム安全ポリシーの遵守が実現する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>プロンプトインジェクション攻撃への耐性</h3>
+                        <p>間接的プロンプトインジェクションの検出、指示の出所の識別、攻撃パターンへの頑健性を強化し、エージェントワークフローの安全性を向上させる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-content">
+                        <h3>エージェント AI 安全性への貢献</h3>
+                        <p>Responses API やツール使用が普及する中、外部入力が増加するエージェントワークフローにおいて指示の優先順位を正しく処理する能力は安全性設計の基盤となる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 指示階層の仕組み -->
+        <section class="section">
+            <h2 class="section-title">指示階層の仕組み</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>System Prompt (最高優先)</h4>
+                        <p>アプリケーション開発者が設定する信頼された指示。モデルの動作範囲や制約を定義する。指示階層において最も高い優先度を持つ。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>User Message (中間優先)</h4>
+                        <p>エンドユーザーからの入力。システムプロンプトの制約内で処理される。システムプロンプトの設定を上書きすることはできない。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Tool Output (最低優先)</h4>
+                        <p>API 呼び出しや外部データソースからの応答。最も信頼度が低く、他の指示を上書きしてはならない。悪意ある内容が含まれるリスクが最も高い。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After 比較 -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (従来の LLM)</h4>
+                    <ul>
+                        <li>すべての入力テキストを同等に扱う</li>
+                        <li>ツール出力の悪意ある指示でシステムプロンプトが上書きされるリスク</li>
+                        <li>指示の出所を区別できない</li>
+                        <li>安全性設定の一貫した維持が困難</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (IH-Challenge 適用後)</h4>
+                    <ul>
+                        <li>指示源に適切な優先順位を付与</li>
+                        <li>信頼境界の明確化により不正な上書きを防止</li>
+                        <li>指示の出所を正確に識別</li>
+                        <li>カスタム安全ポリシーを一貫して遵守</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 安全性の操縦可能性 -->
+        <section class="section">
+            <h2 class="section-title">安全性の操縦可能性の向上</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F6A7; 信頼境界の明確化</h3>
+                    <p>システムプロンプトによる制約が、ユーザー入力やツール出力によって無効化されにくくなる。開発者が定義した安全性の境界線が堅固に維持される。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CB; カスタム安全ポリシーの遵守</h3>
+                    <p>開発者が設定した独自の安全ポリシーをモデルが一貫して遵守する。アプリケーション固有の制約が確実に適用される。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2699; 動的な制約管理</h3>
+                    <p>アプリケーションの要件に応じて安全性設定を変更した場合、モデルが適切に追従する。柔軟かつ確実なコントロールが可能。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- プロンプトインジェクション攻撃への耐性 -->
+        <section class="section">
+            <h2 class="section-title">プロンプトインジェクション攻撃への耐性</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F50D; 間接的インジェクションの検出</h3>
+                    <p>ツール出力や外部データに含まれる不正な指示を識別し、優先度の低い指示として適切に処理する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CD; 指示の出所の識別</h3>
+                    <p>モデルが各指示の出所 (システム、ユーザー、ツール) を正確に認識し、優先順位に基づいて処理する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; 攻撃パターンへの頑健性</h3>
+                    <p>様々なプロンプトインジェクション手法に対して、一貫した防御能力を発揮する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技術的な詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 16px;">IH-Challenge ベンチマークの構成</h3>
+            <div class="detail-grid" style="margin-bottom: 24px;">
+                <div class="detail-item">
+                    <h4>指示の競合解決</h4>
+                    <p>システムプロンプトとユーザーメッセージが矛盾する場合に、モデルがシステムプロンプトを優先するかを検証</p>
+                </div>
+                <div class="detail-item">
+                    <h4>間接インジェクション耐性</h4>
+                    <p>ツール出力に埋め込まれた不正な指示に対するモデルの応答を評価</p>
+                </div>
+                <div class="detail-item">
+                    <h4>安全性の維持</h4>
+                    <p>外部からの指示によってモデルの安全性ガードレールが解除されないかを検証</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 16px;">エージェントワークフローにおける適用</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Text</span>
+                    <span class="code-title">指示階層のフロー</span>
+                </div>
+                <pre><code>[System Prompt] 開発者が定義した制約・安全ポリシー
+       &#x2193; (最高優先)
+[User Message] ユーザーからのリクエスト
+       &#x2193; (中間優先)
+[Tool Output]  Web 検索結果、API 応答、ファイル内容
+       &#x2193; (最低優先)
+[Model Response] 階層に基づいた適切な応答</code></pre>
+            </div>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 12px;">Responses API を利用するエージェントでは、ツール出力が動的に変化するため、指示階層の遵守がセキュリティの要となる。</p>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Hierarchy["指示階層 (Instruction Hierarchy)"]
+        System["System Prompt<br>(最高優先)"]
+        User["User Message<br>(中間優先)"]
+        Tool["Tool Output<br>(最低優先)"]
+    end
+
+    subgraph Training["IH-Challenge 訓練"]
+        Benchmark["評価ベンチマーク"]
+        Fine["モデル訓練"]
+    end
+
+    subgraph Safety["安全性向上"]
+        Steer["安全性の操縦可能性"]
+        Inject["プロンプトインジェクション耐性"]
+        Trust["信頼境界の強化"]
+    end
+
+    subgraph Agent["エージェントワークフロー"]
+        API["Responses API"]
+        Tools["ツール呼び出し"]
+    end
+
+    System -->|優先| User
+    User -->|優先| Tool
+    System --> Fine
+    User --> Fine
+    Tool --> Fine
+    Benchmark --> Fine
+    Fine --> Steer
+    Fine --> Inject
+    Fine --> Trust
+    Steer --> API
+    Inject --> API
+    API --> Tools
+    Tools --> Tool
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class System,Fine openai
+    class User,Benchmark,Steer,Inject,Trust dark
+    class Tool,API,Tools light
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>エージェント開発における安全性設計</h4>
+                <ul>
+                    <li><strong>システムプロンプトの重要性の再確認:</strong> 指示階層において最高優先度を持つシステムプロンプトの設計が、アプリケーション全体の安全性を左右する</li>
+                    <li><strong>ツール出力の信頼度管理:</strong> 外部 API やデータソースからの出力を処理する際、その内容がモデルの動作を不正に変更しないよう、指示階層に基づいた処理が保証される</li>
+                    <li><strong>防御的プロンプト設計の推進:</strong> プロンプトインジェクション攻撃を想定した防御的なプロンプト設計がより効果的になる</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>Responses API 利用時の考慮事項</h4>
+                <ul>
+                    <li>Responses API を使用するエージェントでは、ツール出力が頻繁にモデルのコンテキストに追加されるため、指示階層の改善による恩恵が大きい</li>
+                    <li>マルチステップのエージェントワークフローにおいて、各ステップで指示階層が維持されることで、攻撃面 (attack surface) の縮小が期待できる</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>安全性テストへの活用</h4>
+                <ul>
+                    <li>IH-Challenge のアプローチを参考に、自社アプリケーションにおける指示階層の遵守をテストする仕組みの構築が推奨される</li>
+                    <li>レッドチーミングの一環として、プロンプトインジェクション攻撃に対するモデルの耐性を定期的に検証すべきである</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI が発表した IH-Challenge は、フロンティア LLM における指示階層の改善を目指す重要な研究成果である。システムプロンプト、ユーザーメッセージ、ツール出力という三層の指示源に対して適切な優先順位を付けることで、モデルの安全性の操縦可能性とプロンプトインジェクション攻撃への耐性が向上する。特にエージェント AI が普及する現在、外部入力が増加するワークフローにおいて指示階層を正しく処理する能力は、安全なアプリケーション構築の基盤となる。開発者は、本研究の成果を踏まえ、システムプロンプトの設計やツール出力の取り扱いに関する安全性設計を見直すことが推奨される。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/instruction-hierarchy-challenge" target="_blank" rel="noopener noreferrer">https://openai.com/index/instruction-hierarchy-challenge</a></p>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="https://openai.com/index/instruction-hierarchy-challenge" target="_blank" rel="noopener noreferrer">OpenAI 公式発表</a></li>
+                    <li><a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety Research</a></li>
+                    <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">Responses API ドキュメント</a></li>
+                    <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

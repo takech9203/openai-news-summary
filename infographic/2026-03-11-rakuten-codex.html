@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rakuten が Codex で問題修復速度を 2 倍に向上 - OpenAI News Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+  :root {
+    --openai-green: #10A37F;
+    --openai-green-dark: #0D8A6A;
+    --openai-dark: #343541;
+    --openai-light: #F7F7F8;
+    --openai-gray: #ECECF1;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background-color: var(--openai-light);
+    color: var(--openai-dark);
+    line-height: 1.8;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 100%);
+    color: white;
+    padding: 48px 40px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16,163,127,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--openai-green);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header h1 {
+    font-size: 1.9rem;
+    font-weight: 900;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header .date {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Section common */
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid var(--openai-gray);
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--openai-green);
+    display: inline-block;
+  }
+
+  .section p {
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  /* Key Points */
+  .key-points-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--openai-light);
+    padding: 18px 20px;
+    border-radius: 10px;
+    border-left: 4px solid var(--openai-green);
+  }
+
+  .key-point-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--openai-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .key-point-text {
+    font-size: 0.93rem;
+    color: #444;
+    line-height: 1.7;
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #2b2b3d 100%);
+    color: white;
+    padding: 24px 16px;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--openai-green);
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+
+  /* Feature Cards */
+  .feature-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .feature-card {
+    background: var(--openai-light);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--openai-gray);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  .feature-card-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--openai-green), var(--openai-green-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    font-size: 1.3rem;
+  }
+
+  .feature-card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 8px;
+  }
+
+  .feature-card p {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  /* Data platform cards */
+  .data-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .data-card {
+    background: var(--openai-dark);
+    color: white;
+    border-radius: 12px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .data-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(16,163,127,0.3) 0%, transparent 70%);
+  }
+
+  .data-card h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--openai-green);
+    margin-bottom: 8px;
+  }
+
+  .data-card p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  /* Ecosystem highlight */
+  .ecosystem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .ecosystem-item {
+    text-align: center;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #2b2b3d 100%);
+    border-radius: 12px;
+    color: white;
+  }
+
+  .ecosystem-item .eco-value {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--openai-green);
+    margin-bottom: 6px;
+  }
+
+  .ecosystem-item .eco-label {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+
+  /* Tech details */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+    margin-bottom: 24px;
+  }
+
+  .tech-item {
+    background: var(--openai-light);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--openai-gray);
+  }
+
+  .tech-item-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--openai-green);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+
+  .tech-item-value {
+    font-size: 0.88rem;
+    color: var(--openai-dark);
+  }
+
+  /* Code block */
+  .code-section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .code-section h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 10px;
+  }
+
+  .code-section pre {
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  .code-section pre code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  /* Mermaid */
+  .mermaid-section {
+    margin-top: 16px;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    overflow-x: auto;
+  }
+
+  /* Impact / Use Cases */
+  .impact-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .impact-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 20px;
+    background: var(--openai-light);
+    border-radius: 10px;
+    border: 1px solid var(--openai-gray);
+  }
+
+  .impact-card-marker {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--openai-green);
+    border-radius: 50%;
+    margin-top: 8px;
+  }
+
+  .impact-card strong {
+    color: var(--openai-dark);
+  }
+
+  .impact-card p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0;
+  }
+
+  /* Related links */
+  .links-list {
+    list-style: none;
+    margin-top: 14px;
+  }
+
+  .links-list li {
+    margin-bottom: 8px;
+  }
+
+  .links-list a {
+    color: var(--openai-green);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .links-list a:hover {
+    color: var(--openai-green-dark);
+    text-decoration: underline;
+  }
+
+  /* Summary */
+  .summary-box {
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 36px;
+    margin-bottom: 24px;
+  }
+
+  .summary-box .section-title {
+    color: white;
+    border-bottom-color: var(--openai-green);
+  }
+
+  .summary-box p {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.93rem;
+    line-height: 1.8;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: #888;
+    font-size: 0.82rem;
+  }
+
+  .footer a {
+    color: var(--openai-green);
+    text-decoration: none;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+  }
+
+  .footer .source-label {
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .container {
+      padding: 12px;
+    }
+    .header {
+      padding: 32px 24px;
+    }
+    .header h1 {
+      font-size: 1.4rem;
+    }
+    .section {
+      padding: 24px;
+    }
+    .feature-cards,
+    .tech-grid {
+      grid-template-columns: 1fr;
+    }
+    .stats-grid,
+    .data-cards,
+    .ecosystem-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="badge">API</span>
+    <h1>Rakuten が Codex で問題修復速度を 2 倍に向上</h1>
+    <div class="date">2026-03-11 | OpenAI News/Blog</div>
+  </div>
+
+  <!-- 概要 -->
+  <div class="section">
+    <div class="section-title">概要</div>
+    <p>
+      Rakuten Group は、OpenAI のコーディングエージェントである Codex を導入し、ソフトウェア開発の速度と安全性を大幅に向上させた。MTTR (平均修復時間) を 50% 削減し、CI/CD レビューの自動化やフルスタックビルドの迅速な提供を実現している。
+    </p>
+    <p>
+      Rakuten は世界中に 18 億以上の会員を持ち、EC、フィンテック、デジタルコンテンツ、通信など 70 以上のオンラインサービスを運営する巨大エコシステムである。57,000 以上の日本の加盟店のオンライン販売を支援する B2B 企業でもあり、その規模に見合った高速かつ安全なソフトウェア開発体制が求められている。今回の Codex 導入は、こうした要件に対する実践的な解決策として注目される。
+    </p>
+    <div class="key-points-grid">
+      <div class="key-point">
+        <div class="key-point-icon">1</div>
+        <div class="key-point-text">MTTR (平均修復時間) を 50% 削減し、サービスの可用性を大幅に向上</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">2</div>
+        <div class="key-point-text">CI/CD レビューの自動化により、コードレビューやパイプラインの検証プロセスの人的負荷を軽減</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">3</div>
+        <div class="key-point-text">従来数ヶ月を要していたフルスタック構築を数週間で完了する迅速化を実現</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 数字で見る成果 -->
+  <div class="section">
+    <div class="section-title">数字で見る Rakuten のエコシステム</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">50%</div>
+        <div class="stat-label">MTTR 削減</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">18 億+</div>
+        <div class="stat-label">グローバル会員数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">70+</div>
+        <div class="stat-label">オンラインサービス数</div>
+      </div>
+    </div>
+    <div class="ecosystem-grid" style="margin-top: 16px;">
+      <div class="ecosystem-item">
+        <div class="eco-value">57,000+</div>
+        <div class="eco-label">日本の加盟店数</div>
+      </div>
+      <div class="ecosystem-item">
+        <div class="eco-value">数ヶ月 → 数週間</div>
+        <div class="eco-label">フルスタックビルド期間</div>
+      </div>
+      <div class="ecosystem-item">
+        <div class="eco-value">自動化</div>
+        <div class="eco-label">CI/CD レビュー</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Codex によるソフトウェア開発の変革 -->
+  <div class="section">
+    <div class="section-title">Codex によるソフトウェア開発の変革</div>
+    <p>
+      Rakuten の AI ビジネス担当 General Manager である Yusuke Kaji 氏は「データ資産こそが最も重要な企業資産」と述べ、OpenAI のモデルを活用してデータの価値を増幅させている。Codex の導入により、開発チームは以下の成果を達成した。
+    </p>
+    <div class="feature-cards">
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <h3>MTTR 50% 削減</h3>
+        <p>障害発生時の平均修復時間を半減させ、サービスの可用性を向上</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <h3>CI/CD レビューの自動化</h3>
+        <p>コードレビューやパイプラインの検証プロセスを Codex が支援し、人的負荷を軽減</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </div>
+        <h3>フルスタックビルドの迅速化</h3>
+        <p>従来数ヶ月を要していたフルスタックの構築を数週間で完了</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h3>開発の安全性向上</h3>
+        <p>自動化されたコード検証により、バグやセキュリティリスクの早期発見を実現</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- データ活用基盤との連携 -->
+  <div class="section">
+    <div class="section-title">データ活用基盤との連携</div>
+    <p>
+      Rakuten は Codex だけでなく、Code Interpreter と RAG (Retrieval-Augmented Generation) を組み合わせて、複雑な非構造化データの理解と価値抽出を行っている。70 以上のサービスから生成される膨大なデータ資産を AI で分析し、開発プロセスの最適化に活かしている。
+    </p>
+    <div class="data-cards">
+      <div class="data-card">
+        <h4>Codex</h4>
+        <p>コーディングエージェントによるコード生成・修正・レビュー</p>
+      </div>
+      <div class="data-card">
+        <h4>Code Interpreter</h4>
+        <p>非構造化データの分析と価値抽出を自動化</p>
+      </div>
+      <div class="data-card">
+        <h4>RAG</h4>
+        <p>社内データ資産を活用した精度の高い情報検索</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 大規模エコシステムでの実証 -->
+  <div class="section">
+    <div class="section-title">大規模エコシステムでの実証</div>
+    <p>
+      18 億以上の会員基盤と 57,000 以上の加盟店を抱える Rakuten のエコシステムは、高いスケーラビリティと信頼性が求められる環境である。Codex はこうした大規模環境においても実用的な成果を上げており、エンタープライズレベルでの AI コーディングエージェント活用の成功事例となっている。
+    </p>
+  </div>
+
+  <!-- 技術的な詳細 -->
+  <div class="section">
+    <div class="section-title">技術的な詳細</div>
+
+    <h3 style="font-size:1rem; font-weight:700; margin-bottom:14px; color:var(--openai-dark);">Codex の活用方法</h3>
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="tech-item-label">障害対応の高速化</div>
+        <div class="tech-item-value">Codex がコードベースを分析し、障害の原因特定と修正案の提示を自動化。MTTR を 50% 削減</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-item-label">CI/CD パイプラインの自動レビュー</div>
+        <div class="tech-item-value">プルリクエストやビルドパイプラインの検証を Codex が自動的に実行し、品質を担保</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-item-label">フルスタック開発の加速</div>
+        <div class="tech-item-value">フロントエンドからバックエンドまで、Codex がコード生成と実装を支援</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-item-label">データ分析基盤</div>
+        <div class="tech-item-value">Code Interpreter + RAG で非構造化データの理解と価値抽出を実現</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; font-weight:700; margin-bottom:10px; color:var(--openai-dark);">データ分析パターン: Code Interpreter + RAG の活用例</h3>
+    <div class="code-section">
+      <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Rakuten のデータ分析パターン: Code Interpreter + RAG の活用例
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a data analysis assistant for an e-commerce platform. "
+                "Analyze the provided unstructured data and extract actionable "
+                "insights for merchant optimization."
+            )
+        },
+        {
+            "role": "user",
+            "content": "Analyze the following merchant sales data..."
+        }
+    ],
+    temperature=0.3,
+)</code></pre>
+    </div>
+  </div>
+
+  <!-- アーキテクチャ -->
+  <div class="section">
+    <div class="section-title">アーキテクチャ</div>
+    <div class="mermaid-section">
+      <pre class="mermaid">
+flowchart TD
+    subgraph Developer["開発チーム"]
+        Dev["開発者"]
+        Issue["障害/タスク"]
+    end
+
+    subgraph CodexAgent["Codex コーディングエージェント"]
+        CodeGen["コード生成/修正"]
+        Review["コードレビュー"]
+        Analysis["障害分析"]
+    end
+
+    subgraph CICD["CI/CD パイプライン"]
+        Build["ビルド"]
+        Test["自動テスト"]
+        Validate["バリデーション"]
+    end
+
+    subgraph Deploy["デプロイ"]
+        Staging["ステージング"]
+        Production["プロダクション"]
+    end
+
+    subgraph DataPlatform["データ基盤"]
+        RAG["RAG"]
+        CodeInterp["Code Interpreter"]
+        DataAssets["データ資産"]
+    end
+
+    Dev --> Issue
+    Issue --> Analysis
+    Analysis --> CodeGen
+    CodeGen --> Review
+    Review --> Build
+    Build --> Test
+    Test --> Validate
+    Validate --> Staging
+    Staging --> Production
+
+    DataAssets --> RAG
+    RAG --> CodeInterp
+    CodeInterp --> Analysis
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class CodeGen,Review,Analysis openai
+    class Build,Test,Validate dark
+    class Dev,Issue,Staging,Production,RAG,CodeInterp,DataAssets light
+      </pre>
+    </div>
+  </div>
+
+  <!-- 開発者への影響 -->
+  <div class="section">
+    <div class="section-title">開発者への影響</div>
+    <p>
+      Rakuten の事例は、大規模エンタープライズにおける AI コーディングエージェントの実践的な導入指針を示している。開発者が注目すべきポイントは以下の通り。
+    </p>
+    <div class="impact-cards">
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>MTTR の劇的な改善:</strong> Codex による障害分析と修正提案の自動化は、運用チームの負荷を大幅に軽減する。MTTR 50% 削減という成果は、SRE やインフラチームにとって重要な指標となる</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>CI/CD への統合:</strong> Codex をパイプラインに組み込むことで、コードレビューの品質と速度を両立できる。大規模チームほどこの自動化の恩恵は大きい</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>フルスタック開発の加速:</strong> フロントエンドからバックエンドまでを Codex が支援することで、少人数のチームでも短期間でのプロダクト構築が可能になる</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>RAG との組み合わせ:</strong> 社内データ資産と RAG を組み合わせることで、Codex がドメイン固有の知識を活用した精度の高いコード生成を行える</p>
+        </div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <div>
+          <p><strong>エンタープライズ規模での実証:</strong> 18 億会員規模のプラットフォームでの成功事例は、大規模導入を検討する企業にとって信頼性の高い参考事例となる</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 関連リンク -->
+  <div class="section">
+    <div class="section-title">関連リンク</div>
+    <ul class="links-list">
+      <li><a href="https://openai.com/index/rakuten" target="_blank">Rakuten と OpenAI の事例記事</a></li>
+      <li><a href="https://openai.com/codex" target="_blank">OpenAI Codex</a></li>
+      <li><a href="https://platform.openai.com/docs" target="_blank">OpenAI API ドキュメント</a></li>
+      <li><a href="https://platform.openai.com/docs/guides/text-generation" target="_blank">OpenAI Chat Completions API</a></li>
+    </ul>
+  </div>
+
+  <!-- まとめ -->
+  <div class="summary-box">
+    <div class="section-title">まとめ</div>
+    <p>
+      Rakuten Group は、OpenAI の Codex を活用してソフトウェア開発プロセスを大幅に効率化した。MTTR 50% 削減、CI/CD レビューの自動化、フルスタックビルドの迅速化という具体的な成果は、AI コーディングエージェントがエンタープライズ環境で実用的な価値を提供できることを実証している。さらに、Code Interpreter と RAG を組み合わせたデータ活用基盤との連携により、70 以上のサービスを支える巨大エコシステムにおいても AI 駆動の開発体制を確立した。この事例は、大規模な開発組織が Codex を導入する際の実践的なモデルケースとなるだろう。
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="source-label">Source</div>
+    <a href="https://openai.com/index/rakuten" target="_blank">
+      openai.com/index/rakuten
+    </a>
+    <div style="margin-top: 12px; color: #aaa;">OpenAI News Summary | 2026-03-11</div>
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#10A37F',
+      primaryTextColor: '#fff',
+      primaryBorderColor: '#0D8A6A',
+      lineColor: '#343541',
+      secondaryColor: '#343541',
+      tertiaryColor: '#F7F7F8',
+      fontFamily: 'Zen Maru Gothic, sans-serif'
+    }
+  });
+  hljs.highlightAll();
+</script>
+
+</body>
+</html>

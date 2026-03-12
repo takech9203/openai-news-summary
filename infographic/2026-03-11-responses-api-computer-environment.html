@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>モデルからエージェントへ: Responses API にコンピュータ環境を装備する - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-10: rgba(16, 163, 127, 0.1);
+            --openai-green-20: rgba(16, 163, 127, 0.2);
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 50%, var(--openai-dark) 100%);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--openai-green-20) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: var(--openai-gray);
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        /* Key Points */
+        .key-points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-green-10);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--openai-green-20);
+            transition: transform 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+        }
+
+        .key-point-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .key-point-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .key-point-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--openai-dark);
+        }
+
+        /* Overview */
+        .overview-text {
+            font-size: 15px;
+            line-height: 2;
+            color: #444654;
+        }
+
+        /* Feature Cards */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px 24px;
+            border: 1px solid var(--openai-gray);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--openai-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .feature-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        .feature-card-desc {
+            font-size: 14px;
+            color: #6e6e80;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 13px;
+            padding: 4px 0;
+            line-height: 1.6;
+        }
+
+        .comparison-card.before ul li {
+            color: #7f1d1d;
+        }
+
+        .comparison-card.after ul li {
+            color: #064e3b;
+        }
+
+        /* Code Blocks */
+        .code-section {
+            margin-top: 16px;
+        }
+
+        .code-block-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            margin-bottom: 8px;
+            margin-top: 20px;
+        }
+
+        .code-block-label:first-child {
+            margin-top: 0;
+        }
+
+        pre {
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        pre code {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-note {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #5d4037;
+            line-height: 1.7;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Migration notes */
+        .migration-section {
+            margin-top: 20px;
+        }
+
+        .migration-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .migration-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .migration-list li {
+            font-size: 13px;
+            color: #444654;
+            padding: 8px 12px;
+            padding-left: 32px;
+            position: relative;
+            background: #fff3e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        .migration-list li::before {
+            content: '!';
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            width: 16px;
+            height: 16px;
+            background: #ff9800;
+            border-radius: 50%;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Links */
+        .links-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 8px;
+        }
+
+        .links-list a {
+            font-size: 14px;
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .links-list a:hover {
+            color: var(--openai-green-dark);
+            text-decoration: underline;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            line-height: 2;
+            color: #444654;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--openai-gray);
+            margin-bottom: 4px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 11px;
+            color: #6e6e80;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px 10px 32px;
+            }
+
+            .header {
+                padding: 32px 24px;
+                border-radius: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 18px;
+            }
+
+            .feature-cards,
+            .impact-grid,
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .key-points-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">Engineering</span>
+            <h1>モデルからエージェントへ: Responses API にコンピュータ環境を装備する</h1>
+            <div class="header-date">2026-03-11 | OpenAI Engineering Blog</div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points-grid">
+                <div class="key-point">
+                    <div class="key-point-icon">&#9889;</div>
+                    <div class="key-point-label">Responses API</div>
+                    <div class="key-point-value">エージェント開発向け次世代 API</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128421;</div>
+                    <div class="key-point-label">Shell Tool</div>
+                    <div class="key-point-value">シェルコマンド実行インターフェース</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128230;</div>
+                    <div class="key-point-label">Hosted Container</div>
+                    <div class="key-point-value">セキュアなサンドボックス環境</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="overview-text">
+                OpenAI のエンジニアリングチームは、Responses API、Shell ツール、およびホステッドコンテナを活用して、セキュアでスケーラブルなエージェントランタイムを構築した方法を解説する技術記事を公開した。この記事は、AI がテキスト生成にとどまらず、実際のコンピュータ環境で作業を実行する「エージェント」へと進化する過程を技術的に詳述している。
+            </p>
+            <br>
+            <p class="overview-text">
+                Responses API は Chat Completions API の後継として位置づけられ、ツール使用やマルチステップの対話を統合的に管理する新しい API である。Shell ツールとホステッドコンテナを組み合わせることで、エージェントがファイル操作、外部ツール呼び出し、状態管理を安全に行える基盤が実現されている。この技術は OpenAI の Codex (コーディングエージェント) の基盤技術と密接に関連している。
+            </p>
+        </section>
+
+        <!-- Before/After: Chat Completions API vs Responses API -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: Chat Completions API</h4>
+                    <ul>
+                        <li>リクエスト / レスポンスの単純な往復</li>
+                        <li>ツール呼び出しは開発者が手動管理</li>
+                        <li>マルチステップ対話は自前実装</li>
+                        <li>状態管理はクライアント側の責任</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: Responses API</h4>
+                    <ul>
+                        <li>マルチステップのツール呼び出しを API レベルでサポート</li>
+                        <li>オーケストレーションを OpenAI 側に委任</li>
+                        <li>1 つの API セッション内でタスク管理</li>
+                        <li>中断と再開をサポートする状態管理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Responses API -->
+        <section class="section">
+            <h2 class="section-title">Responses API の概要</h2>
+            <p class="overview-text">
+                Responses API は、OpenAI が提供するエージェント開発向けの新しい API である。従来の Chat Completions API がリクエスト / レスポンスの単純な往復に基づいていたのに対し、Responses API はマルチステップのツール呼び出しと対話の管理を API レベルでサポートする。
+            </p>
+            <div class="key-points-grid" style="margin-top: 20px;">
+                <div class="key-point">
+                    <div class="key-point-icon">&#128295;</div>
+                    <div class="key-point-label">ツール統合</div>
+                    <div class="key-point-value">API レベルでツールを定義し、モデルが適切なタイミングで呼び出す</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128260;</div>
+                    <div class="key-point-label">マルチステップ対話</div>
+                    <div class="key-point-value">複数ステップのタスクを 1 つのセッション内で管理</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128190;</div>
+                    <div class="key-point-label">状態管理</div>
+                    <div class="key-point-value">実行状態を API 側で追跡、中断と再開をサポート</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: Agent Runtime, Shell Tool, Hosted Container -->
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128640;</div>
+                    <div class="feature-card-title">エージェントランタイム</div>
+                </div>
+                <p class="feature-card-desc">モデルの推論能力とコンピュータ環境を橋渡しし、AI がタスクを自律的に遂行できる実行環境全体を設計。</p>
+                <ul>
+                    <li><strong>オーケストレーション:</strong> Responses API がモデルの出力を解釈し、適切なツール呼び出しやアクションを実行</li>
+                    <li><strong>ループ実行:</strong> モデル出力 → ツール実行 → 結果フィードバック → 次の推論のサイクルを自動管理</li>
+                    <li><strong>エラーハンドリング:</strong> ツール実行の失敗やタイムアウトに対する適切なリカバリ機構</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128187;</div>
+                    <div class="feature-card-title">Shell ツール</div>
+                </div>
+                <p class="feature-card-desc">エージェントがシェルコマンドを実行するためのインターフェース。ファイルの読み書き、プログラムの実行、システム情報の取得などが利用可能。</p>
+                <ul>
+                    <li><strong>コマンド実行:</strong> bash や sh などのシェルを通じた任意のコマンド実行</li>
+                    <li><strong>出力キャプチャ:</strong> コマンドの標準出力と標準エラー出力の取得</li>
+                    <li><strong>タイムアウト制御:</strong> 長時間実行コマンドに対する適切なタイムアウト管理</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128230;</div>
+                    <div class="feature-card-title">ホステッドコンテナ</div>
+                </div>
+                <p class="feature-card-desc">エージェントの実行環境をセキュアなサンドボックスとして提供。各セッションに専用コンテナが割り当てられ、リソースが隔離される。</p>
+                <ul>
+                    <li><strong>セキュリティ:</strong> コンテナの分離によりホストシステムへの影響を防止</li>
+                    <li><strong>スケーラビリティ:</strong> コンテナの動的な起動と停止による効率的なリソース管理</li>
+                    <li><strong>再現性:</strong> 一貫した実行環境の提供によるエージェント動作の再現性確保</li>
+                    <li><strong>永続性:</strong> セッション内でのファイルや状態の永続化</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-card-header">
+                    <div class="feature-card-icon">&#128279;</div>
+                    <div class="feature-card-title">Codex との関連</div>
+                </div>
+                <p class="feature-card-desc">この技術は OpenAI の Codex (コーディングエージェント) の基盤技術と密接に関連している。</p>
+                <ul>
+                    <li><strong>統合基盤:</strong> Responses API はエージェント製品群の技術的基盤</li>
+                    <li><strong>実用化:</strong> Codex をはじめとする実プロダクトで活用</li>
+                    <li><strong>拡張性:</strong> 様々なエージェントユースケースに対応可能</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Technical Details: Code Samples -->
+        <section class="section" style="margin-top: 24px;">
+            <h2 class="section-title">技術的な詳細</h2>
+            <div class="code-section">
+                <div class="code-block-label">Responses API を使用したエージェント構築 - 基本例</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Responses API を使用したエージェントの構築
+response = client.responses.create(
+    model="gpt-5.4",
+    input="プロジェクトのディレクトリ構造を確認して、README.md の内容を要約してください。",
+    tools=[
+        {
+            "type": "shell",
+            "shell": {
+                "image": "python:3.12-slim"
+            }
+        }
+    ]
+)
+
+# エージェントの実行結果を取得
+print(response.output_text)</code></pre>
+
+                <div class="code-block-label">マルチステップタスクの実行例</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ファイル操作を含むマルチステップタスク
+response = client.responses.create(
+    model="gpt-5.4",
+    input="以下の手順を実行してください: "
+          "1. test_project ディレクトリを作成 "
+          "2. Python のサンプルコードを作成 "
+          "3. テストを実行して結果を報告",
+    tools=[
+        {
+            "type": "shell",
+            "shell": {
+                "image": "python:3.12-slim"
+            }
+        }
+    ]
+)
+
+# レスポンスにはツール呼び出しの履歴と最終結果が含まれる
+for item in response.output:
+    if item.type == "shell_call":
+        print(f"Command: {item.command}")
+        print(f"Output: {item.output}")
+    elif item.type == "message":
+        print(f"Agent: {item.content[0].text}")</code></pre>
+
+                <div class="code-block-label">コンテナ環境のカスタマイズ</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# カスタムコンテナ環境でのエージェント実行
+response = client.responses.create(
+    model="gpt-5.4",
+    input="Node.js プロジェクトをセットアップし、Express サーバーを作成してください。",
+    tools=[
+        {
+            "type": "shell",
+            "shell": {
+                "image": "node:20-slim",
+                "env": {
+                    "NODE_ENV": "development"
+                }
+            }
+        }
+    ]
+)
+
+print(response.output_text)</code></pre>
+
+                <div class="code-note">
+                    <strong>注:</strong> 上記のコード例は記事の内容に基づく一般的な利用パターンの想定であり、実際のパラメータやツール指定の詳細は公式ドキュメントを参照してください。
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアント"]
+        SDK["OpenAI SDK"]
+        App["アプリケーション"]
+    end
+
+    subgraph Runtime["エージェントランタイム"]
+        ResAPI["Responses API"]
+        Orch["オーケストレーター"]
+
+        subgraph Container["ホステッドコンテナ"]
+            ShellTool["Shell ツール"]
+            FS["ファイルシステム"]
+            ExtTools["外部ツール"]
+            State["状態管理"]
+        end
+    end
+
+    subgraph Model["AI モデル"]
+        LLM["GPT-5.4"]
+    end
+
+    App --> SDK
+    SDK --> ResAPI
+    ResAPI --> Orch
+    Orch <--> LLM
+    Orch --> ShellTool
+    ShellTool --> FS
+    ShellTool --> ExtTools
+    ShellTool --> State
+    State -.->|フィードバック| Orch
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class ResAPI,Orch openai
+    class LLM,ShellTool dark
+    class SDK,App,FS,ExtTools,State light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-card-title">エージェント開発パラダイムの転換</div>
+                    <p class="feature-card-desc">Responses API の登場により、エージェント開発のアプローチが根本的に変化する。</p>
+                    <ul>
+                        <li><strong>Chat Completions API からの移行:</strong> 既存アプリケーションを Responses API に移行することでエージェント機能を容易に追加可能</li>
+                        <li><strong>ツール統合の簡素化:</strong> Shell ツールにより、外部ツールやサービスとの連携が API レベルで標準化</li>
+                        <li><strong>開発コストの削減:</strong> オーケストレーションロジックを OpenAI 側に委任し、ビジネスロジックに集中可能</li>
+                    </ul>
+                </div>
+
+                <div class="impact-card">
+                    <div class="impact-card-title">セキュリティとコンプライアンス</div>
+                    <p class="feature-card-desc">ホステッドコンテナによるサンドボックス化は、エンタープライズ環境でのエージェント導入を加速する。</p>
+                    <ul>
+                        <li><strong>データ隔離:</strong> コンテナの分離によりデータ漏洩リスクを軽減</li>
+                        <li><strong>監査証跡:</strong> エージェントのアクション履歴が API レスポンスに記録される</li>
+                        <li><strong>権限制御:</strong> コンテナ内での操作範囲を制限することでセキュリティを確保</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="migration-section">
+                <div class="migration-title">移行時の考慮事項</div>
+                <ul class="migration-list">
+                    <li>Chat Completions API から Responses API への移行にはコードの書き換えが必要</li>
+                    <li>Shell ツールの利用にはセキュリティポリシーの見直しが推奨される</li>
+                    <li>コンテナ実行に伴う追加コストを考慮した設計が重要</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="links-list">
+                <li><a href="https://openai.com/index/equip-responses-api-computer-environment" target="_blank" rel="noopener">Responses API 公式記事</a></li>
+                <li><a href="https://platform.openai.com/docs" target="_blank" rel="noopener">OpenAI API ドキュメント</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener">OpenAI API リファレンス</a></li>
+                <li><a href="https://platform.openai.com/docs/guides/responses" target="_blank" rel="noopener">Responses API ガイド</a></li>
+                <li><a href="https://openai.com/index/openai-codex" target="_blank" rel="noopener">OpenAI Codex</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="summary-text">
+                OpenAI が公開したこの技術記事は、Responses API、Shell ツール、ホステッドコンテナという 3 つの要素を組み合わせて、セキュアでスケーラブルなエージェントランタイムを構築する方法を解説している。この技術は、AI をテキスト生成の枠を超えて実際のコンピュータ環境で作業を遂行する「エージェント」へと進化させる重要な基盤である。Responses API は Chat Completions API の後継として、エージェント開発の新しいパラダイムを提示しており、Codex をはじめとする OpenAI のエージェント製品群の技術的基盤となっている。開発者にとっては、エージェント構築のための強力かつ統合的なプラットフォームが提供されることになり、より高度な AI アプリケーションの開発が促進されることが期待される。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-source">
+                Source: <a href="https://openai.com/index/equip-responses-api-computer-environment" target="_blank" rel="noopener">https://openai.com/index/equip-responses-api-computer-environment</a>
+            </div>
+            <div class="footer-branding">OpenAI News Summary | Generated on 2026-03-12</div>
+        </footer>
+
+    </div>
+
+    <script>
+        hljs.highlightAll();
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#343541',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            }
+        });
+    </script>
+</body>
+</html>

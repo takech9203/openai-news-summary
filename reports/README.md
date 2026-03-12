@@ -5,7 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-11](2026/2026-03-11-wayfair-openai-catalog-support.md) - Wayfair が OpenAI を活用してカタログ精度とサポート速度を向上
+- [2026-03-11](2026/2026-03-11-responses-api-computer-environment.md) - モデルからエージェントへ: Responses API にコンピュータ環境を装備する
+- [2026-03-11](2026/2026-03-11-rakuten-codex.md) - Rakuten が Codex で問題修復速度を 2 倍に向上
+- [2026-03-11](2026/2026-03-11-designing-agents-resist-prompt-injection.md) - AI エージェントのプロンプトインジェクション耐性設計
 - [2026-03-10](2026/2026-03-10-pentagon-deal-backlash-chatgpt-uninstalls.md) - Pentagon 契約への反発激化: ChatGPT アンインストールが米国で 295% 急増
+- [2026-03-10](2026/2026-03-10-instruction-hierarchy-challenge.md) - フロンティア LLM における指示階層の改善
+- [2026-03-10](2026/2026-03-10-chatgpt-math-science-learning.md) - ChatGPT に数学・科学のインタラクティブ学習機能が追加
 - [2026-03-09](2026/2026-03-09-openai-to-acquire-promptfoo.md) - OpenAI が Promptfoo を買収: AI セキュリティプラットフォームの統合へ
 - [2026-03-09](2026/2026-03-09-chatgpt-adult-mode-delayed.md) - ChatGPT Adult Mode が再び延期: 新たなリリース日は未定
 - [2026-03-08](2026/2026-03-08-kalinowski-resigns-pentagon-deal.md) - OpenAI ロボティクス責任者 Caitlin Kalinowski が Pentagon 契約に抗議して辞任
