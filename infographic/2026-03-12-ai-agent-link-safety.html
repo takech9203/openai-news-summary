@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI エージェントのリンク安全性 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --danger: #FF6B6B;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Note block */
+        .note-block {
+            background: linear-gradient(135deg, #FFF7ED 0%, #FFFBEB 100%);
+            border-left: 4px solid var(--warning);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card.threat {
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .feature-card.threat:hover {
+            box-shadow: 0 8px 30px rgba(255, 107, 107, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .feature-card ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Workflow Steps */
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Detail Items */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .detail-item {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .detail-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .detail-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary Text */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Related article */
+        .related-article {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .related-article:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 163, 127, 0.15);
+        }
+
+        .related-article-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .related-article-content h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .related-article-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FFF7ED 100%);
+            border-left: 4px solid var(--danger);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links ul li a {
+            font-size: 13px;
+        }
+
+        .footer-disclaimer {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Security</span>
+                <h1>AI エージェントのリンク安全性</h1>
+                <p class="date">2026-03-12</p>
+            </div>
+        </header>
+
+        <!-- 注記 -->
+        <section class="section">
+            <div class="note-block">
+                <strong>注記:</strong> 本レポートは OpenAI のセキュリティカテゴリサイトマップ (lastmod: 2026-03-13T17:24:27) から発見された記事に基づいて作成されている。レポート生成時点では記事の全文コンテンツにアクセスできなかったため、サイトマップ情報、記事タイトル、および関連する公開情報をもとに内容を構成している。
+            </div>
+        </section>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">OpenAI は AI エージェントがリンクを安全に処理するための設計手法に関するセキュリティ記事「AI Agent Link Safety」を公開した。AI エージェントが Web ブラウジング、メール処理、ドキュメント参照などを自律的に実行する場面が増加する中、リンクの安全性確保は不可欠な課題である。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3A3;</div>
+                    <div class="key-point-content">
+                        <h3>フィッシング URL の脅威</h3>
+                        <p>エージェントが Web ページやメール内で遭遇するリンクの中から、フィッシングサイトへの誘導を目的とした URL を識別し、ユーザーへの提示やアクセスをブロックする仕組みが必要。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F489;</div>
+                    <div class="key-point-content">
+                        <h3>悪意のあるリンクインジェクション</h3>
+                        <p>プロンプトインジェクションの一形態として、外部コンテンツ内に埋め込まれた悪意のある URL をエージェントに処理させようとする攻撃への対策が求められる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F500;</div>
+                    <div class="key-point-content">
+                        <h3>リダイレクトチェーンの悪用</h3>
+                        <p>正規の URL に見せかけて複数回のリダイレクトを経由し、最終的に悪意のあるサイトに到達させる手法への防御が重要。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4E4;</div>
+                    <div class="key-point-content">
+                        <h3>データ流出リンクの防止</h3>
+                        <p>エージェントが保持する機密情報を URL パラメータに埋め込んで外部に送信させる攻撃の阻止が不可欠。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>多層防御アプローチ</h3>
+                        <p>URL 解析、レピュテーション評価、コンテキスト検証、アクセス制御の多層防御モデルで体系的に対処するアプローチが示されている。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 脅威の分類 -->
+        <section class="section">
+            <h2 class="section-title">リンクに関する脅威の分類</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">AI エージェントがリンクを扱う際に直面する主要な脅威として、以下の 4 つのカテゴリが想定される。</p>
+            <div class="feature-grid">
+                <div class="feature-card threat">
+                    <h3>&#x1F3A3; フィッシング URL の検出</h3>
+                    <p>エージェントが Web ページやメール内で遭遇するリンクの中から、フィッシングサイトへの誘導を目的とした URL を識別し、ユーザーへの提示やアクセスをブロックする仕組み。</p>
+                </div>
+                <div class="feature-card threat">
+                    <h3>&#x1F489; リンクインジェクション</h3>
+                    <p>プロンプトインジェクションの一形態として、外部コンテンツ内に埋め込まれた悪意のある URL をエージェントに処理させようとする攻撃への対策。</p>
+                </div>
+                <div class="feature-card threat">
+                    <h3>&#x1F500; リダイレクトチェーン</h3>
+                    <p>正規の URL に見せかけて複数回のリダイレクトを経由し、最終的に悪意のあるサイトに到達させる手法への防御。</p>
+                </div>
+                <div class="feature-card threat">
+                    <h3>&#x1F4E4; データ流出リンク</h3>
+                    <p>エージェントが保持する機密情報を URL パラメータに埋め込んで外部に送信させる攻撃の阻止。API キー、トークン、個人情報などが対象。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 設計原則 -->
+        <section class="section">
+            <h2 class="section-title">リンク安全性の設計原則</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">AI エージェントにおけるリンク処理の安全性を確保するための設計原則として、以下の 4 つのアプローチが考えられる。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F50D; URL の事前検証</h3>
+                    <p>エージェントがリンクにアクセスする前に、URL のドメイン、パス、パラメータを検証し、既知の悪意あるパターンとの照合を実施。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; ユーザー確認の導入</h3>
+                    <p>高リスクと判定されたリンクへのアクセスや、リンクをユーザーに提示する際に、明示的な確認フローを挟むことでリスクを軽減。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CB; コンテキストベースの判断</h3>
+                    <p>リンクが埋め込まれていたコンテキスト (メール、Web ページ、ツール出力など) の信頼性を評価し、信頼度に応じた処理を適用。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F441; 透明性の確保</h3>
+                    <p>エージェントがアクセスするリンクや提示するリンクの情報をユーザーに開示し、暗黙的なナビゲーションを防止。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 多層防御モデル -->
+        <section class="section">
+            <h2 class="section-title">リンク安全性の多層防御モデル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">エージェントにおけるリンク処理のセキュリティは、以下の 4 つの防御レイヤーで構成されると想定される。</p>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>URL 解析レイヤー</h4>
+                        <p>リンクの構造 (スキーム、ドメイン、パス、クエリパラメータ) を解析し、異常なパターンを検出。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>レピュテーション評価レイヤー</h4>
+                        <p>URL のドメインを既知の脅威データベースやセーフブラウジング API と照合し、リスクスコアを算出。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>コンテキスト検証レイヤー</h4>
+                        <p>リンクが出現したコンテキストとリンク先の整合性を検証し、不自然な遷移を検出。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>アクセス制御レイヤー</h4>
+                        <p>リスク評価の結果に基づき、自動アクセス、ユーザー確認付きアクセス、アクセス拒否の判定を実行。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- データ流出防止 -->
+        <section class="section">
+            <h2 class="section-title">データ流出防止メカニズム</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">エージェントがリンクを生成または利用する際に、機密データがリンクに含まれることを防ぐ仕組みとして、以下が考えられる。</p>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <h4>パラメータ検査</h4>
+                    <p>URL パラメータに機密情報 (API キー、トークン、個人情報) が含まれていないかの検査。</p>
+                </div>
+                <div class="detail-item">
+                    <h4>ドメイン制限</h4>
+                    <p>エージェントが生成するリンクの宛先ドメインの制限 (許可リスト方式)。</p>
+                </div>
+                <div class="detail-item">
+                    <h4>リダイレクト追跡</h4>
+                    <p>リダイレクト先の追跡と最終到達先の安全性確認。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Sources["リンク入力ソース"]
+        WebPage["Web ページ"]
+        Email["メール"]
+        Document["ドキュメント"]
+        ToolOutput["ツール出力"]
+    end
+
+    subgraph LinkSafety["リンク安全性レイヤー"]
+        Parse["URL 解析"]
+        Reputation["レピュテーション評価"]
+        Context["コンテキスト検証"]
+        AccessControl["アクセス制御"]
+    end
+
+    subgraph Agent["AI エージェント"]
+        Model["言語モデル"]
+        Browse["Web ブラウジング"]
+        Present["リンク提示"]
+    end
+
+    subgraph Result["処理結果"]
+        Safe(["安全なアクセス"])
+        UserConfirm(["ユーザー確認"])
+        Block(["アクセス拒否"])
+    end
+
+    WebPage --> Parse
+    Email --> Parse
+    Document --> Parse
+    ToolOutput --> Parse
+    Parse --> Reputation
+    Reputation --> Context
+    Context --> AccessControl
+    AccessControl -->|低リスク| Model
+    AccessControl -->|中リスク| UserConfirm
+    AccessControl -->|高リスク| Block
+    UserConfirm -->|承認| Model
+    Model --> Browse
+    Model --> Present
+    Browse --> Safe
+    Present --> Safe
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef warning fill:#FF6B6B,stroke:#EE5A5A,stroke-width:2px,color:white
+
+    class Model openai
+    class Parse,Reputation,Context,AccessControl dark
+    class WebPage,Email,Document,ToolOutput,Safe light
+    class Block,UserConfirm warning
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>エージェント開発におけるリンク処理の安全設計</h4>
+                <p>AI エージェントを構築する開発者は、リンク処理における安全性を設計段階から組み込む必要がある。</p>
+                <ul>
+                    <li><strong>URL ホワイトリストの導入:</strong> エージェントがアクセス可能なドメインを事前に定義し、未知のドメインへのアクセスには制限を設けることが推奨される</li>
+                    <li><strong>リンク検証の実装:</strong> エージェントが外部コンテンツからリンクを抽出する際、URL の正当性を検証するロジックを実装すべきである</li>
+                    <li><strong>ユーザー確認フローの設計:</strong> 高リスクなリンクへのアクセスや、ユーザーへのリンク提示においては、確認ステップを組み込むことが求められる</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>プロンプトインジェクション対策との統合</h4>
+                <ul>
+                    <li>2026 年 3 月 11 日公開の「Designing AI agents to resist prompt injection」で示された入力検証の手法を、リンク処理にも適用する</li>
+                    <li>外部コンテンツに埋め込まれた悪意のあるリンクを、プロンプトインジェクションの一形態として検出・防御する仕組みを導入する</li>
+                    <li>エージェントが生成するリンクについても、出力フィルタリングの対象として安全性を担保する</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>Responses API 利用者への推奨事項</h4>
+                <ul>
+                    <li>Web ブラウジングツールを使用するエージェントでは、アクセス先 URL のバリデーションを必ず実装する</li>
+                    <li>Computer Use 機能を活用する場合、エージェントがクリックする URL の安全性検証を事前に行う</li>
+                    <li>エージェントの応答に含まれるリンクが、信頼できるソースからのものであることを確認する仕組みを導入する</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 関連記事 -->
+        <section class="section">
+            <h2 class="section-title">関連記事</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">本記事は、2026 年 3 月 11 日公開の「Designing AI agents to resist prompt injection」の姉妹記事として位置づけられる。プロンプトインジェクションによるリンク操作は、エージェントセキュリティにおける重要な攻撃ベクトルであり、両記事の知見を統合的に適用することが効果的な防御につながる。</p>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <h4>姉妹記事</h4>
+                    <p><a href="https://openai.com/index/designing-agents-to-resist-prompt-injection" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">Designing AI agents to resist prompt injection</a></p>
+                </div>
+                <div class="detail-item">
+                    <h4>Responses API</h4>
+                    <p><a href="https://platform.openai.com/docs/api-reference/responses" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">OpenAI Responses API ドキュメント</a></p>
+                </div>
+                <div class="detail-item">
+                    <h4>Agent SDK</h4>
+                    <p><a href="https://github.com/openai/openai-agents-python" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">OpenAI Agent SDK</a></p>
+                </div>
+                <div class="detail-item">
+                    <h4>セキュリティガイド</h4>
+                    <p><a href="https://platform.openai.com/docs/guides/safety-best-practices" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">OpenAI セキュリティガイド</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="summary-text">
+                OpenAI が公開した「AI Agent Link Safety」は、AI エージェントがリンクを安全に処理するための設計指針を提供するセキュリティ記事である。2026 年 3 月 11 日公開の「Designing AI agents to resist prompt injection」と合わせて、OpenAI のエージェント安全性イニシアチブの重要な柱を構成している。フィッシング URL の検出、悪意のあるリンクインジェクションの防御、データ流出リンクの阻止、リダイレクトチェーンの検証といった多角的な脅威に対して、URL 解析、レピュテーション評価、コンテキスト検証、アクセス制御の多層防御モデルで対処するアプローチが示されていると考えられる。AI エージェントの自律的な Web 操作が拡大する中、リンク安全性の確保はエージェント開発者にとって不可欠な設計要件である。
+            </p>
+        </section>
+
+        <!-- 免責事項 -->
+        <section class="section">
+            <div class="disclaimer">
+                <strong>免責事項:</strong> 本レポートはサイトマップ情報および関連する公開情報に基づいて構成されたものであり、記事の全文を確認した上での分析ではない。記事の実際の内容とは異なる可能性がある点にご留意いただきたい。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/ai-agent-link-safety/" target="_blank" rel="noopener noreferrer">https://openai.com/index/ai-agent-link-safety/</a></p>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="https://openai.com/index/designing-agents-to-resist-prompt-injection" target="_blank" rel="noopener noreferrer">Prompt Injection 耐性設計</a></li>
+                    <li><a href="https://platform.openai.com/docs/api-reference/responses" target="_blank" rel="noopener noreferrer">Responses API</a></li>
+                    <li><a href="https://github.com/openai/openai-agents-python" target="_blank" rel="noopener noreferrer">Agent SDK</a></li>
+                    <li><a href="https://platform.openai.com/docs/guides/safety-best-practices" target="_blank" rel="noopener noreferrer">Security Guide</a></li>
+                </ul>
+            </div>
+            <div class="footer-disclaimer">
+                本インフォグラフィックは OpenAI のサイトマップ情報および関連する公開情報に基づいて自動生成されたものであり、記事の全文を確認した上での分析ではありません。
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

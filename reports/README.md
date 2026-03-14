@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-13](2026/2026-03-13-sora-api-improvements.md) - Sora API の改善: Character API、動画拡張・編集、高解像度エクスポート
+- [2026-03-13](2026/2026-03-13-custom-voices-api.md) - Custom Voices API サポートの追加
+- [2026-03-12](2026/2026-03-12-unrolling-codex-agent-loop.md) - Codex エージェントループの内部構造を解説: "Unrolling the Codex Agent Loop"
+- [2026-03-12](2026/2026-03-12-ai-agent-link-safety.md) - AI エージェントのリンク安全性
 - [2026-03-11](2026/2026-03-11-wayfair-openai-catalog-support.md) - Wayfair が OpenAI を活用してカタログ精度とサポート速度を向上
 - [2026-03-11](2026/2026-03-11-responses-api-computer-environment.md) - モデルからエージェントへ: Responses API にコンピュータ環境を装備する
 - [2026-03-11](2026/2026-03-11-rakuten-codex.md) - Rakuten が Codex で問題修復速度を 2 倍に向上

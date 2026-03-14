@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex エージェントループの内部構造を解説 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-10: rgba(16, 163, 127, 0.1);
+            --openai-green-20: rgba(16, 163, 127, 0.2);
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 50%, var(--openai-dark) 100%);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--openai-green-20) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: var(--openai-gray);
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        /* Note */
+        .note-box {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #5d4037;
+            line-height: 1.7;
+        }
+
+        /* Key Points */
+        .key-points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-green-10);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--openai-green-20);
+            transition: transform 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+        }
+
+        .key-point-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .key-point-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .key-point-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--openai-dark);
+        }
+
+        /* Overview */
+        .overview-text {
+            font-size: 15px;
+            line-height: 2;
+            color: #444654;
+        }
+
+        /* Feature Cards */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-cards.three-col {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px 24px;
+            border: 1px solid var(--openai-gray);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--openai-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .feature-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        .feature-card-desc {
+            font-size: 14px;
+            color: #6e6e80;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Phase Cards (5 column for agent loop) */
+        .phase-cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .phase-card {
+            background: var(--openai-green-10);
+            border-radius: 12px;
+            padding: 20px 14px;
+            text-align: center;
+            border: 1px solid var(--openai-green-20);
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .phase-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .phase-card-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 28px;
+            margin-bottom: 8px;
+        }
+
+        .phase-card-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .phase-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .phase-card-sub {
+            font-size: 12px;
+            color: var(--openai-green-dark);
+            font-weight: 500;
+        }
+
+        .phase-card-desc {
+            font-size: 12px;
+            color: #6e6e80;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .phase-arrow {
+            display: none;
+        }
+
+        /* Code Blocks */
+        .code-section {
+            margin-top: 16px;
+        }
+
+        .code-block-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            margin-bottom: 8px;
+            margin-top: 20px;
+        }
+
+        .code-block-label:first-child {
+            margin-top: 0;
+        }
+
+        pre {
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        pre code {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-note {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #5d4037;
+            line-height: 1.7;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 13px;
+            color: #444654;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Related timeline */
+        .timeline {
+            margin-top: 16px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-date {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: #444654;
+            line-height: 1.6;
+        }
+
+        /* Links */
+        .links-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 8px;
+        }
+
+        .links-list a {
+            font-size: 14px;
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .links-list a:hover {
+            color: var(--openai-green-dark);
+            text-decoration: underline;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            line-height: 2;
+            color: #444654;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--openai-gray);
+            margin-bottom: 4px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-disclaimer {
+            font-size: 12px;
+            color: #6e6e80;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .footer-branding {
+            font-size: 11px;
+            color: #6e6e80;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px 10px 32px;
+            }
+
+            .header {
+                padding: 32px 24px;
+                border-radius: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 18px;
+            }
+
+            .feature-cards,
+            .feature-cards.three-col,
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .phase-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .key-points-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">Engineering</span>
+            <h1>Codex エージェントループの内部構造を解説: "Unrolling the Codex Agent Loop"</h1>
+            <div class="header-date">2026-03-12 | OpenAI Engineering Blog</div>
+        </header>
+
+        <!-- Note -->
+        <div class="note-box">
+            <strong>注:</strong> 本レポートは OpenAI のエンジニアリングサイトマップ (lastmod: 2026-03-12T14:41:37) から記事の存在を確認して作成しています。記事本文へのアクセスは Cloudflare の保護により制限されたため、タイトル、URL、関連記事の文脈、および Codex の公開情報に基づいて内容を構成しています。正確な詳細については公式記事を参照してください。
+        </div>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 - Key Points</h2>
+            <p class="overview-text">
+                OpenAI のエンジニアリングチームは、コーディングエージェント Codex の中核メカニズムである「エージェントループ」の内部構造を技術的に解説する記事を公開した。タイトルの "Unrolling" (展開する) は、通常ブラックボックスとして扱われるエージェントの反復実行プロセスを分解し、各ステップの設計意図と実装上の工夫を明らかにするものと推察される。
+            </p>
+            <div class="key-points-grid" style="margin-top: 20px;">
+                <div class="key-point">
+                    <div class="key-point-icon">&#128203;</div>
+                    <div class="key-point-label">Plan</div>
+                    <div class="key-point-value">計画フェーズ</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#9889;</div>
+                    <div class="key-point-label">Execute</div>
+                    <div class="key-point-value">実行フェーズ</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128065;</div>
+                    <div class="key-point-label">Observe</div>
+                    <div class="key-point-value">観察フェーズ</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#9989;</div>
+                    <div class="key-point-label">Evaluate</div>
+                    <div class="key-point-value">評価フェーズ</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128260;</div>
+                    <div class="key-point-label">Refine</div>
+                    <div class="key-point-value">修正フェーズ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent Loop Phases -->
+        <section class="section">
+            <h2 class="section-title">エージェントループとは</h2>
+            <p class="overview-text">
+                エージェントループとは、AI エージェントがタスクを遂行するために繰り返し実行する中核的なサイクルである。Codex の場合、ユーザーからの指示を受け取った後、以下の 5 つのステップを反復的に実行してタスクを完了する。このループを「展開」(unroll) することで、各ステップにおけるモデルの意思決定プロセス、コンテキスト管理の仕組み、エラーからの回復戦略などが明らかになる。
+            </p>
+            <div class="phase-cards">
+                <div class="phase-card">
+                    <div class="phase-card-number">1</div>
+                    <div class="phase-card-icon">&#128203;</div>
+                    <div class="phase-card-title">計画</div>
+                    <div class="phase-card-sub">Plan</div>
+                    <div class="phase-card-desc">タスクを分析し、次に実行すべきアクションを決定</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-card-number">2</div>
+                    <div class="phase-card-icon">&#9889;</div>
+                    <div class="phase-card-title">実行</div>
+                    <div class="phase-card-sub">Execute</div>
+                    <div class="phase-card-desc">Shell ツールを通じてコマンド実行やファイル読み書き</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-card-number">3</div>
+                    <div class="phase-card-icon">&#128065;</div>
+                    <div class="phase-card-title">観察</div>
+                    <div class="phase-card-sub">Observe</div>
+                    <div class="phase-card-desc">実行結果 (標準出力、エラー出力、ファイル変更) を確認</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-card-number">4</div>
+                    <div class="phase-card-icon">&#9989;</div>
+                    <div class="phase-card-title">評価</div>
+                    <div class="phase-card-sub">Evaluate</div>
+                    <div class="phase-card-desc">結果がタスクの目標に合致しているかを判定</div>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-card-number">5</div>
+                    <div class="phase-card-icon">&#128260;</div>
+                    <div class="phase-card-title">修正</div>
+                    <div class="phase-card-sub">Refine</div>
+                    <div class="phase-card-desc">アプローチを修正し、次のイテレーションへ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Responses API Integration -->
+        <section class="section">
+            <h2 class="section-title">Responses API との連携</h2>
+            <p class="overview-text">
+                Codex のエージェントループは、Responses API のマルチステップ実行機能を基盤としている。Responses API は、モデルの推論とツール呼び出しの往復を API レベルで管理し、以下の機能を提供する。
+            </p>
+            <div class="key-points-grid" style="margin-top: 20px;">
+                <div class="key-point">
+                    <div class="key-point-icon">&#128190;</div>
+                    <div class="key-point-label">ステートフル実行管理</div>
+                    <div class="key-point-value">各イテレーションの状態を保持し、コンテキストの連続性を確保</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128295;</div>
+                    <div class="key-point-label">ツール呼び出し</div>
+                    <div class="key-point-value">モデルの要求に応じて API が適切なツールにリクエストを転送</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128257;</div>
+                    <div class="key-point-label">結果フィードバック</div>
+                    <div class="key-point-value">ツール実行結果をモデルのコンテキストに自動的に追加</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Context Management -->
+        <section class="section">
+            <h2 class="section-title">コンテキスト管理の工夫</h2>
+            <p class="overview-text">
+                長時間にわたるエージェントループでは、コンテキストウィンドウの管理が重要な課題となる。多数のファイル読み取り結果、コマンド出力、中間推論がコンテキストに蓄積されるため、効率的な管理戦略が不可欠である。
+            </p>
+            <div class="feature-cards three-col" style="margin-top: 20px;">
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128451;</div>
+                        <div class="feature-card-title">圧縮</div>
+                    </div>
+                    <p class="feature-card-desc">過去のツール出力を要約し、重要な情報のみを保持することでコンテキストの肥大化を防止</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#127919;</div>
+                        <div class="feature-card-title">選択的保持</div>
+                    </div>
+                    <p class="feature-card-desc">タスクの現在のフェーズに関連する情報を優先的に保持し、不要な情報を除外</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128736;</div>
+                        <div class="feature-card-title">段階的構築</div>
+                    </div>
+                    <p class="feature-card-desc">必要に応じてファイルを再読み込みし、最新の状態を反映するコンテキストを構築</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Handling -->
+        <section class="section">
+            <h2 class="section-title">エラーハンドリングとリトライ戦略</h2>
+            <p class="overview-text">
+                エージェントループの信頼性を確保するために、多層的なエラーハンドリング機構が実装されていると考えられる。
+            </p>
+            <div class="feature-cards" style="margin-top: 20px;">
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128683;</div>
+                        <div class="feature-card-title">コマンド失敗への対応</div>
+                    </div>
+                    <p class="feature-card-desc">シェルコマンドが非ゼロの終了コードを返した場合、エラー出力を分析して代替アプローチを試行</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128270;</div>
+                        <div class="feature-card-title">テスト失敗からの回復</div>
+                    </div>
+                    <p class="feature-card-desc">テスト実行が失敗した場合、エラーメッセージに基づいてコードを修正し再実行</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128256;</div>
+                        <div class="feature-card-title">無限ループの防止</div>
+                    </div>
+                    <p class="feature-card-desc">同じエラーが繰り返される場合に検出し、異なるアプローチへ切り替え</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#9200;</div>
+                        <div class="feature-card-title">タイムアウト管理</div>
+                    </div>
+                    <p class="feature-card-desc">長時間実行されるコマンドに対する適切なタイムアウトとリカバリ</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Optimization -->
+        <section class="section">
+            <h2 class="section-title">パフォーマンス最適化</h2>
+            <p class="overview-text">
+                エージェントループの効率性を高めるために、以下のような最適化が施されていると推察される。
+            </p>
+            <div class="feature-cards three-col" style="margin-top: 20px;">
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128640;</div>
+                        <div class="feature-card-title">並列ツール呼び出し</div>
+                    </div>
+                    <p class="feature-card-desc">独立した複数のアクション (例: 複数ファイルの同時読み取り) を並列に実行</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128161;</div>
+                        <div class="feature-card-title">推測的実行</div>
+                    </div>
+                    <p class="feature-card-desc">高い確率で必要になるアクションを事前に実行し、待機時間を削減</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <div class="feature-card-icon">&#128230;</div>
+                        <div class="feature-card-title">キャッシュ活用</div>
+                    </div>
+                    <p class="feature-card-desc">同一ファイルやコマンド結果のキャッシュによる重複実行の回避</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-section">
+                <div class="code-block-label">Responses API を使用したエージェント構築 - 基本例</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Codex エージェントループの概念的な構造
+# (実際の API 呼び出しは Responses API を使用)
+response = client.responses.create(
+    model="codex",
+    input="プロジェクトのテストを修正してください。失敗しているテストを特定し、コードを修正して全テストが通るようにしてください。",
+    tools=[
+        {
+            "type": "shell",
+            "shell": {
+                "image": "python:3.12-slim"
+            }
+        }
+    ]
+)
+
+# エージェントループの各ステップがレスポンスに記録される
+for item in response.output:
+    if item.type == "reasoning":
+        # 計画・評価フェーズ: モデルの推論プロセス
+        print(f"[Plan] {item.summary}")
+    elif item.type == "shell_call":
+        # 実行フェーズ: シェルコマンドの実行
+        print(f"[Execute] $ {item.command}")
+        print(f"[Observe] {item.output[:200]}")
+    elif item.type == "message":
+        # 最終結果の報告
+        print(f"[Result] {item.content[0].text}")</code></pre>
+
+                <div class="code-block-label">ループのイテレーション例</div>
+                <pre><code class="language-python">Iteration 1 (計画):
+  - リポジトリ構造の把握: ls, find コマンドでプロジェクト構造を確認
+  - テストの実行: pytest を実行して失敗テストを特定
+
+Iteration 2 (分析):
+  - 失敗テストのエラーメッセージを分析
+  - 関連するソースファイルを読み取り
+
+Iteration 3 (修正):
+  - ソースコードの修正を実施
+  - テストを再実行して結果を確認
+
+Iteration 4 (検証):
+  - 全テストスイートを実行して回帰がないことを確認
+  - 変更内容のサマリーを生成</code></pre>
+
+                <div class="code-note">
+                    <strong>注:</strong> 上記のコード例と実行フローは、Codex および Responses API の公開情報と関連記事に基づく想定であり、記事の実際の内容とは異なる可能性があります。正確な技術詳細は公式記事を参照してください。
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="overview-text" style="margin-bottom: 16px;">
+                以下の図は、Codex エージェントループの内部構造を示している。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["ユーザー入力"]
+        Task["タスク指示"]
+        Repo["コードリポジトリ"]
+    end
+
+    subgraph AgentLoop["Codex エージェントループ"]
+        Plan["計画<br/>(Plan)"]
+        Execute["実行<br/>(Execute)"]
+        Observe["観察<br/>(Observe)"]
+        Evaluate["評価<br/>(Evaluate)"]
+        Refine["修正<br/>(Refine)"]
+
+        Plan --> Execute
+        Execute --> Observe
+        Observe --> Evaluate
+        Evaluate -->|"タスク未完了"| Refine
+        Refine --> Plan
+    end
+
+    subgraph Runtime["エージェントランタイム"]
+        ResAPI["Responses API"]
+        Context["コンテキスト管理"]
+
+        subgraph Container["ホステッドコンテナ"]
+            Shell["Shell ツール"]
+            FS["ファイルシステム"]
+            Tests["テスト実行環境"]
+        end
+    end
+
+    subgraph Model["AI モデル"]
+        LLM["Codex モデル"]
+    end
+
+    Task --> Plan
+    Repo --> Container
+    Plan <--> LLM
+    Evaluate <--> LLM
+    Execute --> Shell
+    Shell --> FS
+    Shell --> Tests
+    Observe -.->|"実行結果"| Context
+    Context -.->|"コンテキスト注入"| LLM
+    ResAPI --- AgentLoop
+    Evaluate -->|"タスク完了"| Output["最終結果"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Plan,Execute,Observe,Evaluate,Refine openai
+    class LLM,Shell dark
+    class Task,Repo,FS,Tests,Output light
+    class ResAPI,Context accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-card-title">エージェント設計パターンの理解</div>
+                    <p class="feature-card-desc">Codex のエージェントループの内部構造が公開されることで、開発者は自身のエージェントアプリケーション設計に以下の知見を活用できる。</p>
+                    <ul>
+                        <li><strong>ループ設計のベストプラクティス:</strong> 計画・実行・観察・評価・修正の各フェーズの分離と責務の明確化</li>
+                        <li><strong>コンテキスト管理戦略:</strong> 長時間実行タスクにおけるコンテキストウィンドウの効率的な活用方法</li>
+                        <li><strong>エラーハンドリングパターン:</strong> エージェントの信頼性を高めるための多層的なエラー回復戦略</li>
+                    </ul>
+                </div>
+
+                <div class="impact-card">
+                    <div class="impact-card-title">Responses API を活用したエージェント開発</div>
+                    <p class="feature-card-desc">Responses API の機能を活用することで、エージェント開発を効率化できる。</p>
+                    <ul>
+                        <li><strong>API ネイティブなループ管理:</strong> Responses API のマルチステップ実行機能により独自のループ管理実装が不要に</li>
+                        <li><strong>Shell ツール統合:</strong> Codex が実証したパターンを自身のエージェントに応用可能</li>
+                        <li><strong>ホステッドコンテナの活用:</strong> セキュアな実行環境での信頼性の高いエージェントループ実行</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div class="impact-card-title">関連する技術動向</div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2026-03-11</div>
+                        <div class="timeline-desc"><strong>Responses API のエージェントランタイム:</strong> エージェントループの実行基盤</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2026-03-07</div>
+                        <div class="timeline-desc"><strong>Codex for Open Source:</strong> エージェントループの実際の適用事例</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2026-03-06</div>
+                        <div class="timeline-desc"><strong>Codex Security:</strong> セキュリティスキャンにおけるエージェントループの活用</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="links-list">
+                <li><a href="https://openai.com/index/unrolling-the-codex-agent-loop/" target="_blank" rel="noopener">Unrolling the Codex Agent Loop (公式記事)</a></li>
+                <li><a href="https://openai.com/index/equip-responses-api-computer-environment" target="_blank" rel="noopener">From model to agent: Equipping the Responses API with a computer environment</a></li>
+                <li><a href="https://openai.com/index/codex-for-open-source/" target="_blank" rel="noopener">Codex for Open Source</a></li>
+                <li><a href="https://openai.com/index/codex-security-now-in-research-preview" target="_blank" rel="noopener">Codex Security: now in research preview</a></li>
+                <li><a href="https://openai.com/codex" target="_blank" rel="noopener">OpenAI Codex</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener">OpenAI API リファレンス</a></li>
+                <li><a href="https://platform.openai.com/docs/guides/responses" target="_blank" rel="noopener">Responses API ガイド</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="summary-text">
+                OpenAI が公開した「Unrolling the Codex Agent Loop」は、コーディングエージェント Codex の中核メカニズムであるエージェントループの内部構造を技術的に解説するエンジニアリング記事である。エージェントループは、計画・実行・観察・評価・修正の 5 つのフェーズを反復的に実行することでタスクを遂行する。この仕組みは Responses API、Shell ツール、ホステッドコンテナで構成されるエージェントランタイム上に構築されており、コンテキスト管理、エラーハンドリング、パフォーマンス最適化など、信頼性の高いエージェント実行を実現するための多くの工夫が施されている。本記事は、2026 年 3 月に集中的に公開された Codex 関連の技術記事群の一つであり、エージェント開発に取り組む開発者にとって、設計パターンの理解と実装の参考となる重要な技術資料である。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-source">
+                Source: <a href="https://openai.com/index/unrolling-the-codex-agent-loop/" target="_blank" rel="noopener">https://openai.com/index/unrolling-the-codex-agent-loop/</a>
+            </div>
+            <div class="footer-disclaimer">
+                本レポートはサイトマップベースの発見に基づいて作成されています。記事本文へのアクセスが制限されていたため、タイトル、URL、関連記事の文脈、および公開情報に基づく構成です。正確な詳細は公式記事を参照してください。
+            </div>
+            <div class="footer-branding">OpenAI News Summary | Generated on 2026-03-12</div>
+        </footer>
+
+    </div>
+
+    <script>
+        hljs.highlightAll();
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#343541',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            }
+        });
+    </script>
+</body>
+</html>
