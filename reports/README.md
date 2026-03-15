@@ -6,6 +6,7 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-03-13](2026/2026-03-13-sora-api-improvements.md) - Sora API の改善: Character API、動画拡張・編集、高解像度エクスポート
+- [2026-03-13](2026/2026-03-13-gpt-5-4-image-encoder-fix.md) - GPT-5.4 画像エンコーダーのバグ修正: input_image 入力の品質向上
 - [2026-03-13](2026/2026-03-13-custom-voices-api.md) - Custom Voices API サポートの追加
 - [2026-03-12](2026/2026-03-12-unrolling-codex-agent-loop.md) - Codex エージェントループの内部構造を解説: "Unrolling the Codex Agent Loop"
 - [2026-03-12](2026/2026-03-12-ai-agent-link-safety.md) - AI エージェントのリンク安全性
