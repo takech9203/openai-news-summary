@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-16](2026/2026-03-16-codex-subagents-custom-agents.md) - Codex v0.115.0: サブエージェント GA とカスタムエージェント定義の導入
+- [2026-03-16](2026/2026-03-16-codex-security-no-sast-report.md) - Codex Security が従来の SAST レポートを含まない理由
+- [2026-03-16](2026/2026-03-16-api-update-filters-batch-video.md) - OpenAI API 更新: フィルター演算子の拡張、Batch API 動画対応、ツール遅延読み込み
 - [2026-03-13](2026/2026-03-13-sora-api-improvements.md) - Sora API の改善: Character API、動画拡張・編集、高解像度エクスポート
 - [2026-03-13](2026/2026-03-13-gpt-5-4-image-encoder-fix.md) - GPT-5.4 画像エンコーダーのバグ修正: input_image 入力の品質向上
 - [2026-03-13](2026/2026-03-13-custom-voices-api.md) - Custom Voices API サポートの追加

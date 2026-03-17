@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI API 更新: フィルター演算子の拡張、Batch API 動画対応、ツール遅延読み込み - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card .version-badge {
+            display: inline-block;
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            padding: 2px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Table */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .spec-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .spec-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .spec-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .spec-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .spec-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .spec-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .spec-table tbody tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        .spec-table code {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--openai-dark);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p, .use-case ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            margin-bottom: 6px;
+        }
+
+        .use-case ul li strong {
+            color: var(--text-primary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            margin-bottom: 6px;
+        }
+
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .summary-text:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <h1>OpenAI API 更新: フィルター演算子の拡張、Batch API 動画対応、ツール遅延読み込み</h1>
+                <p class="date">2026-03-16 | OpenAI API Changelog (via OpenAI Node SDK v6.30.0 / v6.31.0)</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="summary-text">OpenAI は 2026 年 3 月 16 日、Node SDK v6.30.0 および v6.31.0 のリリースを通じて、3 つの重要な API 更新を発表した。検索精度の向上、動画生成ワークフローの効率化、エージェント開発の最適化という 3 つの側面で開発者体験を向上させるものである。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>in/nin フィルター演算子</h3>
+                        <p>ComparisonFilter に <code>in</code> / <code>nin</code> 演算子が追加され、ベクトルストア検索のフィルタリングが強化。複数の値を一度に指定した柔軟なフィルタリングが実現された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AC;</div>
+                    <div class="key-point-content">
+                        <h3>Batch API /v1/videos 対応</h3>
+                        <p>Batch API が <code>/v1/videos</code> エンドポイントをサポートし、Sora 動画生成のバッチ処理が可能に。コスト削減と大規模動画生成ワークフローの効率化を実現。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>NamespaceTool defer_loading</h3>
+                        <p>NamespaceTool に <code>defer_loading</code> フィールドが追加され、ツールが初回使用時にオンデマンドで読み込まれるように。エージェントの起動パフォーマンスが改善。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="version-badge">v6.31.0</span>
+                    <h3>&#x1F50D; ComparisonFilter in/nin</h3>
+                    <p>ComparisonFilter 型に <code>in</code> (含まれる) と <code>nin</code> (含まれない) 演算子を追加。従来の <code>eq</code> / <code>ne</code> などの単一値比較に加え、複数の値を一度に指定した柔軟なフィルタリングが可能に。カテゴリ別のドキュメント検索やタグベースのフィルタリングに有効。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="version-badge">v6.30.0</span>
+                    <h3>&#x1F3AC; Batch API 動画生成</h3>
+                    <p>Batch API が <code>/v1/videos</code> エンドポイントをサポート。Sora による動画生成リクエストのバッチ処理が可能になり、複数の動画生成ジョブをまとめて送信し一括処理することでコストを削減。マルチメディアコンテンツの大規模生成ワークフローがさらに効率化。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="version-badge">v6.30.0</span>
+                    <h3>&#x26A1; defer_loading ツール遅延読み込み</h3>
+                    <p><code>defer_loading</code> を <code>True</code> に設定すると、ツールが初期化時ではなく初回使用時にオンデマンドで読み込まれる。多数のツールを登録したエージェントにおいて、実際に使用されるツールのみが必要なタイミングで読み込まれ起動時間が短縮。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details: Table -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">in/nin フィルター演算子の仕様</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">新しい演算子は ComparisonFilter の <code>comparator</code> フィールドで指定する。<code>value</code> フィールドには配列を渡し、フィールドの値がその配列に含まれるか (in) または含まれないか (nin) を判定する。</p>
+
+            <table class="spec-table">
+                <thead>
+                    <tr>
+                        <th>演算子</th>
+                        <th>説明</th>
+                        <th>value の型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>in</code></td>
+                        <td>値が指定した集合に含まれる</td>
+                        <td>配列</td>
+                    </tr>
+                    <tr>
+                        <td><code>nin</code></td>
+                        <td>値が指定した集合に含まれない</td>
+                        <td>配列</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">in/nin フィルターを使用したベクトルストア検索</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+client = OpenAI()
+
+# Using 'in' filter for vector store search
+results = client.vector_stores.search(
+    vector_store_id="vs_abc123",
+    query="security best practices",
+    filters={
+        "type": "comparison",
+        "key": "category",
+        "comparator": "in",
+        "value": ["security", "compliance", "best-practices"]
+    }
+)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Batch API による動画生成のバッチ処理</span>
+                </div>
+                <pre><code class="language-python"># Batch API with /v1/videos endpoint
+batch = client.batches.create(
+    input_file_id="file-abc123",
+    endpoint="/v1/videos",
+    completion_window="24h"
+)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">NamespaceTool の遅延読み込み</span>
+                </div>
+                <pre><code class="language-python"># Using defer_loading for on-demand tool loading
+tools = [
+    {
+        "type": "namespace",
+        "name": "heavy_tool",
+        "defer_loading": True,
+        "description": "A tool that loads on first use"
+    }
+]</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">以下の図は、Batch API が <code>/v1/videos</code> エンドポイントをサポートしたことにより、既存のエンドポイントと並列で動画生成のバッチ処理が可能になった構成を示している。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアント"]
+        SDK["OpenAI SDK"]
+        JSONL["JSONL 入力ファイル"]
+    end
+
+    subgraph BatchAPI["Batch API"]
+        Gateway["Batch Gateway"]
+        Queue["ジョブキュー"]
+    end
+
+    subgraph Endpoints["対応エンドポイント"]
+        Chat["/v1/chat/completions"]
+        Embeddings["/v1/embeddings"]
+        Videos["/v1/videos"]
+    end
+
+    subgraph Processing["処理エンジン"]
+        GPT["GPT モデル"]
+        EmbModel["Embedding モデル"]
+        Sora["Sora"]
+    end
+
+    SDK --> Gateway
+    JSONL --> Gateway
+    Gateway --> Queue
+    Queue --> Chat
+    Queue --> Embeddings
+    Queue --> Videos
+    Chat --> GPT
+    Embeddings --> EmbModel
+    Videos --> Sora
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Chat,Embeddings,Videos,Sora openai
+    class Gateway,Queue dark
+    class SDK,JSONL,GPT,EmbModel light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>&#x1F50D; 検索機能の強化</h4>
+                <ul>
+                    <li><strong>より柔軟なフィルタリング:</strong> <code>in</code> / <code>nin</code> 演算子により、複数カテゴリにまたがるドキュメント検索が 1 回のクエリで実行可能になる</li>
+                    <li><strong>RAG パイプラインの最適化:</strong> ベクトルストア検索のフィルタリング精度が向上し、Retrieval-Augmented Generation のパフォーマンスが改善される</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F3AC; 動画生成ワークフローの効率化</h4>
+                <ul>
+                    <li><strong>コスト削減:</strong> Batch API を利用した動画生成は、個別リクエストと比較してコストが削減される</li>
+                    <li><strong>大規模処理:</strong> マーケティングコンテンツや教育資料など、大量の動画を一括生成するユースケースに対応</li>
+                    <li><strong>非同期処理:</strong> 24 時間の完了ウィンドウ内でバックグラウンド処理が行われるため、リアルタイム性が不要なワークフローに最適</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x26A1; エージェント開発の最適化</h4>
+                <ul>
+                    <li><strong>起動時間の短縮:</strong> <code>defer_loading</code> により、多数のツールを持つエージェントの初期化が高速化される</li>
+                    <li><strong>リソース効率の向上:</strong> 使用されないツールの読み込みを回避することで、メモリ使用量が削減される</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F4E6; SDK アップグレード</h4>
+                <ul>
+                    <li>Node SDK v6.31.0 以上で <code>in</code> / <code>nin</code> フィルターが利用可能</li>
+                    <li>Node SDK v6.30.0 以上で Batch API の <code>/v1/videos</code> 対応と <code>defer_loading</code> が利用可能</li>
+                    <li>Python SDK でも同様の更新が順次反映される見込み</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="summary-text">2026 年 3 月 16 日の OpenAI Node SDK v6.30.0 / v6.31.0 リリースにより、3 つの重要な API 更新が提供された。ComparisonFilter への <code>in</code> / <code>nin</code> 演算子追加はベクトルストア検索の柔軟性を大幅に向上させ、Batch API の <code>/v1/videos</code> エンドポイント対応は Sora 動画生成の大規模バッチ処理を可能にした。また、NamespaceTool の <code>defer_loading</code> フィールドはエージェントの起動パフォーマンスを改善する。これらの更新は、検索、動画生成、エージェント開発のそれぞれの領域で開発者の生産性とアプリケーションの効率性を向上させるものである。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <ul>
+                <li><a href="https://github.com/openai/openai-node/releases" target="_blank" rel="noopener noreferrer">OpenAI Node SDK リリースノート</a></li>
+                <li><a href="https://platform.openai.com/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+                <li><a href="https://platform.openai.com/docs/guides/batch" target="_blank" rel="noopener noreferrer">Batch API ガイド</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference/vector-stores" target="_blank" rel="noopener noreferrer">Vector Store 検索 API リファレンス</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

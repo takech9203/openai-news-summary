@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Security が従来の SAST レポートを含まない理由 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '- ';
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '+ ';
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+        }
+
+        .comparison-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .comparison-table thead th:first-child {
+            width: 25%;
+        }
+
+        .comparison-table tbody td {
+            padding: 12px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .comparison-table tbody td:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .comparison-table tbody td:nth-child(2) {
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tbody td:nth-child(3) {
+            color: var(--openai-green);
+            font-weight: 500;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Design Decision */
+        .decision-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .decision-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 14px;
+        }
+
+        .decision-list li:last-child {
+            border-bottom: none;
+        }
+
+        .decision-number {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .decision-content strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .decision-content span {
+            color: var(--text-secondary);
+        }
+
+        /* Analysis Flow */
+        .flow-steps {
+            display: grid;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .flow-step-num {
+            width: 32px;
+            height: 32px;
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .flow-step-content h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .flow-step-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Notes */
+        .notes-section {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .notes-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notes-section ul {
+            padding-left: 20px;
+        }
+
+        .notes-section ul li {
+            font-size: 13px;
+            color: #78350F;
+            padding: 4px 0;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            padding: 4px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 12px;
+            }
+
+            .comparison-table thead th,
+            .comparison-table tbody td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">セキュリティ</span>
+                <h1>Codex Security が従来の SAST レポートを含まない理由</h1>
+                <p class="date">2026-03-16</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
+                OpenAI は Codex Security が従来の SAST (Static Application Security Testing) レポートを含まない理由を解説。パターンマッチングに依存する従来の SAST ツールとは根本的に異なり、AI による意味理解とコンテキスト認識に基づくセキュリティ分析を提供する。
+            </p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>AI ネイティブセキュリティ分析</h3>
+                        <p>ルールベースのスキャンではなく、LLM の能力を活用した AI ネイティブなセキュリティ分析を実現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>コンテキスト理解</h3>
+                        <p>プロジェクト全体の文脈の中で脆弱性を評価し、実際に悪用可能かどうかを判断</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>誤検知の大幅削減</h3>
+                        <p>AI によるコンテキスト理解により、従来の SAST と比較して false positive 率を大幅に低減</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔗</div>
+                    <div class="key-point-content">
+                        <h3>開発ワークフロー統合</h3>
+                        <p>別途レポートを確認するのではなく、開発プロセスの中でシームレスにセキュリティフィードバックを受け取れる</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Traditional SAST</h4>
+                    <ul>
+                        <li>パターンマッチング / ルールベース</li>
+                        <li>高い誤検知率 (30-70%)</li>
+                        <li>コンテキストの欠如</li>
+                        <li>ノイズの多いレポート</li>
+                        <li>ルールの陳腐化</li>
+                        <li>手動トリアージが必要</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>Codex Security</h4>
+                    <ul>
+                        <li>AI 推論 / 意味解析</li>
+                        <li>誤検知を大幅に低減</li>
+                        <li>プロジェクト全体のコンテキスト認識</li>
+                        <li>アクショナブルなインサイト</li>
+                        <li>AI が自律的に新規パターン判断</li>
+                        <li>自動検証と修正提案</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features: Codex Security の AI ネイティブアプローチ -->
+        <section class="section">
+            <h2 class="section-title">Codex Security の AI ネイティブなアプローチ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4A1; コードの意味理解</h3>
+                    <p>構文パターンではなく、コードが何を意図しているかを意味的に理解する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F30D; コンテキストに基づく評価</h3>
+                    <p>脆弱性の可能性をプロジェクト全体の文脈の中で評価し、実際に悪用可能かどうかを判断する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F527; 修正提案の高品質化</h3>
+                    <p>コードベース全体を考慮した上で、プロジェクトのスタイルや規約に準拠した具体的な修正提案を生成する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; 誤検知の大幅な削減</h3>
+                    <p>AI によるコンテキスト理解により、従来の SAST と比較して false positive 率を大幅に低減する</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Design Decision: SAST レポートを含まない設計判断 -->
+        <section class="section">
+            <h2 class="section-title">SAST レポートを含まない設計判断</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                Codex Security が従来型の SAST レポートを出力しない理由は、単に技術的な制約ではなく、意図的な設計判断である。
+            </p>
+            <ol class="decision-list">
+                <li>
+                    <span class="decision-number">1</span>
+                    <div class="decision-content">
+                        <strong>レポート疲れの回避</strong>
+                        <span>大量の検出結果を一覧表示するのではなく、真に重要な問題にフォーカスする</span>
+                    </div>
+                </li>
+                <li>
+                    <span class="decision-number">2</span>
+                    <div class="decision-content">
+                        <strong>アクショナブルなインサイト</strong>
+                        <span>脆弱性の指摘にとどまらず、なぜそれが問題であるか、どのように修正すべきかまでを包括的に提示する</span>
+                    </div>
+                </li>
+                <li>
+                    <span class="decision-number">3</span>
+                    <div class="decision-content">
+                        <strong>開発ワークフローへの統合</strong>
+                        <span>別途レポートを確認するのではなく、開発プロセスの中でシームレスにセキュリティフィードバックを受け取れるようにする</span>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- Technical: Comparison Table -->
+        <section class="section">
+            <h2 class="section-title">従来の SAST と Codex Security の比較</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>観点</th>
+                        <th>従来の SAST</th>
+                        <th>Codex Security</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>分析手法</td>
+                        <td>パターンマッチング / ルールベース</td>
+                        <td>AI 推論 / 意味解析</td>
+                    </tr>
+                    <tr>
+                        <td>コンテキスト理解</td>
+                        <td>限定的 (ファイル単位)</td>
+                        <td>プロジェクト全体</td>
+                    </tr>
+                    <tr>
+                        <td>誤検知率</td>
+                        <td>高い (30-70% 程度)</td>
+                        <td>大幅に低減</td>
+                    </tr>
+                    <tr>
+                        <td>出力形式</td>
+                        <td>脆弱性一覧レポート</td>
+                        <td>コンテキスト付きインサイト</td>
+                    </tr>
+                    <tr>
+                        <td>修正提案</td>
+                        <td>汎用的なガイダンス</td>
+                        <td>プロジェクト固有の具体的修正</td>
+                    </tr>
+                    <tr>
+                        <td>新規パターン対応</td>
+                        <td>ルール追加が必要</td>
+                        <td>AI が自律的に判断</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Technical: Architecture Mermaid Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Traditional["従来の SAST パイプライン"]
+        Code1["ソースコード"] --> RuleEngine["ルールエンジン"]
+        RuleEngine --> PatternMatch["パターンマッチング"]
+        PatternMatch --> VulnList["脆弱性一覧レポート"]
+        VulnList --> Triage["手動トリアージ"]
+        Triage --> Fix1["手動修正"]
+    end
+
+    subgraph Codex["Codex Security パイプライン"]
+        Code2["ソースコード"] --> AIAnalysis["AI コンテキスト分析"]
+        AIAnalysis --> SemanticEval["意味的セキュリティ評価"]
+        SemanticEval --> Validation["自動検証"]
+        Validation --> ActionableInsight["アクショナブルインサイト"]
+        ActionableInsight --> AutoPatch["修正提案 / 自動パッチ"]
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class AIAnalysis,SemanticEval,Validation openai
+    class ActionableInsight,AutoPatch dark
+    class Code1,Code2 light
+    class RuleEngine,PatternMatch,VulnList,Triage,Fix1 gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Analysis Flow -->
+        <section class="section">
+            <h2 class="section-title">Codex Security の分析フロー</h2>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <span class="flow-step-num">1</span>
+                    <div class="flow-step-content">
+                        <h4>コードベースの理解</h4>
+                        <p>プロジェクト構造、依存関係、設定を包括的に分析</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-step-num">2</span>
+                    <div class="flow-step-content">
+                        <h4>意味的な脆弱性検出</h4>
+                        <p>AI がコードの意図を理解した上で、セキュリティ上の問題を特定</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-step-num">3</span>
+                    <div class="flow-step-content">
+                        <h4>コンテキストベースの検証</h4>
+                        <p>検出された問題が実際の実行環境で悪用可能かを評価</p>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-step-num">4</span>
+                    <div class="flow-step-content">
+                        <h4>統合的なフィードバック</h4>
+                        <p>開発ワークフロー内で直接、修正提案とともに結果を提示</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact: セキュリティワークフローの変革 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>トリアージ作業の削減</h4>
+                <p>数百件の SAST レポートを手動で確認する必要がなくなり、真に対処すべき問題に集中できる</p>
+            </div>
+            <div class="use-case">
+                <h4>修正までの時間短縮</h4>
+                <p>脆弱性の検出から修正提案の提示まで一貫して行われるため、対応のリードタイムが短縮される</p>
+            </div>
+            <div class="use-case">
+                <h4>開発フローとの統合</h4>
+                <p>別ツールでレポートを確認する手間がなく、開発プロセスの中でセキュリティフィードバックを受け取れる</p>
+            </div>
+            <div class="use-case">
+                <h4>既存ツールとの関係</h4>
+                <p>Codex Security は従来の SAST ツールを完全に置き換えるものではなく、補完的に利用することも可能。コンプライアンス要件で SAST レポートの提出が求められる場合など、従来ツールの併用が必要なケースもある。</p>
+            </div>
+        </section>
+
+        <!-- Notes -->
+        <section class="section">
+            <h2 class="section-title">注意点</h2>
+            <div class="notes-section">
+                <h3>&#x26A0;&#xFE0F; 留意すべき事項</h3>
+                <ul>
+                    <li>AI ベースの分析であるため、結果の妥当性は人間のレビューで確認すべきである</li>
+                    <li>現時点ではリサーチプレビュー段階であり、検出範囲や精度は今後改善される可能性がある</li>
+                    <li>規制やコンプライアンスの要件によっては、従来の SAST レポートが依然として必要な場合がある</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-text">
+                OpenAI は、Codex Security が従来の SAST レポートを含まない理由を、技術的な制約ではなく意図的な設計判断として説明した。パターンマッチングに依存する従来の SAST は高い誤検知率やコンテキストの欠如という根本的な課題を抱えており、Codex Security は AI ネイティブなアプローチでこれらの課題を解決する。コードの意味理解、プロジェクト全体のコンテキスト認識、そしてアクショナブルなインサイトの提供により、開発者のセキュリティ対応を効率化し、開発ワークフローにセキュリティをシームレスに統合することを目指している。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/why-codex-security-doesnt-include-a-sast-report" target="_blank" rel="noopener noreferrer">https://openai.com/index/why-codex-security-doesnt-include-a-sast-report</a></li>
+                <li><a href="https://openai.com/codex" target="_blank" rel="noopener noreferrer">https://openai.com/codex</a></li>
+                <li><a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">https://owasp.org/www-project-top-ten/</a></li>
+            </ul>
+        </footer>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
