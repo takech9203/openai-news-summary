@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-17](2026/2026-03-17-introducing-gpt-5-4-mini-and-nano.md) - GPT-5.4 mini / nano の発表: 高速・低コストの小型フロンティアモデル
+- [2026-03-17](2026/2026-03-17-equipping-workers-compensation-insights.md) - ChatGPT が労働者の報酬情報格差を解消する
 - [2026-03-16](2026/2026-03-16-codex-subagents-custom-agents.md) - Codex v0.115.0: サブエージェント GA とカスタムエージェント定義の導入
 - [2026-03-16](2026/2026-03-16-codex-security-no-sast-report.md) - Codex Security が従来の SAST レポートを含まない理由
 - [2026-03-16](2026/2026-03-16-api-update-filters-batch-video.md) - OpenAI API 更新: フィルター演算子の拡張、Batch API 動画対応、ツール遅延読み込み
