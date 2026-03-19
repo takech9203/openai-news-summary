@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-18](2026/2026-03-18-accelerating-science-gpt-5.md) - GPT-5 による科学研究の加速 -- 数学・物理学・生物学にわたる初期実験の成果
+- [2026-03-17](2026/2026-03-17-japan-teen-safety-blueprint.md) - OpenAI Japan が「Japan Teen Safety Blueprint」を発表、ティーンの安全を最優先に
 - [2026-03-17](2026/2026-03-17-introducing-gpt-5-4-mini-and-nano.md) - GPT-5.4 mini / nano の発表: 高速・低コストの小型フロンティアモデル
 - [2026-03-17](2026/2026-03-17-equipping-workers-compensation-insights.md) - ChatGPT が労働者の報酬情報格差を解消する
 - [2026-03-16](2026/2026-03-16-codex-subagents-custom-agents.md) - Codex v0.115.0: サブエージェント GA とカスタムエージェント定義の導入
