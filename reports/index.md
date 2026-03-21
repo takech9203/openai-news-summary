@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-20](2026/2026-03-20-openai-desktop-superapp.md) - OpenAI がデスクトップ「スーパーアプリ」を発表: ChatGPT、Codex、Atlas を統合した新たな製品戦略
+- [2026-03-20](2026/2026-03-20-openai-automated-researcher.md) - OpenAI が完全自動 AI リサーチャーの構築に全力投球: 研究の自律化で次世代エージェント時代を切り拓く
+- [2026-03-20](2026/2026-03-20-chatgpt-commerce-strategy-pivot.md) - ChatGPT コマース戦略の転換: Instant Checkout 終了とリテーラーアプリへの移行
+- [2026-03-20](2026/2026-03-20-britannica-sues-openai.md) - Encyclopaedia Britannica が OpenAI を提訴: 約 10 万件の記事スクレイピングをめぐる著作権訴訟
 - [2026-03-19](2026/2026-03-19-openai-to-acquire-astral.md) - OpenAI が Astral を買収: Python 開発者ツールの次世代化で Codex の成長を加速
 - [2026-03-19](2026/2026-03-19-monitoring-internal-coding-agents-misalignment.md) - 内部コーディングエージェントのミスアライメント監視手法
 - [2026-03-18](2026/2026-03-18-accelerating-science-gpt-5.md) - GPT-5 による科学研究の加速 -- 数学・物理学・生物学にわたる初期実験の成果
