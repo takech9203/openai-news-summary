@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-21](2026/2026-03-21-samsung-hbm4-openai-titan-chip.md) - Samsung、OpenAI 初の AI チップ「Titan」向けに HBM4 を供給へ
+- [2026-03-21](2026/2026-03-21-openai-workforce-doubling-8000.md) - OpenAI、2026 年末までに従業員数を 8,000 人に倍増計画: エンタープライズ戦略強化と Frontier プラットフォーム拡大
+- [2026-03-21](2026/2026-03-21-chatgpt-ads-expansion-us.md) - OpenAI、ChatGPT 無料・低価格ユーザー向けに米国で広告展開を拡大
+- [2026-03-21](2026/2026-03-21-amazon-openai-custom-models.md) - Amazon、OpenAI とカスタムモデル提供に向けた協議を開始
 - [2026-03-20](2026/2026-03-20-openai-desktop-superapp.md) - OpenAI がデスクトップ「スーパーアプリ」を発表: ChatGPT、Codex、Atlas を統合した新たな製品戦略
 - [2026-03-20](2026/2026-03-20-openai-automated-researcher.md) - OpenAI が完全自動 AI リサーチャーの構築に全力投球: 研究の自律化で次世代エージェント時代を切り拓く
 - [2026-03-20](2026/2026-03-20-chatgpt-commerce-strategy-pivot.md) - ChatGPT コマース戦略の転換: Instant Checkout 終了とリテーラーアプリへの移行
