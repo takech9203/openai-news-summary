@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-22](2026/2026-03-22-walmart-drops-openai.md) - Walmart、OpenAI との提携を解消 -- エンタープライズ AI の勢力図が変化
+- [2026-03-22](2026/2026-03-22-openai-trade-desk-ad-partnership.md) - OpenAI、The Trade Desk との広告販売提携を検討 -- 年間売上 250 億ドル到達
+- [2026-03-22](2026/2026-03-22-openai-police-warning-debate-canada.md) - OpenAI、カナダ銃撃事件前の警察への通報を巡り社内で議論 -- AI 安全性の新たな課題
+- [2026-03-22](2026/2026-03-22-openai-hires-openclaw-agent-developer.md) - OpenAI、AI エージェント開発者 Steinberger を採用 — OpenClaw の技術を獲得
+- [2026-03-22](2026/2026-03-22-openai-datacenter-pivot-nvidia-ipo.md) - OpenAI、IPO を前にデータセンター投資を縮小し Nvidia 契約を見直し: クラウドパートナー依存へ戦略転換
 - [2026-03-21](2026/2026-03-21-samsung-hbm4-openai-titan-chip.md) - Samsung、OpenAI 初の AI チップ「Titan」向けに HBM4 を供給へ
 - [2026-03-21](2026/2026-03-21-openai-workforce-doubling-8000.md) - OpenAI、2026 年末までに従業員数を 8,000 人に倍増計画: エンタープライズ戦略強化と Frontier プラットフォーム拡大
 - [2026-03-21](2026/2026-03-21-chatgpt-ads-expansion-us.md) - OpenAI、ChatGPT 無料・低価格ユーザー向けに米国で広告展開を拡大
