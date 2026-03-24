@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-23](2026/2026-03-23-openai-pe-pitch-175-return.md) - OpenAI、プライベートエクイティ向けに 17.5% 最低リターン保証を提示: Anthropic との企業 AI 覇権争いが激化
+- [2026-03-23](2026/2026-03-23-openai-microsoft-ipo-risk-disclosure.md) - OpenAI、IPO 投資家向け文書で Microsoft 依存リスクを明記: インフラ集中リスクと多角化戦略の全容
+- [2026-03-23](2026/2026-03-23-openai-hires-meta-ad-exec.md) - OpenAI、元 Meta 広告幹部 David Dugan を ChatGPT 広告チームのトップに起用
+- [2026-03-23](2026/2026-03-23-openai-helion-fusion-energy.md) - OpenAI、Altman 支援の核融合スタートアップ Helion Energy との大型エネルギー提携を推進
+- [2026-03-23](2026/2026-03-23-creating-with-sora-safely.md) - Sora 2 の安全な創作環境: ソーシャル動画生成プラットフォームにおける安全設計
+- [2026-03-23](2026/2026-03-23-chatgpt-library-personal-files.md) - OpenAI、ChatGPT Library を展開 -- 個人ファイルの保存・管理が可能に
 - [2026-03-22](2026/2026-03-22-walmart-drops-openai.md) - Walmart、OpenAI との提携を解消 -- エンタープライズ AI の勢力図が変化
 - [2026-03-22](2026/2026-03-22-openai-trade-desk-ad-partnership.md) - OpenAI、The Trade Desk との広告販売提携を検討 -- 年間売上 250 億ドル到達
 - [2026-03-22](2026/2026-03-22-openai-police-warning-debate-canada.md) - OpenAI、カナダ銃撃事件前の警察への通報を巡り社内で議論 -- AI 安全性の新たな課題

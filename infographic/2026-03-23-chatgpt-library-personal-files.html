@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI、ChatGPT Library を展開 -- 個人ファイルの保存・管理が可能に - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .data-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .data-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .data-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .data-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .data-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Concern Cards */
+        .concern-card {
+            background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+            border: 1px solid #FDBA74;
+            border-left: 4px solid var(--warning);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .concern-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .concern-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #92400E;
+        }
+
+        .concern-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Note */
+        .note {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 1px solid #93C5FD;
+            border-left: 4px solid var(--info);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product</span>
+                <h1>OpenAI、ChatGPT Library を展開 -- 個人ファイルの保存・管理が可能に</h1>
+                <p class="date">2026-03-23 | BleepingComputer、MSN</p>
+            </div>
+        </header>
+
+        <!-- 概要 / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4C1;</div>
+                    <div class="key-point-content">
+                        <h3>ChatGPT に「Library」機能を追加</h3>
+                        <p>OpenAI は ChatGPT に「Library」と呼ばれる新機能を展開。ユーザーは個人ファイルを ChatGPT 内に直接保存・管理できるようになり、ChatGPT が単なる対話型 AI から永続的なファイルストレージを備えた包括的な生産性プラットフォームへと進化する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>会話をまたいだファイルの永続化</h3>
+                        <p>従来はセッション終了とともにファイル参照が失われていたが、Library によりプロジェクト単位でのドキュメント管理やリサーチ資料の蓄積が可能となり、ワークフローの連続性が大幅に向上する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-content">
+                        <h3>デスクトップ「スーパーアプリ」構想の一環</h3>
+                        <p>2026 年 3 月 20 日に報じられたデスクトップスーパーアプリ構想の一環として位置づけられ、ChatGPT を包括的な AI ワークスペースとして発展させる戦略が着実に進行している。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: ファイル管理の変化</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: セッション限定</h4>
+                    <ul>
+                        <li>- ファイルは個別セッションに紐づく</li>
+                        <li>- セッション終了でファイル参照が消失</li>
+                        <li>- 毎回ファイルの再アップロードが必要</li>
+                        <li>- プロジェクト横断の分析が困難</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: Library で永続化</h4>
+                    <ul>
+                        <li>- ファイルが永続的に保存される</li>
+                        <li>- 複数セッションから同一ファイルを参照</li>
+                        <li>- 専用 UI でファイルを一覧・検索・整理</li>
+                        <li>- Code Interpreter 等と連携</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主な機能 -->
+        <section class="section">
+            <h2 class="section-title">ChatGPT Library の主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4BE; 永続的なファイルストレージ</h3>
+                    <p>アップロードしたファイルが会話セッション終了後も保持され、いつでもアクセス可能になる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F5C2; ファイル管理インターフェース</h3>
+                    <p>ファイルの一覧表示、検索、整理のための専用 UI を提供。直感的なファイル操作が可能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F517; 会話間でのファイル参照</h3>
+                    <p>複数の会話セッションから同一ファイルを参照・分析でき、継続的なリサーチが実現する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F527; 既存機能との統合</h3>
+                    <p>Code Interpreter やファイル分析機能とシームレスに連携し、保存ファイルを直接活用できる。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 対応ファイル形式 -->
+        <section class="section">
+            <h2 class="section-title">対応ファイル形式</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4C4; ドキュメント系</h3>
+                    <p>PDF、Word (.docx)、テキスト (.txt)、Markdown (.md)、PowerPoint (.pptx)、Excel (.xlsx)、CSV</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4BB; コード系</h3>
+                    <p>Python (.py)、JavaScript (.js)、TypeScript (.ts) 等の主要プログラミング言語ファイル、JSON、YAML、XML 等の構造化データ</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F5BC; 画像系</h3>
+                    <p>PNG、JPEG、GIF、WebP 等の一般的な画像形式</p>
+                </div>
+            </div>
+            <div class="note">
+                <strong>注:</strong> 具体的なファイル形式の完全なリストおよびストレージ容量の上限は、OpenAI の公式ドキュメントを参照されたい。
+            </div>
+        </section>
+
+        <!-- 既存機能との統合 -->
+        <section class="section">
+            <h2 class="section-title">既存機能との統合</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>Code Interpreter との連携</h3>
+                        <p>Library に保存したデータファイル (CSV、Excel 等) を Code Interpreter で直接読み込み、データ分析やグラフ作成を実行できる。セッションごとの再アップロードが不要に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>ファイル分析機能との連携</h3>
+                        <p>PDF やドキュメントを Library に保存しておくことで、複数の会話セッションにわたって同一ドキュメントの分析を継続できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-content">
+                        <h3>GPTs (カスタム GPT) との連携</h3>
+                        <p>カスタム GPT が Library 内のファイルを参照できるようになれば、ナレッジベースとしての活用が可能になる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50E;</div>
+                    <div class="key-point-content">
+                        <h3>検索・要約機能</h3>
+                        <p>Library 内のファイルを横断的に検索し、AI による要約や関連情報の抽出が可能になる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 提供ティアと可用性 -->
+        <section class="section">
+            <h2 class="section-title">提供ティアと可用性</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ティア</th>
+                            <th>Library の利用</th>
+                            <th>想定ストレージ</th>
+                            <th>備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Free</td>
+                            <td>制限付き</td>
+                            <td>小容量</td>
+                            <td>基本的なファイル保存のみ</td>
+                        </tr>
+                        <tr>
+                            <td>Plus</td>
+                            <td>利用可能</td>
+                            <td>中容量</td>
+                            <td>フル機能</td>
+                        </tr>
+                        <tr>
+                            <td>Pro</td>
+                            <td>利用可能</td>
+                            <td>大容量</td>
+                            <td>優先的な機能アクセス</td>
+                        </tr>
+                        <tr>
+                            <td>Team</td>
+                            <td>利用可能</td>
+                            <td>大容量 + 共有</td>
+                            <td>チーム共有機能付き</td>
+                        </tr>
+                        <tr>
+                            <td>Enterprise</td>
+                            <td>利用可能</td>
+                            <td>カスタム</td>
+                            <td>管理者制御、コンプライアンス対応</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="note">
+                <strong>注:</strong> 上記は報道内容に基づく推定であり、実際の提供内容は OpenAI の公式発表を参照されたい。
+            </div>
+        </section>
+
+        <!-- プライバシーとセキュリティ -->
+        <section class="section">
+            <h2 class="section-title">プライバシーとセキュリティ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F512; 暗号化</h3>
+                    <p>アップロードされたファイルは保存時 (at-rest) および転送時 (in-transit) に暗号化されることが期待される。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; アクセス制御</h3>
+                    <p>ファイルはアップロードしたユーザーのみがアクセス可能であり、他のユーザーからは参照できない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4DC; データ保持ポリシー</h3>
+                    <p>ファイルの保持期間、削除ポリシー、データの所在地に関する透明性が求められる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2699; AI トレーニング利用</h3>
+                    <p>アップロードファイルが AI モデルのトレーニングに使用されるかどうかの明確なオプトアウト設定が必要。</p>
+                </div>
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 700; margin: 24px 0 16px; color: var(--text-primary);">Enterprise 向けの要件</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F511; SSO・SCIM 連携</h3>
+                    <p>企業の ID 管理システムとの統合によるアクセス制御。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CB; 監査ログ</h3>
+                    <p>ファイルのアップロード、アクセス、削除の履歴を記録する監査機能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6AB; データ損失防止 (DLP)</h3>
+                    <p>機密情報を含むファイルのアップロードを防止するポリシーの設定。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2696; コンプライアンス</h3>
+                    <p>GDPR、HIPAA 等の規制要件への適合。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 競合分析 -->
+        <section class="section">
+            <h2 class="section-title">競合分析: ファイルストレージ + AI 統合</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>ChatGPT Library</th>
+                            <th>Google Drive + Gemini</th>
+                            <th>OneDrive + Copilot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ストレージ基盤</td>
+                            <td>ChatGPT 内蔵</td>
+                            <td>Google Drive (15 GB 無料)</td>
+                            <td>OneDrive (5 GB 無料)</td>
+                        </tr>
+                        <tr>
+                            <td>AI 統合</td>
+                            <td>ネイティブ (ChatGPT)</td>
+                            <td>Gemini による分析・要約</td>
+                            <td>Copilot による分析・要約</td>
+                        </tr>
+                        <tr>
+                            <td>エコシステム</td>
+                            <td>ChatGPT 中心</td>
+                            <td>Google Workspace 全体</td>
+                            <td>Microsoft 365 全体</td>
+                        </tr>
+                        <tr>
+                            <td>強み</td>
+                            <td>対話型 AI との深い統合</td>
+                            <td>大規模ストレージ、共同編集</td>
+                            <td>Office アプリとの統合</td>
+                        </tr>
+                        <tr>
+                            <td>弱み</td>
+                            <td>ストレージ規模は限定的</td>
+                            <td>AI 統合は後付け</td>
+                            <td>AI 統合は後付け</td>
+                        </tr>
+                        <tr>
+                            <td>対象ユーザー</td>
+                            <td>AI ヘビーユーザー</td>
+                            <td>Google エコシステムユーザー</td>
+                            <td>企業ユーザー</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 16px; line-height: 1.6;">
+                OpenAI の差別化ポイントは、AI との対話を中心としたファイル管理体験にある。Google Drive や OneDrive は汎用ストレージとして膨大な容量と共同編集機能を提供するが、ChatGPT Library は AI によるファイルの理解・分析・活用を第一に設計されている点で根本的に異なるアプローチを取る。
+            </p>
+        </section>
+
+        <!-- ユースケース -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>&#x1F4C4; ドキュメント管理</h4>
+                <p>契約書、レポート、仕様書等のドキュメントを Library に保存し、必要に応じて AI に分析・要約を依頼する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F50D; リサーチ</h4>
+                <p>論文、記事、データセットを蓄積し、複数の会話セッションにわたって継続的なリサーチを実施する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4CB; プロジェクト管理</h4>
+                <p>プロジェクト関連ファイルを一元管理し、AI をプロジェクトアシスタントとして活用する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F393; 学習・教育</h4>
+                <p>教材や参考資料を Library に保存し、AI を個人チューターとして活用する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4BB; コード開発</h4>
+                <p>コードベースやドキュメントを保存し、Code Interpreter と連携した分析・デバッグを実行する。</p>
+            </div>
+        </section>
+
+        <!-- 技術的な詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細: ファイルストレージアーキテクチャ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x2601; オブジェクトストレージ</h3>
+                    <p>ファイルの永続保存にクラウドベースのオブジェクトストレージ (Azure Blob Storage 等) を使用する可能性が高い。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4DD; メタデータ管理</h3>
+                    <p>ファイル名、サイズ、アップロード日時、ファイル形式等のメタデータを管理するデータベース。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50E; インデックス作成</h3>
+                    <p>ファイル内容の検索を可能にするための全文検索インデックス。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9E0; ベクトル埋め込み</h3>
+                    <p>ファイル内容をベクトル化し、セマンティック検索や関連ファイルの推薦に活用。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- API の可能性 -->
+        <section class="section">
+            <h2 class="section-title">API の可能性: コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">想定される Library API の使用例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ファイルのアップロード (想定される API)
+file = client.files.create(
+    file=open("research_paper.pdf", "rb"),
+    purpose="library"
+)
+
+# Library 内のファイルを参照した会話
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "user",
+            "content": "Library に保存した research_paper.pdf の要約を作成してください"
+        }
+    ],
+    file_ids=[file.id]
+)
+print(response.choices[0].message.content)</code></pre>
+            </div>
+            <div class="note">
+                <strong>注:</strong> 上記のコードサンプルは想定される API の例示であり、実際の API 仕様は OpenAI の公式ドキュメントを参照されたい。既存の Files API (<code>client.files.create</code>) は Assistants API や Fine-tuning 向けに提供されており、Library 向けの API はこれを拡張する形で実装される可能性がある。
+            </div>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー"]
+        Upload(["ファイルアップロード"])
+        Chat(["会話セッション"])
+    end
+
+    subgraph Library["ChatGPT Library"]
+        subgraph Storage["ストレージレイヤー"]
+            ObjStore["オブジェクトストレージ<br/>(暗号化保存)"]
+            Metadata["メタデータ DB"]
+        end
+
+        subgraph Index["インデックスレイヤー"]
+            FullText["全文検索<br/>インデックス"]
+            VectorDB["ベクトル<br/>埋め込み"]
+        end
+
+        FileManager["ファイル管理 UI"]
+    end
+
+    subgraph ChatGPT["ChatGPT プラットフォーム"]
+        ChatEngine["Chat Completions"]
+        CodeInterp["Code Interpreter"]
+        FileAnalysis["ファイル分析"]
+        GPTs["カスタム GPTs"]
+    end
+
+    subgraph Models["OpenAI Models"]
+        GPT4O["GPT-4o"]
+        Embeddings["Embeddings API"]
+    end
+
+    Upload --> FileManager
+    FileManager --> ObjStore
+    FileManager --> Metadata
+    ObjStore --> FullText
+    ObjStore --> VectorDB
+
+    Chat --> ChatEngine
+    ChatEngine --> ObjStore
+    ChatEngine --> FullText
+    ChatEngine --> VectorDB
+
+    ChatEngine --> CodeInterp
+    ChatEngine --> FileAnalysis
+    ChatEngine --> GPTs
+
+    CodeInterp --> ObjStore
+    FileAnalysis --> ObjStore
+    GPTs --> ObjStore
+
+    ChatEngine --> GPT4O
+    VectorDB --> Embeddings
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class GPT4O,Embeddings openai
+    class ChatEngine,CodeInterp,FileAnalysis,GPTs dark
+    class Upload,Chat light
+    class ObjStore,Metadata,FullText,VectorDB,FileManager accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4E6;</div>
+                    <div class="key-point-content">
+                        <h3>Files API の拡張可能性</h3>
+                        <p>既存の Files API が Library 機能に対応することで、開発者はアプリケーションからユーザーの Library にファイルを保存・取得する機能を構築できるようになる可能性がある。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-content">
+                        <h3>Assistants API との連携強化</h3>
+                        <p>Assistants API が Library 内のファイルを直接参照できるようになれば、よりパーソナライズされたアシスタントの構築が可能になる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E9;</div>
+                    <div class="key-point-content">
+                        <h3>ベクトルストアとの統合</h3>
+                        <p>Library に保存されたファイルが自動的にベクトルストアに登録されることで、RAG ベースのアプリケーション開発が簡素化される。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- プラットフォーム戦略への影響 -->
+        <section class="section">
+            <h2 class="section-title">プラットフォーム戦略への影響</h2>
+            <div class="use-case">
+                <h4>&#x1F512; エコシステムのロックイン強化</h4>
+                <p>ユーザーが ChatGPT Library にファイルを蓄積するほど、プラットフォームへの依存度が高まる。開発者はデータポータビリティを考慮した設計が求められる。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x2694; 競合プラットフォームとの差別化</h4>
+                <p>Google の Gemini や Anthropic の Claude がファイル管理機能を提供する中、OpenAI は Library により永続的なファイルストレージの分野で差別化を図る。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4F1; スーパーアプリ構想との連携</h4>
+                <p>デスクトップスーパーアプリに Library が統合されることで、ローカルファイルとクラウドファイルのシームレスな管理が実現する可能性がある。</p>
+            </div>
+        </section>
+
+        <!-- 留意すべき課題 -->
+        <section class="section">
+            <h2 class="section-title">留意すべき課題</h2>
+            <div class="concern-card">
+                <h4>データガバナンス</h4>
+                <p>Enterprise 環境では、Library に保存されるファイルのガバナンスポリシーの設定が重要になる。</p>
+            </div>
+            <div class="concern-card">
+                <h4>コスト構造</h4>
+                <p>ストレージ容量に応じた追加課金が発生する場合、アプリケーションの設計においてコスト管理を考慮する必要がある。</p>
+            </div>
+            <div class="concern-card">
+                <h4>レート制限</h4>
+                <p>ファイルのアップロード・ダウンロードに対するレート制限の設定と、アプリケーション側での適切なハンドリングが必要になる。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                ChatGPT Library は、ChatGPT を対話型 AI から永続的なファイルストレージを備えた生産性プラットフォームへと進化させる重要な機能追加である。会話セッションをまたいだファイルの永続化により、ドキュメント管理、継続的なリサーチ、プロジェクトファイルの一元管理といったユースケースが実現する。Code Interpreter やファイル分析機能との統合により、保存したファイルを AI が直接活用できる点が、Google Drive + Gemini や OneDrive + Copilot との差別化要因となる。一方で、プライバシー保護、データガバナンス、AI トレーニングへのデータ利用に関する透明性の確保は、ユーザーの信頼を維持する上で不可欠である。2026 年 3 月 20 日に報じられたデスクトップスーパーアプリ構想と合わせて、OpenAI が ChatGPT を包括的な AI ワークスペースとして発展させる戦略が着実に進行していることを示す動きである。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <p><a href="https://www.bleepingcomputer.com/" target="_blank" rel="noopener noreferrer">BleepingComputer 報道</a></p>
+            <p><a href="https://www.msn.com/" target="_blank" rel="noopener noreferrer">MSN 報道</a></p>
+            <p><a href="https://platform.openai.com/docs/api-reference/files" target="_blank" rel="noopener noreferrer">OpenAI Files API ドキュメント</a></p>
+            <p><a href="https://platform.openai.com/docs/assistants" target="_blank" rel="noopener noreferrer">OpenAI Assistants API ドキュメント</a></p>
+            <p><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
