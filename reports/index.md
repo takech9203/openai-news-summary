@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-24](2026/2026-03-24-update-on-the-openai-foundation.md) - OpenAI Foundation の最新情報: 10 億ドル以上の社会投資計画を発表
+- [2026-03-24](2026/2026-03-24-teen-safety-policies-gpt-oss-safeguard.md) - 開発者がティーン向けのより安全な AI 体験を構築するための支援: gpt-oss-safeguard によるティーン安全ポリシーの公開
+- [2026-03-24](2026/2026-03-24-powering-product-discovery-in-chatgpt.md) - ChatGPT における商品発見機能の強化 -- Agentic Commerce Protocol の導入
 - [2026-03-23](2026/2026-03-23-openai-pe-pitch-175-return.md) - OpenAI、プライベートエクイティ向けに 17.5% 最低リターン保証を提示: Anthropic との企業 AI 覇権争いが激化
 - [2026-03-23](2026/2026-03-23-openai-microsoft-ipo-risk-disclosure.md) - OpenAI、IPO 投資家向け文書で Microsoft 依存リスクを明記: インフラ集中リスクと多角化戦略の全容
 - [2026-03-23](2026/2026-03-23-openai-hires-meta-ad-exec.md) - OpenAI、元 Meta 広告幹部 David Dugan を ChatGPT 広告チームのトップに起用

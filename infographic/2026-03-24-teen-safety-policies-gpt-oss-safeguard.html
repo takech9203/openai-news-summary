@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ティーン安全ポリシーの公開: gpt-oss-safeguard - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Pipeline Steps */
+        .pipeline-steps {
+            counter-reset: step;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .pipeline-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .pipeline-step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .pipeline-step-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .pipeline-step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Safety</span>
+                <h1>開発者がティーン向けのより安全な AI 体験を構築するための支援: gpt-oss-safeguard によるティーン安全ポリシーの公開</h1>
+                <p class="date">2026-03-24 | OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- 概要 / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>gpt-oss-safeguard の公開</h3>
+                        <p>OpenAI は開発者がティーン (10 代) ユーザー向けにより安全な AI 体験を構築できるよう、プロンプトベースのティーン安全ポリシーを <code>gpt-oss-safeguard</code> として公開した。年齢固有のリスクをモデレーションするための具体的な指針とツールを含んでいる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F310;</div>
+                    <div class="key-point-content">
+                        <h3>グローバルなティーン安全施策との連携</h3>
+                        <p>本取り組みは、2026 年 3 月 17 日に発表された「Japan Teen Safety Blueprint」をはじめとするグローバルなティーン安全施策の技術的な実装支援として位置づけられる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4BB;</div>
+                    <div class="key-point-content">
+                        <h3>開発者フレンドリーな設計</h3>
+                        <p>開発者が OpenAI の API を利用してアプリケーションを構築する際に、ティーンユーザーに対する安全性を組み込みやすくすることを目的としている。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- gpt-oss-safeguard の概要 -->
+        <section class="section">
+            <h2 class="section-title">gpt-oss-safeguard の主な特徴</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4DD; プロンプトベースのアプローチ</h3>
+                    <p>システムプロンプトに組み込む形式で提供されるため、開発者は既存のアプリケーションアーキテクチャを大幅に変更することなく、ティーン向けの安全対策を導入できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6A8; 年齢固有のリスクモデレーション</h3>
+                    <p>ティーンユーザーに特有のリスク (不適切なコンテンツへの露出、自傷行為に関する情報、過度な個人情報の共有等) に対応したポリシーが定義されている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F513; オープンソースでの提供</h3>
+                    <p>"oss" (Open Source Software) の名称が示す通り、本ポリシーはオープンソースとして公開されており、開発者コミュニティが自由に利用・改善できる形式で提供されている。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- プロンプトベースの安全ポリシーの仕組み -->
+        <section class="section">
+            <h2 class="section-title">プロンプトベースの安全ポリシーの仕組み</h2>
+            <div class="pipeline-steps">
+                <div class="pipeline-step">
+                    <div class="pipeline-step-number">1</div>
+                    <div class="pipeline-step-content">
+                        <h4>システムプロンプトへの統合</h4>
+                        <p>開発者は、gpt-oss-safeguard が提供するポリシーテンプレートを自身のアプリケーションのシステムプロンプトに組み込む</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-number">2</div>
+                    <div class="pipeline-step-content">
+                        <h4>年齢に応じた応答制御</h4>
+                        <p>ティーンユーザーと判定されたセッションでは、安全ポリシーに基づいてモデルの応答が年齢に適した内容に調整される</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-number">3</div>
+                    <div class="pipeline-step-content">
+                        <h4>リスクカテゴリの定義</h4>
+                        <p>暴力、性的コンテンツ、薬物、自傷行為、個人情報漏洩など、ティーンに対して特にリスクの高いカテゴリが明確に定義されている</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-step-number">4</div>
+                    <div class="pipeline-step-content">
+                        <h4>段階的な制限</h4>
+                        <p>リスクレベルに応じて、警告の表示、応答の修正、生成の拒否といった段階的な対応が実装される</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 開発者向けガイダンス -->
+        <section class="section">
+            <h2 class="section-title">開発者向けガイダンス</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4D6; 実装ガイド</h3>
+                    <p>ポリシーの組み込み方法、カスタマイズの手順、テスト方法を含む包括的なドキュメントが提供されている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; ベストプラクティス</h3>
+                    <p>ティーンユーザーを対象としたアプリケーション構築における安全設計のベストプラクティスが整備されている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9EA; 評価ツール</h3>
+                    <p>ポリシーの有効性を検証するためのテストケースと評価フレームワークが提供されている。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- コードサンプル 1: ティーン安全ポリシーの統合 -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">gpt-oss-safeguard のティーン安全ポリシーをシステムプロンプトに組み込む例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# gpt-oss-safeguard のティーン安全ポリシーをシステムプロンプトに組み込む例
+teen_safety_policy = """
+You are an AI assistant serving a teen user (age 13-17).
+Follow the gpt-oss-safeguard teen safety policies:
+- Do not generate content that is sexually explicit or gratuitously violent
+- Do not provide instructions for self-harm or dangerous activities
+- Redirect conversations about mental health crises to appropriate helplines
+- Do not encourage sharing of personal identifying information
+- Maintain age-appropriate language and topics
+- If uncertain about content appropriateness, err on the side of caution
+"""
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "system", "content": teen_safety_policy},
+        {"role": "user", "content": "Hello! Can you help me with my homework?"}
+    ]
+)
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">年齢検証との連携</span>
+                </div>
+                <pre><code class="language-python">def get_system_prompt(user_age: int) -> str:
+    """ユーザーの年齢に応じて適切なシステムプロンプトを返す"""
+    if 13 <= user_age <= 17:
+        # gpt-oss-safeguard のティーン向けポリシーを適用
+        return load_teen_safety_policy()
+    elif user_age >= 18:
+        return load_standard_policy()
+    else:
+        # 13 歳未満のユーザーにはサービスを提供しない
+        raise ValueError("User must be at least 13 years old")</code></pre>
+            </div>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 16px;">gpt-oss-safeguard は、OpenAI の Chat Completions API や Responses API と連携して動作する。開発者はシステムプロンプトにポリシーを組み込むことで、ティーン向けの安全対策を実装できる。開発者のアプリケーション側で実装される年齢検証メカニズムと連携し、ユーザーがティーンであると判定された場合に安全ポリシーが適用されるシステムプロンプトに切り替える設計が推奨される。</p>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph App["開発者アプリケーション"]
+        User(["ユーザー"])
+        AgeVerify["年齢検証<br/>モジュール"]
+        User --> AgeVerify
+    end
+
+    subgraph PolicyLayer["gpt-oss-safeguard ポリシー層"]
+        TeenPolicy["ティーン向け<br/>安全ポリシー"]
+        RiskCategories["リスクカテゴリ<br/>定義"]
+        PromptTemplate["プロンプト<br/>テンプレート"]
+        TeenPolicy --> RiskCategories
+        TeenPolicy --> PromptTemplate
+    end
+
+    subgraph Integration["API 統合層"]
+        SystemPrompt["システム<br/>プロンプト構築"]
+        AgeCheck{"ティーン<br/>ユーザー?"}
+        AgeVerify --> AgeCheck
+        AgeCheck -->|はい| SystemPrompt
+        PromptTemplate --> SystemPrompt
+        AgeCheck -->|いいえ| StandardPrompt["標準<br/>プロンプト"]
+    end
+
+    subgraph OpenAIAPI["OpenAI API"]
+        ChatAPI["Chat Completions<br/>API"]
+        Moderation["Moderation<br/>API"]
+        Model["GPT-4o /<br/>GPT-5"]
+        SystemPrompt --> ChatAPI
+        StandardPrompt --> ChatAPI
+        ChatAPI --> Model
+        ChatAPI --> Moderation
+    end
+
+    subgraph Safety["安全出力制御"]
+        ResponseFilter["応答<br/>フィルタリング"]
+        RiskAssess["リスク<br/>評価"]
+        SafeResponse["安全な応答"]
+        BlockedResponse["生成拒否 /<br/>リダイレクト"]
+        Model --> ResponseFilter
+        Moderation --> RiskAssess
+        ResponseFilter --> RiskAssess
+        RiskAssess -->|安全| SafeResponse
+        RiskAssess -->|リスク検出| BlockedResponse
+    end
+
+    Output(["ティーンに安全な<br/>AI 体験"])
+    SafeResponse --> Output
+    BlockedResponse --> HelpLine(["相談窓口<br/>への誘導"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class User,Output openai
+    class ChatAPI,Model,Moderation dark
+    class TeenPolicy,RiskCategories,PromptTemplate accent
+    class SystemPrompt,StandardPrompt,AgeCheck light
+    class ResponseFilter,RiskAssess,SafeResponse accent
+    class BlockedResponse,HelpLine danger
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>ティーン向け安全対策の標準化</h4>
+                <p>プロンプトベースの安全ポリシーが公式に提供されることで、開発者は独自に安全対策を設計する負担が軽減され、業界として統一的なアプローチが促進される。</p>
+            </div>
+            <div class="use-case">
+                <h4>コンプライアンス対応の容易化</h4>
+                <p>各国の未成年者保護に関する法規制 (米国の COPPA、EU の GDPR、日本の青少年インターネット環境整備法等) への対応において、gpt-oss-safeguard を基盤として活用することで、コンプライアンス対応が容易になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>オープンソースによるコミュニティ主導の改善</h4>
+                <p>ポリシーがオープンソースで公開されることにより、開発者コミュニティからのフィードバックや改善提案を通じて、ポリシーの品質が継続的に向上することが期待される。</p>
+            </div>
+            <div class="use-case">
+                <h4>アプリケーション審査への影響</h4>
+                <p>OpenAI の API 利用規約において、ティーン向けアプリケーションに対して gpt-oss-safeguard の導入が推奨または要件化される可能性がある。</p>
+            </div>
+            <div class="use-case">
+                <h4>多言語対応の必要性</h4>
+                <p>グローバルに展開されるアプリケーションでは、各言語・文化圏に適合したポリシーのカスタマイズが求められる。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI が公開した gpt-oss-safeguard は、開発者がティーンユーザー向けのより安全な AI 体験を構築するためのプロンプトベースの安全ポリシーセットである。年齢固有のリスクモデレーションを実現するための具体的なポリシーテンプレートとガイダンスが提供されており、開発者はシステムプロンプトへの統合という比較的容易な方法で安全対策を導入できる。オープンソースとして公開されているため、開発者コミュニティによる改善と拡張が期待される。本施策は、OpenAI の Teen Safety Blueprint や Japan Teen Safety Blueprint といったグローバルなティーン安全イニシアティブの技術的な実装基盤として、AI エコシステム全体における未成年者保護の水準向上に貢献するものである。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <p><a href="https://openai.com/index/teen-safety-policies-gpt-oss-safeguard" target="_blank" rel="noopener noreferrer">Helping developers build safer AI experiences for teens - OpenAI</a></p>
+            <p><a href="https://openai.com/index/japan-teen-safety-blueprint/" target="_blank" rel="noopener noreferrer">Japan Teen Safety Blueprint</a></p>
+            <p><a href="https://openai.com/index/introducing-the-teen-safety-blueprint/" target="_blank" rel="noopener noreferrer">Introducing the Teen Safety Blueprint</a></p>
+            <p><a href="https://openai.com/index/teen-safety-freedom-and-privacy/" target="_blank" rel="noopener noreferrer">Teen Safety, Freedom, and Privacy</a></p>
+            <p><a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></p>
+            <p><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
