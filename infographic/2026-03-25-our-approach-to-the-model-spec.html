@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Spec へのアプローチ: AI モデルの行動指針を定める公開フレームワーク - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Hierarchy */
+        .hierarchy-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .hierarchy-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .hierarchy-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .hierarchy-item.level-1 {
+            background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            color: white;
+        }
+
+        .hierarchy-item.level-1 .hierarchy-desc {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hierarchy-item.level-2 {
+            background: var(--openai-dark);
+            color: white;
+        }
+
+        .hierarchy-item.level-2 .hierarchy-desc {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .hierarchy-item.level-3 {
+            background: var(--openai-gray);
+            color: var(--text-primary);
+        }
+
+        .hierarchy-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .hierarchy-item.level-3 .hierarchy-number {
+            background: rgba(16, 163, 127, 0.15);
+            color: var(--openai-green);
+        }
+
+        .hierarchy-content {
+            flex: 1;
+        }
+
+        .hierarchy-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .hierarchy-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Impl list */
+        .impl-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impl-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--openai-gray);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .impl-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .impl-list li strong {
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary text */
+        .summary-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Research</span>
+                <h1>Model Spec へのアプローチ: AI モデルの行動指針を定める公開フレームワーク</h1>
+                <p class="date">2026-03-25 | OpenAI Blog (公式)</p>
+            </div>
+        </header>
+
+        <!-- 概要 / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4DC;</div>
+                    <div class="key-point-content">
+                        <h3>Model Spec: AI の行動規範を明文化</h3>
+                        <p>OpenAI は、AI モデルがどのように振る舞うべきかを定義する公開フレームワーク「Model Spec」に関する詳細なアプローチを発表した。モデルの意思決定プロセスと行動基準を明確に示すことで、AI の信頼性を高める重要な取り組みである。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x2696;</div>
+                    <div class="key-point-content">
+                        <h3>3 つの原則のバランス</h3>
+                        <p>安全性 (Safety)、ユーザーの自由 (User Freedom)、説明責任 (Accountability) の 3 つの要素をバランスよく両立させることを目指しており、AI システムの高度化に対応した行動規範の策定が進められている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>透明性と外部検証</h3>
+                        <p>AI 技術が急速に進歩する現在、モデルの行動指針を公開し外部からの検証を可能にすることで、開発者、ユーザー、そして社会全体に対する透明性を確保する。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3 つの原則 -->
+        <section class="section">
+            <h2 class="section-title">Model Spec の 3 つの原則</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">&#x1F6E1;</div>
+                    <div class="stat-label">安全性 (Safety)<br>有害コンテンツの防止、悪用の抑制、社会的に責任ある振る舞い</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&#x1F5FD;</div>
+                    <div class="stat-label">ユーザーの自由 (User Freedom)<br>過度な制限を避け、ユーザーの自律性を尊重</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&#x1F4CB;</div>
+                    <div class="stat-label">説明責任 (Accountability)<br>透明で説明可能な行動、問題の原因特定と是正</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 権限の階層構造 -->
+        <section class="section">
+            <h2 class="section-title">権限の階層構造</h2>
+            <ul class="hierarchy-list">
+                <li class="hierarchy-item level-1">
+                    <div class="hierarchy-number">1</div>
+                    <div class="hierarchy-content">
+                        <h4>OpenAI のポリシー (最上位)</h4>
+                        <p class="hierarchy-desc">OpenAI が定めるグローバルな安全ポリシーと行動規範。すべてのモデルの振る舞いの基盤となる。</p>
+                    </div>
+                </li>
+                <li class="hierarchy-item level-2">
+                    <div class="hierarchy-number">2</div>
+                    <div class="hierarchy-content">
+                        <h4>開発者の指示</h4>
+                        <p class="hierarchy-desc">API を通じてモデルを利用する開発者が設定するシステムプロンプトやカスタム指示。OpenAI のポリシーの範囲内で有効。</p>
+                    </div>
+                </li>
+                <li class="hierarchy-item level-3">
+                    <div class="hierarchy-number">3</div>
+                    <div class="hierarchy-content">
+                        <h4>ユーザーの要求</h4>
+                        <p class="hierarchy-desc">エンドユーザーからの個別の要求。開発者の指示と OpenAI のポリシーの両方の範囲内で処理される。</p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- 安全性とユーザーの自由のバランス -->
+        <section class="section">
+            <h2 class="section-title">安全性とユーザーの自由のバランス</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x2699; デフォルトの行動基準</h3>
+                    <p>モデルは安全で有用な応答をデフォルトとして設計されている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9E0; コンテキストに応じた判断</h3>
+                    <p>教育目的、研究目的、創作目的など、コンテキストに応じて適切な応答が異なることを認識し、柔軟に対応する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6A7; ハードリミットとソフトリミット</h3>
+                    <p>絶対に超えてはならないハードリミット (例: 児童搾取コンテンツの生成禁止) と、状況に応じて調整可能なソフトリミットを区別する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4AC; 透明性の確保</h3>
+                    <p>モデルが要求を拒否する場合、その理由を可能な限り説明する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 説明責任の仕組み -->
+        <section class="section">
+            <h2 class="section-title">説明責任の仕組み</h2>
+            <ul class="impl-list">
+                <li><strong>公開性:</strong> Model Spec 自体を公開文書として公開し、外部の研究者、開発者、一般ユーザーからのフィードバックを受け付ける</li>
+                <li><strong>反復的な改善:</strong> AI 技術の進歩や社会的な要請の変化に応じて、Model Spec を継続的に更新する</li>
+                <li><strong>監査可能性:</strong> モデルの行動が Model Spec に準拠しているかを検証可能な仕組みを構築する</li>
+                <li><strong>ステークホルダーの参加:</strong> AI の行動規範の策定プロセスに、多様なステークホルダーの意見を反映する</li>
+            </ul>
+        </section>
+
+        <!-- 技術的な詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細: モデルへの適用</h2>
+            <ul class="impl-list">
+                <li><strong>トレーニング段階:</strong> RLHF (人間のフィードバックによる強化学習) や Constitutional AI の手法を用いて、Model Spec に定められた行動原則をモデルに学習させる</li>
+                <li><strong>システムプロンプト:</strong> Model Spec の原則は、モデルのシステムプロンプトにも反映され、推論時の行動を制御する</li>
+                <li><strong>安全フィルター:</strong> Model Spec のハードリミットに対応する安全フィルターが、入力および出力の両方に適用される</li>
+                <li><strong>評価と監視:</strong> Model Spec への準拠度を測定するための評価ベンチマークが構築され、継続的な監視が行われる</li>
+            </ul>
+        </section>
+
+        <!-- 開発者向けカスタマイズ -->
+        <section class="section">
+            <h2 class="section-title">開発者向けのカスタマイズ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4DD; システムプロンプトによる指示</h3>
+                    <p>開発者はシステムプロンプトを通じて、モデルのトーン、応答スタイル、対応範囲を調整できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F527; コンテンツフィルターの設定</h3>
+                    <p>一部のコンテンツカテゴリについて、開発者がフィルターの厳格さを調整できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F3AF; ユースケースに応じた設定</h3>
+                    <p>医療、法律、教育など、特定のユースケースに応じた行動パターンを設定できる。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture / Mermaid -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph ModelSpec["Model Spec フレームワーク"]
+        Core["Model Spec<br/>行動指針の定義"]
+        Safety["安全性<br/>(Safety)"]
+        Freedom["ユーザーの自由<br/>(User Freedom)"]
+        Accountability["説明責任<br/>(Accountability)"]
+        Core --> Safety
+        Core --> Freedom
+        Core --> Accountability
+    end
+
+    subgraph Hierarchy["権限の階層構造"]
+        OpenAIPolicy["OpenAI ポリシー<br/>(最上位)"]
+        DevInstructions["開発者の指示<br/>(システムプロンプト)"]
+        UserRequests["ユーザーの要求"]
+        OpenAIPolicy --> DevInstructions
+        DevInstructions --> UserRequests
+    end
+
+    subgraph Limits["制限の種類"]
+        HardLimits["ハードリミット<br/>(絶対的な制限)"]
+        SoftLimits["ソフトリミット<br/>(調整可能な制限)"]
+        Safety --> HardLimits
+        Safety --> SoftLimits
+        Freedom --> SoftLimits
+    end
+
+    subgraph Implementation["実装レイヤー"]
+        Training["トレーニング<br/>(RLHF)"]
+        SystemPrompt["システム<br/>プロンプト"]
+        SafetyFilter["安全<br/>フィルター"]
+        Evaluation["評価・監視<br/>ベンチマーク"]
+        HardLimits --> SafetyFilter
+        SoftLimits --> SystemPrompt
+        Core --> Training
+        Core --> Evaluation
+    end
+
+    subgraph Feedback["フィードバックループ"]
+        Public["公開レビュー"]
+        Research["外部研究者の<br/>検証"]
+        Update["継続的な<br/>更新"]
+        Accountability --> Public
+        Public --> Research
+        Research --> Update
+        Update --> Core
+    end
+
+    subgraph Model["AI モデル"]
+        GPT["GPT-4o / o3 等"]
+        Training --> GPT
+        SystemPrompt --> GPT
+        SafetyFilter --> GPT
+    end
+
+    Output(["安全で有用な<br/>AI 応答"])
+    GPT --> Output
+    Evaluation --> Update
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Core,Output openai
+    class Safety,Freedom,Accountability dark
+    class OpenAIPolicy,DevInstructions,UserRequests accent
+    class HardLimits,SoftLimits,Training,SystemPrompt,SafetyFilter,Evaluation accent
+    class Public,Research,Update light
+    class GPT dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>行動基準の明確化</h4>
+                <p>モデルがどのような原則に基づいて応答を生成するかが明文化されたことで、開発者はアプリケーション設計時にモデルの振る舞いをより正確に予測できるようになる。</p>
+            </div>
+            <div class="use-case">
+                <h4>カスタマイズの指針</h4>
+                <p>システムプロンプトや API パラメータを通じたモデルの行動カスタマイズについて、許容範囲と制限事項が明確になり、開発者がより効果的にモデルを活用できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>コンプライアンス対応</h4>
+                <p>規制当局や顧客に対して、利用している AI モデルの行動基準を Model Spec を参照して説明できるようになり、コンプライアンス対応が容易になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>フィードバック参加</h4>
+                <p>Model Spec の改善プロセスに開発者が参加できるため、実際のユースケースに基づいた行動基準の改善に貢献できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>安全設計の参考</h4>
+                <p>Model Spec のアプローチは、開発者が自身のアプリケーションにおける安全設計を検討する際の参考フレームワークとなる。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="summary-text">
+                OpenAI は、AI モデルの行動指針を体系的に定義する公開フレームワーク「Model Spec」に関する詳細なアプローチを発表した。Model Spec は、安全性、ユーザーの自由、説明責任の 3 つの原則をバランスよく両立させることを目指しており、OpenAI ポリシー、開発者の指示、ユーザーの要求という権限の階層構造を通じて、安全性を最優先としながらもユーザーの自律性を尊重する設計となっている。ハードリミットとソフトリミットの区別、コンテキストに応じた柔軟な判断、そして公開文書としての透明性確保と反復的な改善プロセスにより、AI システムの高度化に対応した行動規範の策定が進められている。Model Spec の公開は、開発者にとってモデルの行動予測の精度向上、カスタマイズの指針明確化、コンプライアンス対応の容易化といった実践的なメリットをもたらすものであり、AI 業界全体における行動規範の標準化に向けた重要な一歩である。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <p><a href="https://openai.com/index/our-approach-to-the-model-spec" target="_blank" rel="noopener noreferrer">https://openai.com/index/our-approach-to-the-model-spec</a></p>
+            <p><a href="https://model-spec.openai.com/" target="_blank" rel="noopener noreferrer">OpenAI Model Spec</a></p>
+            <p><a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety</a></p>
+            <p><a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></p>
+            <p><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
