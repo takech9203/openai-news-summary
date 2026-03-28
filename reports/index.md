@@ -5,9 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-27](2026/2026-03-27-stadler-chatgpt-knowledge-work.md) - STADLER: 230 年の歴史を持つ企業が ChatGPT でナレッジワークを変革
 - [2026-03-25](2026/2026-03-25-safety-bug-bounty.md) - OpenAI Safety Bug Bounty プログラムの導入
 - [2026-03-25](2026/2026-03-25-our-approach-to-the-model-spec.md) - Model Spec へのアプローチ: AI モデルの行動指針を定める公開フレームワーク
 - [2026-03-25](2026/2026-03-25-openai-sora-shutdown-disney-exit.md) - OpenAI が Sora を終了、Disney との 10 億ドル提携も解消
+- [2026-03-25](2026/2026-03-25-openai-sdk-v2-30-computer-action-keys.md) - OpenAI SDK アップデート: Computer Action に keys フィールド追加 (Python v2.30.0 / Node v6.33.0)
 - [2026-03-24](2026/2026-03-24-update-on-the-openai-foundation.md) - OpenAI Foundation の最新情報: 10 億ドル以上の社会投資計画を発表
 - [2026-03-24](2026/2026-03-24-teen-safety-policies-gpt-oss-safeguard.md) - 開発者がティーン向けのより安全な AI 体験を構築するための支援: gpt-oss-safeguard によるティーン安全ポリシーの公開
 - [2026-03-24](2026/2026-03-24-powering-product-discovery-in-chatgpt.md) - ChatGPT における商品発見機能の強化 -- Agentic Commerce Protocol の導入
