@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-03-31](2026/2026-03-31-codex-hooks.md) - Codex Hooks: クラウドコーディングエージェントにライフサイクルフックを導入
+- [2026-03-29](2026/2026-03-29-vfl-wolfsburg-chatgpt.md) - VfL Wolfsburg: ブンデスリーガのプロサッカークラブが ChatGPT をクラブ全体の能力として導入
+- [2026-03-29](2026/2026-03-29-helping-disaster-response-teams-asia.md) - アジアの災害対応チームを AI で支援: OpenAI と Gates Foundation の協働ワークショップ
 - [2026-03-27](2026/2026-03-27-stadler-chatgpt-knowledge-work.md) - STADLER: 230 年の歴史を持つ企業が ChatGPT でナレッジワークを変革
 - [2026-03-25](2026/2026-03-25-safety-bug-bounty.md) - OpenAI Safety Bug Bounty プログラムの導入
 - [2026-03-25](2026/2026-03-25-our-approach-to-the-model-spec.md) - Model Spec へのアプローチ: AI モデルの行動指針を定める公開フレームワーク
