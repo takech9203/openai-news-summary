@@ -6,6 +6,7 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-03-31](2026/2026-03-31-codex-hooks.md) - Codex Hooks: クラウドコーディングエージェントにライフサイクルフックを導入
+- [2026-03-31](2026/2026-03-31-accelerating-the-next-phase-ai.md) - OpenAI、1,220 億ドルの資金調達を発表: シリコンバレー史上最大規模の資金調達ラウンド
 - [2026-03-29](2026/2026-03-29-vfl-wolfsburg-chatgpt.md) - VfL Wolfsburg: ブンデスリーガのプロサッカークラブが ChatGPT をクラブ全体の能力として導入
 - [2026-03-29](2026/2026-03-29-helping-disaster-response-teams-asia.md) - アジアの災害対応チームを AI で支援: OpenAI と Gates Foundation の協働ワークショップ
 - [2026-03-27](2026/2026-03-27-stadler-chatgpt-knowledge-work.md) - STADLER: 230 年の歴史を持つ企業が ChatGPT でナレッジワークを変革
