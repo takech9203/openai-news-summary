@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-02](2026/2026-04-02-openai-acquires-tbpn.md) - OpenAI が AI メディアネットワーク TBPN を買収
+- [2026-04-02](2026/2026-04-02-codex-flexible-pricing-for-teams.md) - Codex がチーム向けに柔軟な従量課金制を導入
 - [2026-04-01](2026/2026-04-01-gradient-labs-ai-banking.md) - Gradient Labs: すべての銀行顧客に AI アカウントマネージャーを提供
 - [2026-03-31](2026/2026-03-31-codex-hooks.md) - Codex Hooks: クラウドコーディングエージェントにライフサイクルフックを導入
 - [2026-03-31](2026/2026-03-31-accelerating-the-next-phase-ai.md) - OpenAI、1,220 億ドルの資金調達を発表: シリコンバレー史上最大規模の資金調達ラウンド
