@@ -5,8 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-03](2026/2026-04-03-openai-leadership-shuffle-simo-leave.md) - OpenAI 経営陣の人事異動: Fidji Simo が医療休暇、Brad Lightcap が新役職へ
+- [2026-04-03](2026/2026-04-03-openai-anti-scam-alliance.md) - OpenAI が Global Anti-Scam Alliance (GASA) に基盤メンバーとして加盟
+- [2026-04-02](2026/2026-04-02-openai-spud-model-agi-claims.md) - OpenAI が新基盤モデル「Spud」を予告、Greg Brockman が AGI 到達への確信を表明
 - [2026-04-02](2026/2026-04-02-openai-acquires-tbpn.md) - OpenAI が AI メディアネットワーク TBPN を買収
 - [2026-04-02](2026/2026-04-02-codex-flexible-pricing-for-teams.md) - Codex がチーム向けに柔軟な従量課金制を導入
+- [2026-04-02](2026/2026-04-02-chatgpt-voice-carplay.md) - ChatGPT Voice モードが Apple CarPlay に対応
 - [2026-04-01](2026/2026-04-01-gradient-labs-ai-banking.md) - Gradient Labs: すべての銀行顧客に AI アカウントマネージャーを提供
 - [2026-03-31](2026/2026-03-31-codex-hooks.md) - Codex Hooks: クラウドコーディングエージェントにライフサイクルフックを導入
 - [2026-03-31](2026/2026-03-31-accelerating-the-next-phase-ai.md) - OpenAI、1,220 億ドルの資金調達を発表: シリコンバレー史上最大規模の資金調達ラウンド
