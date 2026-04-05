@@ -5,7 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-05](2026/2026-04-05-openai-cfo-compute-constraints.md) - OpenAI CFO、コンピュート不足により事業機会を見送っていると発言: 1,220 億ドル調達後も続く計算資源の逼迫
+- [2026-04-04](2026/2026-04-04-microsoft-in-house-ai-openai-partnership-shift.md) - Microsoft、自社 AI モデル 3 種を発表し Texas データセンターを引き継ぎ: OpenAI パートナーシップの構造的転換が加速
 - [2026-04-03](2026/2026-04-03-openai-leadership-shuffle-simo-leave.md) - OpenAI 経営陣の人事異動: Fidji Simo が医療休暇、Brad Lightcap が新役職へ
+- [2026-04-03](2026/2026-04-03-openai-cmo-kate-rouch-steps-down.md) - OpenAI CMO Kate Rouch が退任 -- 乳がん治療からの回復に専念
 - [2026-04-03](2026/2026-04-03-openai-anti-scam-alliance.md) - OpenAI が Global Anti-Scam Alliance (GASA) に基盤メンバーとして加盟
 - [2026-04-02](2026/2026-04-02-openai-spud-model-agi-claims.md) - OpenAI が新基盤モデル「Spud」を予告、Greg Brockman が AGI 到達への確信を表明
 - [2026-04-02](2026/2026-04-02-openai-acquires-tbpn.md) - OpenAI が AI メディアネットワーク TBPN を買収
