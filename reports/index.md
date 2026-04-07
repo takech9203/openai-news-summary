@@ -5,7 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-06](2026/2026-04-06-openai-safety-fellowship.md) - OpenAI Safety Fellowship の発表: 次世代 AI 安全性研究者を育成する新プログラム
 - [2026-04-06](2026/2026-04-06-openai-ark-etf-pre-ipo.md) - OpenAI、Cathie Wood 率いる ARK ETF に組み込み: 個人投資家に IPO 前株式へのアクセスを提供
+- [2026-04-06](2026/2026-04-06-industrial-policy-intelligence-age.md) - OpenAI、「Intelligence Age のための産業政策」を発表
 - [2026-04-05](2026/2026-04-05-openai-secret-nonprofit-funding.md) - OpenAI、非営利研究団体への秘密資金提供が発覚: 独立性と利益相反への懸念が拡大
 - [2026-04-05](2026/2026-04-05-openai-cfo-compute-constraints.md) - OpenAI CFO、コンピュート不足により事業機会を見送っていると発言: 1,220 億ドル調達後も続く計算資源の逼迫
 - [2026-04-04](2026/2026-04-04-microsoft-in-house-ai-openai-partnership-shift.md) - Microsoft、自社 AI モデル 3 種を発表し Texas データセンターを引き継ぎ: OpenAI パートナーシップの構造的転換が加速
