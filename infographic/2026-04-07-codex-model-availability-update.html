@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex のモデル選択肢を更新 -- 旧モデルを段階的に廃止 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-primary);
+        }
+
+        .comparison-card.before ul li::before {
+            content: "\2717 ";
+            color: #DC2626;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .comparison-card.after ul li::before {
+            content: "\2713 ";
+            color: #059669;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Access Method Table */
+        .access-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .access-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .access-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .access-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .access-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            padding: 4px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .access-table {
+                font-size: 12px;
+            }
+
+            .access-table thead th,
+            .access-table tbody td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <h1>Codex のモデル選択肢を更新 -- 旧モデルを段階的に廃止</h1>
+                <p class="date">2026-04-07 | Codex Changelog</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>旧モデルの段階的廃止</h3>
+                        <p>ChatGPT サインインで Codex を利用するユーザー向けに、GPT-5.1 系および GPT-5.2 系 Codex モデルがモデルピッカーから非表示化。2026 年 4 月 14 日には完全削除される。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.4 ファミリーへの統合</h3>
+                        <p>OpenAI は GPT-5.4 系を主力モデルとして位置づけ、機能改善やパフォーマンス最適化をこの系列に集中。モデル廃止サイクルの一環として旧モデルを整理。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F511;</div>
+                    <div class="key-point-content">
+                        <h3>API キーでの継続アクセス</h3>
+                        <p>ChatGPT サインインでは利用可能なモデルが限定されるが、API キーでサインインまたはモデルプロバイダーを設定することで、API サポート対象の全モデルにアクセス可能。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: モデル選択肢の変更</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>廃止対象モデル (4 月 14 日に削除)</h4>
+                    <ul>
+                        <li>gpt-5.2-codex</li>
+                        <li>gpt-5.1-codex-mini</li>
+                        <li>gpt-5.1-codex-max</li>
+                        <li>gpt-5.1-codex</li>
+                        <li>gpt-5.1</li>
+                        <li>gpt-5</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>引き続き利用可能なモデル</h4>
+                    <ul>
+                        <li>gpt-5.4</li>
+                        <li>gpt-5.4-mini</li>
+                        <li>gpt-5.3-codex</li>
+                        <li>gpt-5.2</li>
+                        <li>gpt-5.3-codex-spark (Pro のみ)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Stats -->
+        <section class="section">
+            <h2 class="section-title">移行スケジュール</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">4/7</div>
+                    <div class="stat-label">モデルピッカーから非表示</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4/14</div>
+                    <div class="stat-label">ChatGPT サインインから完全削除</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">廃止対象モデル数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">継続利用可能モデル数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">主な変更内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F6AB; モデルピッカーからの非表示化</h3>
+                    <p>2026 年 4 月 7 日より、ChatGPT サインインで Codex を利用する場合、gpt-5.2-codex、gpt-5.1 系、gpt-5 の各モデルがモデルピッカーに表示されなくなった。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F5D1; 完全削除のスケジュール</h3>
+                    <p>2026 年 4 月 14 日に上記モデルは ChatGPT サインインでの Codex から完全に削除され、この日以降は利用できなくなる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; 引き続き利用可能</h3>
+                    <p>gpt-5.4、gpt-5.4-mini、gpt-5.3-codex、gpt-5.2 は全ユーザーが利用可能。gpt-5.3-codex-spark は ChatGPT Pro ユーザー限定。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50C; API キーによるアクセス</h3>
+                    <p>API サポート対象の他モデルを利用したい場合は、API キーでサインインするか、モデルプロバイダーを設定することで引き続きアクセスが可能。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Access Method Comparison Table -->
+        <section class="section">
+            <h2 class="section-title">アクセス方法の比較</h2>
+            <table class="access-table">
+                <thead>
+                    <tr>
+                        <th>サインイン方法</th>
+                        <th>利用可能なモデル</th>
+                        <th>制限</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ChatGPT サインイン</td>
+                        <td>gpt-5.4, gpt-5.4-mini, gpt-5.3-codex, gpt-5.2</td>
+                        <td>旧モデルは 4 月 14 日に完全削除</td>
+                    </tr>
+                    <tr>
+                        <td>ChatGPT Pro サインイン</td>
+                        <td>上記 + gpt-5.3-codex-spark</td>
+                        <td>旧モデルは 4 月 14 日に完全削除</td>
+                    </tr>
+                    <tr>
+                        <td>API キーサインイン</td>
+                        <td>API サポート対象の全モデル</td>
+                        <td>API の利用制限に準拠</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Mermaid Diagram -->
+        <section class="section">
+            <h2 class="section-title">モデル移行タイムライン</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Apr7["2026-04-07"]
+        Hide["モデルピッカーから非表示"]
+    end
+
+    subgraph Apr14["2026-04-14"]
+        Remove["ChatGPT サインインから完全削除"]
+    end
+
+    subgraph Deprecated["廃止対象モデル"]
+        M1["gpt-5.2-codex"]
+        M2["gpt-5.1-codex-mini"]
+        M3["gpt-5.1-codex-max"]
+        M4["gpt-5.1-codex"]
+        M5["gpt-5.1"]
+        M6["gpt-5"]
+    end
+
+    subgraph Available["引き続き利用可能"]
+        A1["gpt-5.4"]
+        A2["gpt-5.4-mini"]
+        A3["gpt-5.3-codex"]
+        A4["gpt-5.2"]
+        A5["gpt-5.3-codex-spark\n(Pro のみ)"]
+    end
+
+    Deprecated --> Hide --> Remove
+    Available --> Continue(["継続利用可能"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef deprecated fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class A1,A2,A3,A4,A5 openai
+    class Hide,Remove dark
+    class Continue light
+    class M1,M2,M3,M4,M5,M6 deprecated
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>&#x26A0; 旧モデルからの移行が必須</h4>
+                <p>gpt-5.1 系および gpt-5.2-codex を利用しているユーザーは、2026 年 4 月 14 日までに gpt-5.4 系または gpt-5.3-codex への移行を完了する必要がある。移行が間に合わない場合、ワークフローが中断する可能性がある。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4C8; GPT-5.4 ファミリーへの統合</h4>
+                <p>OpenAI は GPT-5.4 系を主力モデルとして位置づけており、今後の機能改善やパフォーマンス最適化もこの系列に集中することが予想される。早期の移行により、最新の改善を享受できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F511; API キー利用の検討</h4>
+                <p>ChatGPT サインインでは利用可能なモデルが限定されるため、幅広いモデル選択が必要な場合は API キーでのサインインへの切り替えを検討すべきである。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F451; ChatGPT Pro の付加価値</h4>
+                <p>gpt-5.3-codex-spark は ChatGPT Pro ユーザー限定のモデルであり、Pro プランの価値が相対的に向上している。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F50D; ワークフローの検証</h4>
+                <p>旧モデルに依存するプロンプトやワークフローが存在する場合、新モデルでの動作検証を早急に行う必要がある。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-text">
+                OpenAI は Codex のモデル選択肢を整理し、ChatGPT サインインユーザー向けに旧世代モデルの段階的廃止を開始した。2026 年 4 月 7 日にモデルピッカーから非表示となった gpt-5.2-codex、gpt-5.1 系、gpt-5 の各モデルは、4 月 14 日に完全に削除される。引き続き利用可能なモデルは gpt-5.4、gpt-5.4-mini、gpt-5.3-codex、gpt-5.2 であり、ChatGPT Pro ユーザーは gpt-5.3-codex-spark も選択できる。これは GPT-5.4 ファミリーへの統合を進めるモデル廃止サイクルの一環であり、開発者は 4 月 14 日の完全削除までにワークフローの移行と検証を完了することが推奨される。API サポート対象の他のモデルを利用したい場合は、API キーでのサインインまたはモデルプロバイダーの設定が必要である。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <ul>
+                <li><a href="https://developers.openai.com/codex/changelog/" target="_blank" rel="noopener noreferrer">https://developers.openai.com/codex/changelog/</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/api-reference</a></li>
+                <li><a href="https://platform.openai.com/docs/models" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/models</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">https://openai.com/news</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

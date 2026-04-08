@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-07](2026/2026-04-07-new-yorker-altman-investigation.md) - The New Yorker が Sam Altman の経営手法を徹底検証
+- [2026-04-07](2026/2026-04-07-musk-seeks-altman-ouster.md) - Musk が OpenAI 訴訟で Altman CEO 解任を要求
+- [2026-04-07](2026/2026-04-07-iran-threatens-stargate-uae.md) - イランが UAE の OpenAI Stargate データセンターへの攻撃を示唆
+- [2026-04-07](2026/2026-04-07-codex-model-availability-update.md) - Codex のモデル選択肢を更新 -- 旧モデルを段階的に廃止
 - [2026-04-06](2026/2026-04-06-openai-safety-fellowship.md) - OpenAI Safety Fellowship の発表: 次世代 AI 安全性研究者を育成する新プログラム
 - [2026-04-06](2026/2026-04-06-openai-ark-etf-pre-ipo.md) - OpenAI、Cathie Wood 率いる ARK ETF に組み込み: 個人投資家に IPO 前株式へのアクセスを提供
 - [2026-04-06](2026/2026-04-06-industrial-policy-intelligence-age.md) - OpenAI、「Intelligence Age のための産業政策」を発表
