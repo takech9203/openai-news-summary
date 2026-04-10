@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-09](2026/2026-04-09-openai-full-fan-mode-contest.md) - OpenAI、インド市場向け「Full Fan Mode」コンテストを開催: IPL 観戦チケットが当たる Instagram キャンペーン
+- [2026-04-09](2026/2026-04-09-cyberagent-chatgpt-enterprise-codex.md) - CyberAgent が ChatGPT Enterprise と Codex で広告・メディア・ゲーム事業の AI 活用を加速
 - [2026-04-08](2026/2026-04-08-next-phase-of-enterprise-ai.md) - OpenAI、エンタープライズ AI の次なるフェーズを発表: Frontier、ChatGPT Enterprise、Codex、全社規模 AI エージェントで企業導入を加速
 - [2026-04-08](2026/2026-04-08-introducing-child-safety-blueprint.md) - OpenAI が「Child Safety Blueprint」を発表: 子どもの安全を守る AI 開発の包括的フレームワーク
 - [2026-04-07](2026/2026-04-07-new-yorker-altman-investigation.md) - The New Yorker が Sam Altman の経営手法を徹底検証
