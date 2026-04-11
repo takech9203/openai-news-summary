@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-10](2026/2026-04-10-stargate-leaders-depart-for-meta.md) - OpenAI Stargate データセンター構想の主要リーダー 3 名が退社し Meta に移籍へ
+- [2026-04-10](2026/2026-04-10-pachocki-ai-research-intern.md) - OpenAI チーフサイエンティスト Pachocki が「AI は人間のリサーチインターンに匹敵する水準に近づいている」と発言
+- [2026-04-10](2026/2026-04-10-openai-academy-launch.md) - OpenAI Academy を正式ローンチ -- 24 以上の教育リソースでチーム・業種別 AI 活用を支援
+- [2026-04-10](2026/2026-04-10-eu-dsa-chatgpt-regulation.md) - EU が ChatGPT を DSA (デジタルサービス法) の「超大規模プラットフォーム」に分類検討 -- より厳格な規制へ
+- [2026-04-10](2026/2026-04-10-axios-developer-tool-compromise.md) - OpenAI が Axios 開発者ツールのサプライチェーン攻撃に対応 -- macOS アプリのコード署名証明書をローテーション
+- [2026-04-10](2026/2026-04-10-altman-home-molotov-attack.md) - OpenAI CEO Sam Altman の自宅にモロトフ・カクテルが投げ込まれる -- 容疑者を逮捕
 - [2026-04-09](2026/2026-04-09-openai-full-fan-mode-contest.md) - OpenAI、インド市場向け「Full Fan Mode」コンテストを開催: IPL 観戦チケットが当たる Instagram キャンペーン
 - [2026-04-09](2026/2026-04-09-cyberagent-chatgpt-enterprise-codex.md) - CyberAgent が ChatGPT Enterprise と Codex で広告・メディア・ゲーム事業の AI 活用を加速
 - [2026-04-08](2026/2026-04-08-next-phase-of-enterprise-ai.md) - OpenAI、エンタープライズ AI の次なるフェーズを発表: Frontier、ChatGPT Enterprise、Codex、全社規模 AI エージェントで企業導入を加速

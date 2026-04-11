@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI が Axios 開発者ツールのサプライチェーン攻撃に対応 -- macOS アプリのコード署名証明書をローテーション - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .category-badge.security {
+            background: var(--danger);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .source {
+            font-size: 13px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        /* Notice Banner */
+        .notice-banner {
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            border: 2px solid #F59E0B;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .notice-banner .icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .notice-banner p {
+            font-size: 14px;
+            color: #92400E;
+            line-height: 1.6;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .section-title .icon {
+            font-size: 1.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, var(--openai-green), transparent);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            background: var(--openai-gray);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .key-point-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: white;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .key-point-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .key-point-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .key-point-card .icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point-card .text {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .key-point-card .text strong {
+            color: var(--openai-green);
+        }
+
+        /* Before/After */
+        .before-after-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .before-card, .after-card {
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .before-card {
+            background: linear-gradient(135deg, #FEF2F2, #FECACA);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .after-card {
+            background: linear-gradient(135deg, #ECFDF5, #A7F3D0);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+        }
+
+        .before-card h3, .after-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .before-card h3 { color: #DC2626; }
+        .after-card h3 { color: #059669; }
+
+        .before-card ul, .after-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .before-card li, .after-card li {
+            font-size: 14px;
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .before-card li::before {
+            content: "\2716";
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-size: 12px;
+        }
+
+        .after-card li::before {
+            content: "\2714";
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-size: 12px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .feature-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .feature-card li::before {
+            content: "\25B8";
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Steps */
+        .steps-container {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .step-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Impact Table */
+        .impact-table-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .impact-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .impact-table thead {
+            background: var(--openai-dark);
+            color: white;
+        }
+
+        .impact-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .impact-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .impact-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .impact-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .impact-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .impact-table tr:hover td {
+            background: rgba(16, 163, 127, 0.04);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-badge.updated { background: #ECFDF5; color: #059669; }
+        .status-badge.no-impact { background: #F3F4F6; color: #6B7280; }
+        .status-badge.confirmed { background: #EFF6FF; color: #2563EB; }
+
+        /* Supply Chain Table */
+        .supply-chain-table-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+
+        /* Use Case Cards */
+        .usecase-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--openai-green);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .usecase-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .usecase-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .usecase-card p, .usecase-card li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .usecase-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .usecase-card li {
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .usecase-card li::before {
+            content: "\25C6";
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-size: 10px;
+            top: 8px;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .summary-box h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #065F46;
+        }
+
+        .summary-box p {
+            font-size: 15px;
+            color: #065F46;
+            line-height: 1.8;
+        }
+
+        /* Disclaimer */
+        .disclaimer-box {
+            background: #FFF7ED;
+            border: 1px solid #FDBA74;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 24px;
+        }
+
+        .disclaimer-box p {
+            font-size: 13px;
+            color: #9A3412;
+            line-height: 1.6;
+        }
+
+        .disclaimer-box strong {
+            color: #C2410C;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            color: white;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-top: 32px;
+        }
+
+        .footer h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            padding: 6px 0;
+        }
+
+        .footer-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer .copyright {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            opacity: 0.5;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header h1 { font-size: 1.5rem; }
+            .before-after-grid { grid-template-columns: 1fr; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .header { padding: 32px 20px; }
+            .container { padding: 24px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <span class="category-badge security">SECURITY</span>
+            <span class="category-badge">OpenAI News</span>
+            <h1>OpenAI が Axios 開発者ツールのサプライチェーン攻撃に対応 -- macOS アプリのコード署名証明書をローテーション</h1>
+            <div class="date">2026-04-10</div>
+            <div class="source">OpenAI News (Security)</div>
+        </div>
+    </header>
+
+    <!-- Notice Banner -->
+    <div class="notice-banner">
+        <span class="icon">&#x26A0;&#xFE0F;</span>
+        <p><strong>注記:</strong> 本レポートは、公式ブログ記事が Cloudflare のアクセス制限により全文取得できなかったため、公開されている概要情報および複数のニュースソースに基づいて作成されている。正確な詳細については公式ページを参照されたい。</p>
+    </div>
+
+    <!-- 概要 (Key Points) -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F4CB;</span>
+            概要
+        </div>
+        <div class="key-points">
+            <div class="key-point-card">
+                <span class="icon">&#x1F6E1;&#xFE0F;</span>
+                <div class="text">OpenAI は 2026 年 4 月 10 日、サードパーティ製開発者ツール「<strong>Axios</strong>」に関連するセキュリティ問題を特定し、これに対応したことを発表した。</div>
+            </div>
+            <div class="key-point-card">
+                <span class="icon">&#x1F517;</span>
+                <div class="text">この問題は、OpenAI の <strong>macOS アプリケーション</strong> (ChatGPT および Codex) のコード署名プロセスで使用されていた Axios ツールにおける<strong>サプライチェーン攻撃</strong>に起因するものである。</div>
+            </div>
+            <div class="key-point-card">
+                <span class="icon">&#x1F504;</span>
+                <div class="text">OpenAI は問題の特定後、直ちに macOS の<strong>コード署名証明書をローテーション</strong>し、影響を受けるすべての Mac アプリケーションを更新した。</div>
+            </div>
+            <div class="key-point-card">
+                <span class="icon">&#x2705;</span>
+                <div class="text"><strong>ユーザーデータの侵害は確認されておらず</strong>、OpenAI のシステムのセキュリティは維持されている。ただし、万全を期すため、すべての macOS ユーザーに対して最新バージョンへのアップデートを推奨している。</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Before/After -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F504;</span>
+            対応前後の比較
+        </div>
+        <div class="before-after-grid">
+            <div class="before-card">
+                <h3>&#x26A0;&#xFE0F; 対応前 (Before)</h3>
+                <ul>
+                    <li>Axios 開発者ツールがサプライチェーン攻撃により侵害</li>
+                    <li>macOS アプリのコード署名プロセスが影響を受ける可能性</li>
+                    <li>旧コード署名証明書が使用されている状態</li>
+                    <li>ChatGPT / Codex macOS アプリが旧証明書で署名</li>
+                </ul>
+            </div>
+            <div class="after-card">
+                <h3>&#x2705; 対応後 (After)</h3>
+                <ul>
+                    <li>セキュリティ問題を特定し、原因を排除</li>
+                    <li>新しいコード署名証明書を発行・適用</li>
+                    <li>ChatGPT / Codex macOS アプリを新証明書で再署名</li>
+                    <li>ユーザーデータの安全性を確認済み</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 主要機能/内容 -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F4E2;</span>
+            インシデントの概要
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card full-width">
+                <div class="card-icon">&#x26D4;</div>
+                <h3>サプライチェーン攻撃の性質</h3>
+                <p>今回のセキュリティインシデントは、OpenAI 自身のコードやインフラストラクチャに対する直接的な攻撃ではなく、ソフトウェアサプライチェーンにおけるサードパーティ製ツールの侵害 (サプライチェーン攻撃) である。macOS アプリケーションのコード署名・証明プロセスで使用されていた「Axios」と呼ばれる開発者ツールにおいてセキュリティ上の問題が発見された。</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F50D;</div>
+                <h3>攻撃の特徴</h3>
+                <p>直接的なコードの改ざんではなく、開発・ビルド・配布プロセスの信頼されたコンポーネントを標的とするため、検出が困難であるという特徴がある。</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4E6;</div>
+                <h3>依存関係の侵害</h3>
+                <p>ソフトウェア開発プロセスの上流にある依存関係 (ライブラリ、ツール、サービスなど) を侵害し、最終的な製品やサービスに間接的に影響を与える攻撃手法である。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- OpenAI の対応手順 -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F6E0;&#xFE0F;</span>
+            OpenAI の対応手順
+        </div>
+        <div class="steps-container">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>問題の特定</h4>
+                    <p>Axios 開発者ツールにおけるセキュリティ上の脆弱性を発見・特定</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>証明書のローテーション</h4>
+                    <p>macOS アプリケーションに使用されていたコード署名証明書を新しい証明書に置き換え</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>アプリケーションの更新</h4>
+                    <p>新しい証明書で署名された ChatGPT および Codex の macOS アプリケーションをリリース</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>影響範囲の確認</h4>
+                    <p>ユーザーデータへの侵害がないことを確認し、OpenAI のシステム全体のセキュリティが維持されていることを検証</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ユーザーデータへの影響 -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F512;</span>
+            ユーザーデータへの影響
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card full-width">
+                <div class="card-icon">&#x2705;</div>
+                <h3>データ侵害なし</h3>
+                <p>OpenAI は、今回のインシデントによるユーザーデータの漏洩や侵害は確認されていないと明言している。サプライチェーン上のツールに問題があったものの、OpenAI のシステム自体は安全な状態を維持しており、ユーザーの会話データ、アカウント情報、API キーなどへのアクセスは発生していないとされる。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ユーザーへの推奨事項 -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F4DD;</span>
+            ユーザーへの推奨事項
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4BB;</div>
+                <h3>ChatGPT macOS アプリ</h3>
+                <p>最新バージョンへのアップデートを推奨</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4BB;</div>
+                <h3>Codex macOS アプリ</h3>
+                <p>最新バージョンへのアップデートを推奨</p>
+            </div>
+            <div class="feature-card full-width">
+                <div class="card-icon">&#x1F6A8;</div>
+                <h3>更新方法</h3>
+                <p>macOS 上で OpenAI のアプリケーションを使用しているユーザーは、App Store またはアプリ内の更新機能を通じて、速やかに最新バージョンに更新することが推奨される。OpenAI は「万全を期すため (out of an abundance of caution)」として、これらの対応を推奨している。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技術的な詳細 -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x2699;&#xFE0F;</span>
+            技術的な詳細
+        </div>
+
+        <!-- サプライチェーン攻撃とは -->
+        <div class="feature-card full-width" style="margin-bottom: 20px;">
+            <div class="card-icon">&#x1F4DA;</div>
+            <h3>サプライチェーン攻撃 (Supply Chain Attack) とは</h3>
+            <p>ソフトウェア開発ライフサイクルの中で使用されるサードパーティ製のコンポーネント、ツール、サービスを侵害することにより、最終的なソフトウェア製品に悪意のあるコードや脆弱性を注入する攻撃手法である。</p>
+        </div>
+
+        <!-- サプライチェーン攻撃の特徴テーブル -->
+        <div class="supply-chain-table-wrapper">
+            <h3 style="font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">&#x1F50E; サプライチェーン攻撃の主な特徴</h3>
+            <table class="impact-table">
+                <thead>
+                    <tr>
+                        <th>特徴</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>間接的な攻撃経路</strong></td>
+                        <td>標的のコードを直接改ざんするのではなく、依存関係を通じて間接的に影響を与える</td>
+                    </tr>
+                    <tr>
+                        <td><strong>信頼関係の悪用</strong></td>
+                        <td>開発者が信頼しているツールやライブラリを介して攻撃を行う</td>
+                    </tr>
+                    <tr>
+                        <td><strong>広範な影響</strong></td>
+                        <td>侵害されたコンポーネントを使用するすべてのソフトウェアが影響を受ける可能性がある</td>
+                    </tr>
+                    <tr>
+                        <td><strong>検出の困難さ</strong></td>
+                        <td>正規の開発プロセスの中で発生するため、通常のセキュリティ検査では検出しにくい</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 過去の事例 -->
+        <div class="feature-card full-width" style="margin-top: 20px; margin-bottom: 20px;">
+            <div class="card-icon">&#x1F4C5;</div>
+            <h3>代表的なサプライチェーン攻撃の事例</h3>
+            <p>近年のサプライチェーン攻撃の代表的な事例としては、SolarWinds 攻撃 (2020 年)、Codecov 攻撃 (2021 年)、Log4Shell 脆弱性 (2021 年) などがあり、ソフトウェア業界全体でサプライチェーンセキュリティへの関心が高まっている。</p>
+        </div>
+
+        <!-- macOS コード署名と証明書ローテーション -->
+        <div class="feature-card full-width" style="margin-bottom: 20px;">
+            <div class="card-icon">&#x1F4DC;</div>
+            <h3>macOS コード署名と証明書ローテーション</h3>
+            <p style="margin-bottom: 12px;">macOS のコード署名は、Apple のセキュリティフレームワークにおいて、アプリケーションの完全性と発行元の身元を保証するための重要なメカニズムである。</p>
+        </div>
+
+        <div class="feature-grid" style="margin-bottom: 20px;">
+            <div class="feature-card">
+                <div class="card-icon">&#x2705;</div>
+                <h3>発行元の認証</h3>
+                <p>アプリケーションが信頼された開発者によって作成されたことを証明</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F6E1;&#xFE0F;</div>
+                <h3>改ざん検知</h3>
+                <p>アプリケーションのバイナリが署名後に変更されていないことを保証</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F6AA;</div>
+                <h3>Gatekeeper 連携</h3>
+                <p>macOS の Gatekeeper 機能と連携し、信頼されたアプリケーションのみの実行を許可</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">&#x1F4E4;</div>
+                <h3>Notarization</h3>
+                <p>Apple の公証 (Notarization) プロセスを通じて、マルウェアのスキャンと配布の承認を実施</p>
+            </div>
+        </div>
+
+        <!-- 証明書ローテーションの手順 -->
+        <div class="steps-container" style="margin-bottom: 20px;">
+            <h3 style="font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">&#x1F504; 証明書ローテーションの手順</h3>
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>新しい証明書の発行</h4>
+                    <p>Apple Developer Program を通じて新しいコード署名証明書を取得</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>既存証明書の失効</h4>
+                    <p>侵害された可能性のある既存の証明書を失効 (Revoke) させる</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>アプリケーションの再署名</h4>
+                    <p>ChatGPT および Codex の macOS アプリケーションを新しい証明書で再署名</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>再公証 (Re-Notarization)</h4>
+                    <p>Apple の公証プロセスを再度通過させ、配布の承認を取得</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>アップデートの配布</h4>
+                    <p>更新されたアプリケーションをユーザーに配布</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mermaid Diagram -->
+        <div class="section-title" style="margin-top: 28px;">
+            <span class="icon">&#x1F5FA;&#xFE0F;</span>
+            サプライチェーン攻撃のフロー
+        </div>
+        <div class="mermaid-container">
+            <div class="mermaid">
+flowchart TD
+    subgraph Attack["サプライチェーン攻撃の経路"]
+        Attacker(["攻撃者"])
+        Axios["Axios<br/>開発者ツール"]
+        Attacker -->|侵害| Axios
+    end
+
+    subgraph BuildProcess["OpenAI ビルドプロセス"]
+        SourceCode["OpenAI<br/>ソースコード"]
+        Build["ビルド<br/>パイプライン"]
+        CodeSign["コード署名<br/>プロセス"]
+        OldCert["旧コード署名<br/>証明書"]
+        SourceCode --> Build
+        Build --> CodeSign
+        Axios -.->|影響| CodeSign
+        OldCert --> CodeSign
+    end
+
+    subgraph Distribution["配布"]
+        MacApp["macOS アプリ<br/>(ChatGPT / Codex)"]
+        Users(["macOS<br/>ユーザー"])
+        CodeSign --> MacApp
+        MacApp --> Users
+    end
+
+    subgraph Response["OpenAI の対応"]
+        Detect["問題の<br/>特定"]
+        NewCert["新しい証明書<br/>の発行"]
+        Resign["アプリの<br/>再署名"]
+        Update["アップデート<br/>の配布"]
+        Detect --> NewCert
+        NewCert --> Resign
+        Resign --> Update
+    end
+
+    Update -->|最新版| Users
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class SourceCode,Build,MacApp openai
+    class CodeSign,OldCert,NewCert,Resign dark
+    class Detect,Update,Users light
+    class Attacker,Axios danger
+            </div>
+        </div>
+
+        <!-- 影響範囲の整理 -->
+        <div class="section-title" style="margin-top: 28px;">
+            <span class="icon">&#x1F4CA;</span>
+            影響範囲の整理
+        </div>
+        <div class="impact-table-wrapper">
+            <table class="impact-table">
+                <thead>
+                    <tr>
+                        <th>対象</th>
+                        <th>影響</th>
+                        <th>対応状況</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>&#x1F4BB; macOS 版 ChatGPT アプリ</td>
+                        <td>コード署名証明書のローテーションが必要</td>
+                        <td><span class="status-badge updated">更新済み</span></td>
+                    </tr>
+                    <tr>
+                        <td>&#x1F4BB; macOS 版 Codex アプリ</td>
+                        <td>コード署名証明書のローテーションが必要</td>
+                        <td><span class="status-badge updated">更新済み</span></td>
+                    </tr>
+                    <tr>
+                        <td>&#x2601;&#xFE0F; OpenAI API</td>
+                        <td>影響なし</td>
+                        <td><span class="status-badge no-impact">--</span></td>
+                    </tr>
+                    <tr>
+                        <td>&#x1F310; Web 版 ChatGPT</td>
+                        <td>影響なし</td>
+                        <td><span class="status-badge no-impact">--</span></td>
+                    </tr>
+                    <tr>
+                        <td>&#x1F4F1; iOS / Android アプリ</td>
+                        <td>影響なし</td>
+                        <td><span class="status-badge no-impact">--</span></td>
+                    </tr>
+                    <tr>
+                        <td>&#x1F5A5;&#xFE0F; Windows アプリ</td>
+                        <td>影響なし</td>
+                        <td><span class="status-badge no-impact">--</span></td>
+                    </tr>
+                    <tr>
+                        <td>&#x1F464; ユーザーデータ</td>
+                        <td>侵害なし</td>
+                        <td><span class="status-badge confirmed">確認済み</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 開発者への影響 -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F468;&#x200D;&#x1F4BB;</span>
+            開発者への影響
+        </div>
+
+        <!-- macOS アプリ利用者 -->
+        <div class="usecase-card">
+            <h3>&#x1F34E; macOS アプリ利用者への影響</h3>
+            <p>今回のインシデントは、macOS 上で ChatGPT または Codex アプリケーションを使用しているすべてのユーザーに影響する。ただし、ユーザーデータの侵害は確認されていないため、必要な対応は最新バージョンへのアップデートのみである。</p>
+            <ul>
+                <li><strong>即座のアクション:</strong> macOS 版 ChatGPT および Codex アプリを最新バージョンに更新する。App Store またはアプリ内の自動更新機能を使用して、新しい証明書で署名されたバージョンを取得する</li>
+                <li><strong>API キーの確認:</strong> 念のため、OpenAI API キーに不審な利用がないか確認することを推奨する。OpenAI はユーザーデータの侵害はないと確認しているが、セキュリティのベストプラクティスとして定期的な確認は有益である</li>
+                <li><strong>古いバージョンの継続利用に関する注意:</strong> 旧証明書で署名されたアプリケーションは、証明書の失効により将来的に macOS の Gatekeeper によってブロックされる可能性がある</li>
+            </ul>
+        </div>
+
+        <!-- OpenAI API 開発者 -->
+        <div class="usecase-card">
+            <h3>&#x2601;&#xFE0F; OpenAI API 開発者への影響</h3>
+            <p>OpenAI API を直接使用している開発者への直接的な影響はない。今回のインシデントは macOS アプリケーションのコード署名プロセスに限定されており、API エンドポイント、認証メカニズム、データ処理パイプラインには影響がない。</p>
+        </div>
+
+        <!-- サプライチェーンセキュリティの教訓 -->
+        <div class="usecase-card">
+            <h3>&#x1F4A1; サプライチェーンセキュリティの教訓</h3>
+            <p>本インシデントは、ソフトウェア開発におけるサプライチェーンセキュリティの重要性を改めて浮き彫りにしている。</p>
+            <ul>
+                <li><strong>依存関係の監査:</strong> 使用しているサードパーティ製ツールやライブラリのセキュリティを定期的に監査することの重要性</li>
+                <li><strong>SBOM (Software Bill of Materials) の管理:</strong> ソフトウェア構成要素の一覧を管理し、脆弱性が発見された場合に迅速に影響範囲を特定できる体制の構築</li>
+                <li><strong>証明書管理のベストプラクティス:</strong> コード署名証明書の適切な管理、定期的なローテーション、およびインシデント発生時の迅速な対応手順の整備</li>
+                <li><strong>ゼロトラストアーキテクチャの採用:</strong> ビルドパイプラインにおいても、すべてのコンポーネントを検証するゼロトラストの原則を適用</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- まとめ -->
+    <section class="section">
+        <div class="section-title">
+            <span class="icon">&#x1F4DD;</span>
+            まとめ
+        </div>
+        <div class="summary-box">
+            <h3>&#x2705; 総括</h3>
+            <p>OpenAI は 2026 年 4 月 10 日、macOS アプリケーションのコード署名プロセスで使用されていたサードパーティ製開発者ツール「Axios」にサプライチェーン攻撃が発生したことを公表し、迅速な対応を行った。OpenAI は問題を特定後、直ちにコード署名証明書をローテーションし、ChatGPT および Codex の macOS アプリケーションを更新した。ユーザーデータの侵害は確認されておらず、OpenAI のシステムのセキュリティは維持されている。macOS ユーザーは万全を期すため最新バージョンへのアップデートが推奨される。本インシデントは OpenAI 自身のコードの脆弱性ではなく、サードパーティ製ツールを介したサプライチェーン攻撃であり、ソフトウェア開発における依存関係管理とサプライチェーンセキュリティの重要性を改めて示す事例となった。</p>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer-box">
+            <p><strong>免責事項:</strong> 本レポートは、OpenAI の公式ブログ記事の概要情報および複数のニュースソースに基づいて構成されたものであり、記事の全文を確認した上での分析ではない。記事の実際の内容とは異なる可能性がある点にご留意いただきたい。</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h3>&#x1F517; 関連リンク</h3>
+        <ul class="footer-links">
+            <li><a href="https://openai.com/index/axios-developer-tool-compromise" target="_blank">Axios Developer Tool Compromise (原文)</a></li>
+            <li><a href="https://openai.com/security" target="_blank">OpenAI Security</a></li>
+            <li><a href="https://openai.com/index/safety-bug-bounty" target="_blank">OpenAI Bug Bounty Program</a></li>
+            <li><a href="https://openai.com/news" target="_blank">OpenAI News</a></li>
+            <li><a href="https://developer.apple.com/support/code-signing/" target="_blank">Apple Developer - Code Signing</a></li>
+            <li><a href="https://www.nist.gov/itl/executive-order-14028-improving-nations-cybersecurity/software-supply-chain-security" target="_blank">NIST - Software Supply Chain Security Guidance</a></li>
+        </ul>
+        <div class="copyright">OpenAI News Summary - Generated on 2026-04-11</div>
+    </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+        primaryColor: '#10A37F',
+        primaryTextColor: '#343541',
+        primaryBorderColor: '#10A37F',
+        lineColor: '#10A37F',
+        background: '#FFFFFF',
+        mainBkg: '#F7F7F8',
+        nodeBorder: '#10A37F',
+        clusterBkg: '#F7F7F8',
+        clusterBorder: '#10A37F'
+    }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>
