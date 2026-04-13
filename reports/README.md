@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-12](2026/2026-04-12-openai-ai-liability-legislation.md) - OpenAI、AI による損害の責任を制限する法案を支持 -- 業界の安全規制を巡る議論が激化
+- [2026-04-12](2026/2026-04-12-musk-legal-ambush-openai-trial.md) - OpenAI、Musk の「法的奇襲」を非難 -- 1000 億ドル規模の裁判を前に反競争的行為の調査を要請
+- [2026-04-12](2026/2026-04-12-emea-youth-wellbeing-grant.md) - OpenAI、EMEA 地域の若者の安全とウェルビーイングを支援する助成プログラムを発表
+- [2026-04-12](2026/2026-04-12-altman-home-second-attack-arrests.md) - Altman 宅が 2 度目の攻撃を受ける -- 容疑者 2 名が逮捕、銃撃事件も発生
+- [2026-04-11](2026/2026-04-11-openai-mac-security-mandatory-update.md) - OpenAI、Mac ユーザーに ChatGPT / Codex アプリの緊急アップデートを義務化 -- サードパーティツール経由のセキュリティインシデントに対応
+- [2026-04-11](2026/2026-04-11-chatgpt-pro-100-codex-plan.md) - OpenAI、月額 100 ドルの新 ChatGPT Pro プランを発表 -- Codex アクセス 5 倍で Claude Max に対抗
 - [2026-04-10](2026/2026-04-10-stargate-leaders-depart-for-meta.md) - OpenAI Stargate データセンター構想の主要リーダー 3 名が退社し Meta に移籍へ
 - [2026-04-10](2026/2026-04-10-pachocki-ai-research-intern.md) - OpenAI チーフサイエンティスト Pachocki が「AI は人間のリサーチインターンに匹敵する水準に近づいている」と発言
 - [2026-04-10](2026/2026-04-10-openai-academy-launch.md) - OpenAI Academy を正式ローンチ -- 24 以上の教育リソースでチーム・業種別 AI 活用を支援
