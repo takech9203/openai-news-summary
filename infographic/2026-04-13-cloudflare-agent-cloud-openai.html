@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Agent Cloud と OpenAI でエージェントワークフローを実現 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: "\2713";
+            color: var(--openai-green);
+            font-weight: 700;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Timeline Table */
+        .timeline-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .timeline-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .timeline-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .timeline-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .timeline-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .timeline-table tbody tr.highlight-row {
+            background: rgba(16, 163, 127, 0.08);
+            font-weight: 500;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .comparison-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .comparison-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 16px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-block-header .lang-badge {
+            background: var(--openai-green);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .code-block pre {
+            padding: 20px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        .code-block pre code {
+            font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #e6e6e6;
+        }
+
+        .code-block pre code.hljs {
+            background: transparent;
+            padding: 0;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            padding: 4px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-table,
+            .comparison-table {
+                font-size: 12px;
+            }
+
+            .timeline-table thead th,
+            .timeline-table tbody td,
+            .comparison-table thead th,
+            .comparison-table tbody td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">PARTNERSHIP</span>
+                <span class="category-badge">ENTERPRISE</span>
+                <h1>Cloudflare Agent Cloud と OpenAI でエンタープライズがエージェントワークフローを実現</h1>
+                <p class="date">2026-04-13 | OpenAI News/Blog</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F91D;</div>
+                    <div class="key-point-content">
+                        <h3>Cloudflare との戦略的パートナーシップ</h3>
+                        <p>OpenAI と Cloudflare が提携し、「Cloudflare Agent Cloud」を発表。Cloudflare のグローバルなエッジコンピューティングインフラストラクチャ上で、OpenAI のモデルを活用したエージェント型 AI ワークフローを構築・デプロイできるプラットフォームを提供。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F310;</div>
+                    <div class="key-point-content">
+                        <h3>世界 300 以上のエッジロケーション</h3>
+                        <p>Cloudflare が世界 300 以上の都市に展開するエッジネットワークを活用し、エンドユーザーに最も近いロケーションで低レイテンシなエージェント応答を実現。従来のクラウドベースデプロイメントとは一線を画す性能を提供。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F527;</div>
+                    <div class="key-point-content">
+                        <h3>OpenAI API との深い統合</h3>
+                        <p>Chat Completions API、Responses API、Assistants API の主要 3 つの API と深く統合。用途に応じて最適な API を選択し、エージェントワークフローに組み込み可能。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3E2;</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズ AI 戦略の具体化</h3>
+                        <p>2026 年 4 月 8 日に発表された「エンタープライズ AI の次なるフェーズ」で示された全社規模 AI エージェントのビジョンを具体化。Codex エージェントインフラストラクチャや Responses API を補完する形で、デプロイメントの選択肢を大幅に拡充。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>統合されたセキュリティ</h3>
+                        <p>Cloudflare の WAF、DDoS 防御、Zero Trust アクセス制御がエージェントの保護に自動適用。エンタープライズのデータレジデンシー要件や GDPR 準拠にも対応可能。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: Cloudflare Agent Cloud -->
+        <section class="section">
+            <h2 class="section-title">主要機能: Cloudflare Agent Cloud</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x2601; サーバーレスエージェントホスティング</h3>
+                    <p>Cloudflare Workers 上でエージェントが実行される</p>
+                    <ul>
+                        <li>自動スケーリング</li>
+                        <li>インフラ管理不要</li>
+                        <li>従量課金モデル</li>
+                        <li>アイドルコストゼロ</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A1; エッジ実行</h3>
+                    <p>世界 300 以上のデータセンターで低レイテンシ応答</p>
+                    <ul>
+                        <li>数十ミリ秒のレイテンシ</li>
+                        <li>ユーザー最寄りで実行</li>
+                        <li>グローバル自動展開</li>
+                        <li>ネットワーク最適化</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4BE; Durable Objects 統合</h3>
+                    <p>エージェントの状態管理とセッション永続化を組み込み提供</p>
+                    <ul>
+                        <li>セッション管理</li>
+                        <li>会話履歴の永続化</li>
+                        <li>ワークフロー進行管理</li>
+                        <li>外部 DB 不要</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; セキュリティ統合</h3>
+                    <p>Cloudflare のセキュリティ機能がエージェントに自動適用</p>
+                    <ul>
+                        <li>WAF (Web Application Firewall)</li>
+                        <li>DDoS 防御</li>
+                        <li>Zero Trust アクセス制御</li>
+                        <li>データレジデンシー対応</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: OpenAI API Integration -->
+        <section class="section">
+            <h2 class="section-title">OpenAI API との統合</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4AC; Chat Completions API</h3>
+                    <p>会話型エージェントの構築に最適</p>
+                    <ul>
+                        <li>マルチターン対話</li>
+                        <li>ユーザー意図の理解</li>
+                        <li>タスク遂行</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F680; Responses API</h3>
+                    <p>エージェント開発向け次世代 API</p>
+                    <ul>
+                        <li>マルチステップツール呼び出し</li>
+                        <li>API レベル状態管理</li>
+                        <li>複雑なワークフロー対応</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4DA; Assistants API</h3>
+                    <p>ファイル処理・コード実行・知識検索を統合</p>
+                    <ul>
+                        <li>ナレッジベース連携</li>
+                        <li>コード実行</li>
+                        <li>ファイル処理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Table -->
+        <section class="section">
+            <h2 class="section-title">エッジコンピューティングの優位性</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>特性</th>
+                        <th>従来のクラウドデプロイメント</th>
+                        <th>Cloudflare Agent Cloud</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>レイテンシ</td>
+                        <td>数百ミリ秒 (リージョン依存)</td>
+                        <td>数十ミリ秒 (エッジ実行)</td>
+                    </tr>
+                    <tr>
+                        <td>スケーリング</td>
+                        <td>手動設定またはオートスケール</td>
+                        <td>自動 (サーバーレス)</td>
+                    </tr>
+                    <tr>
+                        <td>グローバル展開</td>
+                        <td>リージョンごとの設定が必要</td>
+                        <td>300 以上のロケーションに自動展開</td>
+                    </tr>
+                    <tr>
+                        <td>状態管理</td>
+                        <td>外部データベースが必要</td>
+                        <td>Durable Objects で組み込み</td>
+                    </tr>
+                    <tr>
+                        <td>セキュリティ</td>
+                        <td>別途設定が必要</td>
+                        <td>WAF / DDoS / Zero Trust が統合</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Technical Details - Mermaid Diagram 1: Architecture -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: アーキテクチャ概要</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Cloudflare Agent Cloud と OpenAI の統合アーキテクチャ。エンタープライズユーザーからの接続がセキュリティ層を経由し、Cloudflare Workers 上のエージェントが OpenAI API やエンタープライズシステムと連携する。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Users["エンタープライズユーザー"]
+        WebApp(["Web アプリ"])
+        MobileApp(["モバイルアプリ"])
+        InternalTool(["社内ツール"])
+    end
+
+    subgraph CloudflareEdge["Cloudflare エッジネットワーク"]
+        subgraph AgentCloud["Agent Cloud"]
+            Workers["Cloudflare Workers\n(エージェントランタイム)"]
+            DO["Durable Objects\n(状態管理)"]
+            KV["Workers KV\n(キャッシュ)"]
+        end
+
+        subgraph Security["セキュリティ層"]
+            WAF["WAF"]
+            ZeroTrust["Zero Trust"]
+            DDoS["DDoS 防御"]
+        end
+    end
+
+    subgraph OpenAIAPI["OpenAI API"]
+        subgraph APIs["API エンドポイント"]
+            ChatAPI["Chat Completions API"]
+            ResponsesAPI["Responses API"]
+            AssistantsAPI["Assistants API"]
+        end
+
+        subgraph Models["モデル"]
+            GPT5["GPT-5"]
+            GPT4o["GPT-4o"]
+        end
+    end
+
+    subgraph EntSystems["エンタープライズシステム"]
+        CRM["CRM"]
+        ERP["ERP"]
+        DB["データベース"]
+    end
+
+    WebApp --> WAF
+    MobileApp --> WAF
+    InternalTool --> ZeroTrust
+
+    WAF --> Workers
+    ZeroTrust --> Workers
+    DDoS --> WAF
+
+    Workers --> DO
+    Workers --> KV
+    Workers --> ChatAPI
+    Workers --> ResponsesAPI
+    Workers --> AssistantsAPI
+
+    ChatAPI --> GPT5
+    ChatAPI --> GPT4o
+    ResponsesAPI --> GPT5
+    AssistantsAPI --> GPT5
+
+    Workers --> CRM
+    Workers --> ERP
+    Workers --> DB
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class GPT5,GPT4o,ChatAPI,ResponsesAPI,AssistantsAPI openai
+    class Workers,DO,KV,WAF,ZeroTrust,DDoS dark
+    class WebApp,MobileApp,InternalTool,CRM,ERP,DB light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Technical Details - Mermaid Diagram 2: Deploy Flow -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: エージェントのデプロイフロー</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">開発者がエージェントコードを作成してからエッジネットワークに展開し、監視するまでの一連のフローを示す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    Dev["開発者"] --> Code["エージェント\nコード作成"]
+    Code --> Test["ローカル\nテスト"]
+    Test --> Deploy["Cloudflare\nWorkers Deploy"]
+    Deploy --> Edge["エッジ\nネットワーク展開"]
+    Edge --> Monitor["監視 &\nログ"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Deploy,Edge openai
+    class Code,Test dark
+    class Dev,Monitor light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample 1: Responses API Agent -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: 実装例 - Responses API エージェント</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Cloudflare Workers 上で OpenAI の Responses API を利用したエージェントの基本的な実装例。Durable Objects によるセッション状態管理とツール呼び出しを組み合わせている。</p>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="lang-badge">TypeScript</span>
+                    <span>Cloudflare Workers + Responses API</span>
+                </div>
+                <pre><code class="language-typescript">import OpenAI from "openai";
+
+export interface Env {
+  OPENAI_API_KEY: string;
+  AGENT_STATE: DurableObjectNamespace;
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+
+    const { messages, session_id } = await request.json&lt;{
+      messages: Array&lt;{ role: string; content: string }&gt;;
+      session_id?: string;
+    }&gt;();
+
+    // Durable Objects でセッション状態を管理
+    const id = env.AGENT_STATE.idFromName(session_id ?? crypto.randomUUID());
+    const stub = env.AGENT_STATE.get(id);
+
+    // Responses API を使用したエージェント実行
+    const response = await openai.responses.create({
+      model: "gpt-5",
+      input: messages,
+      tools: [
+        {
+          type: "function",
+          name: "search_knowledge_base",
+          description: "社内ナレッジベースを検索する",
+          parameters: {
+            type: "object",
+            properties: {
+              query: { type: "string", description: "検索クエリ" },
+            },
+            required: ["query"],
+          },
+        },
+        {
+          type: "function",
+          name: "create_ticket",
+          description: "サポートチケットを作成する",
+          parameters: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              description: { type: "string" },
+              priority: { type: "string", enum: ["low", "medium", "high"] },
+            },
+            required: ["title", "description"],
+          },
+        },
+      ],
+    });
+
+    // セッション状態を Durable Objects に保存
+    await stub.fetch(new Request("https://internal/save-state", {
+      method: "POST",
+      body: JSON.stringify({ response_id: response.id, messages }),
+    }));
+
+    return new Response(JSON.stringify(response), {
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+};</code></pre>
+            </div>
+        </section>
+
+        <!-- Code Sample 2: Chat Completions API Agent -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: 実装例 - Chat Completions API エージェント</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Chat Completions API を使用したシンプルなエージェントの実装例。業務ワークフローの実行をツールとして定義している。</p>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="lang-badge">TypeScript</span>
+                    <span>Cloudflare Workers + Chat Completions API</span>
+                </div>
+                <pre><code class="language-typescript">import OpenAI from "openai";
+
+export default {
+  async fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+
+    const { prompt } = await request.json&lt;{ prompt: string }&gt;();
+
+    // Chat Completions API によるエージェント処理
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "あなたはエンタープライズ向けの業務支援エージェントです。" +
+            "ユーザーの要求を分析し、適切なアクションを提案してください。",
+        },
+        { role: "user", content: prompt },
+      ],
+      tools: [
+        {
+          type: "function",
+          function: {
+            name: "execute_workflow",
+            description: "業務ワークフローを実行する",
+            parameters: {
+              type: "object",
+              properties: {
+                workflow_name: { type: "string" },
+                parameters: { type: "object" },
+              },
+              required: ["workflow_name"],
+            },
+          },
+        },
+      ],
+    });
+
+    return new Response(JSON.stringify(completion), {
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+};</code></pre>
+            </div>
+        </section>
+
+        <!-- Code Sample 3: wrangler.toml -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: wrangler.toml 設定例</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Cloudflare Workers のデプロイ設定ファイル。Durable Objects のバインディングやシークレットの設定方法を示す。</p>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="lang-badge">TOML</span>
+                    <span>wrangler.toml</span>
+                </div>
+                <pre><code class="language-toml">name = "enterprise-agent"
+main = "src/index.ts"
+compatibility_date = "2026-04-13"
+
+[durable_objects]
+bindings = [
+  { name = "AGENT_STATE", class_name = "AgentState" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["AgentState"]
+
+[vars]
+OPENAI_MODEL = "gpt-5"
+
+# シークレットは wrangler secret put で設定
+# wrangler secret put OPENAI_API_KEY</code></pre>
+            </div>
+        </section>
+
+        <!-- Enterprise Strategy Timeline -->
+        <section class="section">
+            <h2 class="section-title">OpenAI エンタープライズ戦略の軌跡</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">2026 年に入り急速に拡大する OpenAI のエンタープライズ向け取り組み。Cloudflare Agent Cloud はその一環として位置付けられる。</p>
+            <table class="timeline-table">
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2026-03-11</td>
+                        <td>Responses API にコンピュータ環境を装備し、エージェントランタイムの基盤を構築</td>
+                    </tr>
+                    <tr>
+                        <td>2026-03-31</td>
+                        <td>1,220 億ドルの資金調達を完了、エンタープライズ AI への投資を加速</td>
+                    </tr>
+                    <tr>
+                        <td>2026-04-02</td>
+                        <td>Codex のチーム向け従量課金制を導入し、エンタープライズの導入障壁を低下</td>
+                    </tr>
+                    <tr>
+                        <td>2026-04-08</td>
+                        <td>「エンタープライズ AI の次なるフェーズ」を発表、全社規模 AI エージェントのビジョンを提示</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>2026-04-13</td>
+                        <td>Cloudflare Agent Cloud で、エッジベースのエージェントデプロイメントプラットフォームを実現 (本発表)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 影響</h2>
+            <div class="use-case">
+                <h4>&#x2699; 自動化されたワークフロー</h4>
+                <p>エージェントが複数のシステムを横断して業務プロセスを自動実行する。例えば、受注処理エージェントが注文内容を解析し、在庫システムの確認、配送手配、顧客への通知までを一連のワークフローとして処理する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F916; エージェントタスクの自律実行</h4>
+                <p>複雑なタスクを複数のサブタスクに分解し、エージェントが自律的に遂行する。コードレビュー、ドキュメント生成、データ分析など、従来は人間の介在が必要だった業務を、エージェントが判断しながら実行する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4DE; カスタマーサポートの高度化</h4>
+                <p>エッジネットワーク上で動作するカスタマーサポートエージェントが、顧客の問い合わせに対してリアルタイムに応答する。ナレッジベースの検索、チケットの作成・更新、エスカレーション判断までをエージェントが自律的に処理する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4CB; コンプライアンスとデータガバナンス</h4>
+                <p>エンタープライズのデータレジデンシー要件に対応し、特定の地域のエッジロケーションでのみエージェントを実行する構成が可能。GDPR や各国の規制に準拠したエージェントデプロイメントを実現する。</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>&#x1F6E0; エージェントデプロイメントの簡素化</h4>
+                <p>Cloudflare Workers のサーバーレスモデルにより、インフラストラクチャの管理を意識することなく AI エージェントをデプロイできる。wrangler deploy コマンド一つで、世界 300 以上のエッジロケーションにエージェントが展開される。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x26A1; 低レイテンシなエージェント応答</h4>
+                <p>エッジコンピューティングの活用により、エンドユーザーに最も近いロケーションでエージェントのオーケストレーションロジックが実行される。OpenAI API への接続についても、Cloudflare のネットワーク最適化による恩恵が期待される。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4BE; 状態管理の統合</h4>
+                <p>Durable Objects によるエージェントの状態管理が組み込みで提供されるため、外部データベースの設定や管理が不要となる。セッション管理、会話履歴、ワークフローの進行状況などを永続的に管理できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F504; API 選択の柔軟性</h4>
+                <p>Chat Completions API、Responses API、Assistants API のいずれも利用可能であり、ユースケースに応じて最適な API を選択できる。特に Responses API はマルチステップのエージェントワークフローに最適化されており、Cloudflare Agent Cloud との相性が良い。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F512; セキュリティの自動適用</h4>
+                <p>Cloudflare の WAF、DDoS 防御、Zero Trust が自動的にエージェントに適用されるため、セキュリティ設定に関する開発者の負担が大幅に軽減される。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4C8; エンタープライズ開発の新たな市場</h4>
+                <p>Cloudflare Agent Cloud 上でのエージェント開発は、新たなスキルセットと市場を創出する。エッジベースの AI エージェント開発に精通した開発者への需要が高まることが予想される。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4B0; コスト最適化</h4>
+                <p>Cloudflare Workers の従量課金モデルにより、エージェントの実行コストを使用量に応じて最適化できる。アイドル時のコストが発生しないため、トラフィックの変動が大きいエンタープライズ環境に適している。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-text">
+                OpenAI と Cloudflare のパートナーシップによる Cloudflare Agent Cloud は、エンタープライズ AI エージェントのデプロイメントにおけるパラダイムシフトを象徴する発表である。Cloudflare のグローバルなエッジネットワーク上で OpenAI のモデルを活用したエージェントを構築・実行できるようになることで、低レイテンシ、自動スケーリング、組み込みのセキュリティ、状態管理といったエッジコンピューティングの優位性が AI エージェントに直接もたらされる。2026 年 4 月 8 日に発表された「エンタープライズ AI の次なるフェーズ」で掲げた全社規模 AI エージェントのビジョンを、具体的なインフラストラクチャパートナーシップとして実現するものであり、OpenAI の Responses API や Codex エージェントインフラストラクチャと補完的な関係にある。開発者にとっては、Cloudflare Workers のサーバーレスモデルと OpenAI の API を組み合わせた新しいエージェント開発パラダイムが登場したことを意味し、エンタープライズ AI エージェント市場における開発機会の大幅な拡大が見込まれる。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/enterprises-power-agentic-workflows-cloudflare-agent-cloud/" target="_blank" rel="noopener noreferrer">https://openai.com/index/enterprises-power-agentic-workflows-cloudflare-agent-cloud/</a></li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://developers.cloudflare.com/workers/" target="_blank" rel="noopener noreferrer">Cloudflare Workers ドキュメント</a></li>
+                <li><a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI API ドキュメント</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

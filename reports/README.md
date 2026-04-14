@@ -5,6 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-14](2026/2026-04-14-openai-acquires-hiro.md) - OpenAI が AI パーソナルファイナンス スタートアップ Hiro を買収: ChatGPT にファイナンシャルプランニング機能を統合へ
+- [2026-04-14](2026/2026-04-14-chatgpt-murder-suicide-federal-claims.md) - 連邦裁判所、ChatGPT に関連する殺人・自殺事件の訴訟で OpenAI の棄却申立てを却下
+- [2026-04-14](2026/2026-04-14-altman-attacker-attempted-murder-charges.md) - Altman 宅攻撃の容疑者に殺人未遂の罪で起訴 -- AI 幹部の暗殺リストも発覚
+- [2026-04-13](2026/2026-04-13-openai-london-office-2027.md) - OpenAI、2027 年にロンドン初の常設オフィスを開設: 欧州市場への本格進出と国際展開の加速
+- [2026-04-13](2026/2026-04-13-openai-internal-memo-amazon-anthropic.md) - OpenAI 内部メモが流出: Amazon 提携の急拡大、Anthropic への対抗戦略、Microsoft との摩擦が明らかに
+- [2026-04-13](2026/2026-04-13-florida-ag-openai-investigation.md) - フロリダ州司法長官、FSU 銃撃事件での ChatGPT 記録発覚を受け OpenAI への正式調査を開始
+- [2026-04-13](2026/2026-04-13-cloudflare-agent-cloud-openai.md) - エンタープライズが Cloudflare Agent Cloud と OpenAI でエージェントワークフローを実現
 - [2026-04-12](2026/2026-04-12-openai-ai-liability-legislation.md) - OpenAI、AI による損害の責任を制限する法案を支持 -- 業界の安全規制を巡る議論が激化
 - [2026-04-12](2026/2026-04-12-musk-legal-ambush-openai-trial.md) - OpenAI、Musk の「法的奇襲」を非難 -- 1000 億ドル規模の裁判を前に反競争的行為の調査を要請
 - [2026-04-12](2026/2026-04-12-emea-youth-wellbeing-grant.md) - OpenAI、EMEA 地域の若者の安全とウェルビーイングを支援する助成プログラムを発表
