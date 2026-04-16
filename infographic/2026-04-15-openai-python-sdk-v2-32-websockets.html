@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Python SDK v2.32.0: WebSocket 再接続とイベントハンドラの大幅強化</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .category-badge.api-update {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .category-badge.sdk {
+            background: rgba(16, 163, 127, 0.15);
+            color: #10A37F;
+            border: 1px solid rgba(16, 163, 127, 0.3);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 15px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            line-height: 1.4;
+        }
+
+        .section-title .title-icon {
+            margin-right: 8px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .key-point-content h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 13px;
+            padding: 6px 0;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2716';
+            color: #DC2626;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2714';
+            color: #059669;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Changes Table */
+        .changes-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .changes-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .changes-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+            width: 120px;
+        }
+
+        .changes-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .changes-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .changes-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .changes-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .changes-table tbody tr:hover {
+            background: var(--openai-light);
+        }
+
+        .change-type {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .change-type.feature {
+            background: rgba(16, 163, 127, 0.15);
+            color: #10A37F;
+        }
+
+        .change-type.bugfix {
+            background: rgba(245, 158, 11, 0.15);
+            color: #D97706;
+        }
+
+        .change-type.docs {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-block:first-of-type {
+            margin-top: 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 8px;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid-container pre.mermaid {
+            background: white !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Use Case / Developer Impact */
+        .use-case {
+            padding: 18px 20px;
+            border-left: 4px solid var(--openai-green);
+            background: var(--openai-light);
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 12px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .use-case ul li::before {
+            content: '\2022';
+            color: var(--openai-green);
+            font-weight: 700;
+            position: absolute;
+            left: 4px;
+        }
+
+        /* Upgrade Note */
+        .upgrade-note {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-top: 16px;
+        }
+
+        .upgrade-note h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #D97706;
+            margin-bottom: 8px;
+        }
+
+        .upgrade-note ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .upgrade-note ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 3px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .upgrade-note ul li::before {
+            content: '\26A0';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Architecture description */
+        .arch-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-top: 24px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .code-block code {
+                font-size: 11px;
+            }
+
+            .changes-table {
+                font-size: 12px;
+            }
+
+            .changes-table thead th,
+            .changes-table tbody td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="header-date">2026-04-15</span>
+                <span class="category-badge api-update">API UPDATE</span>
+                <span class="category-badge sdk">PYTHON SDK</span>
+            </div>
+            <h1>OpenAI Python SDK v2.32.0: WebSocket 再接続とイベントハンドラの大幅強化</h1>
+            <p class="header-subtitle">
+                WebSocket クライアントにイベントハンドラの実装、未接続状態でのメッセージエンキュー、自動再接続 (reconnection) サポートの 3 つの重要な機能を同時追加。Realtime API の開発体験と堅牢性が飛躍的に向上
+            </p>
+        </header>
+
+        <!-- Section 1: Key Points -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CB;</span> 概要 (Key Points)</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50C;</div>
+                    <div class="key-point-content">
+                        <h3>WebSocket イベントハンドラの実装</h3>
+                        <p>WebSocket クライアントにイベントハンドラパターンが公式サポートされ、Realtime API のオーディオストリーミングやテキスト応答の処理を宣言的かつ構造化された方法で実装可能に。従来のポーリングや低レベルのコールバック管理が不要になります。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4E8;</div>
+                    <div class="key-point-content">
+                        <h3>未接続状態でのメッセージエンキュー</h3>
+                        <p>WebSocket が接続状態でない場合でもメッセージをキューに追加可能に。接続確立前やネットワーク切断中でもメッセージは内部キューに蓄積され、接続が確立または再確立された時点で自動送信されます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>WebSocket 自動再接続サポート</h3>
+                        <p>ネットワーク障害やサーバータイムアウト時に SDK が自動リトライ。手動の再接続ロジックが不要になり、キューに蓄積されたメッセージは再接続後に順次送信されるためセッションの継続性が保たれます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4C1;</div>
+                    <div class="key-point-content">
+                        <h3>InputFileContent への detail パラメータ追加</h3>
+                        <p><code>InputFileContent</code> に <code>detail</code> パラメータが追加され、画像ファイルの Vision 処理時に <code>high</code> / <code>low</code> の解像度レベルを直接指定可能に。コストとレスポンス速度のバランス調整が容易になります。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F510;</div>
+                    <div class="key-point-content">
+                        <h3>OAuthErrorCode 型の追加</h3>
+                        <p>OAuth 認証フローにおけるエラーコードを表す <code>OAuthErrorCode</code> 型が新規追加。認証エラーを型安全に処理でき、ハンドリングコードの品質と保守性が向上します。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F504;</span> Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (v2.31.0 以前)</h4>
+                    <ul>
+                        <li>手動でポーリングや低レベルコールバックを管理</li>
+                        <li>未接続時のメッセージ送信で例外が発生</li>
+                        <li>ネットワーク切断時に手動で再接続ロジックを実装</li>
+                        <li>接続状態を常にアプリケーション側で管理</li>
+                        <li>ファイルデータが重複パラメータとして送信されるバグ</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (v2.32.0)</h4>
+                    <ul>
+                        <li><code>@ws.on()</code> で宣言的にイベントハンドラを登録</li>
+                        <li>内部キューにメッセージを蓄積し接続後に自動送信</li>
+                        <li><code>reconnect=True</code> で自動再接続が有効に</li>
+                        <li>SDK が接続状態を管理しセッション継続性を維持</li>
+                        <li>ファイルデータ送信バグを修正し安定動作</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Feature Cards -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x2728;</span> 主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F3AF;</div>
+                    <h3>WebSocket イベントハンドラ</h3>
+                    <p><code>@ws.on("event_type")</code> デコレータで各イベントタイプに対する処理を個別に定義。オーディオストリーミング、テキスト応答、エラーなどのイベントを構造化された方法で処理でき、コードの可読性と保守性が大幅に向上します。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4E9;</div>
+                    <h3>メッセージエンキュー</h3>
+                    <p>WebSocket 接続が確立される前やネットワーク切断中でもメッセージをキューに蓄積。接続が確立または再確立された時点で自動送信されるため、タイミングに依存しない安定したメッセージ送信が可能になります。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F504;</div>
+                    <h3>自動再接続 (Reconnection)</h3>
+                    <p>ネットワークの一時的な障害やサーバー側のタイムアウトが発生した場合に SDK が自動的にリトライ。再接続時にはキューに蓄積されたメッセージが順次送信され、セッションの継続性が保たれます。不安定なネットワーク環境やモバイルアプリケーションで特に有効です。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F5BC;</div>
+                    <h3>InputFileContent detail パラメータ</h3>
+                    <p>画像ファイルを Vision 機能で処理する際に <code>high</code> や <code>low</code> といった解像度レベルを <code>InputFileContent</code> 経由で直接指定可能に。API 呼び出しの柔軟性が向上し、コストとレスポンス速度のバランスを調整できます。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F510;</div>
+                    <h3>OAuthErrorCode 型</h3>
+                    <p>OAuth 認証フローで発生しうるエラーコードを表す新しい型。認証エラーを網羅的かつ型安全に処理でき、ハンドリングコードの品質と保守性が向上します。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F41B;</div>
+                    <h3>ファイルデータ送信バグ修正</h3>
+                    <p>ファイルデータ送信時にパラメータが重複して送信される問題が修正されました。大容量ファイルの送信が安定し、一部のワークアラウンドコードが不要になります。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Changes Table -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4DD;</span> 変更一覧</h2>
+            <table class="changes-table">
+                <thead>
+                    <tr>
+                        <th>種別</th>
+                        <th>変更内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="change-type feature">機能追加</span></td>
+                        <td>WebSocket クライアントにイベントハンドラの実装を追加</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type feature">機能追加</span></td>
+                        <td>WebSocket 未接続状態でのメッセージエンキューをサポート</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type feature">機能追加</span></td>
+                        <td>WebSocket の自動再接続 (reconnection) をサポート</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type feature">機能追加</span></td>
+                        <td><code>InputFileContent</code> に <code>detail</code> パラメータを追加</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type feature">機能追加</span></td>
+                        <td><code>OAuthErrorCode</code> 型を追加</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type bugfix">バグ修正</span></td>
+                        <td>ファイルデータが複数パラメータとして送信される問題を修正</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type docs">ドキュメント</span></td>
+                        <td>サンプルコードの改善</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 5: Code Samples -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4BB;</span> コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">WebSocket イベントハンドラの使用例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Realtime API with event handler (new in v2.32.0)
+async with client.realtime.connect(model="gpt-4o-realtime") as ws:
+    # Register event handlers for different event types
+    @ws.on("response.audio.delta")
+    async def handle_audio(event):
+        # Process audio stream chunks
+        audio_data = event.delta
+        await play_audio(audio_data)
+
+    @ws.on("response.text.delta")
+    async def handle_text(event):
+        # Process text stream chunks
+        print(event.delta, end="", flush=True)
+
+    @ws.on("error")
+    async def handle_error(event):
+        print(f"Error occurred: {event.error}")
+
+    # Send a message to start the conversation
+    await ws.send({
+        "type": "conversation.item.create",
+        "item": {
+            "type": "message",
+            "role": "user",
+            "content": [{"type": "input_text", "text": "Hello!"}]
+        }
+    })
+
+    await ws.send({"type": "response.create"})</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">未接続状態でのエンキューと再接続</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# WebSocket with reconnection support (new in v2.32.0)
+async with client.realtime.connect(
+    model="gpt-4o-realtime",
+    # Enable automatic reconnection
+    reconnect=True,
+) as ws:
+    # Messages can be enqueued even before connection is ready
+    # They will be sent automatically once connected
+    await ws.send({
+        "type": "session.update",
+        "session": {
+            "modalities": ["text", "audio"],
+            "instructions": "You are a helpful assistant.",
+        }
+    })
+
+    @ws.on("session.created")
+    async def on_session_created(event):
+        print("Session created, sending message...")
+        await ws.send({
+            "type": "conversation.item.create",
+            "item": {
+                "type": "message",
+                "role": "user",
+                "content": [{"type": "input_text", "text": "Tell me a joke."}]
+            }
+        })
+        await ws.send({"type": "response.create"})
+
+    @ws.on("response.text.done")
+    async def on_text_done(event):
+        print(f"\nComplete response: {event.text}")</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">InputFileContent に detail パラメータを指定</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Using detail parameter with InputFileContent (new in v2.32.0)
+response = client.responses.create(
+    model="gpt-4o",
+    input=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "input_file",
+                    "file_data": "data:image/png;base64,iVBORw0KGgo...",
+                    "detail": "high"  # Specify detail level: "high" or "low"
+                },
+                {
+                    "type": "input_text",
+                    "text": "Describe what you see in this image in detail."
+                }
+            ]
+        }
+    ]
+)
+
+print(response.output_text)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F3D7;</span> アーキテクチャ</h2>
+            <p class="arch-desc">
+                以下の図は、v2.32.0 で強化された WebSocket クライアントの再接続フローを示しています。ネットワーク切断が発生した場合でも、メッセージキューと自動再接続により、アプリケーションの継続性が保たれる仕組みを表しています。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph App["アプリケーション"]
+        EventHandler["イベントハンドラ\n(@ws.on)"]
+        SendMsg["メッセージ送信\n(ws.send)"]
+    end
+
+    subgraph SDK["OpenAI Python SDK v2.32.0"]
+        WSClient["WebSocket\nクライアント"]
+        Queue["メッセージキュー"]
+        Reconnect["再接続マネージャ"]
+        WSClient -->|切断検知| Reconnect
+        Reconnect -->|再接続成功| WSClient
+        SendMsg -->|未接続時| Queue
+        Queue -->|接続確立後\n自動送信| WSClient
+        SendMsg -->|接続時| WSClient
+    end
+
+    subgraph API["OpenAI Realtime API"]
+        WSServer["WebSocket\nサーバー"]
+        RealtimeSession["Realtime\nセッション"]
+        WSServer --> RealtimeSession
+    end
+
+    EventHandler -.->|ハンドラ登録| WSClient
+    WSClient <-->|双方向通信| WSServer
+    WSServer -->|イベント配信| EventHandler
+    Reconnect -->|リトライ| WSServer
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class WSClient,Reconnect openai
+    class WSServer,RealtimeSession dark
+    class EventHandler,SendMsg light
+    class Queue accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Developer Impact -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F6E0;</span> 開発者への影響</h2>
+
+            <div class="use-case">
+                <h3>Realtime API 利用者への恩恵</h3>
+                <ul>
+                    <li><strong>堅牢なリアルタイム通信:</strong> 自動再接続機能により、ネットワーク障害時にもセッションが自動的に復旧し、ユーザー体験の中断を最小限に抑えられる</li>
+                    <li><strong>宣言的なイベント処理:</strong> イベントハンドラパターンにより、各イベントタイプに対する処理を個別に定義でき、コードの可読性と保守性が大幅に向上する</li>
+                    <li><strong>メッセージの信頼性向上:</strong> 未接続状態でもメッセージをエンキューできるため、タイミングに依存しない安定したメッセージ送信が可能になる</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>ファイル処理の柔軟性向上</h3>
+                <ul>
+                    <li><strong>Vision 処理の最適化:</strong> <code>InputFileContent</code> の <code>detail</code> パラメータにより、画像の処理解像度を明示的に制御でき、コストとレスポンス速度のバランスを調整できる</li>
+                    <li><strong>ファイル送信の信頼性改善:</strong> ファイルデータが重複パラメータとして送信されるバグが修正され、大容量ファイルの送信が安定する</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>OAuth 認証のエラーハンドリング</h3>
+                <p><strong>型安全な認証エラー処理:</strong> <code>OAuthErrorCode</code> 型の追加により、OAuth 認証フローにおけるエラーを網羅的かつ型安全に処理できるようになりました。</p>
+            </div>
+
+            <div class="upgrade-note">
+                <h4>アップグレード時の注意点</h4>
+                <ul>
+                    <li>WebSocket 関連の API は追加的な変更であり、既存コードへの破壊的影響はない</li>
+                    <li>ファイルデータ送信のバグ修正により、一部のワークアラウンドコードが不要になる可能性がある</li>
+                    <li>v2.31.0 からのアップグレードでは、互換性の問題は報告されていない</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-source">
+                Source: <a href="https://github.com/openai/openai-python/releases/tag/v2.32.0" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-python/releases/tag/v2.32.0</a>
+            </p>
+            <p class="footer-source">
+                Realtime API Docs: <a href="https://platform.openai.com/docs/guides/realtime" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/guides/realtime</a>
+            </p>
+            <p class="footer-source">
+                API Changelog: <a href="https://platform.openai.com/docs/changelog" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/changelog</a>
+            </p>
+            <p class="footer-source">
+                GitHub: <a href="https://github.com/openai/openai-python" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-python</a>
+            </p>
+            <p class="footer-source">
+                API Reference: <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/api-reference</a>
+            </p>
+            <p class="footer-branding">OpenAI News Summary -- 2026-04-15</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

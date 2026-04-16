@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agents SDK の次なる進化: Sandbox Agents によるセキュアなエージェント実行環境 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .category-badge.product {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 15px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            line-height: 1.4;
+        }
+
+        .section-title .title-icon {
+            margin-right: 8px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .key-point-content h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 13px;
+            padding: 4px 0;
+            line-height: 1.6;
+        }
+
+        .comparison-card.before ul li::before {
+            content: "\2717 ";
+            color: #DC2626;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        .comparison-card.after ul li::before {
+            content: "\2713 ";
+            color: #059669;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+            line-height: 1.6;
+        }
+
+        .feature-card ul li::before {
+            content: "\2022 ";
+            color: var(--openai-green);
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-block:first-of-type {
+            margin-top: 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 8px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container pre.mermaid {
+            background: white !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Use Case */
+        .use-case {
+            padding: 18px 20px;
+            border-left: 4px solid var(--openai-green);
+            background: var(--openai-light);
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 12px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Highlight tag */
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--openai-green);
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .code-block code {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="header-date">2026-04-15</span>
+                <span class="category-badge product">PRODUCT</span>
+            </div>
+            <h1>Agents SDK の次なる進化: Sandbox Agents によるセキュアなエージェント実行環境</h1>
+            <p class="header-subtitle">
+                Agents SDK v0.14.0 で導入されたネイティブサンドボックス実行環境とモデルネイティブハーネス -- 永続的かつ隔離されたワークスペースでエージェントをセキュアに実行するための包括的な基盤
+            </p>
+        </header>
+
+        <!-- Section 1: Key Points -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CB;</span> 概要 (Key Points)</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>永続的で隔離されたサンドボックス環境</h3>
+                        <p>Sandbox Agents により、エージェントは隔離されたワークスペース上でファイル操作、コマンド実行、リポジトリ編集、アーティファクト生成をセキュアに行えるようになりました。ホスト環境に影響を与えることなく、本番運用が現実的になります。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x2601;</div>
+                    <div class="key-point-content">
+                        <h3>マルチクラウド対応の実行バックエンド</h3>
+                        <p>ローカル (Unix)、コンテナ (Docker)、ホスト型 (Blaxel、Cloudflare、Daytona、E2B、Modal、Runloop、Vercel) の 3 層の実行バックエンドをサポート。開発者は自社インフラに最適なバックエンドを選択できます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4F8;</div>
+                    <div class="key-point-content">
+                        <h3>スナップショットとレジュームによる長時間タスク対応</h3>
+                        <p>エージェントの実行を中断・再開できるスナップショット/レジューム機能を搭載。大規模なコードレビュー、データ処理、ドキュメント生成など長時間を要するタスクに対応可能です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-content">
+                        <h3>サンドボックスメモリによる知識蓄積</h3>
+                        <p>エージェントが過去の実行から学習し、同様のタスクをより効率的に実行できるメモリ機能を搭載。プログレッシブディスクロージャにより、メモリの肥大化を防ぎながら知識を蓄積します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>既存コードとの互換性</h3>
+                        <p>Sandbox Agents は既存の <span class="tag">Agent</span> と <span class="tag">Runner</span> のフローを拡張する形で実装されており、既存のエージェントコードからの移行コストが低く抑えられています。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Before/After -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F504;</span> Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 手動の環境セットアップ</h4>
+                    <ul>
+                        <li>エージェントがホスト環境に直接アクセス</li>
+                        <li>ファイル操作・コマンド実行のセキュリティリスク</li>
+                        <li>長時間タスクの中断・再開が困難</li>
+                        <li>過去の実行から学習する仕組みがない</li>
+                        <li>実行バックエンドが固定的</li>
+                        <li>環境構築のコードが実行ごとに必要</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: Sandbox Agents</h4>
+                    <ul>
+                        <li>隔離されたワークスペースでセキュアに実行</li>
+                        <li>Manifest でワークスペースを宣言的に定義</li>
+                        <li>スナップショット/レジュームで中断・再開可能</li>
+                        <li>サンドボックスメモリで知識を蓄積</li>
+                        <li>7 つのホスト型プロバイダーから選択可能</li>
+                        <li>既存の Agent/Runner パターンを維持</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Feature Cards -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x2699;</span> 主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4E6;</div>
+                    <h3>Sandbox Agents</h3>
+                    <p>エージェントに永続的で隔離されたワークスペースを提供する SDK サーフェス。</p>
+                    <ul>
+                        <li><span class="tag">SandboxAgent</span>: デフォルト設定を持つ Agent の拡張</li>
+                        <li><span class="tag">Manifest</span>: ファイル、ディレクトリ、Git リポ、環境変数を定義</li>
+                        <li><span class="tag">SandboxRunConfig</span>: クライアント作成、レジューム、スナップショット設定</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F5A5;</div>
+                    <h3>サンドボックスクライアント</h3>
+                    <p>ローカル、コンテナ、ホスト型の 3 層の実行バックエンド。</p>
+                    <ul>
+                        <li><span class="tag">UnixLocalSandboxClient</span>: 高速なローカル開発</li>
+                        <li><span class="tag">DockerSandboxClient</span>: コンテナ隔離環境</li>
+                        <li>7 つのホスト型プロバイダー対応</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F9E0;</div>
+                    <h3>サンドボックスメモリ</h3>
+                    <p>過去の実行から得た教訓を将来の実行に活用するメモリ機能。</p>
+                    <ul>
+                        <li>読み取り専用/生成専用モードの制御</li>
+                        <li>ライブ更新で古いメモリをリアルタイム更新</li>
+                        <li>マルチターングルーピング対応</li>
+                        <li>S3 バックドメモリで永続化</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4BE;</div>
+                    <h3>マウント / スナップショット / レジューム</h3>
+                    <p>多様なソースからのファイル提供と実行の中断・再開。</p>
+                    <ul>
+                        <li>ローカル/合成ファイル/Git リポジトリ</li>
+                        <li>S3、R2、GCS、Azure Blob Storage</li>
+                        <li>ポータブルなスナップショット取得</li>
+                        <li>3 つのレジュームパス</li>
+                    </ul>
+                </div>
+                <div class="feature-card full-width">
+                    <div class="feature-card-icon">&#x1F50D;</div>
+                    <h3>ランタイム / トレーシング / モデルプラミング</h3>
+                    <p>エージェント実行の基盤となるランタイム層の大幅な改善。Runner 管理のサンドボックス準備、サンドボックス対応の RunState シリアライゼーション、統合サンドボックストレーシング、トークン使用量のスパン記録、プロンプトキャッシュキーのデフォルト設定、OpenAI エージェント登録とハーネス ID 設定をサポートします。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Stats -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CA;</span> 統計情報</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">ホスト型プロバイダー</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">クラウドストレージ<br>対応</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">レジュームパス</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">実行バックエンド<br>タイプ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">サンドボックス<br>ケイパビリティ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Code Samples -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4BB;</span> コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">基本的な SandboxAgent の作成と実行</span>
+                </div>
+                <pre><code class="language-python">from agents import SandboxAgent, Runner
+from agents.sandbox import Manifest, SandboxRunConfig
+from agents.sandbox.clients import DockerSandboxClient
+
+# マニフェストでワークスペースを定義
+manifest = Manifest(
+    files={"main.py": "print('Hello from sandbox!')"},
+    directories=["output"],
+    env={"PYTHONPATH": "/workspace"},
+)
+
+# SandboxAgent を作成
+agent = SandboxAgent(
+    name="coding-agent",
+    instructions="あなたはコーディングアシスタントです。ファイルを編集し、コマンドを実行してください。",
+    default_manifest=manifest,
+)
+
+# Docker バックエンドでサンドボックスを実行
+sandbox_config = SandboxRunConfig(
+    client=DockerSandboxClient(image="python:3.12-slim"),
+)
+
+result = await Runner.run(
+    agent,
+    "main.py を修正して、フィボナッチ数列を計算する関数を追加してください。",
+    sandbox_run_config=sandbox_config,
+)
+
+print(result.final_output)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">スナップショットとレジュームによる長時間タスク</span>
+                </div>
+                <pre><code class="language-python">from agents import SandboxAgent, Runner
+from agents.sandbox import Manifest, SandboxRunConfig, SandboxSessionState
+from agents.sandbox.clients import DockerSandboxClient
+
+agent = SandboxAgent(
+    name="long-task-agent",
+    instructions="大規模なデータ処理タスクを段階的に実行してください。",
+)
+
+sandbox_config = SandboxRunConfig(
+    client=DockerSandboxClient(image="python:3.12-slim"),
+)
+
+# 初回実行
+result = await Runner.run(
+    agent,
+    "データの前処理を開始してください。",
+    sandbox_run_config=sandbox_config,
+)
+
+# セッション状態を保存
+session_state: SandboxSessionState = result.sandbox_session_state
+
+# 後続の実行でセッションを再開
+resume_config = SandboxRunConfig(
+    client=DockerSandboxClient(image="python:3.12-slim"),
+    session_state=session_state,  # 前回のセッションを復元
+)
+
+result = await Runner.run(
+    agent,
+    "前処理の結果を使って分析を実行してください。",
+    sandbox_run_config=resume_config,
+)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">サンドボックスメモリの活用</span>
+                </div>
+                <pre><code class="language-python">from agents import SandboxAgent, Runner
+from agents.sandbox import Manifest, SandboxRunConfig
+from agents.sandbox.capabilities import SandboxMemory
+from agents.sandbox.clients import DockerSandboxClient
+
+# メモリ機能を有効にした SandboxAgent
+agent = SandboxAgent(
+    name="learning-agent",
+    instructions="過去の経験を活かしてタスクを効率的に実行してください。",
+    capabilities=[
+        SandboxMemory(
+            layout="project-alpha",  # メモリを分離するレイアウト名
+        ),
+    ],
+)
+
+sandbox_config = SandboxRunConfig(
+    client=DockerSandboxClient(image="python:3.12-slim"),
+    group_id="session-001",  # マルチターングルーピング用 ID
+)
+
+# 1 回目の実行: エージェントがタスクを学習
+result = await Runner.run(
+    agent,
+    "このプロジェクトのビルドシステムを調査してください。",
+    sandbox_run_config=sandbox_config,
+)
+
+# 2 回目の実行: 前回の学習を活用
+result = await Runner.run(
+    agent,
+    "テストスイートを実行し、失敗したテストを修正してください。",
+    sandbox_run_config=sandbox_config,
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F3D7;</span> アーキテクチャ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                以下の図は、Agents SDK v0.14.0 における Sandbox Agents のアーキテクチャ全体像を示しています。SandboxAgent と Runner を中心に、ケイパビリティ、サンドボックスクライアント、ホスト型プロバイダー、リモートストレージ、状態管理、トレーシングの各レイヤーがどのように連携するかを可視化しています。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Developer["開発者"]
+        App["アプリケーション&lt;br/&gt;コード"]
+    end
+
+    subgraph SDK["Agents SDK v0.14.0"]
+        SA["SandboxAgent"]
+        Runner["Runner"]
+        Config["SandboxRunConfig"]
+        Manifest["Manifest&lt;br/&gt;(ワークスペース定義)"]
+
+        SA --> Runner
+        Config --> Runner
+        Manifest --> SA
+    end
+
+    subgraph Capabilities["ケイパビリティ"]
+        Shell["Shell アクセス"]
+        FS["ファイルシステム&lt;br/&gt;編集・検査"]
+        Skills["Skills"]
+        Memory["サンドボックス&lt;br/&gt;メモリ"]
+        Compaction["Compaction"]
+    end
+
+    subgraph Clients["サンドボックスクライアント"]
+        Local["UnixLocal&lt;br/&gt;SandboxClient"]
+        Docker["Docker&lt;br/&gt;SandboxClient"]
+        Hosted["ホスト型クライアント"]
+    end
+
+    subgraph Providers["ホスト型プロバイダー"]
+        Blaxel["Blaxel"]
+        CF["Cloudflare"]
+        Daytona["Daytona"]
+        E2B["E2B"]
+        Modal["Modal"]
+        Runloop["Runloop"]
+        Vercel["Vercel"]
+    end
+
+    subgraph Storage["リモートストレージ"]
+        S3["Amazon S3"]
+        R2["Cloudflare R2"]
+        GCS["Google Cloud&lt;br/&gt;Storage"]
+        Azure["Azure Blob&lt;br/&gt;Storage"]
+    end
+
+    subgraph State["状態管理"]
+        RunState["RunState&lt;br/&gt;シリアライゼーション"]
+        Snapshot["スナップショット"]
+        SessionState["SandboxSession&lt;br/&gt;State"]
+    end
+
+    subgraph Tracing["トレーシング"]
+        Spans["SDK スパン"]
+        Tokens["トークン使用量"]
+    end
+
+    App --> SA
+    SA --> Capabilities
+    Runner --> Clients
+    Hosted --> Providers
+    Manifest --> Storage
+    Runner --> State
+    Runner --> Tracing
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class SA,Runner,Config,Manifest openai
+    class Shell,FS,Skills,Memory,Compaction dark
+    class Local,Docker,Hosted dark
+    class Blaxel,CF,Daytona,E2B,Modal,Runloop,Vercel accent
+    class S3,R2,GCS,Azure light
+    class RunState,Snapshot,SessionState openai
+    class Spans,Tokens accent
+    class App light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Use Cases -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F3AF;</span> ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h3>コード生成・実行エージェントの本番運用</h3>
+                <p>サンドボックス環境により、エージェントがファイルシステム操作やコマンド実行を行ってもホスト環境に影響を与えません。コード生成・実行エージェントの安全な本番運用が現実的になり、開発者はセキュリティリスクを気にせずエージェントを展開できます。</p>
+            </div>
+            <div class="use-case">
+                <h3>長時間実行タスクと DevOps 自動化</h3>
+                <p>スナップショットとレジューム機能により、大規模なコードレビュー、データ処理、ドキュメント生成など長時間を要するタスクに対応可能。Git リポジトリのマウント、Docker コンテナによる実行、リモートストレージとの連携により、CI/CD パイプラインや DevOps ワークフローにエージェントを容易に組み込めます。</p>
+            </div>
+            <div class="use-case">
+                <h3>マルチクラウド展開とコスト最適化</h3>
+                <p>7 つのホスト型プロバイダーと 4 つのリモートストレージサービスにより、開発者は自社のインフラストラクチャに最適なバックエンドを選択できます。ローカル開発から本番環境まで同一のコードで動作し、トークン使用量のスパン記録とプロンプトキャッシュキーのデフォルト設定でコスト管理も改善されています。</p>
+            </div>
+            <div class="use-case">
+                <h3>エージェントの学習と知識蓄積</h3>
+                <p>サンドボックスメモリ機能により、エージェントは過去の実行から学習し、同様のタスクをより効率的に実行できるようになります。プログレッシブディスクロージャにより必要に応じて詳細な情報を段階的に提供し、メモリの肥大化を防ぎます。</p>
+            </div>
+        </section>
+
+        <!-- Section 8: Summary -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4DD;</span> まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                Agents SDK v0.14.0 で導入された Sandbox Agents は、エージェント開発における安全性、永続性、スケーラビリティの課題を包括的に解決する大規模なアップデートです。<span class="tag">SandboxAgent</span>、<span class="tag">Manifest</span>、<span class="tag">SandboxRunConfig</span> を中心とするアーキテクチャにより、開発者は既存の Agent/Runner パターンを維持しながら、隔離されたワークスペースでのファイル操作、コマンド実行、リポジトリ編集を安全に行えるようになりました。この進化により、Agents SDK はコード生成、データ処理、DevOps 自動化、ドキュメント生成など、セキュアで長時間実行可能なエージェントを構築するための本格的なプラットフォームへと成長しました。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-source">
+                Source: <a href="https://openai.com/index/the-next-evolution-of-the-agents-sdk" target="_blank" rel="noopener noreferrer">https://openai.com/index/the-next-evolution-of-the-agents-sdk</a>
+            </p>
+            <p class="footer-source">
+                GitHub: <a href="https://github.com/openai/openai-agents-python" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-agents-python</a>
+            </p>
+            <p class="footer-source">
+                Release: <a href="https://github.com/openai/openai-agents-python/releases/tag/v0.14.0" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-agents-python/releases/tag/v0.14.0</a>
+            </p>
+            <p class="footer-branding">OpenAI News Summary -- 2026-04-15</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

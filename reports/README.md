@@ -6,7 +6,9 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-04-15](2026/2026-04-15-people-first-ai-fund.md) - OpenAI、5,000 万ドルの People-First AI Fund を設立: コミュニティと共に築く AI の未来
+- [2026-04-15](2026/2026-04-15-openai-python-sdk-v2-32-websockets.md) - OpenAI Python SDK v2.32.0: WebSocket 再接続とイベントハンドラの大幅強化
 - [2026-04-15](2026/2026-04-15-nonprofit-commission-report.md) - OpenAI 非営利委員会レポート: 取締役会が独立委員会の提言に回答
+- [2026-04-15](2026/2026-04-15-agents-sdk-sandbox-evolution.md) - Agents SDK の次なる進化: Sandbox Agents によるセキュアなエージェント実行環境
 - [2026-04-14](2026/2026-04-14-scaling-trusted-access-cyber-defense.md) - サイバー防衛の新時代に向けた Trusted Access プログラムの拡大
 - [2026-04-14](2026/2026-04-14-openai-acquires-hiro.md) - OpenAI が AI パーソナルファイナンス スタートアップ Hiro を買収: ChatGPT にファイナンシャルプランニング機能を統合へ
 - [2026-04-14](2026/2026-04-14-chatgpt-murder-suicide-federal-claims.md) - 連邦裁判所、ChatGPT に関連する殺人・自殺事件の訴訟で OpenAI の棄却申立てを却下
