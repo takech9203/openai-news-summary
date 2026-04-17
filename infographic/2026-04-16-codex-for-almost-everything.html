@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex が「ほぼ万能」のスーパーアプリに進化</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .category-badge.product {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 15px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            line-height: 1.4;
+        }
+
+        .section-title .title-icon {
+            margin-right: 8px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .key-point-content h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 13px;
+            padding: 6px 0;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2716';
+            color: #DC2626;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2714';
+            color: #059669;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-block:first-of-type {
+            margin-top: 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 8px;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid-container pre.mermaid {
+            background: white !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Use Case / Developer Impact */
+        .use-case {
+            padding: 18px 20px;
+            border-left: 4px solid var(--openai-green);
+            background: var(--openai-light);
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 12px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .use-case ul li::before {
+            content: '\2022';
+            color: var(--openai-green);
+            font-weight: 700;
+            position: absolute;
+            left: 4px;
+        }
+
+        /* Architecture description */
+        .arch-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-top: 24px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .code-block code {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="header-date">2026-04-16</span>
+                <span class="category-badge product">PRODUCT</span>
+            </div>
+            <h1>Codex が「ほぼ万能」のスーパーアプリに進化</h1>
+            <p class="header-subtitle">
+                コンピュータ操作 (Computer Use)、アプリ内ブラウザ、画像生成、永続メモリ、プラグインシステム、Automations を統合。コーディング専用ツールから包括的な AI エージェントプラットフォームへの変革を実現し、全 ChatGPT ユーザーに開放
+            </p>
+        </header>
+
+        <!-- Section 1: Key Points -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CB;</span> 概要 (Key Points)</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F5A5;</div>
+                    <div class="key-point-content">
+                        <h3>Computer Use (コンピュータ操作)</h3>
+                        <p>Codex がユーザーのデスクトップを直接操作し、他のアプリケーションの制御、画面の監視、常時稼働のコーディングエージェントとして機能。Anthropic の Claude Computer Use に対する直接的な回答として位置づけられている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F310;</div>
+                    <div class="key-point-content">
+                        <h3>アプリ内ブラウザ</h3>
+                        <p>ビルトイン Web ブラウザを搭載し、Codex を離れることなく Web ページの閲覧やドキュメントの参照が可能に。開発中の Web アプリケーションのプレビューもアプリ内で実行でき、ワークフローの中断を最小限に抑える。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3A8;</div>
+                    <div class="key-point-content">
+                        <h3>画像生成 (DALL-E 統合)</h3>
+                        <p>コーディングワークフロー内で直接画像を生成。アイコン、バナー、UI モックアップ、アーキテクチャ図などのデザインアセットを DALL-E 統合により高品質に生成し、プロジェクトに即座に組み込める。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-content">
+                        <h3>永続メモリ (Memory)</h3>
+                        <p>セッションや会話をまたいでプロジェクトコンテキストを記憶。コーディングスタイル、設計方針、過去の決定事項を保持し、新しいセッションでも一貫したサポートを提供する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E9;</div>
+                    <div class="key-point-content">
+                        <h3>プラグインシステムと Automations</h3>
+                        <p>サードパーティによるエコシステム構築が可能なプラグインシステムを導入。50 以上の科学ツールに接続する Life Sciences プラグインを同時公開。条件ベースの自動ワークフロー (Automations) も追加され、ノーコードに近い自動化を実現。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Before/After -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F504;</span> Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (コーディング専用ツール)</h4>
+                    <ul>
+                        <li>ターミナル環境で操作する開発者向けに限定</li>
+                        <li>コーディングタスクのみに対応</li>
+                        <li>外部ブラウザやツールへの切り替えが必要</li>
+                        <li>セッション間でコンテキストがリセット</li>
+                        <li>サードパーティ拡張の仕組みなし</li>
+                        <li>自動化は Codex Hooks に限定</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (スーパーアプリ)</h4>
+                    <ul>
+                        <li>全 ChatGPT ユーザーに開放 (macOS / Windows)</li>
+                        <li>Computer Use でデスクトップ全体を操作</li>
+                        <li>アプリ内ブラウザで Web 閲覧・プレビュー</li>
+                        <li>DALL-E 統合で画像生成をワークフローに統合</li>
+                        <li>永続メモリでプロジェクトコンテキストを保持</li>
+                        <li>プラグインと Automations で無限の拡張性</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Feature Cards -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x2728;</span> 主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F5A5;</div>
+                    <h3>Computer Use</h3>
+                    <p>ユーザーのデスクトップ上で動作する他のアプリケーション (IDE、ターミナル、ブラウザ、ファイルマネージャなど) を直接制御。画面をリアルタイムで観察し、コンテキストを理解した上で適切なアクションを提案・実行する常時稼働エージェント。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F310;</div>
+                    <h3>アプリ内ブラウザ</h3>
+                    <p>ビルトインの Web ブラウザにより、ライブラリのドキュメント、API リファレンス、Stack Overflow の解決策を Codex 内で直接確認。開発中の Web アプリケーションのプレビューもリアルタイムで実行可能。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F3A8;</div>
+                    <h3>画像生成</h3>
+                    <p>DALL-E 統合により、アイコン、バナー、プレースホルダー画像、UI モックアップ、アーキテクチャ図、フローチャート、ER 図などの技術的なダイアグラムを自然言語の指示から生成。コードとビジュアルを統合的に開発。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F9E0;</div>
+                    <h3>永続メモリ (Memory)</h3>
+                    <p>プロジェクト構造、使用技術、コーディング規約、過去の設計決定を記憶。ユーザーのコーディングスタイルや好みのフレームワークを学習し、チーム開発でのナレッジ蓄積とオンボーディング支援にも対応。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F9E9;</div>
+                    <h3>プラグインシステム</h3>
+                    <p>サードパーティがプラグインを作成・配布できるプラットフォーム。50 以上の科学ツールに接続する Life Sciences プラグインを初日公開。金融、医療、法務、教育などのドメイン特化型拡張や、CI/CD・プロジェクト管理との連携が可能。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x2699;</div>
+                    <h3>Automations</h3>
+                    <p>ファイル変更、Git プッシュ、テスト失敗、スケジュールなどのイベントに基づき自動ワークフローを実行。複数アクションの連鎖、エラーハンドリング、通知と監視を組み合わせた高レベルな自動化をノーコードに近い形で構築。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Stats -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CA;</span> 統計情報</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">新機能を同時追加</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">50+</div>
+                    <div class="stat-label">科学ツール接続<br>(Life Sciences)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">対応プラットフォーム<br>(macOS / Windows)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">ALL</div>
+                    <div class="stat-label">全 ChatGPT<br>ユーザーに開放</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Code Samples -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4BB;</span> 技術詳細</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Computer Use API の統合例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Codex Computer Use を活用した操作の例
+# (推定される API インターフェース)
+response = client.responses.create(
+    model="codex-agent-latest",
+    input=[
+        {
+            "role": "user",
+            "content": "VS Code を開いて、src/auth.py ファイルのレート制限ロジックを修正してください",
+        }
+    ],
+    tools=[
+        {
+            "type": "computer_use_preview",
+            "display_width": 1920,
+            "display_height": 1080,
+            "environment": "mac",
+        }
+    ],
+)
+
+# エージェントの操作ステップを処理
+for output in response.output:
+    if output.type == "computer_call":
+        print(f"Action: {output.action.type}")
+        print(f"Coordinates: ({output.action.x}, {output.action.y})")</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">プラグインマニフェスト (codex-plugin.json)</span>
+                </div>
+                <pre><code class="language-json">{
+  "name": "life-sciences-research",
+  "version": "1.0.0",
+  "description": "50 以上の科学ツールに接続するライフサイエンス研究プラグイン",
+  "author": "OpenAI",
+  "capabilities": [
+    "tool_integration",
+    "data_analysis",
+    "visualization"
+  ],
+  "tools": [
+    {
+      "name": "pubmed_search",
+      "description": "PubMed データベースから論文を検索",
+      "parameters": {
+        "query": { "type": "string", "description": "検索クエリ" },
+        "max_results": { "type": "integer", "default": 10 }
+      }
+    },
+    {
+      "name": "blast_sequence",
+      "description": "NCBI BLAST で配列相同性検索を実行",
+      "parameters": {
+        "sequence": { "type": "string", "description": "DNA/タンパク質配列" },
+        "database": { "type": "string", "default": "nr" }
+      }
+    },
+    {
+      "name": "protein_structure",
+      "description": "AlphaFold DB からタンパク質構造データを取得",
+      "parameters": {
+        "uniprot_id": { "type": "string", "description": "UniProt ID" }
+      }
+    }
+  ],
+  "permissions": [
+    "network_access",
+    "file_write"
+  ]
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Architecture Mermaid -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F3D7;</span> アーキテクチャ</h2>
+            <p class="arch-desc">
+                以下の図は、Codex スーパーアプリの全体アーキテクチャを示しています。ユーザー、コア UI、エージェントレイヤー、データレイヤー、プラグインエコシステム、OpenAI バックエンド、デスクトップ環境の関係性を表しています。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Users["ユーザー"]
+        MacUser(["macOS ユーザー"])
+        WinUser(["Windows ユーザー"])
+    end
+
+    subgraph CodexApp["Codex スーパーアプリ"]
+        subgraph CoreUI["コア UI レイヤー"]
+            ChatInterface["チャット<br/>インターフェース"]
+            CodeEditor["コード<br/>エディタ"]
+            BrowserView["アプリ内<br/>ブラウザ"]
+            ImageView["画像生成<br/>ビュー"]
+        end
+
+        subgraph AgentLayer["エージェントレイヤー"]
+            ComputerUse["Computer Use<br/>エージェント"]
+            CodingAgent["コーディング<br/>エージェント"]
+            BrowsingAgent["ブラウジング<br/>エージェント"]
+            AutomationEngine["Automation<br/>エンジン"]
+        end
+
+        subgraph DataLayer["データレイヤー"]
+            Memory["永続メモリ<br/>Memory"]
+            PluginRegistry["プラグイン<br/>レジストリ"]
+            ProjectCtx["プロジェクト<br/>コンテキスト"]
+        end
+    end
+
+    subgraph Plugins["プラグインエコシステム"]
+        LifeSci["Life Sciences<br/>50+ 科学ツール"]
+        CustomPlugin["カスタム<br/>プラグイン"]
+        ThirdParty["サードパーティ<br/>プラグイン"]
+    end
+
+    subgraph Backend["OpenAI バックエンド"]
+        ResponsesAPI["Responses API"]
+        CodexAPI["Codex Agent API"]
+        DALLE["DALL-E<br/>画像生成"]
+        Models["GPT / Codex<br/>モデル群"]
+    end
+
+    subgraph Desktop["デスクトップ環境"]
+        Apps["他の<br/>アプリケーション"]
+        FileSystem["ファイル<br/>システム"]
+        Screen["スクリーン<br/>キャプチャ"]
+    end
+
+    MacUser --> CodexApp
+    WinUser --> CodexApp
+
+    ChatInterface --> CodingAgent
+    ChatInterface --> BrowsingAgent
+    CodeEditor --> CodingAgent
+    BrowserView --> BrowsingAgent
+    ImageView --> DALLE
+
+    ComputerUse --> Apps
+    ComputerUse --> FileSystem
+    ComputerUse --> Screen
+
+    CodingAgent --> Memory
+    CodingAgent --> ProjectCtx
+    BrowsingAgent --> Memory
+    AutomationEngine --> CodingAgent
+    AutomationEngine --> ComputerUse
+
+    PluginRegistry --> LifeSci
+    PluginRegistry --> CustomPlugin
+    PluginRegistry --> ThirdParty
+
+    CodingAgent --> ResponsesAPI
+    CodingAgent --> CodexAPI
+    BrowsingAgent --> ResponsesAPI
+    ComputerUse --> ResponsesAPI
+
+    ResponsesAPI --> Models
+    CodexAPI --> Models
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class ResponsesAPI,CodexAPI,DALLE,Models openai
+    class ComputerUse,CodingAgent,BrowsingAgent,AutomationEngine dark
+    class ChatInterface,CodeEditor,BrowserView,ImageView dark
+    class MacUser,WinUser,Apps,FileSystem,Screen light
+    class Memory,PluginRegistry,ProjectCtx,LifeSci,CustomPlugin,ThirdParty accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Computer Use Flow Mermaid -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F504;</span> Computer Use フロー</h2>
+            <p class="arch-desc">
+                以下のシーケンス図は、Computer Use 機能におけるユーザー指示からタスク完了までの操作フローを示しています。エージェントループにより画面状態の取得、アクション決定、実行、評価を繰り返します。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+sequenceDiagram
+    participant User as ユーザー
+    participant Codex as Codex エージェント
+    participant Screen as スクリーン監視
+    participant App as 対象アプリ
+    participant API as OpenAI API
+
+    User->>Codex: タスク指示
+    Codex->>API: 指示を解析
+    API-->>Codex: 操作計画を返却
+
+    loop エージェントループ
+        Codex->>Screen: 画面状態を取得
+        Screen-->>Codex: スクリーンショット
+        Codex->>API: 画面状態を送信
+        API-->>Codex: 次のアクションを決定
+        Codex->>App: アクション実行 (クリック / 入力)
+        App-->>Codex: 操作結果
+        Codex->>Codex: 結果を評価
+    end
+
+    Codex-->>User: タスク完了を通知
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 8: Developer Impact -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F6E0;</span> 開発者への影響</h2>
+
+            <div class="use-case">
+                <h3>開発ワークフローの根本的な変化</h3>
+                <ul>
+                    <li><strong>統合開発環境の再定義:</strong> Codex が IDE、ターミナル、ブラウザ、デザインツールの機能を統合。複数アプリケーションの切り替えが不要になり、コーディングからデプロイまでを単一インターフェースで完結</li>
+                    <li><strong>Computer Use による自動化の飛躍:</strong> API が存在しないツールとの連携も自動化可能に。レガシーシステムとの統合や GUI ベースのツール操作を Codex に委任</li>
+                    <li><strong>永続メモリによる継続的な支援:</strong> セッション間でコンテキストが保持され、プロジェクトの長期的な一貫性を維持。毎回プロジェクト構造や設計方針を説明し直す必要がなくなる</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>プラグインエコシステムの可能性</h3>
+                <ul>
+                    <li><strong>サードパーティ開発者への機会:</strong> Codex プラットフォーム上で新しいツールやサービスを開発・配布する市場が誕生。AI コーディングエージェントのエコシステムとして成長の可能性</li>
+                    <li><strong>ドメイン特化型の拡張:</strong> Life Sciences プラグインに続き、金融工学、法務 AI、教育テクノロジーなど多様な分野での活用が加速</li>
+                    <li><strong>既存ツールとの統合:</strong> CI/CD パイプライン、プロジェクト管理ツール、モニタリングサービスとの連携プラグインにより、Codex が開発ワークフローのハブに</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>競争環境の激化</h3>
+                <ul>
+                    <li><strong>Anthropic Claude との直接競合:</strong> Computer Use は Claude Computer Use への対抗機能。メモリやプラグインを含む統合パッケージで差別化を図り、デスクトップアプリとしてより広い層にアプローチ</li>
+                    <li><strong>GitHub Copilot との関係:</strong> Copilot の IDE 統合型アプローチとは異なるスーパーアプリとしての価値提案が明確化</li>
+                    <li><strong>Google Gemini Code Assist との差別化:</strong> クラウド IDE 統合を強化する Google に対し、Codex はデスクトップネイティブの統合と Computer Use で差別化</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>非開発者への波及とセキュリティ懸念</h3>
+                <ul>
+                    <li><strong>全 ChatGPT ユーザーへの開放:</strong> プログラミングの専門知識を持たないユーザーも AI エージェントの自動化能力を活用可能に</li>
+                    <li><strong>ノーコード自動化:</strong> Automations とプラグインの組み合わせにより、コードなしで業務プロセスを自動化するユースケースが拡大</li>
+                    <li><strong>セキュリティ・プライバシー:</strong> Computer Use によるデスクトップへの広範なアクセス権限、画面監視やメモリ機能によるデータ送信について、セキュリティ対策とデータポリシーの透明性が重要</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-source">
+                Source: <a href="https://openai.com/index/codex-for-almost-everything" target="_blank" rel="noopener noreferrer">https://openai.com/index/codex-for-almost-everything</a>
+            </p>
+            <p class="footer-branding">OpenAI News Summary -- 2026-04-16</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

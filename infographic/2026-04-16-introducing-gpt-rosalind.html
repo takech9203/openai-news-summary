@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-Rosalind: ライフサイエンス研究を加速するフロンティア推論モデル</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .category-badge.research {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 15px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            line-height: 1.4;
+        }
+
+        .section-title .title-icon {
+            margin-right: 8px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .key-point-content h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .feature-card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .feature-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Changes Table / Tool Table */
+        .changes-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .changes-table:last-child {
+            margin-bottom: 0;
+        }
+
+        .changes-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .changes-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .changes-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .changes-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .changes-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .changes-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .changes-table tbody tr:hover {
+            background: var(--openai-light);
+        }
+
+        .table-category {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 20px;
+            margin-bottom: 12px;
+            padding-left: 8px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .table-category:first-child {
+            margin-top: 0;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-block:first-of-type {
+            margin-top: 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 8px;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid-container pre.mermaid {
+            background: white !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 13px;
+            padding: 6px 0;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2716';
+            color: #DC2626;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2714';
+            color: #059669;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Use Case / Developer Impact */
+        .use-case {
+            padding: 18px 20px;
+            border-left: 4px solid var(--openai-green);
+            background: var(--openai-light);
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 12px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .use-case ul li::before {
+            content: '\2022';
+            color: var(--openai-green);
+            font-weight: 700;
+            position: absolute;
+            left: 4px;
+        }
+
+        /* Architecture description */
+        .arch-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-top: 24px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .code-block code {
+                font-size: 11px;
+            }
+
+            .changes-table {
+                font-size: 12px;
+            }
+
+            .changes-table thead th,
+            .changes-table tbody td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="header-date">2026-04-16</span>
+                <span class="category-badge research">RESEARCH</span>
+            </div>
+            <h1>GPT-Rosalind: ライフサイエンス研究を加速するフロンティア推論モデル</h1>
+            <p class="header-subtitle">
+                OpenAI がライフサイエンス研究に特化した初のフロンティア推論モデル「GPT-Rosalind」を発表。創薬、ゲノミクス解析、タンパク質推論、科学研究ワークフロー全般の加速を目的とし、50 以上の科学ツールとの連携を実現する Life Sciences Research Plugin for Codex も同時導入。Amgen との協業も発表され、Google DeepMind AlphaFold との競争が本格化
+            </p>
+        </header>
+
+        <!-- Section 1: Key Points -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CB;</span> 概要 (Key Points)</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9EC;</div>
+                    <div class="key-point-content">
+                        <h3>Drug Discovery (創薬)</h3>
+                        <p>創薬プロセス全般を加速するフロンティア推論モデル。ターゲット発見から化合物スクリーニング、リード最適化まで、研究ワークフローの各段階を包括的に支援する。モデル名は DNA 二重らせん構造の解明に貢献した Rosalind Franklin に由来。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F52C;</div>
+                    <div class="key-point-content">
+                        <h3>Genomics (ゲノミクス)</h3>
+                        <p>遺伝子発現データ、バリアント解析、パスウェイ分析を支援するゲノミクス解析モジュールを搭載。NCBI Gene、gnomAD、ClinVar、KEGG / Reactome などの主要データベースとの連携により、臨床ゲノミクスの高精度な解析を実現する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9EA;</div>
+                    <div class="key-point-content">
+                        <h3>Protein Engineering (タンパク質工学)</h3>
+                        <p>タンパク質の構造、機能、変異の影響に関する推論を支援。AlphaFold、UniProt、Protein Data Bank との統合により、タンパク質構造予測からドラッグターゲット同定までの一連のワークフローをカバーする。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4DA;</div>
+                    <div class="key-point-content">
+                        <h3>50+ Scientific Tools (科学ツール連携)</h3>
+                        <p>Life Sciences Research Plugin for Codex を通じて 50 以上の科学ツールおよびデータソースとの連携をサポート。AlphaFold、PubMed、ChEMBL、UniProt など主要なデータベースとの接続が標準化され、プラグインは GitHub でオープンソース公開。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3E5;</div>
+                    <div class="key-point-content">
+                        <h3>Amgen Partnership (Amgen との協業)</h3>
+                        <p>大手バイオ医薬品企業 Amgen を初期顧客として協業を発表。最先端の AI 能力とツールを新しく革新的な方法で応用し、患者への医薬品提供を加速する。信頼アクセスプログラム (Trusted Access Program) を通じた限定提供で安全性を確保。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Feature Cards -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x2728;</span> 主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x2697;&#xFE0F;</div>
+                    <h3>化学分野の深い理解</h3>
+                    <p>低分子化合物、化学反応、分子特性に関する高度な推論能力を搭載。構造活性相関 (SAR) 解析、化合物スクリーニング、代謝安定性予測などの創薬化学ワークフローを支援する。ChEMBL、PubChem、ZINC、RDKit との統合に対応。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F9EC;</div>
+                    <h3>タンパク質工学の支援</h3>
+                    <p>タンパク質の構造、機能、変異の影響に関する推論を実現。配列解析による機能ドメインの同定、病原性変異のメカニズム解析、ドラッグターゲット部位の結合ポケット分析を支援する。AlphaFold プラグインとの統合によりタンパク質構造予測データを直接活用可能。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F52C;</div>
+                    <h3>ゲノミクス解析</h3>
+                    <p>遺伝子発現データ、バリアント解析、パスウェイ分析を包括的に支援。ACMG 基準に基づくバリアント分類、機能的影響の評価、関連がんリスクの浸透度データ解析、治療的含意の分析に対応。NCBI Gene、gnomAD、ClinVar との連携をサポート。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F527;</div>
+                    <h3>ツール統合オーケストレーション</h3>
+                    <p>50 以上の科学ツールやデータソースとの連携を可能にする改善されたツール使用能力。PubMed 文献検索、AlphaFold 構造予測、臨床試験データの取得を統合的に実行し、複数のデータソースを横断した研究ワークフローの自動化を実現する。</p>
+                </div>
+                <div class="feature-card full-width">
+                    <div class="feature-card-icon">&#x1F4BB;</div>
+                    <h3>Codex Life Sciences Plugin</h3>
+                    <p>GPT-Rosalind の発表と同時に導入された Life Sciences Research Plugin for Codex は、無料でアクセス可能なプラグインとして提供される。AlphaFold、PubMed をはじめとする 50 以上の科学ツールやデータソースへの接続を標準化し、科学的なコード生成、データ解析パイプラインの構築、実験プロトコルの自動化を Codex 上で実行可能にする。GitHub でオープンソース公開されており、開発者コミュニティによるエコシステムの拡張に対応。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Stats -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CA;</span> 統計情報</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">50+</div>
+                    <div class="stat-label">連携可能な科学ツール・データソース</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">10-15 年</div>
+                    <div class="stat-label">現在の創薬タイムライン (短縮を目指す)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Amgen</div>
+                    <div class="stat-label">初期パートナー (大手バイオ医薬品企業)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">研究プレビュー</div>
+                    <div class="stat-label">提供段階 (信頼アクセスプログラム経由)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Scientific Tool Tables -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F5C3;</span> 科学ツール対応表</h2>
+
+            <h3 class="table-category">タンパク質・構造データベース</h3>
+            <table class="changes-table">
+                <thead>
+                    <tr>
+                        <th>ツール / データソース</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>AlphaFold</td>
+                        <td>タンパク質構造予測</td>
+                    </tr>
+                    <tr>
+                        <td>UniProt</td>
+                        <td>タンパク質配列・機能情報</td>
+                    </tr>
+                    <tr>
+                        <td>PDB (Protein Data Bank)</td>
+                        <td>実験的構造データ</td>
+                    </tr>
+                    <tr>
+                        <td>InterPro</td>
+                        <td>タンパク質ドメイン・ファミリー分類</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="table-category">文献・知識データベース</h3>
+            <table class="changes-table">
+                <thead>
+                    <tr>
+                        <th>ツール / データソース</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PubMed</td>
+                        <td>生物医学文献検索</td>
+                    </tr>
+                    <tr>
+                        <td>bioRxiv / medRxiv</td>
+                        <td>プレプリント検索</td>
+                    </tr>
+                    <tr>
+                        <td>ClinicalTrials.gov</td>
+                        <td>臨床試験データ</td>
+                    </tr>
+                    <tr>
+                        <td>DrugBank</td>
+                        <td>医薬品情報データベース</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="table-category">ゲノミクス・バイオインフォマティクス</h3>
+            <table class="changes-table">
+                <thead>
+                    <tr>
+                        <th>ツール / データソース</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NCBI Gene</td>
+                        <td>遺伝子情報</td>
+                    </tr>
+                    <tr>
+                        <td>gnomAD</td>
+                        <td>集団ゲノムデータ</td>
+                    </tr>
+                    <tr>
+                        <td>ClinVar</td>
+                        <td>遺伝子バリアント臨床的意義</td>
+                    </tr>
+                    <tr>
+                        <td>KEGG / Reactome</td>
+                        <td>パスウェイデータベース</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="table-category">化学・創薬</h3>
+            <table class="changes-table">
+                <thead>
+                    <tr>
+                        <th>ツール / データソース</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ChEMBL</td>
+                        <td>生物活性化合物データ</td>
+                    </tr>
+                    <tr>
+                        <td>PubChem</td>
+                        <td>化学物質情報</td>
+                    </tr>
+                    <tr>
+                        <td>ZINC</td>
+                        <td>化合物ライブラリ</td>
+                    </tr>
+                    <tr>
+                        <td>RDKit (統合)</td>
+                        <td>化学情報学ツールキット</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 5: Code Samples -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4BB;</span> 技術詳細 (コードサンプル)</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">GPT-Rosalind 基本 API 呼び出し</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-Rosalind を使用した基本的な科学研究クエリ
+response = client.chat.completions.create(
+    model="gpt-rosalind",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a life sciences research assistant specializing in "
+                "drug discovery, genomics, and protein engineering. "
+                "Provide evidence-based analysis with citations to relevant literature."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Analyze the potential druggability of the KRAS G12C mutation "
+                "in non-small cell lung cancer. What are the key binding sites "
+                "and what approaches have shown promise in recent research?"
+            )
+        }
+    ],
+    max_tokens=4096
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">PubMed プラグインによるツール使用</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Life Sciences Plugin を活用した PubMed 文献検索と解析
+response = client.chat.completions.create(
+    model="gpt-rosalind",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a life sciences research assistant with access to "
+                "scientific tools and databases. Use available plugins to "
+                "retrieve and analyze data from PubMed, AlphaFold, and other "
+                "scientific data sources."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Search PubMed for recent publications on CAR-T cell therapy "
+                "targeting solid tumors published in the last 12 months. "
+                "Summarize the key findings and identify emerging trends."
+            )
+        }
+    ],
+    tools=[
+        {
+            "type": "function",
+            "function": {
+                "name": "search_pubmed",
+                "description": "Search PubMed for biomedical literature",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "PubMed search query"
+                        },
+                        "max_results": {
+                            "type": "integer",
+                            "description": "Maximum number of results to return"
+                        },
+                        "date_range": {
+                            "type": "string",
+                            "description": "Date range filter (e.g., '2025/04:2026/04')"
+                        }
+                    },
+                    "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "query_alphafold",
+                "description": "Query AlphaFold protein structure database",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "uniprot_id": {
+                            "type": "string",
+                            "description": "UniProt accession ID"
+                        },
+                        "include_pae": {
+                            "type": "boolean",
+                            "description": "Include predicted aligned error"
+                        }
+                    },
+                    "required": ["uniprot_id"]
+                }
+            }
+        }
+    ],
+    tool_choice="auto",
+    max_tokens=4096
+)
+
+# ツール呼び出しの結果を処理
+for choice in response.choices:
+    message = choice.message
+    if message.tool_calls:
+        for tool_call in message.tool_calls:
+            print(f"Tool: {tool_call.function.name}")
+            print(f"Arguments: {tool_call.function.arguments}")
+    else:
+        print(message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Architecture Mermaid Diagram -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F3D7;</span> アーキテクチャ</h2>
+            <p class="arch-desc">
+                以下の図は、GPT-Rosalind のシステムアーキテクチャを示しています。研究者・開発者からのアクセスレイヤー、コアモデルの推論モジュール群、Codex Life Sciences Plugin を経由した 50 以上の科学データソースとの連携、およびパートナー企業との協業構造を表しています。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Users["研究者 / 開発者"]
+        Researcher(["科学者"])
+        Developer(["開発者"])
+    end
+
+    subgraph Access["アクセスレイヤー"]
+        ChatGPT["ChatGPT\n(研究プレビュー)"]
+        API["OpenAI API"]
+        TrustedAccess["信頼アクセス\nプログラム"]
+    end
+
+    subgraph Core["GPT-Rosalind コアモデル"]
+        Reasoning["フロンティア推論\nエンジン"]
+        Chemistry["化学理解\nモジュール"]
+        Protein["タンパク質推論\nモジュール"]
+        Genomics["ゲノミクス解析\nモジュール"]
+        ToolUse["ツール使用\nオーケストレーター"]
+    end
+
+    subgraph Codex["Codex Life Sciences Plugin"]
+        PluginCore["プラグインコア"]
+        Connector["データソース\nコネクタ"]
+    end
+
+    subgraph ProteinDB["タンパク質 / 構造"]
+        AlphaFold["AlphaFold"]
+        UniProt["UniProt"]
+        PDB["Protein Data Bank"]
+    end
+
+    subgraph Literature["文献 / 知識"]
+        PubMed["PubMed"]
+        ClinTrials["ClinicalTrials.gov"]
+        DrugBank["DrugBank"]
+    end
+
+    subgraph GenomicsDB["ゲノミクス"]
+        NCBI["NCBI Gene"]
+        gnomAD["gnomAD"]
+        ClinVar["ClinVar"]
+        KEGG["KEGG / Reactome"]
+    end
+
+    subgraph ChemDB["化学 / 創薬"]
+        ChEMBL["ChEMBL"]
+        PubChem["PubChem"]
+        RDKit["RDKit"]
+    end
+
+    subgraph Partners["パートナー企業"]
+        Amgen["Amgen"]
+        Pharma["その他製薬企業"]
+    end
+
+    Researcher --> ChatGPT
+    Developer --> API
+    ChatGPT --> TrustedAccess
+    API --> TrustedAccess
+    TrustedAccess --> Reasoning
+
+    Reasoning --> Chemistry
+    Reasoning --> Protein
+    Reasoning --> Genomics
+    Reasoning --> ToolUse
+
+    ToolUse --> PluginCore
+    PluginCore --> Connector
+
+    Connector --> AlphaFold
+    Connector --> UniProt
+    Connector --> PDB
+    Connector --> PubMed
+    Connector --> ClinTrials
+    Connector --> DrugBank
+    Connector --> NCBI
+    Connector --> gnomAD
+    Connector --> ClinVar
+    Connector --> KEGG
+    Connector --> ChEMBL
+    Connector --> PubChem
+    Connector --> RDKit
+
+    Partners -.->|"協業"| TrustedAccess
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class Reasoning,Chemistry,Protein,Genomics,ToolUse openai
+    class ChatGPT,API,TrustedAccess,PluginCore,Connector dark
+    class AlphaFold,UniProt,PDB,PubMed,ClinTrials,DrugBank light
+    class NCBI,gnomAD,ClinVar,KEGG,ChEMBL,PubChem,RDKit light
+    class Researcher,Developer,Amgen,Pharma gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Drug Discovery Pipeline Mermaid Diagram -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F48A;</span> 創薬パイプライン</h2>
+            <p class="arch-desc">
+                以下の図は、創薬ワークフローにおける GPT-Rosalind の位置付けを示しています。ターゲット発見から上市までの各フェーズにおいて、GPT-Rosalind が文献解析、パスウェイ解析、化合物スクリーニング、SAR 解析、実験設計、毒性予測などの形で貢献する全体像を表しています。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Discovery["ターゲット発見"]
+        Target["ターゲット同定"]
+        Validation["ターゲット検証"]
+    end
+
+    subgraph Design["分子設計"]
+        HitID["ヒット化合物同定"]
+        LeadOpt["リード最適化"]
+    end
+
+    subgraph Preclinical["前臨床"]
+        InVitro["In Vitro 試験"]
+        InVivo["In Vivo 試験"]
+        Tox["毒性評価"]
+    end
+
+    subgraph Clinical["臨床開発"]
+        Phase1["Phase I"]
+        Phase2["Phase II"]
+        Phase3["Phase III"]
+    end
+
+    subgraph Approval["承認"]
+        Regulatory["規制当局申請"]
+        Launch["上市"]
+    end
+
+    Target --> Validation
+    Validation --> HitID
+    HitID --> LeadOpt
+    LeadOpt --> InVitro
+    InVitro --> InVivo
+    InVivo --> Tox
+    Tox --> Phase1
+    Phase1 --> Phase2
+    Phase2 --> Phase3
+    Phase3 --> Regulatory
+    Regulatory --> Launch
+
+    Rosalind(["GPT-Rosalind"])
+    Rosalind -.->|"文献解析\n仮説生成"| Target
+    Rosalind -.->|"パスウェイ解析\nバリアント評価"| Validation
+    Rosalind -.->|"化合物スクリーニング\n構造予測"| HitID
+    Rosalind -.->|"SAR 解析\n最適化提案"| LeadOpt
+    Rosalind -.->|"実験設計\nデータ解析"| InVitro
+    Rosalind -.->|"毒性予測"| Tox
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Rosalind openai
+    class Target,Validation,HitID,LeadOpt dark
+    class InVitro,InVivo,Tox,Phase1,Phase2,Phase3 light
+    class Regulatory,Launch light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 8: Developer Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F6E0;</span> 開発者への影響 / ユースケース</h2>
+
+            <div class="use-case">
+                <h3>創薬プロセスの加速</h3>
+                <ul>
+                    <li><strong>タイムラインの短縮:</strong> ターゲット発見から規制当局承認までの 10 年から 15 年というタイムラインの短縮が期待される。特に初期段階の仮説生成、文献調査、化合物スクリーニングにおける効率化が見込まれる</li>
+                    <li><strong>専用モデルの活用:</strong> 汎用モデルでは達成が困難であった化学、タンパク質工学、ゲノミクスに関する高精度な推論が、専用に訓練されたモデルを通じて利用可能になる</li>
+                    <li><strong>Amgen との協業事例:</strong> 大手バイオ医薬品企業との実際の創薬ワークフローにおいて具体的な価値を提供できることを示す重要なベンチマーク</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>ゲノミクス解析の高度化</h3>
+                <ul>
+                    <li><strong>臨床ゲノミクス:</strong> ACMG 基準に基づくバリアント分類、機能的影響の評価、がんリスクの浸透度データ解析、治療的含意の分析を包括的に支援</li>
+                    <li><strong>複数データソースの横断解析:</strong> gnomAD、ClinVar、KEGG / Reactome などの主要データベースを統合的に活用し、遺伝子バリアントの多角的な評価が可能に</li>
+                    <li><strong>研究ワークフローの再現性:</strong> 標準化されたプラグインインターフェースにより、研究プロトコルの共有と再現が容易になる</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>プラグインエコシステムの開発</h3>
+                <ul>
+                    <li><strong>オープンソース公開:</strong> Life Sciences Research Plugin が GitHub で公開されており、開発者はプラグインフレームワークを基にカスタムプラグインを構築可能</li>
+                    <li><strong>50 以上のツール統合:</strong> AlphaFold、PubMed、UniProt、ChEMBL など主要な科学データベースとの連携が標準化され、個別のコネクタ構築が不要に</li>
+                    <li><strong>信頼アクセスプログラムの考慮:</strong> API アクセスには事前申請と審査が必要。研究プレビュー段階であるため、API 仕様やモデル動作が今後変更される可能性がある点に留意</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-source">
+                Source: <a href="https://openai.com/index/introducing-gpt-rosalind" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-gpt-rosalind</a>
+            </p>
+            <p class="footer-source">
+                OpenAI Research: <a href="https://openai.com/research" target="_blank" rel="noopener noreferrer">https://openai.com/research</a>
+            </p>
+            <p class="footer-source">
+                OpenAI API Docs: <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs</a>
+            </p>
+            <p class="footer-source">
+                AlphaFold Database: <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener noreferrer">https://alphafold.ebi.ac.uk/</a>
+            </p>
+            <p class="footer-branding">OpenAI News Summary -- 2026-04-16</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
