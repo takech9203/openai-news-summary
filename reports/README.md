@@ -7,6 +7,7 @@ OpenAI の最新ニュースレポート一覧
 
 - [2026-04-16](2026/2026-04-16-introducing-gpt-rosalind.md) - GPT-Rosalind の発表: ライフサイエンス研究を加速するフロンティア推論モデル
 - [2026-04-16](2026/2026-04-16-codex-for-almost-everything.md) - Codex が「ほぼ万能」のスーパーアプリに進化: コンピュータ操作、ブラウザ、画像生成、メモリ、プラグインを統合
+- [2026-04-16](2026/2026-04-16-ai-jobs-transition-framework.md) - AI 雇用転換フレームワーク: 900 以上の職業に対する AI の影響を 4 つの要因で分類
 - [2026-04-16](2026/2026-04-16-accelerating-cyber-defense-ecosystem.md) - サイバー防衛エコシステムの加速: 1,000 万ドルの API 助成金と業界パートナーシップの拡大
 - [2026-04-15](2026/2026-04-15-people-first-ai-fund.md) - OpenAI、5,000 万ドルの People-First AI Fund を設立: コミュニティと共に築く AI の未来
 - [2026-04-15](2026/2026-04-15-openai-python-sdk-v2-32-websockets.md) - OpenAI Python SDK v2.32.0: WebSocket 再接続とイベントハンドラの大幅強化

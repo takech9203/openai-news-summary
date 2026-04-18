@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 雇用転換フレームワーク - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header-content { position: relative; z-index: 1; }
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+        .header .subtitle { font-size: 15px; opacity: 0.85; margin-top: 12px; line-height: 1.6; }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points { display: grid; gap: 16px; }
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: var(--text-secondary); }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+
+        /* Category Cards */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+        }
+        .category-card {
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid;
+            position: relative;
+        }
+        .category-card .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .category-card .card-percent {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .category-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .category-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .category-card .examples {
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .cat-high-risk {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FFF5F5 100%);
+            border-color: #F87171;
+        }
+        .cat-high-risk .card-percent { color: #DC2626; }
+        .cat-high-risk h3 { color: #DC2626; }
+
+        .cat-shrinking {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+            border-color: #FBBF24;
+        }
+        .cat-shrinking .card-percent { color: #D97706; }
+        .cat-shrinking h3 { color: #D97706; }
+
+        .cat-expanding {
+            background: linear-gradient(135deg, #D1FAE5 0%, #ECFDF5 100%);
+            border-color: #34D399;
+        }
+        .cat-expanding .card-percent { color: #059669; }
+        .cat-expanding h3 { color: #059669; }
+
+        .cat-stable {
+            background: linear-gradient(135deg, #DBEAFE 0%, #EFF6FF 100%);
+            border-color: #60A5FA;
+        }
+        .cat-stable .card-percent { color: #2563EB; }
+        .cat-stable h3 { color: #2563EB; }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .comparison-card { padding: 24px; border-radius: 16px; }
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .comparison-card.before h4 { color: #DC2626; }
+        .comparison-card.after h4 { color: #059669; }
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--openai-dark); }
+        .use-case p { font-size: 14px; color: var(--text-secondary); }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .code-lang { color: var(--openai-green); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+        .code-block pre { margin: 0; padding: 0; }
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+        .mermaid { display: flex; justify-content: center; }
+
+        /* Callout */
+        .callout {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 1px solid rgba(16, 163, 127, 0.3);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .callout strong { color: var(--openai-green); }
+
+        /* Bar chart visual */
+        .bar-chart { margin: 20px 0; }
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .bar-label {
+            min-width: 200px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: right;
+        }
+        .bar-track {
+            flex: 1;
+            height: 32px;
+            background: var(--openai-gray);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            transition: width 1s ease;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .footer a { color: var(--openai-green); text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid, .category-grid { grid-template-columns: 1fr; }
+            .comparison { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .bar-label { min-width: 120px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Policy / Research</span>
+                <h1>AI 雇用転換フレームワーク</h1>
+                <p class="date">2026-04-16</p>
+                <p class="subtitle">900 以上の職業を 4 つの要因で分類し、AI が労働市場に与える影響を実証データに基づいて体系的に分析。OpenAI チーフエコノミスト Ronnie Chatterji 氏が主導。</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要: 5 つのキーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>900 以上の職業を 4 要因で分類</h3>
+                        <p>AI 処理能力、人間の不可欠性、需要弾力性、ChatGPT 利用データの 4 軸で実証的に評価</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>高リスク職種は ChatGPT を 3 倍利用</h3>
+                        <p>自動化リスクの高い職業の労働者は、リスクの低い職業の約 3 倍 ChatGPT を利用しているという発見</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>大規模な雇用混乱はまだ未確認</h3>
+                        <p>現在の失業データに AI による大量失業の統計的証拠は現れておらず、転換は緩やかに進行</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚖️</div>
+                    <div class="key-point-content">
+                        <h3>「縮小か拡大か」の分岐点</h3>
+                        <p>AI のコスト削減効果を人員削減に使うか、新規事業創出に活用するかが企業と政策の鍵</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>ソフトウェア開発者は雇用拡大カテゴリ</h3>
+                        <p>AI が生産性を向上させることで新たな需要が生まれ、雇用が増加する「拡大シナリオ」の代表例</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るフレームワーク</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">900+</div>
+                    <div class="stat-label">分析対象の職業数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3x</div>
+                    <div class="stat-label">高リスク職の ChatGPT 利用率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">分類要因の数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">職業カテゴリ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 Classification Factors -->
+        <section class="section">
+            <h2 class="section-title">4 つの分類要因</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🤖 AI の業務処理能力</h3>
+                    <p>各職業において、現在の AI 技術が実際にどの程度の業務を代替可能かを評価。理論上の可能性ではなく、実用的な能力に基づく。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👤 人間の不可欠性</h3>
+                    <p>判断力、共感性、対人関係、物理的対応など、人間が果たす役割がどの程度本質的であるかを判定。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💹 コスト低下時の需要変動</h3>
+                    <p>AI によってタスクコストが下がった場合のサービス需要の変化を分析。需要拡大 vs 人員削減を区別する重要な要因。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 ChatGPT 実利用データ</h3>
+                    <p>プラットフォームでの実際の利用パターンを分析し、理論的評価と実際の利用行動のギャップを埋める。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 Occupation Categories -->
+        <section class="section">
+            <h2 class="section-title">職業カテゴリ別の分析結果</h2>
+
+            <!-- Bar Chart Visualization -->
+            <div class="bar-chart">
+                <div class="bar-item">
+                    <div class="bar-label">短期影響小</div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 46%; background: linear-gradient(90deg, #3B82F6, #60A5FA);">46%</div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">人間主導・雇用縮小</div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 24%; background: linear-gradient(90deg, #D97706, #FBBF24);">24%</div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">短期自動化リスク高</div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 18%; background: linear-gradient(90deg, #DC2626, #F87171);">18%</div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">AI で雇用拡大</div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 12%; background: linear-gradient(90deg, #059669, #34D399);">12%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-grid" style="margin-top: 28px;">
+                <div class="category-card cat-high-risk">
+                    <div class="card-header">
+                        <div class="card-percent">18%</div>
+                        <div>
+                            <h3>短期自動化リスク高</h3>
+                            <span style="font-size: 12px; color: #DC2626;">ChatGPT 利用率: 約 3 倍</span>
+                        </div>
+                    </div>
+                    <p>AI が高精度で業務を遂行でき、人間の判断要素が少ない領域。このカテゴリの労働者は ChatGPT を最も積極的に活用している。</p>
+                    <div class="examples">例: データ入力事務員、簿記係、カスタマーサービス</div>
+                </div>
+
+                <div class="category-card cat-shrinking">
+                    <div class="card-header">
+                        <div class="card-percent">24%</div>
+                        <div>
+                            <h3>人間主導だが雇用縮小</h3>
+                            <span style="font-size: 12px; color: #D97706;">業務は人間が主導</span>
+                        </div>
+                    </div>
+                    <p>AI は完全代替しないが、1 人当たりの生産性向上により必要人員が減少する可能性。組織は人員削減か高付加価値業務へのシフトかを選択。</p>
+                    <div class="examples">例: 人事スペシャリスト、管理業務</div>
+                </div>
+
+                <div class="category-card cat-expanding">
+                    <div class="card-header">
+                        <div class="card-percent">12%</div>
+                        <div>
+                            <h3>AI 導入で雇用拡大</h3>
+                            <span style="font-size: 12px; color: #059669;">需要弾力性の効果</span>
+                        </div>
+                    </div>
+                    <p>AI がコストを下げ生産性を向上させることで、これまで実現困難だったプロジェクトが可能に。結果として当該分野の労働需要が増加。</p>
+                    <div class="examples">例: ソフトウェア開発者、AI エンジニア</div>
+                </div>
+
+                <div class="category-card cat-stable">
+                    <div class="card-header">
+                        <div class="card-percent">46%</div>
+                        <div>
+                            <h3>短期的な影響が最小</h3>
+                            <span style="font-size: 12px; color: #2563EB;">人間依存度が高い</span>
+                        </div>
+                    </div>
+                    <p>人間の判断力、ケア能力、対面インタラクションに本質的に依存する職業。AI は補助ツールとして活用されるが、職業の本質は人間が担い続ける。</p>
+                    <div class="examples">例: 教師、在宅医療介助者、ソーシャルワーカー</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ChatGPT Usage Insights -->
+        <section class="section">
+            <h2 class="section-title">ChatGPT 利用データからの知見</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📱</div>
+                    <div class="key-point-content">
+                        <h3>利用率の格差: 約 3 倍</h3>
+                        <p>自動化リスクが最も高い職業の労働者は、リスクが低い職業の労働者と比較して ChatGPT を約 3 倍多く利用。AI が「脅威」であると同時に「適応手段」として機能していることを示唆。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>理論と実践のギャップ</h3>
+                        <p>理論的な自動化可能性と実際の AI 利用行動には相関があるが完全には一致しない。技術的可能性と実際の導入の間にある組織的・制度的要因の存在を示唆。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout" style="margin-top: 20px;">
+                <strong>Ronnie Chatterji 氏 (OpenAI チーフエコノミスト):</strong> AI の能力は「前例のない速度」で向上しており、早期導入者は既に「意味のある生産性向上」を実現している。このフレームワークは、どの職業が最初に圧力に直面し、どの職業が再設計され、どの職業が成長するかを理解するための基盤を提供する。
+            </div>
+        </section>
+
+        <!-- Before/After: Understanding AI's Job Impact -->
+        <section class="section">
+            <h2 class="section-title">Before / After: AI 雇用影響の理解</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 従来の分析</h4>
+                    <ul>
+                        <li>❌ 「AI が全ての仕事を奪う」という単純化されたナラティブ</li>
+                        <li>❌ 技術的可能性のみに基づく予測</li>
+                        <li>❌ 理論的な自動化率の推定</li>
+                        <li>❌ 需要変動の無視</li>
+                        <li>❌ 労働者の適応行動の未考慮</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: 新フレームワーク</h4>
+                    <ul>
+                        <li>✅ 4 要因に基づくきめ細かな分析</li>
+                        <li>✅ 実利用データ (ChatGPT) の組み込み</li>
+                        <li>✅ 需要弾力性による拡大/縮小の区別</li>
+                        <li>✅ 人間の不可欠性の定量評価</li>
+                        <li>✅ 900+ 職業の実証的カテゴリ分類</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture: Framework Structure (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">フレームワークの全体構造</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["分析対象"]
+        Occupations["900 以上の職業"]
+    end
+
+    subgraph Factors["4 つの分類要因"]
+        F1["AI の業務処理能力\n現時点で AI が\n代替可能な業務範囲"]
+        F2["人間の不可欠性\n判断力・共感性・\n対面対応の必要度"]
+        F3["需要弾力性\nコスト低下時の\n需要変動パターン"]
+        F4["ChatGPT 利用データ\nプラットフォームでの\n実際の利用状況"]
+    end
+
+    subgraph Categories["4 つの職業カテゴリ"]
+        C1["短期自動化リスク高\n18% の労働者\nデータ入力、簿記、\nカスタマーサービス"]
+        C2["人間主導・雇用縮小\n24% の労働者\n人事スペシャリスト等"]
+        C3["AI で雇用拡大\n12% の労働者\nソフトウェア開発者等"]
+        C4["短期影響小\n46% の労働者\n教師、医療介助者等"]
+    end
+
+    subgraph Stakeholders["活用主体"]
+        Policy["政策立案者"]
+        Business["企業"]
+        Workers["労働者"]
+    end
+
+    Occupations --> F1
+    Occupations --> F2
+    Occupations --> F3
+    Occupations --> F4
+
+    F1 --> C1
+    F1 --> C2
+    F2 --> C3
+    F2 --> C4
+    F3 --> C1
+    F3 --> C3
+    F4 --> C1
+    F4 --> C2
+
+    C1 --> Policy
+    C2 --> Policy
+    C3 --> Business
+    C4 --> Workers
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class F1,F2,F3,F4 openai
+    class C1,C2,C3,C4 dark
+    class Occupations light
+    class Policy,Business,Workers accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Architecture: Expand vs. Shrink Decision Model (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">「拡大か縮小か」の分岐モデル</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Trigger["AI によるコスト低下"]
+        AI["AI がタスクの\nコスト・時間を削減"]
+    end
+
+    subgraph Decision["企業の意思決定"]
+        Fork{{"縮小 or 拡大?"}}
+    end
+
+    subgraph Shrink["縮小シナリオ"]
+        Reduce["人員削減"]
+        SameOutput["同じ生産量を\n少人数で処理"]
+        CostSave["コスト削減を\n利益に直結"]
+    end
+
+    subgraph Expand["拡大シナリオ"]
+        MoreOutput["生産量の拡大"]
+        NewService["新規サービスの\n立ち上げ"]
+        Upskill["労働者を\n高付加価値業務へ\nシフト"]
+    end
+
+    subgraph Determinants["決定要因"]
+        D1["需要弾力性"]
+        D2["業界の競争環境"]
+        D3["政策的介入"]
+        D4["スキル再教育の\n可用性"]
+    end
+
+    AI --> Fork
+    Fork -->|"低弾力性"| Reduce
+    Fork -->|"高弾力性"| MoreOutput
+    Reduce --> SameOutput
+    SameOutput --> CostSave
+    MoreOutput --> NewService
+    NewService --> Upskill
+
+    D1 --> Fork
+    D2 --> Fork
+    D3 --> Fork
+    D4 --> Fork
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef warning fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class AI,MoreOutput,NewService,Upskill openai
+    class Fork dark
+    class Reduce,SameOutput,CostSave warning
+    class D1,D2,D3,D4 accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">分類アルゴリズムの概念モデル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">職業分類の概念的ロジック</span>
+                </div>
+                <pre><code class="language-python">from dataclasses import dataclass
+
+
+@dataclass
+class OccupationProfile:
+    """職業プロファイル: フレームワークの 4 要因を表現"""
+    name: str
+    ai_capability_score: float      # AI が処理可能な業務の割合 (0.0-1.0)
+    human_essentiality: float       # 人間の不可欠性 (0.0-1.0)
+    demand_elasticity: float        # コスト低下時の需要弾力性 (-1.0 ~ +1.0)
+    chatgpt_usage_rate: float       # ChatGPT の相対的利用率
+
+
+def classify_occupation(profile: OccupationProfile) -> str:
+    if (profile.ai_capability_score > 0.7
+            and profile.human_essentiality < 0.3):
+        return "HIGH_AUTOMATION_RISK"       # 18% - 短期自動化リスク高
+
+    if (profile.ai_capability_score > 0.4
+            and profile.human_essentiality > 0.5
+            and profile.demand_elasticity < 0):
+        return "HUMAN_LED_SHRINKING"        # 24% - 人間主導だが雇用縮小
+
+    if (profile.demand_elasticity > 0.3
+            and profile.ai_capability_score > 0.3):
+        return "AI_DRIVEN_EXPANSION"        # 12% - AI で雇用拡大
+
+    return "LEAST_IMMEDIATE_THREAT"         # 46% - 短期影響小
+
+
+# 各カテゴリの代表的な職業例
+examples = [
+    OccupationProfile("データ入力事務員", 0.85, 0.15, -0.5, 3.0),
+    OccupationProfile("人事スペシャリスト", 0.55, 0.60, -0.2, 1.5),
+    OccupationProfile("ソフトウェア開発者", 0.50, 0.65, 0.6, 2.0),
+    OccupationProfile("在宅医療介助者", 0.15, 0.90, 0.1, 0.5),
+]
+
+for occupation in examples:
+    category = classify_occupation(occupation)
+    print(f"{occupation.name}: {category}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Impact: Policymakers, Business, Developers, Workers -->
+        <section class="section">
+            <h2 class="section-title">ステークホルダーへの影響</h2>
+
+            <div class="use-case">
+                <h4>🏛️ 政策立案者への示唆</h4>
+                <p>短期的自動化リスクが高い 18% の労働者への重点的スキル再教育プログラム設計と、24% の「雇用縮小」カテゴリへの予防的支援が政策的優先事項。12% の「AI で雇用拡大」カテゴリを積極的に支援し、好循環を促進する政策設計が求められる。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>🏢 企業への示唆</h4>
+                <p>自社の労働力ポートフォリオが 4 カテゴリにどう分布しているか分析し、人材戦略を再設計する必要がある。AI の効率化を単なるコスト削減に使うのか、新たな事業機会創出に活用するのかは競争力を左右する戦略的選択。高リスク職種の労働者の AI 活用傾向を積極的に支援すべき。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>💻 開発者への示唆</h4>
+                <p>12% の「AI で雇用拡大」カテゴリは最も有望な市場。生産性向上ツール、トランジション支援ツール、企業向け労働力分析 SaaS の開発機会がある。フレームワークの方法論を活用した個別企業向けの分析ツール需要も見込まれる。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>👷 労働者への示唆</h4>
+                <p>自身の職業がどのカテゴリに属するか認識し、それに応じた準備を行うことが重要。AI を脅威ではなく、生産性向上とキャリア転換の手段として活用するリテラシーが求められる。46% の「短期影響小」に属していても、人間固有の判断力・創造性・対人スキルの継続的強化が長期的な雇用安定につながる。</p>
+            </div>
+        </section>
+
+        <!-- Current Labor Market Status -->
+        <section class="section">
+            <h2 class="section-title">現在の労働市場の状況</h2>
+            <div class="callout">
+                <strong>重要な発見:</strong> 現時点の失業データには、AI による大規模な雇用混乱の兆候がまだ明確には現れていない。AI による雇用転換は、単純な「代替」ナラティブが示唆するよりも、緩やかかつ不均一に進行している可能性がある。ただし、AI の能力は前例のない速度で向上しており、より広範な影響の可能性は引き続き存在する。
+            </div>
+
+            <div class="feature-grid" style="margin-top: 20px;">
+                <div class="feature-card">
+                    <h3>📉 失業データ</h3>
+                    <p>AI に起因する大量失業の統計的証拠は現時点で未確認。転換は予測より緩やか。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ 生産性向上</h3>
+                    <p>早期導入者は「意味のある生産性向上」を実現。AI の能力は前例のない速度で進化中。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔀 不均一な進行</h3>
+                    <p>影響は業種・職種により大きく異なり、労働者自身の適応行動を含む複雑なプロセス。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 15px; line-height: 1.8; color: var(--text-secondary);">
+                OpenAI の「AI 雇用転換フレームワーク」は、900 以上の職業を「AI 処理能力」「人間の不可欠性」「需要弾力性」「ChatGPT 実利用データ」の 4 要因で分類し、
+                <strong style="color: var(--text-primary);">短期自動化リスク高 (18%)</strong>、
+                <strong style="color: var(--text-primary);">人間主導・雇用縮小 (24%)</strong>、
+                <strong style="color: var(--text-primary);">AI で雇用拡大 (12%)</strong>、
+                <strong style="color: var(--text-primary);">短期影響小 (46%)</strong>
+                の 4 カテゴリに整理した画期的な政策研究である。
+                最も注目すべきは、高リスク職種の労働者が ChatGPT を約 3 倍多く利用しているという発見と、大規模雇用混乱がまだ現れていないという事実の共存であり、AI による雇用転換が労働者自身の適応を含むより複雑なプロセスであることを示している。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <p style="margin-top: 8px;"><a href="https://cdn.openai.com/papers/ai-jobs-transition-framework.pdf" target="_blank" rel="noopener noreferrer">https://cdn.openai.com/papers/ai-jobs-transition-framework.pdf</a></p>
+            <p style="margin-top: 4px;"><a href="https://openai.com/research" target="_blank" rel="noopener noreferrer">https://openai.com/research</a></p>
+            <p style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">本インフォグラフィックは複数の公開ニュースソース (Techloy、National Review 等) の報道に基づいて作成されています。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
