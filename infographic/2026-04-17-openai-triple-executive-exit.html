@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI 幹部 3 名が同日退社 -- Kevin Weil, Bill Peebles, Srinivas Narayanan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 60px 20px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16,163,127,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            max-width: 800px;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .header-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-meta-item svg {
+            width: 16px;
+            height: 16px;
+            fill: rgba(255,255,255,0.7);
+        }
+
+        /* ===== Section Styles ===== */
+        .section {
+            padding: 48px 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 28px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .section-title .icon svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        /* ===== Note Box ===== */
+        .note-box {
+            background: white;
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 32px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .note-box strong {
+            color: var(--openai-green);
+        }
+
+        /* ===== Overview ===== */
+        .overview-text {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 2;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            margin-bottom: 32px;
+        }
+
+        /* ===== Key Points ===== */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .key-point-content h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .key-point-content p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== Executive Cards ===== */
+        .exec-cards {
+            display: grid;
+            gap: 24px;
+        }
+
+        .exec-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .exec-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .exec-card-header {
+            padding: 24px 28px 18px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .exec-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .exec-avatar.kevin { background: linear-gradient(135deg, #10A37F, #0D8A6A); }
+        .exec-avatar.bill { background: linear-gradient(135deg, #FF6B6B, #CC5555); }
+        .exec-avatar.srinivas { background: linear-gradient(135deg, #4A90D9, #3A72B0); }
+
+        .exec-info h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .exec-role {
+            font-size: 0.88rem;
+            color: var(--openai-green);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .exec-status {
+            display: inline-block;
+            background: #FFF3F3;
+            color: #CC5555;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        .exec-card-body {
+            padding: 24px 28px 28px;
+        }
+
+        .exec-card-body p {
+            font-size: 0.93rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+
+        .exec-card-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .exec-highlight {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 16px;
+        }
+
+        .exec-highlight h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .exec-highlight p {
+            font-size: 0.88rem;
+            margin-bottom: 0;
+        }
+
+        .exec-highlight ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .exec-highlight ul li {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .exec-highlight ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* ===== Timeline Table ===== */
+        .timeline-wrapper {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .timeline-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .timeline-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 18px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .timeline-table tbody tr {
+            border-bottom: 1px solid var(--openai-gray);
+            transition: background-color 0.15s;
+        }
+
+        .timeline-table tbody tr:hover {
+            background-color: rgba(16,163,127,0.04);
+        }
+
+        .timeline-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-table tbody td {
+            padding: 14px 18px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        .timeline-table tbody td:first-child {
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .timeline-highlight {
+            background-color: rgba(16,163,127,0.06);
+        }
+
+        .timeline-note {
+            background: var(--openai-light);
+            padding: 16px 24px;
+            border-radius: 0 0 16px 16px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            border-top: 2px solid var(--openai-green);
+        }
+
+        /* ===== Strategy Section ===== */
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .strategy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .strategy-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .strategy-card.ended {
+            border-top: 4px solid #FF6B6B;
+        }
+
+        .strategy-card.focus {
+            border-top: 4px solid var(--openai-green);
+        }
+
+        .strategy-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .strategy-card.ended h4 {
+            color: #CC5555;
+        }
+
+        .strategy-card.focus h4 {
+            color: var(--openai-green);
+        }
+
+        .strategy-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .strategy-card ul li {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .strategy-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .strategy-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .strategy-card.ended ul li::before {
+            background: #FFB84D;
+        }
+
+        .strategy-card.focus ul li::before {
+            background: var(--openai-green);
+        }
+
+        .strategy-card ul li strong {
+            color: var(--text-primary);
+        }
+
+        .strategy-card ul li .detail {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ===== Mermaid Diagram ===== */
+        .mermaid-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            overflow-x: auto;
+        }
+
+        .mermaid-wrapper .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-wrapper .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ===== Technical Details ===== */
+        .tech-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .tech-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .tech-card h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 14px;
+        }
+
+        .tech-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-card ul li {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 6px 0 6px 20px;
+            position: relative;
+        }
+
+        .tech-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            transform: rotate(45deg);
+        }
+
+        .tech-card ul li strong {
+            color: var(--text-primary);
+        }
+
+        /* ===== Impact Cards ===== */
+        .impact-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .impact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .impact-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .impact-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .impact-card-icon.api { background: linear-gradient(135deg, #4A90D9, #3A72B0); }
+        .impact-card-icon.codex { background: var(--gradient-accent); }
+        .impact-card-icon.product { background: linear-gradient(135deg, #FF9F43, #EE5A24); }
+        .impact-card-icon.talent { background: linear-gradient(135deg, #A29BFE, #6C5CE7); }
+
+        .impact-card h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 6px 0 6px 20px;
+            position: relative;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 8px;
+            height: 2px;
+            background: var(--openai-green);
+        }
+
+        .impact-card ul li strong {
+            color: var(--text-primary);
+        }
+
+        /* ===== Summary ===== */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 36px 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            margin-bottom: 48px;
+        }
+
+        .summary-box h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid rgba(16,163,127,0.5);
+        }
+
+        .summary-box p {
+            font-size: 0.95rem;
+            line-height: 2;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 16px;
+        }
+
+        .summary-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            background: var(--openai-dark);
+            color: rgba(255,255,255,0.7);
+            padding: 40px 20px;
+        }
+
+        .footer h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            padding: 6px 0;
+        }
+
+        .footer-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+            word-break: break-all;
+        }
+
+        .footer-links a:hover {
+            color: #1DB791;
+            text-decoration: underline;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin: 24px 0;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 32px 0;
+            }
+
+            .exec-card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .timeline-table {
+                font-size: 0.82rem;
+            }
+
+            .timeline-table thead th,
+            .timeline-table tbody td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== Header ===== -->
+    <header class="header">
+        <div class="container">
+            <span class="category-badge">企業 / 人事 / 組織再編</span>
+            <h1>OpenAI 幹部 3 名が同日退社: Kevin Weil、Bill Peebles、Srinivas Narayanan が一斉離脱</h1>
+            <div class="header-meta">
+                <span class="header-meta-item">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+                    2026-04-17
+                </span>
+                <span class="header-meta-item">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    The Information / WIRED / TechCrunch / CNBC / Business Insider / The Decoder / The Next Web
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== Note ===== -->
+    <div class="container">
+        <div class="section" style="padding-bottom: 0;">
+            <div class="note-box">
+                <strong>注記:</strong> 本レポートは WIRED、TechCrunch、CNBC、Business Insider、The Decoder、The Next Web など複数の主要メディアの報道および The Information の調査報道、各人物の X (旧 Twitter) 投稿に基づいて作成されている。
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Overview / Key Points ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </span>
+                概要とキーポイント
+            </h2>
+
+            <div class="overview-text">
+                2026 年 4 月 17 日、OpenAI の上級幹部 3 名が同日に退社したことが複数の主要メディアによって一斉に報じられた。退社したのは、最高プロダクト責任者 (CPO) の Kevin Weil、動画生成モデル Sora の研究リーダーである Bill Peebles、そして B2B アプリケーション CTO 兼 API エンジニアリング責任者の Srinivas Narayanan の 3 名である。TechCrunch はこの出来事を「OpenAI が引き続き "サイドクエスト" (本筋から外れたプロジェクト) を整理している」と表現している。
+            </div>
+
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon" style="color: white;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>幹部 3 名が同日退社</h3>
+                        <p>Kevin Weil (CPO)、Bill Peebles (Sora 研究リーダー)、Srinivas Narayanan (B2B CTO) が 2026 年 4 月 17 日に同時に退社。わずか 2 週間で 6 名の上級幹部が離脱または異動。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="color: white;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>"サイドクエスト" の整理加速</h3>
+                        <p>Sora (動画生成) の終了、OpenAI for Science 部門の解体、Disney との 10 億ドル提携解消など、実験的プロジェクトから撤退し、コアビジネスに集中。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="color: white;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>Prism から Codex への統合</h3>
+                        <p>Kevin Weil が率いていた科学研究ツール「Prism」は Codex プロダクトチームに移管。Codex を戦略的な中核プロダクトとして強化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="color: white;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズ AI と ChatGPT スーパーアプリへの集中</h3>
+                        <p>ChatGPT スーパーアプリ、Codex (コーディング支援)、エンタープライズ API という収益性の高いコアビジネスにリソースを集中させる方向性が鮮明に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="color: white;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>API エンジニアリングの継続性リスク</h3>
+                        <p>Narayanan の退任により、OpenAI の収益の根幹を支える API チームのリーダーシップに空白が発生。後任選定と組織安定化が最優先課題。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Executive Profiles ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </span>
+                退社した幹部 3 名の詳細
+            </h2>
+
+            <div class="exec-cards">
+                <!-- Kevin Weil -->
+                <div class="exec-card">
+                    <div class="exec-card-header">
+                        <div class="exec-avatar kevin">KW</div>
+                        <div class="exec-info">
+                            <h3>Kevin Weil</h3>
+                            <div class="exec-role">最高プロダクト責任者 (CPO)</div>
+                            <span class="exec-status">退任 -- 組織再編に伴う</span>
+                        </div>
+                    </div>
+                    <div class="exec-card-body">
+                        <p>Kevin Weil は OpenAI の最高プロダクト責任者 (CPO) として経営チームの中核を担っていた。The Information の報道によれば、Weil の退任に伴い、同氏が率いていた「OpenAI for Science」部門は解体され、その研究チームは他の研究部門に分散配置される。</p>
+                        <p>Weil は Instagram や Twitter (現 X) でのプロダクト開発経験を持つシリコンバレーの著名なプロダクトリーダーであり、OpenAI の製品戦略において重要な役割を果たしていた。同氏の退任は、OpenAI のプロダクト組織における大きな転換点を意味する。</p>
+                        <div class="exec-highlight">
+                            <h4>OpenAI for Science 部門の再編</h4>
+                            <p>Weil が統括していた科学研究向け AI ツール「Prism」とその開発チームは、Codex プロダクトチームに移管される。これは OpenAI がコーディング支援ツール Codex を戦略的な中核プロダクトとして位置づけ、科学研究向けの AI 機能を Codex エコシステムに統合する方向性を示している。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bill Peebles -->
+                <div class="exec-card">
+                    <div class="exec-card-header">
+                        <div class="exec-avatar bill">BP</div>
+                        <div class="exec-info">
+                            <h3>Bill Peebles</h3>
+                            <div class="exec-role">Sora 研究リーダー</div>
+                            <span class="exec-status">退社 -- Sora 終了後</span>
+                        </div>
+                    </div>
+                    <div class="exec-card-body">
+                        <p>Bill Peebles は OpenAI の動画生成モデル Sora の研究開発を主導してきたリサーチリーダーである。同氏の退社は、OpenAI が 2026 年 3 月に計算資源 (コンピュート) の不足を理由に Sora アプリを終了した約 1 か月後のタイミングとなる。</p>
+                        <p>Sora は 2024 年の初公開以来、AI による動画生成の可能性を示す先駆的なプロジェクトとして業界の注目を集めてきたが、コンピュートコストの高さと収益化の困難さが最終的にプロジェクトの存続を阻んだ。Peebles の退社は、OpenAI における Sora 関連の研究開発が実質的に終了したことを象徴するものである。</p>
+                        <div class="exec-highlight">
+                            <h4>Sora 終了との関連</h4>
+                            <p>2026 年 3 月 25 日、OpenAI は Sora アプリの提供を終了し、Disney との 10 億ドル規模の提携も解消した。コンシューマー向けエンターテインメントから撤退し、ビジネス向けツールと IPO 準備に注力するという戦略転換の一環であった。Peebles にとって、自身が研究を牽引してきたプロダクトの終了は、OpenAI に留まる理由の喪失を意味したと考えられる。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Srinivas Narayanan -->
+                <div class="exec-card">
+                    <div class="exec-card-header">
+                        <div class="exec-avatar srinivas">SN</div>
+                        <div class="exec-info">
+                            <h3>Srinivas Narayanan</h3>
+                            <div class="exec-role">B2B アプリケーション CTO / API エンジニアリング責任者</div>
+                            <span class="exec-status">退任 -- 個人的理由</span>
+                        </div>
+                    </div>
+                    <div class="exec-card-body">
+                        <p>Srinivas Narayanan は OpenAI の B2B (企業間取引) アプリケーション担当 CTO として、API エンジニアリングチームを統括してきた。同氏の退任は、他の 2 名とは異なり、組織再編よりも個人的な理由に基づくものとみられる。</p>
+                        <p>Narayanan は X (旧 Twitter) に投稿し、退社後の時間を楽しみにしている旨を述べており、次のキャリアへの移行というよりも、一時的な休息を取る意向を示唆している。しかし、API エンジニアリングチームの責任者という戦略的に極めて重要なポジションからの離脱は、OpenAI の API プラットフォーム開発に影響を与える可能性がある。</p>
+                        <div class="exec-highlight">
+                            <h4>API 事業への影響</h4>
+                            <p>API は OpenAI の収益の根幹を支える事業領域であり、エンタープライズ顧客へのサービス提供において中核的な役割を果たしている。Narayanan の後任がどのように選定され、API 戦略がどう継続されるかは、OpenAI の B2B 事業の今後を左右する重要な要素となる。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Timeline ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                </span>
+                2026 年 幹部離脱の時系列
+            </h2>
+
+            <div class="timeline-wrapper">
+                <table class="timeline-table">
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>人物</th>
+                            <th>役職</th>
+                            <th>理由 / 状況</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2026-03-25</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>Sora アプリ終了 (Peebles 退社の伏線)</td>
+                        </tr>
+                        <tr>
+                            <td>2026-04-03</td>
+                            <td>Fidji Simo</td>
+                            <td>アプリケーション事業 CEO</td>
+                            <td>医療休暇</td>
+                        </tr>
+                        <tr>
+                            <td>2026-04-03</td>
+                            <td>Brad Lightcap</td>
+                            <td>COO</td>
+                            <td>スペシャルプロジェクトへの異動</td>
+                        </tr>
+                        <tr>
+                            <td>2026-04-03</td>
+                            <td>Kate Rouch</td>
+                            <td>CMO</td>
+                            <td>退任 (乳がん回復に専念)</td>
+                        </tr>
+                        <tr class="timeline-highlight">
+                            <td>2026-04-17</td>
+                            <td><strong>Kevin Weil</strong></td>
+                            <td>CPO</td>
+                            <td>退任 (組織再編に伴う)</td>
+                        </tr>
+                        <tr class="timeline-highlight">
+                            <td>2026-04-17</td>
+                            <td><strong>Bill Peebles</strong></td>
+                            <td>Sora 研究リーダー</td>
+                            <td>退社 (Sora 終了後)</td>
+                        </tr>
+                        <tr class="timeline-highlight">
+                            <td>2026-04-17</td>
+                            <td><strong>Srinivas Narayanan</strong></td>
+                            <td>B2B アプリケーション CTO</td>
+                            <td>退任 (個人的理由)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="timeline-note">
+                    わずか 2 週間の間に 6 名の上級幹部が離脱または異動しており、OpenAI の経営体制は急速に変貌を遂げている。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Strategy: Side Quests ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                </span>
+                戦略的背景: "サイドクエスト" の整理
+            </h2>
+
+            <div class="overview-text" style="margin-bottom: 24px;">
+                TechCrunch が「サイドクエスト (side quests) の整理」と表現したように、OpenAI は本筋から外れたプロジェクトを次々と終了し、コアビジネスへの集中を加速させている。
+            </div>
+
+            <div class="strategy-grid">
+                <div class="strategy-card ended">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#CC5555"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                        整理されたプロジェクト
+                    </h4>
+                    <ul>
+                        <li>
+                            <strong>Sora (動画生成)</strong>
+                            <span class="detail">2026 年 3 月に終了。コンピュート不足と収益化困難が原因</span>
+                        </li>
+                        <li>
+                            <strong>OpenAI for Science</strong>
+                            <span class="detail">Kevin Weil の退任に伴い部門解体。Prism チームは Codex に統合</span>
+                        </li>
+                        <li>
+                            <strong>コンシューマー向けエンターテインメント</strong>
+                            <span class="detail">Disney との提携解消に象徴される撤退</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="strategy-card focus">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#10A37F"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        集中する領域
+                    </h4>
+                    <ul>
+                        <li>
+                            <strong>ChatGPT スーパーアプリ</strong>
+                            <span class="detail">デスクトップアプリの強化、ライブラリ機能、音声対話、広告統合など</span>
+                        </li>
+                        <li>
+                            <strong>エンタープライズ AI</strong>
+                            <span class="detail">API プラットフォーム、Codex (コーディング支援)、ChatGPT Enterprise / Team</span>
+                        </li>
+                        <li>
+                            <strong>IPO 準備</strong>
+                            <span class="detail">営利法人への転換、資金調達、企業評価額の最大化</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Technical Details ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                </span>
+                技術的な詳細: プロダクト・チームの再配置
+            </h2>
+
+            <div class="tech-cards">
+                <div class="tech-card">
+                    <h4>Prism から Codex への統合</h4>
+                    <ul>
+                        <li><strong>科学的推論能力の Codex への統合:</strong> Prism が培った科学的データ分析、仮説生成、研究文献の理解といった能力が Codex のコーディング支援に組み込まれる可能性がある</li>
+                        <li><strong>Codex の適用領域拡大:</strong> 従来のソフトウェア開発支援に加え、科学計算、データサイエンス、研究開発のワークフローをカバーする汎用的な AI エージェントとしての進化が見込まれる</li>
+                        <li><strong>リソース集中:</strong> 分散していた研究リソースを Codex に集中させることで、開発速度と品質の向上を図る</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>API エンジニアリングの継続性</h4>
+                    <ul>
+                        <li><strong>Responses API の進化:</strong> 2026 年 3 月にリリースされた Responses API やコンピュータ環境連携の開発継続性への影響</li>
+                        <li><strong>SDK アップデート:</strong> Python SDK v2.32 (WebSocket 対応) など、活発なリリースサイクルの維持</li>
+                        <li><strong>エンタープライズ機能:</strong> ChatGPT Enterprise、Codex for Teams、柔軟な料金プランなどの B2B 機能開発</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Architecture Diagram ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z"/></svg>
+                </span>
+                組織再編の構造図 (Before / After)
+            </h2>
+
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+flowchart TB
+    subgraph Before["再編前の組織構造"]
+        direction TB
+        CEO_B(["Sam Altman&lt;br/&gt;CEO"])
+
+        subgraph Product_B["プロダクト部門"]
+            CPO_B["Kevin Weil&lt;br/&gt;CPO"]
+            Science_B["OpenAI for Science&lt;br/&gt;(Prism)"]
+            ChatGPT_B["ChatGPT"]
+        end
+
+        subgraph Research_B["研究部門"]
+            Sora_B["Bill Peebles&lt;br/&gt;Sora 研究リーダー"]
+            SoraApp_B["Sora アプリ"]
+        end
+
+        subgraph B2B_B["B2B 部門"]
+            CTO_B["Srinivas Narayanan&lt;br/&gt;B2B CTO"]
+            API_B["API エンジニアリング"]
+        end
+
+        subgraph Apps_B["アプリケーション部門"]
+            AppCEO_B["Fidji Simo&lt;br/&gt;Apps CEO"]
+            COO_B["Brad Lightcap&lt;br/&gt;COO"]
+            CMO_B["Kate Rouch&lt;br/&gt;CMO"]
+        end
+
+        CEO_B --> Product_B
+        CEO_B --> Research_B
+        CEO_B --> B2B_B
+        CEO_B --> Apps_B
+        CPO_B --> Science_B
+        CPO_B --> ChatGPT_B
+    end
+
+    subgraph After["再編後の組織構造"]
+        direction TB
+        CEO_A(["Sam Altman&lt;br/&gt;CEO"])
+
+        subgraph Core_A["コアプロダクト (集中領域)"]
+            ChatGPT_A["ChatGPT&lt;br/&gt;スーパーアプリ"]
+            Codex_A["Codex&lt;br/&gt;(+ Prism 統合)"]
+            API_A["API プラットフォーム&lt;br/&gt;(後任未定)"]
+        end
+
+        subgraph Ended_A["終了 / 解体"]
+            Sora_A["Sora 終了"]
+            Science_A["OpenAI for Science&lt;br/&gt;部門解体"]
+        end
+
+        subgraph Departed_A["退任 / 離脱"]
+            D1["Kevin Weil"]
+            D2["Bill Peebles"]
+            D3["Srinivas Narayanan"]
+            D4["Fidji Simo"]
+            D5["Brad Lightcap"]
+            D6["Kate Rouch"]
+        end
+
+        CEO_A --> Core_A
+        Science_A -.->|"Prism 移管"| Codex_A
+    end
+
+    Before ~~~|"2026 年 3 月 - 4 月"| After
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef departed fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+    classDef ended fill:#FFB84D,stroke:#CC9340,stroke-width:2px,color:#343541
+
+    class CEO_B,CEO_A openai
+    class ChatGPT_B,API_B,ChatGPT_A,Codex_A,API_A dark
+    class CPO_B,Sora_B,CTO_B,AppCEO_B,COO_B,CMO_B,Science_B,SoraApp_B light
+    class D1,D2,D3,D4,D5,D6 departed
+    class Sora_A,Science_A ended
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Developer Impact ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+                </span>
+                開発者への影響
+            </h2>
+
+            <div class="impact-cards">
+                <div class="impact-card">
+                    <div class="impact-card-header">
+                        <div class="impact-card-icon api" style="color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M13 13v8h8v-8h-8zM3 21h8v-8H3v8zM3 3v8h8V3H3zm13.66-1.31L11 7.34 16.66 13l5.66-5.66-5.66-5.65z"/></svg>
+                        </div>
+                        <h4>API 開発者への影響</h4>
+                    </div>
+                    <ul>
+                        <li><strong>API エンジニアリングの継続性:</strong> Narayanan の退任により、API チームのリーダーシップに空白が生じる。新しいエンドポイントの追加、既存 API の改善、SDK のリリーススケジュールに遅延が生じる可能性がある。ただし、OpenAI が API を収益の中核と位置づけている以上、迅速な後任選定が見込まれる</li>
+                        <li><strong>B2B 機能の方向性:</strong> B2B アプリケーション CTO の退任は、エンタープライズ向け API 機能 (カスタムモデル、ファインチューニング、専用インスタンスなど) の開発優先度に影響を与える可能性がある</li>
+                    </ul>
+                </div>
+
+                <div class="impact-card">
+                    <div class="impact-card-header">
+                        <div class="impact-card-icon codex" style="color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                        </div>
+                        <h4>Codex エコシステムの開発者への影響</h4>
+                    </div>
+                    <ul>
+                        <li><strong>Codex の機能拡張:</strong> Prism チームの Codex への統合により、Codex が科学計算やデータサイエンスの領域にも対応する可能性がある。Codex API や Codex for Teams を利用する開発者にとって、新たなユースケースが開拓される可能性がある</li>
+                        <li><strong>Codex の戦略的重要性の向上:</strong> OpenAI がリソースを Codex に集中させていることから、Codex 関連の API やツールが今後さらに強化されることが予想される</li>
+                    </ul>
+                </div>
+
+                <div class="impact-card">
+                    <div class="impact-card-header">
+                        <div class="impact-card-icon product" style="color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        </div>
+                        <h4>プロダクト戦略の変化に伴う影響</h4>
+                    </div>
+                    <ul>
+                        <li><strong>ChatGPT スーパーアプリへの集中:</strong> OpenAI が ChatGPT を統合プラットフォームとして進化させる方向性がより鮮明になった。サードパーティ開発者は、ChatGPT プラグインやカスタム GPT のエコシステムにおけるポジショニングを再検討する必要がある</li>
+                        <li><strong>"サイドクエスト" 領域のリスク:</strong> Sora (動画生成) や OpenAI for Science のように、OpenAI が投資対効果の低い領域から撤退するパターンが確認されたため、OpenAI のプラットフォームに依存したプロダクトを構築する際には、当該領域が OpenAI のコア戦略に合致しているかを慎重に評価する必要がある</li>
+                    </ul>
+                </div>
+
+                <div class="impact-card">
+                    <div class="impact-card-header">
+                        <div class="impact-card-icon talent" style="color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        </div>
+                        <h4>オープンソース / 競合への人材流出</h4>
+                    </div>
+                    <ul>
+                        <li><strong>退社した幹部の動向:</strong> Kevin Weil や Bill Peebles のようなトップレベルの AI 人材が市場に戻ることで、競合他社 (Anthropic、Google DeepMind、Meta AI など) や AI スタートアップにとっての採用機会が生まれる。これは長期的に AI エコシステム全体の競争環境に影響を与える</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Summary ===== -->
+    <div class="container">
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                </span>
+                まとめ
+            </h2>
+
+            <div class="summary-box">
+                <h3>OpenAI 組織再編の新段階</h3>
+                <p>2026 年 4 月 17 日の Kevin Weil (CPO)、Bill Peebles (Sora 研究リーダー)、Srinivas Narayanan (B2B CTO) の同時退社は、OpenAI の組織再編が新たな段階に入ったことを明確に示すものである。3 月の Sora 終了、4 月初旬の Fidji Simo、Brad Lightcap、Kate Rouch の離脱と合わせると、わずか 1 か月弱の間に経営チームの主要メンバー 6 名が離脱または異動するという、かつてない規模の組織変動が進行している。</p>
+                <p>その背景にあるのは、OpenAI の明確な戦略転換である。動画生成 (Sora) や科学研究ツール (Prism / OpenAI for Science) といった実験的な "サイドクエスト" を整理し、ChatGPT スーパーアプリ、Codex (コーディング支援 AI)、エンタープライズ API という収益性の高いコアビジネスにリソースを集中させる方向性が鮮明になった。Prism チームの Codex への統合は、この戦略の具体的な表れである。</p>
+                <p>一方で、API エンジニアリングの責任者である Narayanan の退任は、OpenAI の収益の根幹を支える B2B 事業にとってリスク要因でもある。また、これほど短期間での大規模な幹部離脱は、組織の安定性や機関知識の喪失という観点から懸念材料となり得る。開発者やエンタープライズ顧客にとっては、OpenAI の戦略的な優先領域を見極め、自社の依存度を適切に管理することが今後ますます重要になるだろう。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <footer class="footer">
+        <div class="container">
+            <h4>ソース / 関連リンク</h4>
+            <ul class="footer-links">
+                <li><a href="https://www.wired.com/story/openai-executive-kevin-weil-leaving/" target="_blank" rel="noopener">WIRED: OpenAI Executive Kevin Weil Leaving</a></li>
+                <li><a href="https://techcrunch.com/2026/04/17/kevin-weil-and-bill-peebles-exit-openai-as-company-continues-to-shed-side-quests/" target="_blank" rel="noopener">TechCrunch: Kevin Weil and Bill Peebles exit OpenAI as company continues to shed side quests</a></li>
+                <li><a href="https://the-decoder.com/openai-loses-three-executives-in-one-swoop-as-restructuring-reshapes-its-product-lineup/" target="_blank" rel="noopener">The Decoder: OpenAI loses three executives in one swoop as restructuring reshapes its product lineup</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener">OpenAI News</a></li>
+            </ul>
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <span>OpenAI News Summary -- 2026-04-17</span>
+                <span>The Information / WIRED / TechCrunch / CNBC / Business Insider / The Decoder / The Next Web</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

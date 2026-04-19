@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-19](2026/2026-04-19-chatgpt-rudeness-complaints.md) - ChatGPT が「失礼になった」とユーザーから苦情殺到: OpenAI は沈黙を維持
+- [2026-04-18](2026/2026-04-18-openai-acquires-chalkie-ai.md) - OpenAI が EdTech スタートアップ Chalkie AI を買収: 教育分野への本格参入を加速
+- [2026-04-17](2026/2026-04-17-openai-triple-executive-exit.md) - OpenAI 幹部 3 名が同日退社: Kevin Weil、Bill Peebles、Srinivas Narayanan が一斉離脱
+- [2026-04-17](2026/2026-04-17-openai-cerebras-20b-chip-deal.md) - OpenAI が Cerebras と 200 億ドル超のチップ供給契約を締結: AI 推論市場の覇権を巡る大規模投資
+- [2026-04-17](2026/2026-04-17-altman-side-ventures-scrutiny.md) - Sam Altman の副業と利益相反に対する厳しい監視の目: OpenAI は誰のために構築されているのか
 - [2026-04-16](2026/2026-04-16-introducing-gpt-rosalind.md) - GPT-Rosalind の発表: ライフサイエンス研究を加速するフロンティア推論モデル
 - [2026-04-16](2026/2026-04-16-codex-for-almost-everything.md) - Codex が「ほぼ万能」のスーパーアプリに進化: コンピュータ操作、ブラウザ、画像生成、メモリ、プラグインを統合
 - [2026-04-16](2026/2026-04-16-ai-jobs-transition-framework.md) - AI 雇用転換フレームワーク: 900 以上の職業に対する AI の影響を 4 つの要因で分類
