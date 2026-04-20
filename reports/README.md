@@ -5,7 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-20](2026/2026-04-20-openai-hires-jiostar-ceo-apac.md) - OpenAI、JioStar CEO をアジア太平洋事業責任者に採用: APAC 市場への本格進出を加速
+- [2026-04-19](2026/2026-04-19-novo-nordisk-openai-gpt-rosalind.md) - Novo Nordisk が OpenAI と提携: GPT-Rosalind を活用した AI 創薬の加速
 - [2026-04-19](2026/2026-04-19-chatgpt-rudeness-complaints.md) - ChatGPT が「失礼になった」とユーザーから苦情殺到: OpenAI は沈黙を維持
+- [2026-04-19](2026/2026-04-19-chatgpt-easemytrip-india-travel.md) - ChatGPT が EaseMyTrip を統合: インド旅行市場における Agentic Commerce の実現
 - [2026-04-18](2026/2026-04-18-openai-acquires-chalkie-ai.md) - OpenAI が EdTech スタートアップ Chalkie AI を買収: 教育分野への本格参入を加速
 - [2026-04-17](2026/2026-04-17-openai-triple-executive-exit.md) - OpenAI 幹部 3 名が同日退社: Kevin Weil、Bill Peebles、Srinivas Narayanan が一斉離脱
 - [2026-04-17](2026/2026-04-17-openai-cerebras-20b-chip-deal.md) - OpenAI が Cerebras と 200 億ドル超のチップ供給契約を締結: AI 推論市場の覇権を巡る大規模投資
