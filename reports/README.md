@@ -5,7 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-20](2026/2026-04-20-people-first-ai-fund-grantees.md) - OpenAI、People-First AI Fund の助成先を発表: コミュニティ主導の AI 活用を本格始動
 - [2026-04-20](2026/2026-04-20-openai-hires-jiostar-ceo-apac.md) - OpenAI、JioStar CEO をアジア太平洋事業責任者に採用: APAC 市場への本格進出を加速
+- [2026-04-20](2026/2026-04-20-hyatt-chatgpt-enterprise.md) - Hyatt Hotels が ChatGPT Enterprise で AI 活用を推進: ホスピタリティ業界における大規模 AI 導入の先進事例
+- [2026-04-20](2026/2026-04-20-codex-chronicle-screen-memory.md) - OpenAI Codex に「Chronicle」機能を追加: 画面録画から作業コンテキストを自動記憶
+- [2026-04-20](2026/2026-04-20-chatgpt-codex-api-major-outage.md) - ChatGPT / Codex / API Platform 大規模障害: 約 4 時間にわたり主要サービスが利用不能に
 - [2026-04-19](2026/2026-04-19-novo-nordisk-openai-gpt-rosalind.md) - Novo Nordisk が OpenAI と提携: GPT-Rosalind を活用した AI 創薬の加速
 - [2026-04-19](2026/2026-04-19-chatgpt-rudeness-complaints.md) - ChatGPT が「失礼になった」とユーザーから苦情殺到: OpenAI は沈黙を維持
 - [2026-04-19](2026/2026-04-19-chatgpt-easemytrip-india-travel.md) - ChatGPT が EaseMyTrip を統合: インド旅行市場における Agentic Commerce の実現

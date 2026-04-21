@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Chronicle: 画面録画から作業コンテキストを自動記憶 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .info-table th,
+        .info-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 14px;
+        }
+
+        .info-table th {
+            background: var(--openai-dark);
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .info-table tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        .info-table tr:hover {
+            background: rgba(16, 163, 127, 0.08);
+        }
+
+        /* Warning Section */
+        .warning-section {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .warning-section h3 {
+            color: #92400E;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-item {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-left: 4px solid #F59E0B;
+        }
+
+        .warning-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .warning-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 6px;
+        }
+
+        .warning-item p {
+            font-size: 13px;
+            color: #78350F;
+            line-height: 1.6;
+        }
+
+        .mermaid-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">CODEX / 開発者ツール</span>
+                <h1>Codex Chronicle: 画面録画から作業コンテキストを自動記憶</h1>
+                <p class="date">2026-04-20</p>
+            </div>
+        </header>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4FA;</div>
+                    <div class="key-point-content">
+                        <h3>画面録画メモリ</h3>
+                        <p>Chronicle はバックグラウンドで macOS の画面録画を実行し、ユーザーの作業画面を継続的に記録する。使用中の IDE、開いているプロジェクト、参照ドキュメントなどの情報を自動的にキャプチャする。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-content">
+                        <h3>AI 要約処理</h3>
+                        <p>AI エージェントが録画内容を解析し、ユーザーが使用しているツール、取り組んでいるプロジェクト、参照しているドキュメントなどの情報を抽出・要約する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4DD;</div>
+                    <div class="key-point-content">
+                        <h3>Markdown ローカル保存</h3>
+                        <p>要約はデバイス上に Markdown ファイルとして保存される。Codex が新しいタスクを実行する際、保存された Chronicle メモリを参照してコーディング支援を提供する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x23F1;</div>
+                    <div class="key-point-content">
+                        <h3>6 時間後自動削除</h3>
+                        <p>録画データは一時的に保持され、6 時間後に自動的に削除される。メモリファイルは保持されるが、元の録画データはプライバシー保護のために削除される。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <p>Codex に毎回プロジェクトの背景、使用技術、作業コンテキストを説明する必要があった。複数プロジェクトを並行する場合、コンテキストスイッチのたびに詳細な説明が求められた。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <p>Chronicle が画面録画から自動的に作業コンテキストを記憶する。Codex はユーザーの作業状況を理解した上でコーディング支援を提供し、ペアプログラマーに近い文脈理解が可能になる。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主な機能 -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F3AC; Chronicle の仕組み</h3>
+                    <p>バックグラウンド録画 → AI エージェントによる要約 → Markdown ファイルとしてローカル保存 → Codex のコンテキストとして活用 → 6 時間後に録画自動削除という 5 段階のフローで動作する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CB; 利用条件</h3>
+                    <p>ChatGPT Pro (月額 $200) サブスクライバー向け、macOS のみ対応。オプトインプレビューとして提供され、画面録画権限とアクセシビリティ権限が必要。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F30D; 地域制限</h3>
+                    <p>EU (GDPR)、英国 (UK GDPR)、スイス (nDSG) では利用不可。画面録画による個人データの大量収集が欧州のデータ保護規制に抵触するため。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F512; セキュリティ懸念</h3>
+                    <p>OpenAI 自身がプロンプトインジェクション攻撃、非暗号化保存、レート制限の急速消費を公式に警告。透明性は評価できるが機能の成熟度への懸念も。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 利用条件テーブル -->
+        <section class="section">
+            <h2 class="section-title">利用条件</h2>
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>条件</th>
+                        <th>詳細</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>サブスクリプション</td>
+                        <td>ChatGPT Pro (月額 $200)</td>
+                    </tr>
+                    <tr>
+                        <td>対応 OS</td>
+                        <td>macOS のみ</td>
+                    </tr>
+                    <tr>
+                        <td>提供形態</td>
+                        <td>オプトインプレビュー</td>
+                    </tr>
+                    <tr>
+                        <td>有効化手順</td>
+                        <td>Codex 設定 → 「Personalization」 → 「Memories」 → 「Chronicle」</td>
+                    </tr>
+                    <tr>
+                        <td>必要な権限</td>
+                        <td>macOS の画面録画権限およびアクセシビリティ権限</td>
+                    </tr>
+                    <tr>
+                        <td>利用不可地域</td>
+                        <td>EU、英国、スイス</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- セキュリティ警告 -->
+        <section class="section">
+            <h2 class="section-title">セキュリティ警告</h2>
+            <div class="warning-section">
+                <h3>&#x26A0;&#xFE0F; OpenAI が公式に警告しているリスク</h3>
+                <div class="warning-item">
+                    <h4>&#x1F6A8; プロンプトインジェクション攻撃</h4>
+                    <p>Web サイトやドキュメントに埋め込まれた悪意ある命令を Chronicle が記録し、Codex のコンテキストとして取り込む可能性がある。間接的なプロンプトインジェクション攻撃が成立するリスクがある。</p>
+                </div>
+                <div class="warning-item">
+                    <h4>&#x1F513; 非暗号化のローカル保存</h4>
+                    <p>Chronicle のメモリは暗号化されずにデバイスに保存される。端末の盗難やマルウェア感染により、保存されたメモリが第三者にアクセスされるリスクがある。</p>
+                </div>
+                <div class="warning-item">
+                    <h4>&#x26A1; レート制限の急速な消費</h4>
+                    <p>Chronicle は画面録画の解析に AI 処理を継続的に使用するため、API のレート制限を急速に消費する。ChatGPT Pro の利用枠に大きな影響を与える可能性がある。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+
+            <p class="mermaid-label">Chronicle データフロー</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Device["macOS デバイス"]
+        Screen(["ユーザーの画面"])
+        Capture["画面キャプチャ\n(バックグラウンド)"]
+        TempRecording["一時録画ファイル\n(6 時間後に削除)"]
+        AIAgent["AI エージェント\n(要約処理)"]
+        Memory["Chronicle メモリ\n(Markdown ファイル)\n非暗号化ローカル保存"]
+    end
+
+    subgraph Codex["Codex コーディングアシスタント"]
+        ContextEngine["コンテキストエンジン"]
+        TaskExec["タスク実行"]
+        Response(["コーディング支援\nレスポンス"])
+    end
+
+    User(["ユーザー"])
+
+    Screen --> Capture
+    Capture --> TempRecording
+    TempRecording --> AIAgent
+    AIAgent --> Memory
+    Memory --> ContextEngine
+    User -->|タスク依頼| ContextEngine
+    ContextEngine --> TaskExec
+    TaskExec --> Response
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef warning fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class Capture,AIAgent openai
+    class ContextEngine,TaskExec dark
+    class Screen,TempRecording,Memory light
+    class Response openai
+                </pre>
+            </div>
+
+            <p class="mermaid-label">データフローのセキュリティ観点</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Risk["リスクポイント"]
+        R1["Web サイトに埋め込まれた\n悪意ある命令"]
+        R2["非暗号化メモリへの\n不正アクセス"]
+        R3["レート制限の\n急速消費"]
+    end
+
+    subgraph Flow["データフロー"]
+        Screen(["画面表示"])
+        Recording["録画"]
+        Analysis["AI 解析"]
+        Memory["メモリ保存"]
+        Context["Codex コンテキスト"]
+    end
+
+    Screen --> Recording --> Analysis --> Memory --> Context
+    R1 -.->|プロンプトインジェクション| Screen
+    R2 -.->|データ漏洩リスク| Memory
+    R3 -.->|リソース消費| Analysis
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef risk fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class Recording,Analysis,Context openai
+    class Screen,Memory dark
+    class R1,R2,R3 risk
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>&#x1F504; コーディングワークフローの変革</h4>
+                <p>Chronicle が作業履歴を記憶するため、Codex に対して毎回プロジェクトの背景や使用技術を説明する必要がなくなる。IDE の設定、デバッグ手順、参照ドキュメントなどの暗黙知が自動的に Codex に共有され、ペアプログラマーに近い文脈理解が可能になる。複数プロジェクトを並行する開発者にとって特に大きな生産性向上が見込まれる。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F6E1;&#xFE0F; セキュリティに関する注意点</h4>
+                <p>画面録画によりプロプライエタリなコード、API キー、認証情報などが Chronicle メモリに記録される可能性がある。信頼できないソースの Web ページを開いた状態での使用は間接的なプロンプトインジェクションのリスクがある。企業環境での採用には情報セキュリティ部門との事前調整が不可欠である。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F4B0; ChatGPT Pro のコスト対効果</h4>
+                <p>Chronicle による継続的な AI 処理がレート制限を急速に消費するため、ChatGPT Pro ($200/月) のプランにおける実質的なコスト対効果を慎重に評価する必要がある。Chronicle を常時有効にするか、特定の作業セッションのみで有効にするかの運用判断が重要になる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <p><a href="https://openai.com/index/codex-chronicle/" target="_blank" rel="noopener noreferrer">https://openai.com/index/codex-chronicle/</a></p>
+            <p><a href="https://the-decoder.com/openais-codex-now-watches-your-screen-to-remember-what-youre-working-on/" target="_blank" rel="noopener noreferrer">https://the-decoder.com/openais-codex-now-watches-your-screen-to-remember-what-youre-working-on/</a></p>
+            <p><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">https://openai.com/news</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
