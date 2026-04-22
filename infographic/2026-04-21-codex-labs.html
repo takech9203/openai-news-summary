@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Labs 発表: 開発者向けトレーニング・実験プラットフォーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#10A37F',
+            primaryTextColor: '#343541',
+            primaryBorderColor: '#10A37F',
+            lineColor: '#10A37F',
+            background: '#FFFFFF',
+            mainBkg: '#F7F7F8'
+        }
+    });
+    </script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 40px 36px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .header .date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.4rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point .emoji {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point .text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .key-point .text strong {
+            color: var(--text-primary);
+        }
+
+        /* Feature Cards Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .feature-card.accent {
+            border: 2px solid rgba(16,163,127,0.3);
+            background: linear-gradient(135deg, rgba(16,163,127,0.06) 0%, rgba(16,163,127,0.02) 100%);
+        }
+
+        .feature-card.accent h4 {
+            color: var(--openai-green);
+        }
+
+        /* Training Cards */
+        .training-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .training-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .training-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .training-card .level-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .level-beginner { background: #38A169; }
+        .level-intermediate { background: #D69E2E; }
+        .level-advanced { background: #E53E3E; }
+        .level-handson { background: var(--openai-dark); }
+
+        .training-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .training-card ul li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .training-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .comparison-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .comparison-table tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .comparison-table .label-col {
+            font-weight: 700;
+            color: var(--openai-dark);
+            white-space: nowrap;
+        }
+
+        .comparison-table .highlight {
+            color: var(--openai-green);
+            font-weight: 500;
+        }
+
+        /* Partner Cards */
+        .partner-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .partner-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .partner-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 10px;
+        }
+
+        .partner-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Mermaid container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            border: 2px solid rgba(16,163,127,0.3);
+            padding: 24px;
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Impact Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px 22px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .impact-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .impact-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(52,53,65,0.04) 0%, rgba(52,53,65,0.01) 100%);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            margin-top: 16px;
+        }
+
+        .summary-box p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Note */
+        .note-box {
+            background: #FFFBEB;
+            border: 1px solid #FDE68A;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 28px 20px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px;
+            }
+            .header {
+                padding: 28px 24px;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .section {
+                padding: 22px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .partner-grid {
+                grid-template-columns: 1fr;
+            }
+            .comparison-table {
+                font-size: 0.82rem;
+            }
+            .comparison-table thead th,
+            .comparison-table tbody td {
+                padding: 10px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <span class="badge">製品 / 開発者ツール</span>
+            <div class="date">2026-04-21</div>
+            <h1>Codex Labs 発表: 開発者向けトレーニング・実験プラットフォーム</h1>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128204;</span> 概要
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="emoji">&#128218;</span>
+                    <div class="text"><strong>体系的トレーニング:</strong> ガイド付きチュートリアル、ハンズオンラボ、サンドボックス実験環境を提供する包括的な開発者向けプラットフォーム</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128300;</span>
+                    <div class="text"><strong>サンドボックス環境:</strong> 隔離されたコンテナ環境で Codex の各機能を安全に試行でき、事前構成リポジトリで即座にハンズオン学習を開始可能</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#127891;</span>
+                    <div class="text"><strong>認定プログラム:</strong> 開発者の Codex スキルレベルを評価し、認定バッジやスキル証明を発行するプログラムを提供</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#129309;</span>
+                    <div class="text"><strong>パートナー連携:</strong> Accenture、PwC、Capgemini、Cognizant の 4 社と連携し、企業の開発チーム向けトレーニングを展開</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128200;</span>
+                    <div class="text"><strong>400 万ユーザー:</strong> Codex の WAU が 400 万人に到達する中、急増する利用者に対して統一的な学習リソースを提供しエコシステム全体を底上げ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Codex Labs の概要 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128640;</span> Codex Labs の概要
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">Codex Labs は、OpenAI が提供する開発者向けのトレーニング・実験プラットフォームであり、以下の 4 つの目的で設計されている。</p>
+            <div class="feature-grid">
+                <div class="feature-card accent">
+                    <h4>&#128218; スキル習得の体系化</h4>
+                    <p>Codex の基本操作からエンタープライズ向け高度活用まで、段階的に学べるカリキュラムを提供</p>
+                </div>
+                <div class="feature-card accent">
+                    <h4>&#128300; 実践的な学習環境</h4>
+                    <p>実際のプロジェクトを模したサンドボックス環境で、リスクなく Codex の各機能を試行できる</p>
+                </div>
+                <div class="feature-card accent">
+                    <h4>&#9989; ベストプラクティスの共有</h4>
+                    <p>OpenAI が推奨する Codex 活用パターンやアンチパターンを学べる教材を整備</p>
+                </div>
+                <div class="feature-card accent">
+                    <h4>&#127970; エンタープライズ導入の加速</h4>
+                    <p>企業内の開発チームが短期間で Codex を業務に組み込めるよう、組織的なトレーニングプログラムを提供</p>
+                </div>
+            </div>
+            <div class="note-box">
+                <strong>位置づけ:</strong> 2026 年 4 月 10 日にローンチされた OpenAI Academy が ChatGPT を中心とした汎用的な AI リテラシー教育を担うのに対し、Codex Labs は AI コーディングエージェントに特化した深い技術トレーニングを提供する。
+            </div>
+        </div>
+
+        <!-- トレーニング機能 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128187;</span> トレーニング機能
+            </div>
+            <div class="training-grid">
+                <div class="training-card">
+                    <h4><span class="level-badge level-beginner">初級</span> Getting Started</h4>
+                    <ul>
+                        <li>Codex のセットアップと初期設定</li>
+                        <li>基本的なプロンプトの書き方とベストプラクティス</li>
+                        <li>ファイル操作、コード生成、テスト生成の基礎</li>
+                        <li>Codex CLI とデスクトップアプリの使い分け</li>
+                    </ul>
+                </div>
+                <div class="training-card">
+                    <h4><span class="level-badge level-intermediate">中級</span> Intermediate</h4>
+                    <ul>
+                        <li>複雑なタスクの分解とマルチステップ指示</li>
+                        <li>Computer Use 機能の活用方法</li>
+                        <li>プラグインシステムの利用と開発</li>
+                        <li>永続メモリの効果的な設定と運用</li>
+                    </ul>
+                </div>
+                <div class="training-card">
+                    <h4><span class="level-badge level-advanced">上級</span> Advanced / Enterprise</h4>
+                    <ul>
+                        <li>Codex Hooks と Automations を活用した CI/CD パイプライン統合</li>
+                        <li>Responses API を用いたカスタムエージェントの構築</li>
+                        <li>大規模コードベースでのモダナイゼーション戦略</li>
+                        <li>セキュリティ監査とコンプライアンス対応</li>
+                    </ul>
+                </div>
+                <div class="training-card">
+                    <h4><span class="level-badge level-handson">実践</span> ハンズオンラボ</h4>
+                    <ul>
+                        <li>事前構成された開発環境でのインタラクティブな演習</li>
+                        <li>実際のコードベースを使用したリファクタリング演習</li>
+                        <li>バグ修正・テスト生成のシナリオベース学習</li>
+                        <li>チーム演習によるコラボレーションワークフローの実践</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- エンタープライズ向けプログラム -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#127970;</span> エンタープライズ向けプログラム
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">エンタープライズ顧客の組織的な Codex 導入を支援するプログラム。同日発表された Scaling Codex to enterprises worldwide における組織変革マネジメントの中核を担う。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>&#128203; カスタムトレーニングプラン</h4>
+                    <p>企業の技術スタックや業務要件に合わせたオーダーメイドのカリキュラム設計</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#127891; スキル評価と認定</h4>
+                    <p>開発者の Codex スキルレベルを評価し、認定バッジやスキル証明を発行するプログラム</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128202; 管理者ダッシュボード</h4>
+                    <p>チーム全体のトレーニング進捗、スキルレベル、利用パターンを可視化する管理ツール</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128200; ROI 測定フレームワーク</h4>
+                    <p>Codex 導入による生産性向上効果を定量的に測定するためのメトリクスとレポーティング</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- パートナー連携 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#129309;</span> パートナー連携
+            </div>
+            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">Codex Labs は、Accenture、PwC、Capgemini、Cognizant の 4 社のコンサルティングパートナーとの連携においても重要な役割を果たす。</p>
+            <div class="partner-grid">
+                <div class="partner-card">
+                    <h4>&#128218; Accenture - トレーニング素材</h4>
+                    <p>コンサルティングパートナーが顧客企業へのトレーニングを実施する際に使用するカリキュラムと教材を Codex Labs が提供</p>
+                </div>
+                <div class="partner-card">
+                    <h4>&#127891; PwC - 認定コンサルタント</h4>
+                    <p>パートナー企業のコンサルタントが Codex Labs の上級プログラムを修了し、認定を取得することで、公認のトレーニング提供者として活動</p>
+                </div>
+                <div class="partner-card">
+                    <h4>&#128736; Capgemini - 共同開発コンテンツ</h4>
+                    <p>パートナー企業のドメイン知識と OpenAI の技術知見を組み合わせた業界特化型トレーニングコンテンツの共同開発</p>
+                </div>
+                <div class="partner-card">
+                    <h4>&#128295; Cognizant - 導入支援ツールキット</h4>
+                    <p>エンタープライズ顧客への導入時に利用する、アセスメントツール、PoC テンプレート、展開ガイドラインの提供</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- OpenAI Academy との比較 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128260;</span> OpenAI Academy との比較
+            </div>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>側面</th>
+                        <th>OpenAI Academy</th>
+                        <th>Codex Labs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="label-col">対象</td>
+                        <td>全ユーザー (初心者〜ビジネスユーザー)</td>
+                        <td class="highlight">開発者 (初級〜上級エンジニア)</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">内容</td>
+                        <td>ChatGPT 全般の活用、チーム別・業種別ガイド</td>
+                        <td class="highlight">Codex 特化のコーディング・エージェント技術</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">形式</td>
+                        <td>ガイド、チュートリアル (24 以上のリソース)</td>
+                        <td class="highlight">ハンズオンラボ、サンドボックス、認定プログラム</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">目的</td>
+                        <td>AI リテラシーの向上</td>
+                        <td class="highlight">Codex のプロフェッショナルスキル習得</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">連携</td>
+                        <td>Academy から Codex Labs への導線を提供</td>
+                        <td class="highlight">Labs の修了者が Academy の上級コンテンツにアクセス</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- アーキテクチャ -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128421;</span> アーキテクチャ
+            </div>
+
+            <div class="diagram-label">&#128506; Codex Labs プラットフォーム全体アーキテクチャ</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Users["利用者"]
+        IndivDev(["個人開発者"])
+        EntDev(["エンタープライズ<br/>開発チーム"])
+        Partner(["コンサルティング<br/>パートナー"])
+    end
+
+    subgraph CodexLabs["Codex Labs プラットフォーム"]
+        subgraph Learning["学習レイヤー"]
+            Tutorials["ガイド付き<br/>チュートリアル"]
+            HandsOn["ハンズオン<br/>ラボ"]
+            BestPractice["ベストプラクティス<br/>ライブラリ"]
+        end
+
+        subgraph Sandbox["サンドボックスレイヤー"]
+            DevEnv["隔離された<br/>開発環境"]
+            SampleRepo["事前構成<br/>リポジトリ"]
+            AIGuide["AI リアルタイム<br/>ガイダンス"]
+        end
+
+        subgraph Certification["認定レイヤー"]
+            SkillAssess["スキル<br/>評価"]
+            Badge["認定バッジ<br/>/ 証明書"]
+            AdminDash["管理者<br/>ダッシュボード"]
+        end
+    end
+
+    subgraph CodexEcosystem["Codex エコシステム"]
+        CodexApp["Codex<br/>デスクトップアプリ"]
+        CodexCLI["Codex CLI"]
+        ResponsesAPI["Responses API"]
+        Plugins["プラグイン<br/>システム"]
+    end
+
+    subgraph Partners["パートナーサービス"]
+        Accenture["Accenture"]
+        PwC["PwC"]
+        Capgemini["Capgemini"]
+        Cognizant["Cognizant"]
+    end
+
+    subgraph Academy["OpenAI Academy"]
+        AcademyCore["汎用 AI<br/>リテラシー"]
+        TeamGuide["チーム別<br/>ガイド"]
+    end
+
+    IndivDev --> Tutorials
+    IndivDev --> HandsOn
+    EntDev --> HandsOn
+    EntDev --> Certification
+    Partner --> BestPractice
+    Partner --> Certification
+
+    Tutorials --> DevEnv
+    HandsOn --> DevEnv
+    HandsOn --> SampleRepo
+    DevEnv --> AIGuide
+
+    SkillAssess --> Badge
+    AdminDash -.->|進捗追跡| EntDev
+
+    DevEnv --> CodexApp
+    DevEnv --> CodexCLI
+    SampleRepo --> ResponsesAPI
+    BestPractice --> Plugins
+
+    Partners -.->|トレーニング素材| BestPractice
+    Partners -.->|認定プログラム| Certification
+
+    AcademyCore -.->|導線| Tutorials
+    TeamGuide -.->|開発者向け連携| HandsOn
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Tutorials,HandsOn,BestPractice openai
+    class DevEnv,SampleRepo,AIGuide dark
+    class SkillAssess,Badge,AdminDash dark
+    class CodexApp,CodexCLI,ResponsesAPI,Plugins openai
+    class Accenture,PwC,Capgemini,Cognizant accent
+    class IndivDev,EntDev,Partner light
+    class AcademyCore,TeamGuide accent
+                </pre>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#128257; 学習フロー</div>
+                <div class="mermaid-container">
+                    <pre class="mermaid">
+sequenceDiagram
+    participant D as 開発者
+    participant L as Codex Labs
+    participant S as サンドボックス
+    participant C as Codex エージェント
+    participant A as 管理者
+
+    D->>L: コース選択 / ラボ開始
+    L->>S: サンドボックス環境をプロビジョニング
+    S-->>D: 隔離された開発環境を提供
+
+    loop ハンズオン学習
+        D->>S: 演習タスクに取り組む
+        S->>C: Codex を実行
+        C-->>S: コード生成 / タスク実行
+        S->>D: AI ガイダンスとフィードバック
+    end
+
+    D->>L: スキル評価を受験
+    L-->>D: 認定バッジを発行
+    L-->>A: 進捗レポートを送信
+
+    A->>L: チーム全体の進捗を確認
+    L-->>A: ダッシュボードでスキル分布を表示
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128104;&#8205;&#128187;</span> 開発者への影響
+            </div>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>体系的なスキル習得パスの確立</h4>
+                    <p>これまで Codex の学習は公式ドキュメントやコミュニティの知見に依存していたが、Codex Labs の登場により、初心者から上級者まで体系的にスキルを習得できる公式のパスが確立される。開発者は自身のレベルに合わせた学習計画を立てやすくなる。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>実験環境による安全な試行</h4>
+                    <p>サンドボックス環境の提供により、本番環境に影響を与えることなく Codex の新機能やベストプラクティスを試すことができる。特に Computer Use、Automations、プラグイン開発といった高度な機能の習得において、隔離された実験環境の価値は大きい。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>エンタープライズ導入の障壁低下</h4>
+                    <p>企業が Codex を全社展開する際の最大の課題の一つは、開発者のスキルギャップである。Codex Labs のカスタムトレーニングプランと認定プログラムにより、組織的なスキルアップが効率化され、導入から定着までの期間短縮が期待できる。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>認定によるキャリア価値の向上</h4>
+                    <p>Codex Labs の認定バッジやスキル証明は、AI コーディングエージェントのスキルを客観的に示す手段となる。特にコンサルティングパートナー経由での認定プログラムは、AI 導入コンサルタントとしてのキャリアパスにおいて重要な差別化要因となる可能性がある。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>Codex エコシステムの成熟</h4>
+                    <p>トレーニングプラットフォームの登場は、Codex が実験的なツールから成熟したエンタープライズプラットフォームへと進化していることを示す指標である。プラグイン開発者向けのトレーニングが充実することで、サードパーティエコシステムの成長も加速する。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>400 万ユーザーへの学習リソース提供</h4>
+                    <p>週間アクティブユーザー 400 万人という規模に対して、統一的な学習リソースを提供することは、ユーザー体験の品質向上とサポートコスト削減の両面で戦略的に重要である。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- まとめ -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128221;</span> まとめ
+            </div>
+            <div class="summary-box">
+                <p>OpenAI は 2026 年 4 月 21 日、開発者向けトレーニング・実験プラットフォーム「Codex Labs」を発表した。Codex Labs は、ガイド付きチュートリアル、ハンズオンラボ、サンドボックス実験環境、スキル認定プログラムを通じて、開発者が Codex を効果的に活用するための体系的な学習パスを提供する。</p>
+                <br>
+                <p>同日発表された Scaling Codex to enterprises worldwide と密接に連携し、Accenture、PwC、Capgemini、Cognizant といったコンサルティングパートナーが顧客企業にトレーニングを提供する際の基盤としても機能する。Codex の WAU が 400 万人に達した現在、増大する利用者に対して統一的かつ高品質な学習リソースを提供することは、エコシステム全体の成熟度を高める上で不可欠な施策である。</p>
+                <br>
+                <p>Codex Labs の登場は、OpenAI が Codex を単なるコーディングツールではなく、トレーニング・認定・パートナーエコシステムを備えた包括的なエンタープライズプラットフォームとして確立しようとしていることを明確に示している。</p>
+            </div>
+
+            <div class="note-box">
+                <strong>注記:</strong> 本レポートは OpenAI の公式発表 (URL スラッグ「codex-labs」) および SiliconANGLE 等の外部報道に基づいて作成している。公式記事ページは Cloudflare の保護により直接アクセスが制限されていたため、複数のニュースソースを照合して内容を構成している。正確な詳細については OpenAI の公式記事を参照されたい。
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/codex-labs/" target="_blank" rel="noopener">openai.com/index/codex-labs</a></p>
+            <p style="margin-top: 8px;">OpenAI News Infographic | 2026-04-21</p>
+        </div>
+
+    </div>
+</body>
+</html>

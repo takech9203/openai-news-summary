@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Remote Connections: クラウド環境からのリモート接続機能を提供開始</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#10A37F',
+            primaryTextColor: '#343541',
+            primaryBorderColor: '#10A37F',
+            lineColor: '#10A37F',
+            background: '#FFFFFF',
+            mainBkg: '#F7F7F8'
+        }
+    });
+    </script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 40px 36px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .header .date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.4rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point .emoji {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point .text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .key-point .text strong {
+            color: var(--text-primary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .data-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .path-text {
+            font-family: monospace;
+            font-size: 0.82rem;
+            color: var(--openai-green);
+            background: rgba(16,163,127,0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Enterprise Cards */
+        .enterprise-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .enterprise-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .enterprise-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .enterprise-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Integration Cards */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .integration-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .integration-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .integration-card .integration-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .integration-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .integration-card p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tech Detail Cards */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .tech-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 18px 20px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .tech-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-card ul li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .tech-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Layer Cards */
+        .layer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .layer-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 18px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .layer-card .layer-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .layer-card .layer-content h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .layer-card .layer-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Security Items */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .security-item {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 16px 18px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .security-item h4 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .security-item p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Mermaid container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            border: 2px solid rgba(16,163,127,0.3);
+            padding: 24px;
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Impact Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px 22px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .impact-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .impact-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(52,53,65,0.04) 0%, rgba(52,53,65,0.01) 100%);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            margin-top: 16px;
+        }
+
+        .summary-box p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 28px 20px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px;
+            }
+            .header {
+                padding: 28px 24px;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .section {
+                padding: 22px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .integration-grid {
+                grid-template-columns: 1fr;
+            }
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <span class="badge">開発者ツール / Codex</span>
+            <div class="date">2026-04-22</div>
+            <h1>Codex Remote Connections: クラウド環境からのリモート接続機能を提供開始</h1>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128204;</span> 概要
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="emoji">&#9729;</span>
+                    <div class="text"><strong>リモート接続機能の提供開始:</strong> Codex のクラウド環境において、リモート開発環境への直接接続機能 (Remote Connections) を 2026 年 4 月 22 日に提供開始。Codex エージェントがクラウド上にホストされたリモート環境に接続してコーディング作業を実行可能に</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128279;</span>
+                    <div class="text"><strong>第 3 の接続モード:</strong> ローカル環境、クラウド環境に続く第 3 のモードとして、外部のリモート開発環境 (クラウド VM、コンテナ、リモートサーバー) への接続が可能に</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#127970;</span>
+                    <div class="text"><strong>エンタープライズ対応:</strong> Admin Setup、Governance、Managed Configuration といった管理機能を統合し、大規模組織での安全な運用を支援</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128260;</span>
+                    <div class="text"><strong>外部サービス連携:</strong> GitHub、Slack、Linear とのインテグレーションに対応し、リモート環境上での Codex の作業をチーム開発ワークフローにシームレスに組み込み可能</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128274;</span>
+                    <div class="text"><strong>エンタープライズグレードのセキュリティ:</strong> TLS 1.3 によるエンドツーエンド暗号化、ゼロトラスト認証、ネットワーク分離、監査ログなどのセキュリティ機能を実装</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- リモート接続の概要 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128268;</span> リモート接続の概要
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Codex Remote Connections は、Codex エージェントがリモート環境上のコードベースに対して直接アクセスし、コード生成、リファクタリング、バグ修正、テスト作成などのタスクを実行できる機能である。従来のローカル環境・クラウド環境に加え、第 3 のモードとして外部リモート開発環境への接続が可能となった。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>&#128423; 直接接続</h4>
+                    <p>SSH やセキュアなトンネリングプロトコルを介して、クラウド VM、コンテナ、リモートサーバーに接続</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#9881; 既存インフラ統合</h4>
+                    <p>企業が運用する既存の開発インフラ (AWS、Azure、GCP 上の開発環境など) をそのまま活用可能</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128274; セキュア通信</h4>
+                    <p>エンタープライズグレードの暗号化通信を通じたリモートアクセスを提供</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128338; セッション管理</h4>
+                    <p>リモート環境との接続セッションを永続的に維持し、長時間のタスク実行に対応</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- クラウド環境との統合 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#9729;</span> クラウド環境との統合
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Remote Connections は Codex の既存クラウドアーキテクチャと密接に統合されている。ローカル環境、クラウド環境、リモート環境の 3 つのレイヤーをカバーする包括的な開発プラットフォームへの進化を示している。</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>カテゴリ</th>
+                        <th>パス</th>
+                        <th>概要</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Cloud Environments</strong></td>
+                        <td><span class="path-text">codex/cloud/environments/</span></td>
+                        <td>クラウド環境の基本設定と管理</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Remote Connections</strong></td>
+                        <td><span class="path-text">codex/cloud/remote-connections/</span></td>
+                        <td>リモート環境への接続設定</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Internet Access</strong></td>
+                        <td><span class="path-text">codex/cloud/internet-access/</span></td>
+                        <td>クラウド環境からのインターネットアクセス設定</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Local Environments</strong></td>
+                        <td><span class="path-text">codex/app/local-environments/</span></td>
+                        <td>ローカル開発環境の設定</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- エンタープライズ機能 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#127970;</span> エンタープライズ機能
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Remote Connections はエンタープライズ向けの管理機能と統合されており、大規模な組織での安全な運用を支援する。コンサルティングパートナーシップ (Accenture、PwC、Capgemini、Cognizant) を通じた大企業への Codex 導入を技術面から支える基盤となる。</p>
+            <div class="enterprise-grid">
+                <div class="enterprise-card">
+                    <h4>&#128737; Admin Setup (管理者セットアップ)</h4>
+                    <p>組織の管理者がリモート接続のポリシーを一元管理。接続先の許可リスト、認証方式、アクセス制御ルールを組織レベルで設定可能。</p>
+                </div>
+                <div class="enterprise-card">
+                    <h4>&#128203; Governance (ガバナンス)</h4>
+                    <p>リモート接続の利用状況を監視し、コンプライアンス要件に準拠した運用を確保。接続ログの監査、データフローの追跡、ポリシー違反の検知などを提供。</p>
+                </div>
+                <div class="enterprise-card">
+                    <h4>&#9881; Managed Configuration (マネージド設定)</h4>
+                    <p>接続設定をテンプレート化し、チームや部門単位で標準化された構成を配布。個々の開発者が独自に設定する必要がなく、一貫性のある環境を維持可能。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- インテグレーション -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128260;</span> インテグレーション
+            </div>
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-icon">&#128025;</div>
+                    <h4>GitHub</h4>
+                    <p>リモート環境上のリポジトリと GitHub のプルリクエスト、イシュー、コードレビューを連携。Codex エージェントがリモート環境でコードを修正し、その変更を直接 GitHub にプッシュするワークフローが実現可能。</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">&#128172;</div>
+                    <h4>Slack</h4>
+                    <p>リモート接続の状態通知、タスク完了の報告、エラーアラートを Slack チャンネルに送信。チーム全体でリモート環境上の Codex の動作状況をリアルタイムに共有可能。</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">&#128202;</div>
+                    <h4>Linear</h4>
+                    <p>リモート環境で実行された Codex のタスクを Linear のイシューやプロジェクトと紐づけ。コーディングタスクの進捗をプロジェクト管理ツール上で一元的に追跡可能。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技術詳細 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128736;</span> 技術詳細
+            </div>
+
+            <div class="diagram-label">&#128421; 接続アーキテクチャレイヤー</div>
+            <div class="layer-grid">
+                <div class="layer-card">
+                    <div class="layer-number">1</div>
+                    <div class="layer-content">
+                        <h4>接続レイヤー</h4>
+                        <p>ローカルの IDE や Codex クライアントから Codex クラウドサービスへの接続を確立。認証には OAuth 2.0 ベースのトークン認証を使用。</p>
+                    </div>
+                </div>
+                <div class="layer-card">
+                    <div class="layer-number">2</div>
+                    <div class="layer-content">
+                        <h4>ルーティングレイヤー</h4>
+                        <p>Codex クラウドサービスがリクエストを適切なリモート環境にルーティング。接続先の環境は設定により指定され、動的な負荷分散にも対応。</p>
+                    </div>
+                </div>
+                <div class="layer-card">
+                    <div class="layer-number">3</div>
+                    <div class="layer-content">
+                        <h4>実行レイヤー</h4>
+                        <p>リモート環境上で Codex エージェントが実際のコーディングタスクを実行。ファイルシステムへのアクセス、ビルドツールの実行、テストの実行などが可能。</p>
+                    </div>
+                </div>
+                <div class="layer-card">
+                    <div class="layer-number">4</div>
+                    <div class="layer-content">
+                        <h4>同期レイヤー</h4>
+                        <p>リモート環境での変更をリアルタイムにクライアント側に反映し、GitHub 等の外部サービスと同期。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#128274; セキュリティモデル</div>
+                <div class="security-grid">
+                    <div class="security-item">
+                        <h4>&#128272; エンドツーエンド暗号化</h4>
+                        <p>クライアントからリモート環境までの全通信経路を TLS 1.3 で暗号化</p>
+                    </div>
+                    <div class="security-item">
+                        <h4>&#128273; ゼロトラスト認証</h4>
+                        <p>接続ごとに認証を検証し、セッションの有効期限管理を実施</p>
+                    </div>
+                    <div class="security-item">
+                        <h4>&#128423; ネットワーク分離</h4>
+                        <p>リモート環境ごとにネットワークを分離し、環境間の不正アクセスを防止</p>
+                    </div>
+                    <div class="security-item">
+                        <h4>&#128203; 監査ログ</h4>
+                        <p>全ての接続・操作をログに記録し、事後の監査に対応</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- アーキテクチャ -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128421;</span> アーキテクチャ
+            </div>
+
+            <div class="diagram-label">&#128506; Codex Remote Connections アーキテクチャ</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Local["ローカル環境"]
+        IDE(["IDE / エディタ"])
+        CLI["Codex CLI"]
+        LocalEnv["ローカル<br/>開発環境"]
+    end
+
+    subgraph CodexCloud["Codex クラウドサービス"]
+        Auth["認証 / 認可"]
+        Router["接続ルーター"]
+        Agent["Codex エージェント"]
+        CloudEnv["クラウド<br/>環境管理"]
+    end
+
+    subgraph Remote["リモート開発環境"]
+        VM["クラウド VM<br/>(AWS / Azure / GCP)"]
+        Container["コンテナ環境<br/>(Docker / K8s)"]
+        Server["リモートサーバー<br/>(SSH)"]
+    end
+
+    subgraph Integrations["インテグレーション"]
+        GitHub["GitHub"]
+        Slack["Slack"]
+        Linear["Linear"]
+    end
+
+    subgraph Enterprise["エンタープライズ管理"]
+        Admin["Admin Setup"]
+        Governance["Governance"]
+        ManagedConfig["Managed<br/>Configuration"]
+    end
+
+    IDE --> CLI
+    CLI -->|TLS 1.3| Auth
+    Auth --> Router
+    Router --> Agent
+    Agent --> CloudEnv
+    CloudEnv -->|リモート接続| VM
+    CloudEnv -->|リモート接続| Container
+    CloudEnv -->|リモート接続| Server
+
+    Agent -->|コード変更| GitHub
+    Agent -->|通知| Slack
+    Agent -->|進捗更新| Linear
+
+    Admin -->|ポリシー管理| Auth
+    Governance -->|監査ログ| Router
+    ManagedConfig -->|設定配布| CloudEnv
+
+    LocalEnv -.->|ローカルモード| Agent
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Auth,Router,Agent,CloudEnv openai
+    class GitHub,Slack,Linear dark
+    class IDE,CLI,LocalEnv light
+    class VM,Container,Server light
+    class Admin,Governance,ManagedConfig accent
+                </pre>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#128257; 接続フロー</div>
+                <div class="mermaid-container">
+                    <pre class="mermaid">
+sequenceDiagram
+    participant D as 開発者 (IDE)
+    participant C as Codex クラウド
+    participant A as 認証サービス
+    participant R as リモート環境
+    participant G as GitHub
+
+    D->>C: リモート接続リクエスト
+    C->>A: 認証トークン検証
+    A-->>C: 認証成功
+    C->>R: セキュア接続確立 (TLS 1.3)
+    R-->>C: 環境情報 / ファイルツリー
+    C-->>D: 接続完了 / 環境表示
+
+    D->>C: コーディングタスク指示
+    C->>R: エージェント実行
+    R-->>C: コード変更結果
+    C-->>D: 変更内容プレビュー
+
+    D->>C: 変更承認
+    C->>R: 変更適用
+    C->>G: プルリクエスト作成
+    G-->>D: PR URL 通知
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128104;&#8205;&#128187;</span> 開発者への影響
+            </div>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>リモート開発ワークフローの統一</h4>
+                    <p>これまで Codex の AI コーディング支援をリモート環境で利用するには、コードをローカルに同期する手間が必要であったが、Remote Connections によりリモート環境上で直接 Codex を活用できるようになる。特に大規模なモノレポやビルド環境がリモートに依存するプロジェクトで大きなメリットがある。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>エンタープライズ導入の障壁低下</h4>
+                    <p>セキュリティ要件の厳しいエンタープライズ環境では、コードをローカルにダウンロードすることが制限されるケースが多い。Remote Connections により、コードをリモート環境に保持したまま Codex を利用できるため、セキュリティポリシーに準拠した形での導入が容易になる。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>クラウド開発環境との親和性</h4>
+                    <p>GitHub Codespaces、AWS Cloud9、Google Cloud Shell などのクラウド IDE を日常的に利用している開発者にとって、Codex のリモート接続は自然なワークフロー拡張となる。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>CI/CD パイプラインとの連携強化</h4>
+                    <p>リモート環境上で Codex がコード変更を行い、そのまま CI/CD パイプラインを実行してテスト結果を確認するといったエンドツーエンドの自動化が可能になる。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>チーム開発の効率化</h4>
+                    <p>Slack と Linear のインテグレーションにより、リモート環境上での Codex の作業状況をチーム全体で共有でき、非同期の協働開発が促進される。</p>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <p>OpenAI は Codex のクラウド機能にリモート接続 (Remote Connections) を追加し、開発者がリモート環境上のコードベースに対して Codex の AI コーディング支援を直接適用できるようにした。本機能は、ローカル環境とクラウド環境に続く第 3 の接続モードとして位置付けられ、AWS、Azure、GCP 上の VM やコンテナ環境、SSH 接続可能なリモートサーバーへのセキュアな接続を提供する。</p>
+                <br>
+                <p>エンタープライズ向けには Admin Setup、Governance、Managed Configuration といった管理機能が統合されており、組織全体でのリモート接続ポリシーの一元管理が可能である。GitHub、Slack、Linear とのインテグレーションにより、リモート環境上での Codex の作業をチーム開発のワークフローにシームレスに組み込むことができる。本発表は、前日のコンサルティングパートナーシップによるエンタープライズ展開の加速と連動しており、大企業のリモート開発インフラに対応する技術基盤としての役割を担う。Codex がローカル、クラウド、リモートの全環境をカバーする統合型 AI コーディングプラットフォームへと進化する重要な一歩である。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://developers.openai.com/codex/cloud/environments/" target="_blank" rel="noopener">developers.openai.com/codex/cloud/environments/</a></p>
+            <p style="margin-top: 8px;">OpenAI News Infographic | 2026-04-22</p>
+        </div>
+
+    </div>
+</body>
+</html>

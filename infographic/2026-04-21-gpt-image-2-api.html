@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT Image 2 モデル API 提供開始</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            padding: 48px 0 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(16, 163, 127, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .header .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 18px;
+            letter-spacing: 0.02em;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        /* Section */
+        .section {
+            padding: 40px 0;
+        }
+
+        .section + .section {
+            border-top: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 28px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 12px;
+            padding: 20px 24px;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+
+        .key-point:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .key-point-label {
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .key-point-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Before/After Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .comparison-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .comparison-table thead th:first-child {
+            background: #444654;
+        }
+
+        .comparison-table thead th.before {
+            background: #565869;
+        }
+
+        .comparison-table thead th.after {
+            background: var(--openai-green);
+        }
+
+        .comparison-table tbody td {
+            padding: 14px 18px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .comparison-table tbody td:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
+            background: var(--openai-light);
+            white-space: nowrap;
+        }
+
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* API Endpoint Cards */
+        .endpoint-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 700px) {
+            .endpoint-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .endpoint-card {
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .endpoint-card:hover {
+            box-shadow: 0 6px 20px rgba(16, 163, 127, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .endpoint-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .endpoint-method {
+            display: inline-block;
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+
+        .endpoint-path {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .endpoint-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Parameter Table */
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .param-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 18px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        .param-table tbody td {
+            padding: 12px 18px;
+            font-size: 0.88rem;
+            border-bottom: 1px solid var(--openai-gray);
+            line-height: 1.6;
+        }
+
+        .param-table tbody td:first-child {
+            font-family: monospace;
+            color: var(--openai-green);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .param-table tbody td:nth-child(2) {
+            color: var(--text-muted);
+            font-family: monospace;
+            font-size: 0.82rem;
+        }
+
+        .param-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-block-header {
+            background: #444654;
+            padding: 10px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-block-title {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: monospace;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .code-block pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+        }
+
+        /* Mermaid Diagram */
+        .mermaid-container {
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 12px;
+            padding: 32px 24px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Impact Section */
+        .impact-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .impact-item {
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 18px 22px;
+        }
+
+        .impact-item-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .impact-item-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            padding: 32px 0;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer-source {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-meta {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-badge">API 更新 / 画像生成</div>
+            <h1 class="header-title">GPT Image 2 モデル API 提供開始</h1>
+            <div class="header-date">2026-04-21</div>
+        </div>
+    </header>
+
+    <!-- 概要 (Key Points) -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-label">API 提供開始</div>
+                    <div class="key-point-text">OpenAI は 2026 年 4 月 21 日、Images API を通じて <code>gpt-image-2</code> モデルを開発者向けに提供開始した。従来の DALL-E 3 を大幅に上回る画像生成能力を開発者が自らのアプリケーションに組み込めるようになる。</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-label">推論ベース生成</div>
+                    <div class="key-point-text">画像生成プロセスに推論 (reasoning) ステップを導入。プロンプトから直接ピクセルを生成するのではなく、構図計画、テキスト配置、整合性検証を経てから画像を描画する。</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-label">テキストレンダリング</div>
+                    <div class="key-point-text">画像内テキストを高精度で描画。スペルミスや文字化けが大幅に減少。CJK 文字 (日本語・中国語・韓国語)、アラビア文字、デーヴァナーガリー文字等に対応。</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-label">インフォグラフィック生成</div>
+                    <div class="key-point-text">データ可視化、フローチャート、統計グラフを含む複雑な図表の生成が可能。出力形式は PNG、JPEG、WebP に対応。</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-label">3 つの操作</div>
+                    <div class="key-point-text">generation (生成)、editing (編集)、variations (バリエーション) の 3 操作をサポート。既存の Images API エンドポイントを通じて利用可能。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Before/After -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">DALL-E 3 vs gpt-image-2</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>観点</th>
+                        <th class="before">DALL-E 3</th>
+                        <th class="after">gpt-image-2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>テキスト描画精度</td>
+                        <td>長文でスペルミスが頻発</td>
+                        <td>推論ステップにより高精度な描画</td>
+                    </tr>
+                    <tr>
+                        <td>多言語テキスト</td>
+                        <td>英語中心、CJK 文字は不安定</td>
+                        <td>CJK、アラビア文字等を正確に描画</td>
+                    </tr>
+                    <tr>
+                        <td>複雑な構図</td>
+                        <td>要素が多いと破綻しやすい</td>
+                        <td>レイアウト計画により安定した構図</td>
+                    </tr>
+                    <tr>
+                        <td>インフォグラフィック</td>
+                        <td>実用レベルに未到達</td>
+                        <td>図表を単一プロンプトで生成可能</td>
+                    </tr>
+                    <tr>
+                        <td>生成アプローチ</td>
+                        <td>プロンプトから直接生成</td>
+                        <td>推論・計画フェーズを経て生成</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- API エンドポイント -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">API エンドポイント</h2>
+            <div class="endpoint-cards">
+                <div class="endpoint-card">
+                    <div class="endpoint-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <div class="endpoint-method">POST</div>
+                    <div class="endpoint-path">/v1/images/generations</div>
+                    <div class="endpoint-desc">テキストプロンプトから新しい画像を生成</div>
+                </div>
+                <div class="endpoint-card">
+                    <div class="endpoint-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </div>
+                    <div class="endpoint-method">POST</div>
+                    <div class="endpoint-path">/v1/images/edits</div>
+                    <div class="endpoint-desc">既存画像に対するテキスト指示による編集</div>
+                </div>
+                <div class="endpoint-card">
+                    <div class="endpoint-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg>
+                    </div>
+                    <div class="endpoint-method">POST</div>
+                    <div class="endpoint-path">/v1/images/variations</div>
+                    <div class="endpoint-desc">既存画像のバリエーション生成</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API パラメータ -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">API パラメータ</h2>
+            <table class="param-table">
+                <thead>
+                    <tr>
+                        <th>パラメータ</th>
+                        <th>型</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>model</td>
+                        <td>string</td>
+                        <td><code>"gpt-image-2"</code> を指定</td>
+                    </tr>
+                    <tr>
+                        <td>prompt</td>
+                        <td>string</td>
+                        <td>画像生成のためのテキストプロンプト</td>
+                    </tr>
+                    <tr>
+                        <td>n</td>
+                        <td>integer</td>
+                        <td>生成する画像の枚数 (デフォルト: 1)</td>
+                    </tr>
+                    <tr>
+                        <td>size</td>
+                        <td>string</td>
+                        <td>画像サイズ (例: <code>"1024x1024"</code>、<code>"1792x1024"</code>、<code>"1024x1792"</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>quality</td>
+                        <td>string</td>
+                        <td>画質設定 (<code>"standard"</code> または <code>"hd"</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>response_format</td>
+                        <td>string</td>
+                        <td>レスポンス形式 (<code>"url"</code> または <code>"b64_json"</code>)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- コードサンプル -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <!-- 基本的な画像生成 -->
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-block-title">基本的な画像生成</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# gpt-image-2 による画像生成
+response = client.images.generate(
+    model="gpt-image-2",
+    prompt="A modern tech startup office with large windows, natural lighting, "
+           "and a whiteboard showing an architecture diagram with the text "
+           "'System Design v2.0'",
+    size="1024x1024",
+    quality="hd",
+    n=1,
+)
+
+image_url = response.data[0].url
+print(f"Generated image: {image_url}")</code></pre>
+            </div>
+
+            <!-- 多言語テキスト入りインフォグラフィック -->
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-block-title">多言語テキスト入りインフォグラフィックの生成</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 日本語テキストを含むインフォグラフィックの生成
+response = client.images.generate(
+    model="gpt-image-2",
+    prompt=(
+        "企業向けインフォグラフィック。タイトルは「AI 導入ガイド 2026」。"
+        "3 つのステップを図示: "
+        "1. データ整備 (Data Preparation)、"
+        "2. モデル選定 (Model Selection)、"
+        "3. 本番デプロイ (Production Deployment)。"
+        "各ステップにアイコンと日英バイリンガルの説明テキスト。"
+        "白背景にプロフェッショナルなデザイン。"
+    ),
+    size="1024x1792",
+    quality="hd",
+    n=1,
+)
+
+print(response.data[0].url)</code></pre>
+            </div>
+
+            <!-- 画像編集 (Inpainting) -->
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-block-title">画像編集 (Inpainting)</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+from pathlib import Path
+
+client = OpenAI()
+
+# 既存画像のマスク領域を編集
+response = client.images.edit(
+    model="gpt-image-2",
+    image=Path("original.png"),
+    mask=Path("mask.png"),
+    prompt="Replace the background with a sunset over the ocean",
+    size="1024x1024",
+    n=1,
+)
+
+print(response.data[0].url)</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- アーキテクチャ -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアント"]
+        SDK["Python / Node SDK"]
+        HTTP["cURL / HTTP"]
+    end
+
+    subgraph API["OpenAI Images API"]
+        Gateway["API Gateway"]
+        Generate["/v1/images/generations"]
+        Edit["/v1/images/edits"]
+        Variations["/v1/images/variations"]
+    end
+
+    subgraph Pipeline["gpt-image-2 パイプライン"]
+        Analyze["プロンプト解析"]
+        Layout["構図・レイアウト計画"]
+        TextPlan["テキスト配置・検証"]
+        ImageGen["画像レンダリング"]
+    end
+
+    subgraph Output["出力"]
+        Formats["PNG / JPEG / WebP"]
+    end
+
+    SDK --> Gateway
+    HTTP --> Gateway
+    Gateway --> Generate
+    Gateway --> Edit
+    Gateway --> Variations
+    Generate --> Analyze
+    Edit --> Analyze
+    Variations --> Analyze
+    Analyze --> Layout
+    Layout --> TextPlan
+    TextPlan --> ImageGen
+    ImageGen --> Formats
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Analyze,Layout,TextPlan openai
+    class Gateway,Generate,Edit,Variations,ImageGen dark
+    class SDK,HTTP,Formats light
+                </pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- 開発者への影響 -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-list">
+                <div class="impact-item">
+                    <div class="impact-item-title">DALL-E 3 からの移行</div>
+                    <div class="impact-item-text"><code>model</code> パラメータを <code>"dall-e-3"</code> から <code>"gpt-image-2"</code> に変更するだけで移行可能。エンドポイントとパラメータ構造は維持されており、コード変更は最小限で済む。</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-item-title">プロダクション品質の画像生成</div>
+                    <div class="impact-item-text">マーケティング資料、製品カタログ、教育コンテンツなどのプロダクション品質画像を API 経由で自動生成するワークフローが実現可能になった。</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-item-title">多言語アプリケーション</div>
+                    <div class="impact-item-text">CJK 文字を含む多言語テキストの正確な描画により、グローバルアプリケーションでのローカライズされた画像生成が大幅に簡素化される。</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-item-title">レイテンシの考慮</div>
+                    <div class="impact-item-text">推論フェーズの追加により生成時間が長くなる可能性がある。リアルタイム性が求められるユースケースでは、非同期処理やキューイングの導入を検討すべきである。</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-item-title">コスト管理</div>
+                    <div class="impact-item-text"><code>quality</code> パラメータを <code>"standard"</code> に設定することで、品質とコストのバランスを調整できる。</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-item-title">コンテンツモデレーション</div>
+                    <div class="impact-item-text">写実的な画像生成能力の向上に伴い、C2PA メタデータの検証や独自のモデレーションパイプラインの実装が推奨される。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-source">
+                Source: <a href="https://developers.openai.com/api/docs/guides/image-generation/" target="_blank" rel="noopener noreferrer">Image Generation Guide - OpenAI Developers</a>
+            </div>
+            <div class="footer-meta">OpenAI News Summary - 2026-04-21</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

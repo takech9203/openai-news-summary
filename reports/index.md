@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-22](2026/2026-04-22-codex-remote-connections.md) - Codex Remote Connections: クラウド環境からのリモート接続機能を提供開始
+- [2026-04-21](2026/2026-04-21-scaling-codex-enterprises.md) - OpenAI、グローバルコンサルティング企業と連携し Codex のエンタープライズ展開を加速
+- [2026-04-21](2026/2026-04-21-gpt-image-2-api.md) - GPT Image 2 モデル API 提供開始: 開発者向け次世代画像生成 API
+- [2026-04-21](2026/2026-04-21-codex-labs.md) - Codex Labs 発表: 開発者向けトレーニング・実験プラットフォーム
+- [2026-04-21](2026/2026-04-21-chatgpt-images-2-0.md) - ChatGPT Images 2.0: AI が「考えてから描く」次世代画像生成モデルを発表
+- [2026-04-21](2026/2026-04-21-chatgpt-images-2-0-system-card.md) - ChatGPT Images 2.0 System Card: 次世代画像生成モデルの安全性評価と緩和策
 - [2026-04-20](2026/2026-04-20-people-first-ai-fund-grantees.md) - OpenAI、People-First AI Fund の助成先を発表: コミュニティ主導の AI 活用を本格始動
 - [2026-04-20](2026/2026-04-20-openai-hires-jiostar-ceo-apac.md) - OpenAI、JioStar CEO をアジア太平洋事業責任者に採用: APAC 市場への本格進出を加速
 - [2026-04-20](2026/2026-04-20-hyatt-chatgpt-enterprise.md) - Hyatt Hotels が ChatGPT Enterprise で AI 活用を推進: ホスピタリティ業界における大規模 AI 導入の先進事例
