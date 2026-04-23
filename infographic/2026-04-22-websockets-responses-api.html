@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses API における WebSocket サポート: エージェントワークフローのレイテンシを大幅削減</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#10A37F',
+            primaryTextColor: '#343541',
+            primaryBorderColor: '#10A37F',
+            lineColor: '#10A37F',
+            background: '#FFFFFF',
+            mainBkg: '#F7F7F8'
+        }
+    });
+    </script>
+    <script>document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());</script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 40px 36px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .header .date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.4rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point .emoji {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point .text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .key-point .text strong {
+            color: var(--text-primary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Comparison Cards */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .comparison-card {
+            border-radius: 12px;
+            padding: 24px;
+            border: 2px solid;
+        }
+
+        .comparison-card.before {
+            background: rgba(52,53,65,0.04);
+            border-color: var(--openai-dark);
+        }
+
+        .comparison-card.after {
+            background: rgba(16,163,127,0.04);
+            border-color: var(--openai-green);
+        }
+
+        .comparison-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-card.before h4 {
+            color: var(--openai-dark);
+        }
+
+        .comparison-card.after h4 {
+            color: var(--openai-green);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            padding: 5px 0;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-dark);
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .stat-detail {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .data-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Code Block */
+        .code-block {
+            margin-top: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .code-header {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .code-lang {
+            background: var(--openai-green);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .code-title {
+            color: rgba(255,255,255,0.8);
+            font-weight: 500;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .code-block pre code {
+            font-size: 0.82rem;
+            line-height: 1.6;
+            padding: 16px !important;
+        }
+
+        /* Challenge cards */
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .challenge-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .challenge-item .challenge-number {
+            width: 32px;
+            height: 32px;
+            background: var(--openai-dark);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .challenge-item .challenge-content h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .challenge-item .challenge-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Cache turn cards */
+        .cache-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .cache-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 16px 20px;
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .cache-card h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cache-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .cache-card .cache-stat {
+            display: inline-block;
+            background: rgba(16,163,127,0.12);
+            color: var(--openai-green);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* Use Case */
+        .use-case {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px 22px;
+            border-left: 4px solid var(--openai-green);
+            margin-top: 12px;
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .use-case p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Impact Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px 22px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .impact-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .impact-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Transport guide */
+        .transport-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .transport-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .transport-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .transport-card .transport-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .transport-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .transport-card p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .transport-card.recommended {
+            border-color: var(--openai-green);
+            border-width: 2px;
+            background: rgba(16,163,127,0.04);
+        }
+
+        .transport-card .rec-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        /* Mermaid container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            border: 2px solid rgba(16,163,127,0.3);
+            padding: 24px;
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(52,53,65,0.04) 0%, rgba(52,53,65,0.01) 100%);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            margin-top: 16px;
+        }
+
+        .summary-box p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 28px 20px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px;
+            }
+            .header {
+                padding: 28px 24px;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .section {
+                padding: 22px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .transport-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <span class="badge">&#9881; &#12456;&#12531;&#12472;&#12491;&#12450;&#12522;&#12531;&#12464; / API</span>
+            <div class="date">2026-04-22</div>
+            <h1>Responses API における WebSocket サポート: エージェントワークフローのレイテンシを大幅削減</h1>
+        </div>
+
+        <!-- 概要 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128204;</span> 概要
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="emoji">&#9889;</span>
+                    <div class="text"><strong>WebSocket サポート導入:</strong> Responses API に WebSocket による永続接続を導入し、エージェントワークフローにおけるターンあたりのレイテンシを 40 - 60% 削減</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128451;</span>
+                    <div class="text"><strong>接続スコープキャッシュ:</strong> WebSocket セッション存続中に KV キャッシュ、トークン化済みプロンプト、ツール定義をサーバーサイドで保持し、差分のみを処理する仕組みを実現</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128260;</span>
+                    <div class="text"><strong>Codex エージェントループの最適化:</strong> 数十回の API 往復が発生するエージェントワークフローにおいて、TCP/TLS ハンドシェイクコストを初回のみに限定し、累積オーバーヘッドを排除</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128230;</span>
+                    <div class="text"><strong>Python SDK v2.32.0 対応:</strong> WebSocket 接続のためのイベントハンドラ、自動再接続、メッセージエンキューなどの機能が SDK レベルで提供</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">&#128209;</span>
+                    <div class="text"><strong>3 つの通信方式をサポート:</strong> HTTP (REST)、SSE (Server-Sent Events)、WebSocket の 3 方式に対応し、アプリケーション特性に応じた選択が可能</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After 比較 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128260;</span> Before / After 比較
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">従来の HTTP ベースのエージェントループと、WebSocket ベースの新方式におけるオーバーヘッドの比較。</p>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>&#10060; Before: HTTP リクエスト/レスポンス</h4>
+                    <ul>
+                        <li>毎ターン TCP 接続の確立 (3-way ハンドシェイク)</li>
+                        <li>毎ターン TLS ハンドシェイクが必要</li>
+                        <li>HTTP ヘッダの反復的な送受信</li>
+                        <li>モデルコンテキスト全体を毎回再送信・再処理</li>
+                        <li>ロードバランサの再ルーティングが毎ターン発生</li>
+                        <li>KV キャッシュの再構築コストが累積</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>&#9989; After: WebSocket 永続接続</h4>
+                    <ul>
+                        <li>TCP/TLS ハンドシェイクは初回のみ</li>
+                        <li>WebSocket フレーム (2 - 14 バイト) の最小ヘッダ</li>
+                        <li>双方向ストリーミングで同時送受信</li>
+                        <li>接続スコープキャッシュにより差分のみ処理</li>
+                        <li>セッション固定で同一サーバーにルーティング</li>
+                        <li>KV キャッシュを GPU メモリ上に保持</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- パフォーマンス統計 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128200;</span> パフォーマンス統計
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">40-60%</div>
+                    <div class="stat-label">ターンあたりのレイテンシ削減</div>
+                    <div class="stat-detail">WebSocket + 接続スコープキャッシュの組み合わせにより実現</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~95%</div>
+                    <div class="stat-label">接続確立コスト削減</div>
+                    <div class="stat-detail">TCP/TLS ハンドシェイクを初回のみに限定</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2-14 B</div>
+                    <div class="stat-label">WebSocket フレームヘッダサイズ</div>
+                    <div class="stat-detail">HTTP ヘッダの反復送信に代わる最小限のオーバーヘッド</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">v2.32.0</div>
+                    <div class="stat-label">Python SDK 対応バージョン</div>
+                    <div class="stat-detail">WebSocket 接続のための API を SDK レベルで提供</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 課題と解決策 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128679;</span> Codex エージェントループの課題
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">Codex エージェントループは「計画 → 実行 → 観察 → 評価 → 修正」のサイクルを反復実行する。1 つのタスク完了に数十回の API 呼び出しが必要となり、HTTP ベースでは以下のオーバーヘッドが累積する。</p>
+            <div class="challenge-grid">
+                <div class="challenge-item">
+                    <div class="challenge-number">1</div>
+                    <div class="challenge-content">
+                        <h4>TCP 接続の確立</h4>
+                        <p>新規接続のたびに 3-way ハンドシェイクが必要。数十ターンの往復で遅延が蓄積する。</p>
+                    </div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-number">2</div>
+                    <div class="challenge-content">
+                        <h4>TLS ハンドシェイク</h4>
+                        <p>HTTPS 通信のための暗号化ネゴシエーションが毎ターン発生。</p>
+                    </div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-number">3</div>
+                    <div class="challenge-content">
+                        <h4>HTTP ヘッダの反復送受信</h4>
+                        <p>リクエスト/レスポンスヘッダの転送が毎回必要で、帯域幅を浪費する。</p>
+                    </div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-number">4</div>
+                    <div class="challenge-content">
+                        <h4>プロンプトの再処理</h4>
+                        <p>毎回の API 呼び出しでモデルコンテキスト全体を再送信・再処理。長いコンテキストほどコストが支配的に。</p>
+                    </div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-number">5</div>
+                    <div class="challenge-content">
+                        <h4>ロードバランサの再ルーティング</h4>
+                        <p>リクエストごとに新たなルーティング判断が必要で、異なるサーバーに振り分けられる可能性がある。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WebSocket による永続接続 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128268;</span> WebSocket による永続接続
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">WebSocket プロトコルは HTTP のアップグレードメカニズムを通じて確立される全二重通信チャネルであり、エージェントループのような頻繁な往復通信に最適なプロトコルとなる。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>&#128279; 接続の永続化</h4>
+                    <p>エージェントセッション全体を 1 つの WebSocket 接続で処理。TCP/TLS のハンドシェイクコストを初回のみに限定。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#9889; 低オーバーヘッドなフレーミング</h4>
+                    <p>HTTP ヘッダの反復送信に代わり、WebSocket フレームの最小限のヘッダ (2 - 14 バイト) でメッセージを送受信。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128260; 双方向ストリーミング</h4>
+                    <p>サーバーからのプッシュ型イベント配信と、クライアントからの非同期メッセージ送信を 1 つの接続で同時に実現。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128423; サーバー親和性</h4>
+                    <p>同一 WebSocket 接続内のリクエストが同一バックエンドサーバーにルーティングされ、セッション状態を効率的に管理。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 接続スコープキャッシュ -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128451;</span> 接続スコープキャッシュ (Connection-Scoped Caching)
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">WebSocket サポートにおける最大の技術革新。セッション存続期間中、サーバーサイドで以下の要素をキャッシュし、エージェントループの 2 回目以降のターンでは差分のみを処理対象とする。</p>
+
+            <div class="feature-grid" style="margin-bottom: 20px;">
+                <div class="feature-card">
+                    <h4>&#129504; KV キャッシュ</h4>
+                    <p>モデルの注意機構 (attention mechanism) の中間状態を GPU メモリ上に保持。新しいターンでは差分のみを計算。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128221; トークン化済みプロンプト</h4>
+                    <p>処理済みプロンプト部分のトークン列を保持し、再トークン化を回避。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128295; ツール定義</h4>
+                    <p>セッション内で変化しないツール定義情報を初回のみ処理。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128200; キャッシュヒット率</h4>
+                    <p>後続ターンほどキャッシュヒット率が向上し、コンテキストが長いほど効果が顕著に。</p>
+                </div>
+            </div>
+
+            <div class="diagram-label">&#128257; ターンごとのキャッシュ動作</div>
+            <div class="cache-grid">
+                <div class="cache-card">
+                    <h4>&#9654; ターン 1: 初回リクエスト</h4>
+                    <p>[System Prompt] + [User Message] + [Tool Definitions] を全て処理し、KV キャッシュを構築して接続に紐付けて保存。</p>
+                    <span class="cache-stat">全て新規処理: 2,000 トークン</span>
+                </div>
+                <div class="cache-card">
+                    <h4>&#9654; ターン 2: ツール実行結果を追加</h4>
+                    <p>既存コンテキストはキャッシュ済み。[Tool Call] + [Tool Output] の差分のみ処理。</p>
+                    <span class="cache-stat">差分処理: 200 トークン | キャッシュヒット: 2,000 トークン</span>
+                </div>
+                <div class="cache-card">
+                    <h4>&#9654; ターン 3: さらにツール呼び出し</h4>
+                    <p>コンテキストが増大しても差分のみ処理。キャッシュ済み KV 状態を参照。</p>
+                    <span class="cache-stat">差分処理: 300 トークン | キャッシュヒット: 2,200 トークン</span>
+                </div>
+                <div class="cache-card">
+                    <h4>&#9654; ターン N: 効率が累積的に向上</h4>
+                    <p>キャッシュされる KV キャッシュのサイズが大きいほど、再計算の回避による節約量が増大。</p>
+                    <span class="cache-stat">キャッシュヒット率: ターンごとに向上</span>
+                </div>
+            </div>
+
+            <div class="code-block" style="margin-top: 20px;">
+                <div class="code-header">
+                    <span class="code-title">接続スコープキャッシュの概念的な動作</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python"># 接続スコープキャッシュの概念的な動作
+
+# ターン 1: 全プロンプトを処理
+# [System Prompt] + [User Message] + [Tool Definitions]
+# → KV キャッシュを構築し、接続に紐付けて保存
+# → トークン数: 2,000 (全て新規処理)
+
+# ターン 2: ツール実行結果を追加
+# [System Prompt] + [User Message] + [Tool Definitions]  ← キャッシュ済み
+# + [Tool Call] + [Tool Output]                           ← 新規処理
+# → 差分のみ処理: 200 トークン (キャッシュヒット: 2,000 トークン)
+
+# ターン 3: さらにツール呼び出し
+# [System Prompt] + ... + [Tool Output 1]                ← キャッシュ済み
+# + [New Tool Call] + [New Tool Output]                   ← 新規処理
+# → 差分のみ処理: 300 トークン (キャッシュヒット: 2,200 トークン)
+
+# ターン N: コンテキストが増大しても差分のみ処理
+# → キャッシュヒット率は後続ターンほど高くなる</code></pre>
+            </div>
+        </div>
+
+        <!-- HTTP/SSE/WebSocket 比較表 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128202;</span> HTTP / SSE / WebSocket 比較表
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">Responses API がサポートする 3 つの通信方式の特徴と適用場面を整理する。</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>方式</th>
+                        <th>通信方向</th>
+                        <th>接続モデル</th>
+                        <th>適用場面</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>HTTP (REST)</strong></td>
+                        <td>単方向 (リクエスト/レスポンス)</td>
+                        <td>ステートレス</td>
+                        <td>単発の API 呼び出し、シンプルなクエリ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SSE</strong></td>
+                        <td>単方向 (サーバー → クライアント)</td>
+                        <td>半永続</td>
+                        <td>ストリーミングレスポンス、進捗通知</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WebSocket</strong></td>
+                        <td>双方向</td>
+                        <td>永続</td>
+                        <td>エージェントループ、多ターン対話</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 20px;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>指標</th>
+                            <th>HTTP (従来)</th>
+                            <th>WebSocket</th>
+                            <th>改善率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ターンあたりのレイテンシ</strong></td>
+                            <td>ベースライン</td>
+                            <td>40 - 60% 削減</td>
+                            <td style="color: var(--openai-green); font-weight: 700;">40 - 60%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>接続確立コスト</strong></td>
+                            <td>毎ターン発生</td>
+                            <td>初回のみ</td>
+                            <td style="color: var(--openai-green); font-weight: 700;">約 95% 削減</td>
+                        </tr>
+                        <tr>
+                            <td><strong>プロンプト処理時間</strong></td>
+                            <td>全コンテキスト再処理</td>
+                            <td>差分のみ</td>
+                            <td style="color: var(--openai-green); font-weight: 700;">コンテキスト長に依存</td>
+                        </tr>
+                        <tr>
+                            <td><strong>エージェントタスク完了時間</strong></td>
+                            <td>ベースライン</td>
+                            <td>大幅短縮</td>
+                            <td style="color: var(--openai-green); font-weight: 700;">タスク複雑度に依存</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- コードサンプル -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128187;</span> コードサンプル: HTTP vs WebSocket エージェントループ
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">HTTP ベースのエージェントループ (従来方式)</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# HTTP ベースのエージェントループ (従来方式)
+context = [
+    {"role": "user", "content": "テストを修正してください。"}
+]
+
+while True:
+    # 毎ターン、新しい HTTP リクエストを送信
+    # コンテキスト全体を再送信する必要がある
+    response = client.responses.create(
+        model="codex",
+        input=context,
+        tools=[{"type": "shell", "shell": {"image": "python:3.12-slim"}}]
+    )
+
+    # ツール呼び出し結果をコンテキストに追加
+    for item in response.output:
+        context.append(item)
+
+    if response.status == "completed":
+        break
+
+    # 次のターンでは、増大したコンテキスト全体が再送信される
+    # → プロンプト処理コストがターンごとに増加</code></pre>
+            </div>
+
+            <div class="code-block" style="margin-top: 20px;">
+                <div class="code-header">
+                    <span class="code-title">WebSocket ベースのエージェントループ (新方式)</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# WebSocket ベースのエージェントループ (新方式)
+async with client.responses.connect(
+    model="codex",
+    websocket=True,
+    tools=[{"type": "shell", "shell": {"image": "python:3.12-slim"}}]
+) as session:
+    # 初回リクエスト
+    await session.send({
+        "type": "response.create",
+        "input": "テストを修正してください。",
+    })
+
+    # 永続接続上でイベントを受信
+    # 接続スコープキャッシュにより、差分のみ処理
+    async for event in session.events():
+        if event.type == "response.done":
+            if event.response.status == "completed":
+                print("タスク完了")
+                break
+            # 次のターンでは差分のみが処理される
+            # KV キャッシュが保持されているため、
+            # 既存コンテキストの再計算は不要</code></pre>
+            </div>
+
+            <div class="code-block" style="margin-top: 20px;">
+                <div class="code-header">
+                    <span class="code-title">WebSocket 接続の完全なサンプル (イベントハンドリング付き)</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# WebSocket を使用した Responses API 接続
+async with client.responses.connect(
+    model="codex",
+    websocket=True,
+    tools=[
+        {
+            "type": "shell",
+            "shell": {
+                "image": "python:3.12-slim"
+            }
+        }
+    ]
+) as session:
+    # 初回のタスク送信
+    response = await session.send({
+        "type": "response.create",
+        "input": "プロジェクトのテストを実行して結果を報告してください。",
+    })
+
+    # エージェントループ内の各ターンで同一接続を再利用
+    # 接続スコープキャッシュにより、差分のみが処理される
+    async for event in session.events():
+        if event.type == "response.output_item.done":
+            if event.item.type == "shell_call":
+                print(f"[Tool] $ {event.item.command}")
+                print(f"[Output] {event.item.output[:200]}")
+            elif event.item.type == "message":
+                print(f"[Agent] {event.item.content[0].text}")
+
+        elif event.type == "response.done":
+            # エージェントが追加のツール呼び出しを要求した場合
+            if event.response.status == "requires_action":
+                # 接続スコープキャッシュにより、
+                # 既存のコンテキストは再処理不要
+                await session.send({
+                    "type": "response.create",
+                    "input": event.response.required_action,
+                })
+            else:
+                print("タスク完了")
+                break</code></pre>
+            </div>
+        </div>
+
+        <!-- アーキテクチャ -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128421;</span> アーキテクチャ
+            </div>
+
+            <div class="diagram-label">&#128506; WebSocket vs HTTP アーキテクチャ比較</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph HTTP["HTTP ベース (従来)"]
+        direction TB
+        C1["クライアント"]
+        LB1["ロード\nバランサ"]
+        S1A["サーバー A"]
+        S1B["サーバー B"]
+        S1C["サーバー C"]
+
+        C1 -->|"ターン 1\n全コンテキスト送信"| LB1
+        LB1 -->|"ルーティング"| S1A
+        C1 -->|"ターン 2\n全コンテキスト再送信"| LB1
+        LB1 -->|"再ルーティング"| S1B
+        C1 -->|"ターン 3\n全コンテキスト再送信"| LB1
+        LB1 -->|"再ルーティング"| S1C
+    end
+
+    subgraph WS["WebSocket ベース (新方式)"]
+        direction TB
+        C2["クライアント"]
+        LB2["ロード\nバランサ"]
+        S2["サーバー A\n(固定)"]
+        Cache["KV キャッシュ\n(GPU メモリ)"]
+
+        C2 -->|"永続接続\n差分のみ送信"| LB2
+        LB2 -->|"セッション固定"| S2
+        S2 <-->|"キャッシュ参照"| Cache
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class C1,C2 light
+    class LB1,LB2 accent
+    class S1A,S1B,S1C dark
+    class S2 openai
+    class Cache openai
+                </pre>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#128257; 接続スコープキャッシュのフロー</div>
+                <div class="mermaid-container">
+                    <pre class="mermaid">
+sequenceDiagram
+    participant Client as クライアント
+    participant WS as WebSocket 接続
+    participant API as Responses API
+    participant Cache as KV キャッシュ<br/>(GPU メモリ)
+    participant Model as モデル
+
+    Note over Client,Model: ターン 1: 初回リクエスト
+    Client->>WS: response.create (全コンテキスト)
+    WS->>API: プロンプト処理
+    API->>Model: 全トークン処理 (2,000 tokens)
+    Model-->>Cache: KV キャッシュ保存
+    Model-->>API: レスポンス (ツール呼び出し)
+    API-->>WS: response.output (shell_call)
+    WS-->>Client: ツール実行要求
+
+    Note over Client,Model: ツール実行 (クライアント側)
+    Client->>Client: ツール実行・結果取得
+
+    Note over Client,Model: ターン 2: 差分のみ処理
+    Client->>WS: response.create (ツール出力のみ)
+    WS->>API: 差分プロンプト処理
+    API->>Cache: キャッシュヒット (2,000 tokens)
+    Cache-->>API: キャッシュ済み KV 状態
+    API->>Model: 差分のみ処理 (200 tokens)
+    Model-->>Cache: KV キャッシュ更新
+    Model-->>API: レスポンス (次のツール呼び出し)
+    API-->>WS: response.output
+    WS-->>Client: 次のツール実行要求
+
+    Note over Client,Model: ターン 3: さらに効率化
+    Client->>WS: response.create (新しいツール出力のみ)
+    WS->>API: 差分プロンプト処理
+    API->>Cache: キャッシュヒット (2,200 tokens)
+    Cache-->>API: キャッシュ済み KV 状態
+    API->>Model: 差分のみ処理 (300 tokens)
+    Model-->>API: 最終レスポンス
+    API-->>WS: response.done (completed)
+    WS-->>Client: タスク完了
+                    </pre>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#9881; エージェントランタイム全体像</div>
+                <div class="mermaid-container">
+                    <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアント層"]
+        SDK["OpenAI SDK\n(Python / Node.js)"]
+        App["エージェント\nアプリケーション"]
+        App --> SDK
+    end
+
+    subgraph Transport["トランスポート層"]
+        HTTP["HTTP/REST"]
+        SSE["SSE\n(Server-Sent Events)"]
+        WSConn["WebSocket"]
+    end
+
+    subgraph APILayer["Responses API"]
+        Router["リクエスト\nルーター"]
+        SessionMgr["セッション\nマネージャ"]
+        CacheMgr["キャッシュ\nマネージャ"]
+    end
+
+    subgraph Inference["推論層"]
+        KVCache["KV キャッシュ\n(GPU メモリ)"]
+        ModelInst["モデル\nインスタンス"]
+    end
+
+    subgraph Tools["ツール実行層"]
+        ShellTool["Shell ツール"]
+        Container["ホステッド\nコンテナ"]
+        ShellTool --> Container
+    end
+
+    SDK -->|"単発リクエスト"| HTTP
+    SDK -->|"ストリーミング"| SSE
+    SDK -->|"エージェントループ"| WSConn
+
+    HTTP --> Router
+    SSE --> Router
+    WSConn --> Router
+
+    Router --> SessionMgr
+    SessionMgr --> CacheMgr
+    CacheMgr <--> KVCache
+    SessionMgr --> ModelInst
+    ModelInst --> ShellTool
+
+    WSConn -.->|"セッション固定"| SessionMgr
+    CacheMgr -.->|"接続スコープ\nキャッシュ"| KVCache
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class WSConn,Router,SessionMgr,CacheMgr openai
+    class ModelInst,ShellTool,Container dark
+    class SDK,App light
+    class HTTP,SSE,KVCache accent
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128104;&#8205;&#128187;</span> 開発者への影響
+            </div>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>エージェントアプリケーションのパフォーマンス向上</h4>
+                    <p>ターンあたり 40 - 60% のレイテンシ削減により、特にコンテキストが大きいエージェントセッションで顕著な効果。数十ターンにわたるエージェントタスクではタスク全体の所要時間が大幅に短縮される。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>SDK アップグレードの推奨</h4>
+                    <p>Python SDK v2.32.0 以降で WebSocket 接続をサポート。イベントハンドラ、自動再接続、メッセージエンキュー機能が提供される。非同期 (async/await) パターンを前提とした API 設計のため、既存の同期コードからの移行にはコードの書き換えが必要。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>コスト効率の向上</h4>
+                    <p>接続スコープキャッシュによるプロンプト処理の削減は、計算リソースの節約にもつながる可能性がある。キャッシュされる KV キャッシュのサイズが大きいほど節約量も増大する。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>運用上の考慮事項</h4>
+                    <p>WebSocket 接続にはタイムアウトや最大持続時間が設定される可能性がある。接続スコープキャッシュは GPU メモリを消費するため、同時接続数の増加に伴うリソース管理が必要。接続状態の監視 (接続数、レイテンシ、キャッシュヒット率) のための運用体制の整備が推奨される。</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#128204; 通信方式の選択指針</div>
+                <div class="transport-grid">
+                    <div class="transport-card">
+                        <div class="transport-icon">&#128225;</div>
+                        <h4>HTTP (REST)</h4>
+                        <p>単発の質問応答、1 ターンで完結するタスク。最もシンプルな実装。</p>
+                    </div>
+                    <div class="transport-card">
+                        <div class="transport-icon">&#128226;</div>
+                        <h4>SSE</h4>
+                        <p>レスポンスのリアルタイムストリーミング。チャットボット等に適する。</p>
+                    </div>
+                    <div class="transport-card recommended">
+                        <span class="rec-badge">推奨: エージェント用途</span>
+                        <div class="transport-icon">&#9889;</div>
+                        <h4>WebSocket</h4>
+                        <p>マルチターンのエージェントワークフロー、頻繁なツール呼び出し。Codex に最適。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <p>OpenAI が公開した本エンジニアリング記事は、Responses API への WebSocket サポート導入がエージェントワークフローのパフォーマンスをどのように改善するかを技術的に詳述している。Codex エージェントループを具体例として、HTTP のリクエスト/レスポンスモデルに起因する累積的なオーバーヘッドが、WebSocket による永続接続と接続スコープキャッシュの組み合わせで効果的に解消されることを示した。</p>
+                <br>
+                <p>ターンあたり 40 - 60% のレイテンシ削減という成果は、数十回の API 往復が発生するエージェントワークフローにおいて特に大きなインパクトを持つ。本発表は、Python SDK v2.32.0 の WebSocket 機能強化、Codex エージェントループの設計、および同日発表の Codex Remote Connections と一連の技術スタックを構成しており、OpenAI のエージェントインフラストラクチャが「正しく動作する」段階から「高速に動作する」段階へと成熟しつつあることを示す重要なマイルストーンである。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/speeding-up-agentic-workflows-with-websockets" target="_blank" rel="noopener">openai.com/index/speeding-up-agentic-workflows-with-websockets</a></p>
+            <p style="margin-top: 8px;">OpenAI News Infographic | 2026-04-22</p>
+        </div>
+
+    </div>
+</body>
+</html>

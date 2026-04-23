@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT に Workspace Agents を導入: Codex ベースのクラウドエージェントでチームワークフローを自動化</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#10A37F',
+            primaryTextColor: '#343541',
+            primaryBorderColor: '#10A37F',
+            lineColor: '#10A37F',
+            background: '#FFFFFF',
+            mainBkg: '#F7F7F8'
+        }
+    });
+    hljs.highlightAll();
+    </script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 40px 36px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .header .category-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.9);
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            font-weight: 400;
+            margin-left: 8px;
+            position: relative;
+        }
+
+        .header .date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.4rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point-content {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .key-point-content strong {
+            color: var(--text-primary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .data-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .data-table tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Enterprise Cards */
+        .enterprise-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .enterprise-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .enterprise-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .enterprise-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Integration Cards */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .integration-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid var(--openai-gray);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .integration-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .integration-card .integration-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .integration-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .integration-card p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Layer Cards */
+        .layer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .layer-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 18px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .layer-card .layer-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .layer-card .layer-content h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .layer-card .layer-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Security Items */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .security-item {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 16px 18px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .security-item h4 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .security-item p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Mermaid container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            border: 2px solid rgba(16,163,127,0.3);
+            padding: 24px;
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Code Block */
+        .code-block {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--openai-gray);
+            margin-top: 16px;
+        }
+
+        .code-header {
+            background: var(--openai-dark);
+            padding: 10px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-title {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.82rem;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 0.78rem;
+            font-weight: 500;
+            background: rgba(16,163,127,0.15);
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .code-block pre code {
+            font-size: 0.82rem;
+            line-height: 1.7;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Impact Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px 22px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .impact-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .impact-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Use Case */
+        .use-case {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .use-case h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(52,53,65,0.04) 0%, rgba(52,53,65,0.01) 100%);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            margin-top: 16px;
+        }
+
+        .summary-box p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 28px 20px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px;
+            }
+            .header {
+                padding: 28px 24px;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .section {
+                padding: 22px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .integration-grid {
+                grid-template-columns: 1fr;
+            }
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="badge">&#129302; Workspace Agents</span>
+                <span class="category-badge">&#128196; &#12503;&#12525;&#12480;&#12463;&#12488; / ChatGPT / &#12456;&#12540;&#12472;&#12455;&#12531;&#12488;</span>
+                <div class="date">2026-04-22</div>
+                <h1>ChatGPT &#12395; Workspace Agents &#12434;&#23566;&#20837;: Codex &#12505;&#12540;&#12473;&#12398;&#12463;&#12521;&#12454;&#12489;&#12456;&#12540;&#12472;&#12455;&#12531;&#12488;&#12391;&#12481;&#12540;&#12512;&#12527;&#12540;&#12463;&#12501;&#12525;&#12540;&#12434;&#33258;&#21205;&#21270;</h1>
+            </div>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128204;</span> 概要
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="key-point-icon">&#129302;</span>
+                    <div class="key-point-content"><strong>Workspace Agents の導入:</strong> ChatGPT に Codex エンジンを基盤とするクラウドベースの AI エージェント「Workspace Agents」を導入。ChatGPT のインターフェース内から直接、複雑なマルチステップワークフローを自動化できる機能を提供</div>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-icon">&#9729;&#65039;</span>
+                    <div class="key-point-content"><strong>汎用ワークフロー自動化:</strong> 従来の Codex がコーディングタスクに特化していたのに対し、Workspace Agents はドキュメント作成、データ分析、プロジェクト管理、ツール連携といった幅広い業務ワークフローをカバーする汎用エージェント</div>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-icon">&#128260;</span>
+                    <div class="key-point-content"><strong>外部ツール連携:</strong> Slack、GitHub、Linear、Jira などの外部ツールとのインテグレーションにより、チーム全体の業務を横断的に自動化。同日発表の Codex Remote Connections とも連携</div>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-icon">&#128274;</span>
+                    <div class="key-point-content"><strong>セキュアなサンドボックス実行:</strong> すべてのタスクがクラウド上の隔離されたサンドボックス環境で実行され、ユーザーのローカル環境に影響を与えることなく安全にタスクを処理</div>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-icon">&#127970;</span>
+                    <div class="key-point-content"><strong>エンタープライズ対応:</strong> Admin Console、Governance、Audit Logs、SSO/SCIM 統合により、大規模組織での安全な運用を支援。Academy ページで構築ガイダンスも提供</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主な内容: Workspace Agents の特徴 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128640;</span> Workspace Agents の特徴
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Workspace Agents は、ChatGPT 内で動作する Codex ベースのクラウドエージェントである。ユーザーが自然言語で指示を出すと、エージェントがクラウド上で自律的にタスクを実行し、結果を ChatGPT のインターフェースに返す。従来の ChatGPT が「質問に対して回答する」対話型 AI であったのに対し、Workspace Agents は「指示に基づいて実際にタスクを遂行する」実行型 AI エージェントである。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>&#9881;&#65039; Codex エンジン基盤</h4>
+                    <p>OpenAI の Codex テクノロジーを基盤とし、コード生成・実行、ファイル操作、ツール連携などの高度な実行能力を備える</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#9729;&#65039; クラウド実行</h4>
+                    <p>すべてのタスクがクラウド上のサンドボックス環境で実行され、ローカル環境への影響なしに安全に動作する</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128260; マルチステップワークフロー</h4>
+                    <p>単一のプロンプトから複数のステップにまたがる複雑なワークフローを自律的に遂行する</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128279; ツール統合</h4>
+                    <p>Slack、GitHub、Linear、Jira などの外部ツールに接続し、ツール間をまたいだ自動化を実現する</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128101; チーム共有</h4>
+                    <p>作成したエージェントをチームメンバーと共有し、組織全体で再利用可能にする</p>
+                </div>
+                <div class="feature-card">
+                    <h4>&#128218; Academy リソース</h4>
+                    <p>構築方法、活用パターン、チーム運用のベストプラクティスを体系的に学べるリソースを提供</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 対象ワークフロー表 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128203;</span> 対象ワークフロー
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Workspace Agents がカバーするワークフローの範囲は、従来のコーディング支援を大幅に超えている。</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>カテゴリ</th>
+                        <th>ユースケース例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ソフトウェア開発</strong></td>
+                        <td>コードレビュー自動化、バグ修正、テスト生成、リファクタリング、PR 作成</td>
+                    </tr>
+                    <tr>
+                        <td><strong>プロジェクト管理</strong></td>
+                        <td>イシュートリアージ、スプリントレポート生成、進捗レポートの自動作成</td>
+                    </tr>
+                    <tr>
+                        <td><strong>データ分析</strong></td>
+                        <td>CSV/JSON データの解析、可視化レポート生成、定期レポートの自動化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ドキュメント</strong></td>
+                        <td>技術ドキュメント生成、API リファレンス更新、変更ログの自動作成</td>
+                    </tr>
+                    <tr>
+                        <td><strong>運用・DevOps</strong></td>
+                        <td>デプロイ状態の監視、アラート対応の自動化、インフラ設定の検証</td>
+                    </tr>
+                    <tr>
+                        <td><strong>コミュニケーション</strong></td>
+                        <td>Slack への定期レポート投稿、ミーティングサマリーの生成</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- カスタムエージェント構築 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128736;</span> カスタムエージェント構築
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Workspace Agents の重要な特徴の一つは、ユーザーが独自のカスタムエージェントを構築できる点である。Academy ページで提供されるガイダンスに基づき、以下の 5 ステッププロセスでカスタムエージェントを作成できる。</p>
+            <div class="layer-grid">
+                <div class="layer-card">
+                    <div class="layer-number">1</div>
+                    <div class="layer-content">
+                        <h4>ワークフローの定義</h4>
+                        <p>自動化したいワークフローのステップを自然言語で記述する</p>
+                    </div>
+                </div>
+                <div class="layer-card">
+                    <div class="layer-number">2</div>
+                    <div class="layer-content">
+                        <h4>ツール接続の設定</h4>
+                        <p>エージェントが利用する外部ツール (GitHub、Slack、Linear 等) への認証と接続を設定する</p>
+                    </div>
+                </div>
+                <div class="layer-card">
+                    <div class="layer-number">3</div>
+                    <div class="layer-content">
+                        <h4>実行ルールの設定</h4>
+                        <p>エージェントの動作範囲、権限、トリガー条件を定義する</p>
+                    </div>
+                </div>
+                <div class="layer-card">
+                    <div class="layer-number">4</div>
+                    <div class="layer-content">
+                        <h4>テストと反復</h4>
+                        <p>エージェントをテスト実行し、フィードバックに基づいて改善する</p>
+                    </div>
+                </div>
+                <div class="layer-card">
+                    <div class="layer-number">5</div>
+                    <div class="layer-content">
+                        <h4>チームへの共有</h4>
+                        <p>完成したエージェントをワークスペースのメンバーに公開する。テンプレートとして保存し、他のチームや組織にも展開可能</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ツールインテグレーション -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128260;</span> ツールインテグレーション
+            </div>
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-icon">&#128025;</div>
+                    <h4>GitHub</h4>
+                    <p>リポジトリへのアクセス、PR の作成・レビュー、イシュー管理、コードの読み取り・編集。Codex Remote Connections の接続基盤を共有</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">&#128172;</div>
+                    <h4>Slack</h4>
+                    <p>メッセージの送受信、チャンネルへの通知、ワークフロートリガーの受信。定期レポート投稿やアラート通知に対応</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">&#128202;</div>
+                    <h4>Linear</h4>
+                    <p>イシューの作成・更新、プロジェクトの進捗追跡、スプリント管理。コーディングタスクとプロジェクト管理を連携</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">&#128203;</div>
+                    <h4>Jira</h4>
+                    <p>チケット管理、ワークフロー自動化、ステータス更新。エンタープライズの既存プロジェクト管理基盤との統合</p>
+                </div>
+            </div>
+            <div style="margin-top: 16px;">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>&#128193; ファイルストレージ</h4>
+                        <p>クラウドストレージとの連携によるドキュメント管理</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>&#127760; Web API</h4>
+                        <p>カスタム API エンドポイントへの接続による独自ツール統合</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- セキュリティモデル -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128274;</span> セキュリティモデル
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">エンタープライズ環境での安全な運用を支えるため、Workspace Agents は多層的なセキュリティモデルを採用している。</p>
+            <div class="security-grid">
+                <div class="security-item">
+                    <h4>&#128737; サンドボックス実行</h4>
+                    <p>すべてのエージェントタスクがクラウド上の隔離されたサンドボックス環境で実行。Agents SDK v0.14.0 の Sandbox Agents 技術基盤を活用し、各実行は独立した環境で処理</p>
+                </div>
+                <div class="security-item">
+                    <h4>&#128272; OAuth 2.0 認証</h4>
+                    <p>OAuth 2.0 ベースの認証により外部ツールへのアクセスを安全に管理。エージェントごとに最小権限の原則に基づいたアクセス制御を実施</p>
+                </div>
+                <div class="security-item">
+                    <h4>&#128203; 監査ログ</h4>
+                    <p>すべてのエージェント実行は詳細な監査ログに記録。管理者はエージェントの実行履歴、ツールアクセス、データフローを追跡可能</p>
+                </div>
+                <div class="security-item">
+                    <h4>&#128273; データ保護</h4>
+                    <p>ツール接続の認証情報は暗号化された状態で管理。データ処理ポリシーに準拠し、ビジネスデータはモデルトレーニングに使用されない</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- エンタープライズ管理 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#127970;</span> エンタープライズ管理
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Workspace Agents は、組織レベルでのガバナンスを実現するエンタープライズ管理機能を備えている。</p>
+            <div class="enterprise-grid">
+                <div class="enterprise-card">
+                    <h4>&#128737; Admin Console (管理者コンソール)</h4>
+                    <p>ワークスペース全体のエージェントポリシーを一元管理。利用可能なツール、実行上限、データアクセスルールを組織レベルで設定可能。</p>
+                </div>
+                <div class="enterprise-card">
+                    <h4>&#128203; Governance (ガバナンス)</h4>
+                    <p>エージェントの利用状況を監視し、コンプライアンス要件への準拠を確保。ポリシー違反の検知と自動アラートを提供。</p>
+                </div>
+                <div class="enterprise-card">
+                    <h4>&#128270; Audit Logs (監査ログ)</h4>
+                    <p>すべてのエージェント操作の詳細なログを保持。事後の監査やセキュリティインシデント調査に対応。</p>
+                </div>
+                <div class="enterprise-card">
+                    <h4>&#128273; SSO / SCIM 統合</h4>
+                    <p>企業の既存の ID 管理基盤との統合をサポート。ユーザーのプロビジョニングとアクセス管理を自動化。</p>
+                </div>
+                <div class="enterprise-card">
+                    <h4>&#128202; Usage Analytics (利用分析)</h4>
+                    <p>エージェントの利用頻度、処理時間、コスト、効果を可視化するダッシュボード。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Codex との比較表 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128200;</span> Codex との比較
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;">Workspace Agents は Codex エコシステムの一部として位置づけられるが、スタンドアロンの Codex とは異なる形で提供される。</p>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>Codex (スタンドアロン)</th>
+                        <th>Workspace Agents</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>実行環境</strong></td>
+                        <td>Codex デスクトップアプリ / CLI</td>
+                        <td>ChatGPT 内</td>
+                    </tr>
+                    <tr>
+                        <td><strong>主な対象</strong></td>
+                        <td>ソフトウェア開発者</td>
+                        <td>全 ChatGPT ユーザー / チーム</td>
+                    </tr>
+                    <tr>
+                        <td><strong>フォーカス</strong></td>
+                        <td>コーディングタスク</td>
+                        <td>汎用ワークフロー自動化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ツール統合</strong></td>
+                        <td>IDE / ターミナル / GitHub</td>
+                        <td>Slack / GitHub / Linear / Jira 等</td>
+                    </tr>
+                    <tr>
+                        <td><strong>実行モデル</strong></td>
+                        <td>ローカル + クラウド + リモート</td>
+                        <td>クラウド (サンドボックス)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>共有機能</strong></td>
+                        <td>チーム内リポジトリ共有</td>
+                        <td>エージェントライブラリ / テンプレート</td>
+                    </tr>
+                    <tr>
+                        <td><strong>管理機能</strong></td>
+                        <td>Codex Admin</td>
+                        <td>ChatGPT Admin + エージェントガバナンス</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="summary-box" style="margin-top: 20px;">
+                <p>Workspace Agents は Codex の AI エンジンとサンドボックス実行技術を内部的に活用しつつ、ChatGPT の直感的なインターフェースを通じてより幅広いユーザー層にエージェント能力を提供する。Codex デスクトップアプリが「開発者のための専用ツール」であるのに対し、Workspace Agents は「チーム全体のための業務自動化プラットフォーム」としての役割を担う。</p>
+            </div>
+        </div>
+
+        <!-- アーキテクチャ -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128421;</span> アーキテクチャ
+            </div>
+
+            <!-- 全体アーキテクチャ -->
+            <div class="diagram-label">&#128506; Workspace Agents 全体アーキテクチャ</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Users["ユーザー / チーム"]
+        User(["ChatGPT ユーザー"])
+        Admin(["管理者"])
+    end
+
+    subgraph ChatGPT["ChatGPT インターフェース"]
+        Chat["チャット UI"]
+        AgentLib["エージェント&lt;br/&gt;ライブラリ"]
+        Builder["エージェント&lt;br/&gt;ビルダー"]
+        Dashboard["実行&lt;br/&gt;ダッシュボード"]
+    end
+
+    subgraph WorkspaceAgents["Workspace Agents エンジン"]
+        Orchestrator["タスク&lt;br/&gt;オーケストレーター"]
+        Planner["ワークフロー&lt;br/&gt;プランナー"]
+        Executor["エージェント&lt;br/&gt;エグゼキューター"]
+        Memory["エージェント&lt;br/&gt;メモリ"]
+    end
+
+    subgraph CodexBackend["Codex クラウドバックエンド"]
+        CodexEngine["Codex&lt;br/&gt;エンジン"]
+        Sandbox["サンドボックス&lt;br/&gt;実行環境"]
+        RemoteConn["Remote&lt;br/&gt;Connections"]
+        CloudEnv["クラウド&lt;br/&gt;環境管理"]
+    end
+
+    subgraph Integrations["ツールインテグレーション"]
+        GitHub["GitHub"]
+        Slack["Slack"]
+        Linear["Linear"]
+        Jira["Jira"]
+        CustomAPI["カスタム API"]
+    end
+
+    subgraph Enterprise["エンタープライズ管理"]
+        AdminConsole["Admin Console"]
+        Governance["Governance"]
+        AuditLog["Audit Logs"]
+        SSO["SSO / SCIM"]
+        Analytics["Usage Analytics"]
+    end
+
+    User --> Chat
+    User --> AgentLib
+    Admin --> AdminConsole
+
+    Chat --> Orchestrator
+    AgentLib --> Builder
+    Builder --> Orchestrator
+    Dashboard --> Executor
+
+    Orchestrator --> Planner
+    Planner --> Executor
+    Executor --> Memory
+
+    Executor --> CodexEngine
+    CodexEngine --> Sandbox
+    CodexEngine --> RemoteConn
+    Sandbox --> CloudEnv
+
+    Executor --> GitHub
+    Executor --> Slack
+    Executor --> Linear
+    Executor --> Jira
+    Executor --> CustomAPI
+
+    AdminConsole --> Governance
+    Governance --> AuditLog
+    AdminConsole --> SSO
+    AdminConsole --> Analytics
+
+    Governance -.->|ポリシー適用| Orchestrator
+    AuditLog -.->|ログ記録| Executor
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Orchestrator,Planner,Executor,Memory openai
+    class CodexEngine,Sandbox,RemoteConn,CloudEnv openai
+    class Chat,AgentLib,Builder,Dashboard dark
+    class GitHub,Slack,Linear,Jira,CustomAPI dark
+    class User,Admin light
+    class AdminConsole,Governance,AuditLog,SSO,Analytics accent
+                </pre>
+            </div>
+
+            <!-- 実行フロー -->
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#128257; Workspace Agent の実行フロー</div>
+                <div class="mermaid-container">
+                    <pre class="mermaid">
+sequenceDiagram
+    participant U as ユーザー
+    participant C as ChatGPT UI
+    participant O as オーケストレーター
+    participant S as サンドボックス
+    participant T as 外部ツール
+    participant A as 監査ログ
+
+    U->>C: エージェントにタスクを指示
+    C->>O: タスク定義を送信
+    O->>O: ワークフローを計画
+    O->>S: サンドボックス環境を起動
+    A->>A: 実行開始を記録
+
+    loop マルチステップ実行
+        O->>S: ステップを実行
+        S->>T: ツール API を呼び出し
+        T-->>S: 結果を返却
+        S-->>O: ステップ結果
+        O->>A: 操作ログを記録
+        O->>C: 進捗を更新
+        C->>U: リアルタイム進捗表示
+    end
+
+    O->>S: サンドボックスを終了
+    O-->>C: 最終結果を返却
+    C-->>U: 完了通知と結果表示
+    A->>A: 実行完了を記録
+                    </pre>
+                </div>
+            </div>
+
+            <!-- Codex エコシステム -->
+            <div style="margin-top: 24px;">
+                <div class="diagram-label">&#127760; Codex エコシステムにおける Workspace Agents の位置づけ</div>
+                <div class="mermaid-container">
+                    <pre class="mermaid">
+flowchart LR
+    subgraph CodexEcosystem["Codex エコシステム"]
+        subgraph Desktop["デスクトップ"]
+            CodexApp["Codex&lt;br/&gt;デスクトップアプリ"]
+            CLI["Codex CLI"]
+        end
+
+        subgraph Cloud["クラウド"]
+            CloudEnv["Cloud&lt;br/&gt;Environments"]
+            RemoteConn["Remote&lt;br/&gt;Connections"]
+        end
+
+        subgraph ChatGPTLayer["ChatGPT 統合"]
+            WA["Workspace&lt;br/&gt;Agents"]
+        end
+
+        subgraph Foundation["共通基盤"]
+            Engine["Codex エンジン"]
+            SandboxRT["Sandbox&lt;br/&gt;Runtime"]
+            AgentsSDK["Agents SDK&lt;br/&gt;v0.14.0"]
+        end
+    end
+
+    subgraph UsersLayer["ユーザー層"]
+        Devs["開発者"]
+        Teams["チーム / PM"]
+        EntUser["エンタープライズ&lt;br/&gt;管理者"]
+    end
+
+    Devs --> CodexApp
+    Devs --> CLI
+    Teams --> WA
+    EntUser --> WA
+
+    CodexApp --> Engine
+    CLI --> Engine
+    WA --> Engine
+    CloudEnv --> SandboxRT
+    RemoteConn --> SandboxRT
+    Engine --> AgentsSDK
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Engine,SandboxRT,AgentsSDK openai
+    class CodexApp,CLI,CloudEnv,RemoteConn,WA dark
+    class Devs,Teams,EntUser light
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- コードサンプル -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128187;</span> コードサンプル
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">Workspace Agents は ChatGPT の UI からの利用に加え、API 経由でのプログラマティックなアクセスもサポートしていると想定される。CI/CD パイプラインや社内ツールから Workspace Agents をトリガーし、自動化ワークフローに組み込むことが可能。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-title">Workspace Agent API 使用例 (推定インターフェース)</span>
+                    <span class="code-lang">Python</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Workspace Agent のタスク実行例 (推定される API インターフェース)
+response = client.workspace_agents.tasks.create(
+    agent_id="wa_custom_code_reviewer",
+    workspace_id="ws_engineering_team",
+    input="main ブランチへの最新の PR をレビューし、"
+          "改善点を Slack #code-review チャンネルに投稿してください",
+    tools=[
+        {"type": "github", "repo": "org/main-app"},
+        {"type": "slack", "channel": "#code-review"},
+    ],
+)
+
+print(f"Task ID: {response.id}")
+print(f"Status: {response.status}")</code></pre>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <div class="section-title">
+                <span class="icon">&#128104;&#8205;&#128187;</span> 開発者への影響
+            </div>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>&#127775; 非開発者へのエージェント能力の開放</h4>
+                    <p>プログラミングの専門知識を持たないチームメンバー (PM、デザイナー、アナリスト等) も AI エージェントの自動化能力を活用できるようになった。ChatGPT の直感的なインターフェースを通じてエージェントを利用できるため、技術的な障壁が大幅に低下する。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>&#9889; 開発チームの業務効率化</h4>
+                    <p>コードレビュー、テスト生成、ドキュメント作成、イシュートリアージなどの反復的なタスクをエージェントに委任することで、開発者はより創造的で高付加価値な作業に集中できる。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>&#128260; クロスファンクショナルな自動化</h4>
+                    <p>GitHub のコード変更を Slack に通知し、Linear のイシューを自動更新するといったツール横断型のワークフローにより、チーム内のコミュニケーションとプロセスの効率が向上する。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>&#127970; エンタープライズ導入の加速</h4>
+                    <p>Admin Console、Governance、Audit Logs、SSO/SCIM 統合により大規模組織でも安全に導入・運用可能。コンサルティングパートナーシップ (Accenture、PwC、Capgemini、Cognizant) を通じた導入支援と組み合わせ、エンタープライズ採用が加速する見込み。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>&#128279; Codex Remote Connections との統合</h4>
+                    <p>同日発表の Remote Connections により、Workspace Agents からリモート開発環境上のコードベースにアクセス可能。エンタープライズ環境で一般的なリモートインフラとの親和性が高い。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>&#128640; Codex エコシステムとの補完関係</h4>
+                    <p>Codex のスーパーアプリ化がデスクトップ環境での包括的な AI 体験を提供する一方、Workspace Agents は ChatGPT (Web / モバイル) を通じたチーム向けの自動化プラットフォームとして補完的な役割を果たす。</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div class="diagram-label">&#9888;&#65039; 考慮すべきポイント</div>
+                <div class="security-grid" style="margin-top: 8px;">
+                    <div class="security-item">
+                        <h4>&#128274; データセキュリティ</h4>
+                        <p>外部ツール接続時の企業機密データ保護を確認する必要あり。Governance 機能でデータフローを監視し、ポリシーに準拠した運用を確保すべき</p>
+                    </div>
+                    <div class="security-item">
+                        <h4>&#128737; エージェントの信頼性</h4>
+                        <p>自律的にマルチステップタスクを実行するエージェントが意図しない操作を行うリスク。本番環境への操作には人間の承認フローを設けることを推奨</p>
+                    </div>
+                    <div class="security-item" style="grid-column: 1 / -1;">
+                        <h4>&#128176; コスト管理</h4>
+                        <p>クラウド上でエージェントが実行されるため利用量に応じたコストが発生。Usage Analytics を活用してコストを可視化し、予算内での運用を管理することが重要</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <p>OpenAI は ChatGPT に Workspace Agents を導入し、Codex ベースのクラウドエージェントによるチームワークフローの自動化を実現した。Workspace Agents はクラウド上のサンドボックス環境で動作し、GitHub、Slack、Linear、Jira などの外部ツールと連携して、コーディング、データ分析、プロジェクト管理、ドキュメント作成といった多岐にわたるワークフローを自律的に遂行する。</p>
+                <br>
+                <p>本発表は、同日の Codex Remote Connections、前日のエンタープライズ向けコンサルティングパートナーシップ、4 月 16 日の Codex スーパーアプリ化、4 月 15 日の Agents SDK Sandbox Agents といった一連の発表と連動しており、OpenAI が Codex エコシステムを「個人の開発者ツール」から「組織全体の AI 業務自動化プラットフォーム」へと拡大する戦略の中核を成すものである。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/introducing-workspace-agents-in-chatgpt" target="_blank" rel="noopener">openai.com/index/introducing-workspace-agents-in-chatgpt</a></p>
+            <p style="margin-top: 4px;">Academy: <a href="https://openai.com/academy/workspace-agents" target="_blank" rel="noopener">openai.com/academy/workspace-agents</a></p>
+            <p style="margin-top: 8px;">OpenAI News Infographic | 2026-04-22</p>
+        </div>
+
+    </div>
+</body>
+</html>

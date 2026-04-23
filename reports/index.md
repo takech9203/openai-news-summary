@@ -5,7 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-22](2026/2026-04-22-workspace-agents-chatgpt.md) - ChatGPT に Workspace Agents を導入: Codex ベースのクラウドエージェントでチームワークフローを自動化
+- [2026-04-22](2026/2026-04-22-websockets-responses-api.md) - Responses API における WebSocket サポート: エージェントワークフローのレイテンシを大幅削減
+- [2026-04-22](2026/2026-04-22-openai-privacy-filter.md) - OpenAI Privacy Filter を発表: PII 検出・墨消しのためのオープンウェイトモデル
 - [2026-04-22](2026/2026-04-22-codex-remote-connections.md) - Codex Remote Connections: クラウド環境からのリモート接続機能を提供開始
+- [2026-04-22](2026/2026-04-22-chatgpt-for-clinicians.md) - ChatGPT for Clinicians を米国の医療従事者に無料提供: 臨床ケア、文書作成、研究を AI で支援
 - [2026-04-21](2026/2026-04-21-scaling-codex-enterprises.md) - OpenAI、グローバルコンサルティング企業と連携し Codex のエンタープライズ展開を加速
 - [2026-04-21](2026/2026-04-21-gpt-image-2-api.md) - GPT Image 2 モデル API 提供開始: 開発者向け次世代画像生成 API
 - [2026-04-21](2026/2026-04-21-codex-labs.md) - Codex Labs 発表: 開発者向けトレーニング・実験プラットフォーム
