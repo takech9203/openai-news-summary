@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.5 System Card - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .data-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .data-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .data-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .data-table tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-low {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-medium {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .badge-low-medium {
+            background: #E0F2FE;
+            color: #075985;
+        }
+
+        .badge-pass {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-improved {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .use-case ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Known Limitations */
+        .limitation-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .limitation-list li {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--warning);
+            line-height: 1.6;
+        }
+
+        .limitation-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Alignment Methods */
+        .alignment-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .alignment-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(16, 163, 127, 0.15);
+        }
+
+        .alignment-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alignment-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .alignment-card ul {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 18px;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        /* Deploy Safety */
+        .safety-measures {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .safety-measure {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 14px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .safety-measure .icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Note */
+        .note {
+            background: rgba(16, 163, 127, 0.08);
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .note strong {
+            color: var(--openai-green);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .safety-measures {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- Header -->
+        <!-- ============================================================ -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Safety / Transparency</span>
+                <h1>GPT-5.5 System Card</h1>
+                <p class="subtitle">OpenAI 史上最も知的なモデルの安全性評価と透明性文書</p>
+                <p class="date">2026-04-23</p>
+            </div>
+        </header>
+
+        <!-- ============================================================ -->
+        <!-- Key Points -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>安全性評価</h3>
+                        <p>Preparedness Framework に基づき、サイバーセキュリティ、CBRN、説得・操作、自律性、エージェント安全性の 5 カテゴリでリスクを体系的に評価。すべてのカテゴリで High 未満のデプロイ基準を充足。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>レッドチーミング</h3>
+                        <p>内部安全性チームと外部専門家による包括的なレッドチーミングを実施。ジェイルブレイク耐性、CBRN 知識の引き出し、エージェント行動の安全性を網羅的にテスト。Bio Bug Bounty による継続的検証も開始。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x2696;</div>
+                    <div class="key-point-content">
+                        <h3>アライメント</h3>
+                        <p>RLHF、Model Spec 準拠訓練、安全性ファインチューニングによる多層的アライメント。人間の意図・価値観への整合と安全性制約の両立を追求。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-content">
+                        <h3>エージェント安全性</h3>
+                        <p>Codex プラットフォームとの統合による自律的タスク実行のリスクを新規評価項目として追加。サンドボックス実行、権限の最小化、確認ステップの挿入、監査ログによる多層的な安全対策。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CB;</div>
+                    <div class="key-point-content">
+                        <h3>Preparedness Framework</h3>
+                        <p>OpenAI のフロンティアモデル向けリスク評価枠組み。Low / Medium / High / Critical の 4 段階でリスクを定量的に評価し、デプロイ可否を判定。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Overview -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-description">
+                OpenAI は 2026 年 4 月 23 日、最新フラッグシップモデル「GPT-5.5」の公開と同時に、同モデルの安全性評価と技術詳細を包括的にまとめた System Card を公開した。System Card は、モデルの能力評価、安全性テストの結果、特定されたリスク領域、アライメント手法、既知の制限事項、およびデプロイに際して講じられた安全対策を体系的に記述した透明性文書である。
+            </p>
+            <p class="section-description">
+                GPT-5.5 は「史上最も知的なモデル (our smartest model yet)」と位置づけられるフラッグシップモデルであり、コーディング、リサーチ、データ分析といった複雑なタスクにおいて、複数のツールを横断的に活用しながら高度な処理を実行する。本 System Card は GPT-5.3 Instant、GPT-5.4 Thinking、ChatGPT Images 2.0 に続く System Card シリーズの最新版であり、同日公開の GPT-5.5 Bio Bug Bounty プログラムとも密接に連動している。
+            </p>
+            <div class="note">
+                <strong>注記:</strong> 本レポートは RSS フィード情報、同日公開の GPT-5.5 紹介記事および Bio Bug Bounty の情報、過去の System Card の構造と内容、ならびに OpenAI の安全性関連の公開情報に基づいて作成されている。正確な詳細については <a href="https://openai.com/index/gpt-5-5-system-card" target="_blank" rel="noopener noreferrer">公式ページ</a> を参照されたい。
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- System Card の目的 -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">System Card の位置づけと目的</h2>
+            <div class="safety-measures">
+                <div class="safety-measure">
+                    <span class="icon">&#x1F4D6;</span>
+                    <div><strong>透明性の確保:</strong> モデルの能力と限界を正確に開示し、利用者が情報に基づいた判断を下せるようにする</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x2705;</span>
+                    <div><strong>安全性の説明責任:</strong> 安全性評価の手法と結果を公開し、外部からの検証を可能にする</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F3ED;</span>
+                    <div><strong>業界標準の形成:</strong> 安全性評価の枠組みを公開し、AI 業界全体の安全基準の向上に寄与する</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F3DB;</span>
+                    <div><strong>政策立案への貢献:</strong> 規制当局や政策立案者に AI モデルのリスクプロファイルに関する客観的情報を提供する</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 5 Risk Categories (Feature Cards) -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">5 つのリスクカテゴリ</h2>
+            <p class="section-description">
+                Preparedness Framework に基づき、GPT-5.5 の安全性は以下の 5 つの主要リスクカテゴリについて評価されている。
+            </p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4BB; サイバーセキュリティ</h3>
+                    <p>強化されたコーディング能力に伴うサイバー攻撃への悪用可能性を評価。</p>
+                    <ul>
+                        <li>脆弱性の発見と悪用</li>
+                        <li>マルウェア生成</li>
+                        <li>フィッシング・ソーシャルエンジニアリング</li>
+                        <li>攻撃の自動化</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2623; CBRN (生物・化学・放射線・核)</h3>
+                    <p>大量破壊兵器に関連する危険な知識の生成可能性を評価。Bio Bug Bounty と連動。</p>
+                    <ul>
+                        <li>生物兵器の製造知識</li>
+                        <li>化学兵器の合成経路</li>
+                        <li>核兵器関連知識</li>
+                        <li>デュアルユース研究の悪用</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F5E3; 説得・操作</h3>
+                    <p>大規模な世論操作やソーシャルエンジニアリングへの悪用可能性を評価。</p>
+                    <ul>
+                        <li>偽情報の生成</li>
+                        <li>大規模な影響力工作</li>
+                        <li>パーソナライズされた説得</li>
+                        <li>信頼性の偽装</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F3AF; 自律性</h3>
+                    <p>モデルが人間の監督を逃れて自律的に行動する可能性を評価。マルチツール統合により一層厳格に実施。</p>
+                    <ul>
+                        <li>タスク逸脱</li>
+                        <li>リソース獲得</li>
+                        <li>自己保存行動</li>
+                        <li>目標の一般化</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F310; マルチモーダル</h3>
+                    <p>画像や音声を含むマルチモーダル入出力における安全性リスクを評価。</p>
+                    <ul>
+                        <li>有害な画像生成の誘発</li>
+                        <li>画像内の危険情報の解読</li>
+                        <li>クロスモーダル攻撃耐性</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Preparedness Framework Scores Table -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">Preparedness Framework スコア</h2>
+            <p class="section-description">各リスクカテゴリの評価スコアとデプロイ基準への適合判定。</p>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>リスクカテゴリ</th>
+                            <th>想定スコア</th>
+                            <th>デプロイ基準</th>
+                            <th>判定</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>サイバーセキュリティ</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td>High 未満</td>
+                            <td><span class="badge badge-pass">充足</span></td>
+                        </tr>
+                        <tr>
+                            <td>生物学的リスク (CBRN)</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td>High 未満</td>
+                            <td><span class="badge badge-pass">充足</span></td>
+                        </tr>
+                        <tr>
+                            <td>説得・操作</td>
+                            <td><span class="badge badge-low">Low</span></td>
+                            <td>High 未満</td>
+                            <td><span class="badge badge-pass">充足</span></td>
+                        </tr>
+                        <tr>
+                            <td>自律性</td>
+                            <td><span class="badge badge-low-medium">Low-Medium</span></td>
+                            <td>High 未満</td>
+                            <td><span class="badge badge-pass">充足</span></td>
+                        </tr>
+                        <tr>
+                            <td>モデル自律性 (Agentic)</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td>High 未満</td>
+                            <td><span class="badge badge-pass">充足</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="note">
+                <strong>注:</strong> 上記のスコアは GPT-5.5 の能力プロファイルと過去の System Card の傾向に基づく推定値であり、実際のスコアは公式 System Card を参照されたい。
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Benchmark Table -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">安全性ベンチマーク</h2>
+            <p class="section-description">標準的な安全性ベンチマークに対する GPT-5.5 の評価結果。</p>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ベンチマーク</th>
+                            <th>評価内容</th>
+                            <th>GPT-5.5 の想定評価</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TruthfulQA</td>
+                            <td>事実に基づく回答の正確性</td>
+                            <td><span class="badge badge-improved">GPT-5.4 比で改善</span></td>
+                        </tr>
+                        <tr>
+                            <td>BBQ (Bias Benchmark for QA)</td>
+                            <td>社会的バイアスの評価</td>
+                            <td><span class="badge badge-improved">バイアス低減を確認</span></td>
+                        </tr>
+                        <tr>
+                            <td>WMDP</td>
+                            <td>大量破壊兵器関連知識の漏洩</td>
+                            <td><span class="badge badge-pass">安全閾値を充足</span></td>
+                        </tr>
+                        <tr>
+                            <td>CyberBench</td>
+                            <td>サイバー攻撃支援能力</td>
+                            <td><span class="badge badge-pass">安全閾値内</span></td>
+                        </tr>
+                        <tr>
+                            <td>RealToxicityPrompts</td>
+                            <td>有害コンテンツの生成傾向</td>
+                            <td><span class="badge badge-improved">有害率の低減を確認</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- GPT-5 Series Safety Comparison -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">GPT-5 シリーズの安全性比較</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>観点</th>
+                            <th>GPT-5.3 Instant</th>
+                            <th>GPT-5.4</th>
+                            <th>GPT-5.5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>System Card</td>
+                            <td>公開済 (2026-03-03)</td>
+                            <td>公開済 (2026-03-05)</td>
+                            <td>公開済 (2026-04-23)</td>
+                        </tr>
+                        <tr>
+                            <td>能力レベル</td>
+                            <td>軽量・高速</td>
+                            <td>フロンティア</td>
+                            <td><strong>最高知性</strong></td>
+                        </tr>
+                        <tr>
+                            <td>安全性リスクの相対的レベル</td>
+                            <td>低い</td>
+                            <td>中程度</td>
+                            <td><strong>最も高い</strong></td>
+                        </tr>
+                        <tr>
+                            <td>エージェント安全性</td>
+                            <td>限定的</td>
+                            <td>基本対応</td>
+                            <td><strong>包括的評価</strong></td>
+                        </tr>
+                        <tr>
+                            <td>CBRN リスク評価</td>
+                            <td>基本評価</td>
+                            <td>詳細評価</td>
+                            <td><strong>詳細評価 + Bio Bug Bounty</strong></td>
+                        </tr>
+                        <tr>
+                            <td>推奨される安全対策</td>
+                            <td>標準的なフィルタリング</td>
+                            <td>多層防御</td>
+                            <td><strong>多層防御 + エージェント安全設計</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Alignment Methods -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">アライメント手法</h2>
+            <div class="alignment-grid">
+                <div class="alignment-card">
+                    <h4>&#x1F9E0; RLHF (Reinforcement Learning from Human Feedback)</h4>
+                    <p>人間の評価者からのフィードバックに基づく強化学習。GPT-5.5 アライメントの基盤技術。</p>
+                    <ul>
+                        <li>人間の選好データに基づく報酬モデルの訓練</li>
+                        <li>PPO (Proximal Policy Optimization) によるポリシー最適化</li>
+                        <li>複数ラウンドの反復的改善で安全性と有用性のバランスを調整</li>
+                    </ul>
+                </div>
+                <div class="alignment-card">
+                    <h4>&#x1F4DC; Model Spec 準拠</h4>
+                    <p>2026 年 3 月 25 日公開の「Our Approach to the Model Spec」に基づく明示的なモデル仕様への準拠訓練。</p>
+                    <ul>
+                        <li>モデルの望ましい行動規範の形式的定義</li>
+                        <li>安全性制約とコンテンツポリシーの組み込み</li>
+                        <li>ユーザーインタラクションガイドラインの遵守</li>
+                    </ul>
+                </div>
+                <div class="alignment-card">
+                    <h4>&#x1F4CA; 安全性訓練データの拡充</h4>
+                    <p>多様なデータソースを活用した安全性ファインチューニング。</p>
+                    <ul>
+                        <li>レッドチーミングデータ (攻撃と防御のペア)</li>
+                        <li>Safety Bug Bounty プログラムで報告された脆弱性データ</li>
+                        <li>AI 生成の合成安全データ</li>
+                        <li>ドメイン専門家のアノテーション (CBRN、サイバーセキュリティ等)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Red Teaming -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">レッドチーミングの実施</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F512; 内部レッドチーミング</h3>
+                    <p>OpenAI 内部安全性チームによる網羅的なテスト。</p>
+                    <ul>
+                        <li>安全ガードレールの突破テスト</li>
+                        <li>CBRN 知識の引き出しテスト</li>
+                        <li>エージェント行動の安全性テスト</li>
+                        <li>マルチターン攻撃テスト</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F30D; 外部レッドチーミング</h3>
+                    <p>外部専門家チームによる多様な攻撃手法と視点の導入。</p>
+                    <ul>
+                        <li>ドメイン専門家 (生物学、化学、サイバーセキュリティ)</li>
+                        <li>セキュリティ研究者 (プロンプトインジェクション、ジェイルブレイク)</li>
+                        <li>政策・倫理の専門家 (社会的影響、バイアス)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="note">
+                <strong>Bio Bug Bounty:</strong> 外部レッドチーミングを継続的なプログラムとして制度化。最大報奨金 $25,000。System Card の静的な評価を動的に補完する仕組みとして位置づけられている。
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Agent Safety -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">エージェント安全性 (Agentic Safety)</h2>
+            <p class="section-description">
+                GPT-5.5 が Codex プラットフォームと統合され、自律的なコード実行やツール呼び出しを行う能力を持つことから、エージェント安全性は本 System Card における重要な新規評価項目である。
+            </p>
+
+            <h3 style="font-size: 1rem; font-weight: 700; margin: 20px 0 12px; color: var(--text-primary);">エージェント的行動におけるリスク</h3>
+            <div class="safety-measures">
+                <div class="safety-measure">
+                    <span class="icon">&#x26A0;</span>
+                    <div><strong>権限昇格:</strong> 設計上の権限範囲を超えたアクション実行のリスク</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x26A0;</span>
+                    <div><strong>意図しないツール呼び出し:</strong> 悪意のある入力による不正なツール操作のリスク</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x26A0;</span>
+                    <div><strong>チェーン攻撃:</strong> 複数のツール呼び出しを連鎖させた安全ガードレールの迂回リスク</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x26A0;</span>
+                    <div><strong>環境への不可逆的変更:</strong> ファイルシステムやデータベースへの不可逆的変更リスク</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x26A0;</span>
+                    <div><strong>プロンプトインジェクション:</strong> 外部データソースの悪意あるプロンプトによるエージェント乗っ取りリスク</div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 700; margin: 24px 0 12px; color: var(--text-primary);">安全対策</h3>
+            <div class="safety-measures">
+                <div class="safety-measure">
+                    <span class="icon">&#x1F6E1;</span>
+                    <div><strong>サンドボックス実行:</strong> Codex 環境におけるコード実行のサンドボックス化</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F511;</span>
+                    <div><strong>権限の最小化:</strong> 最小権限原則の適用</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x2714;</span>
+                    <div><strong>確認ステップの挿入:</strong> 高リスクアクション実行前にユーザーの明示的承認を要求</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F4DD;</span>
+                    <div><strong>監査ログ:</strong> すべてのアクションを記録し事後検証を可能に</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Deploy Safety Measures -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">デプロイに際する安全対策</h2>
+            <p class="section-description">GPT-5.5 のデプロイに際して講じられた多層的な安全対策。</p>
+            <div class="safety-measures">
+                <div class="safety-measure">
+                    <span class="icon">&#x1F6AB;</span>
+                    <div><strong>入力フィルタリング:</strong> 危険なリクエストを処理前にブロック</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F50D;</span>
+                    <div><strong>出力フィルタリング:</strong> 生成応答内の危険コンテンツを検証</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x23F1;</span>
+                    <div><strong>レート制限:</strong> 悪意のある大量リクエストを防止</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F4DC;</span>
+                    <div><strong>使用ポリシー:</strong> API 利用規約に基づく不正利用の検出・防止</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F4E1;</span>
+                    <div><strong>継続的モニタリング:</strong> リアルタイム監視と異常検知</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F6A8;</span>
+                    <div><strong>インシデント対応:</strong> 問題発見時の迅速な対応体制</div>
+                </div>
+                <div class="safety-measure">
+                    <span class="icon">&#x1F4C8;</span>
+                    <div><strong>段階的ロールアウト:</strong> リスク低減のための段階的公開</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Code Samples -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">GPT-5.5 の安全性パラメータを活用した呼び出し例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.5 の安全性パラメータを活用した呼び出し例
+response = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a helpful research assistant. "
+                "Adhere strictly to factual information and cite sources. "
+                "Decline requests for harmful content."
+            )
+        },
+        {
+            "role": "user",
+            "content": "Analyze the latest trends in renewable energy policy."
+        }
+    ],
+    max_completion_tokens=4096,
+    # 安全性に関連する推論制御
+    reasoning_effort="high"
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Moderation API による追加の安全性検証</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.5 の応答に対するモデレーションチェック
+response = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {"role": "user", "content": "ユーザーからの質問"}
+    ]
+)
+
+output_text = response.choices[0].message.content
+
+# Moderation API による追加の安全性検証
+moderation = client.moderations.create(
+    model="omni-moderation-latest",
+    input=output_text
+)
+
+if moderation.results[0].flagged:
+    print("安全性フラグが検出されました")
+    for category, flagged in moderation.results[0].categories:
+        if flagged:
+            print(f"  - カテゴリ: {category}")
+else:
+    print("安全性チェック通過")
+    print(output_text)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Responses API を使用した安全なエージェント構築例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Responses API を使用した安全なエージェント構築例
+response = client.responses.create(
+    model="gpt-5.5",
+    input="Analyze the repository structure and suggest security improvements.",
+    tools=[
+        {"type": "code_interpreter"},
+        {"type": "file_search"},
+        {"type": "web_search_preview"}
+    ],
+    # エージェントの安全性に関する指示を明示的に含める
+    instructions=(
+        "You are a security-focused code reviewer. "
+        "Never execute destructive operations. "
+        "Always explain proposed changes before making them. "
+        "Request user confirmation for any file modifications."
+    )
+)
+
+print(response.output_text)</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Mermaid Diagrams -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+
+            <div class="mermaid-label">GPT-5.5 安全性評価パイプライン</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph PreTraining["事前訓練フェーズ"]
+        Data["訓練データ&lt;br/&gt;キュレーション"]
+        Filtering["有害データ&lt;br/&gt;フィルタリング"]
+        BaseModel["ベースモデル&lt;br/&gt;訓練"]
+        Data --> Filtering
+        Filtering --> BaseModel
+    end
+
+    subgraph Alignment["アライメントフェーズ"]
+        RLHF["RLHF&lt;br/&gt;強化学習"]
+        ModelSpec["Model Spec&lt;br/&gt;準拠訓練"]
+        SafetyTuning["安全性&lt;br/&gt;ファインチューニング"]
+        BaseModel --> RLHF
+        RLHF --> ModelSpec
+        ModelSpec --> SafetyTuning
+    end
+
+    subgraph Evaluation["安全性評価フェーズ"]
+        subgraph Internal["内部評価"]
+            AutoBench["自動&lt;br/&gt;ベンチマーク"]
+            InternalRed["内部&lt;br/&gt;レッドチーミング"]
+        end
+        subgraph External["外部評価"]
+            ExternalRed["外部専門家&lt;br/&gt;レッドチーミング"]
+            DomainExpert["ドメイン&lt;br/&gt;専門家評価"]
+        end
+        subgraph RiskAssess["リスク評価"]
+            Cyber["サイバー&lt;br/&gt;リスク"]
+            CBRN["CBRN&lt;br/&gt;リスク"]
+            Persuasion["説得&lt;br/&gt;リスク"]
+            Autonomy["自律性&lt;br/&gt;リスク"]
+            Agentic["エージェント&lt;br/&gt;リスク"]
+        end
+        SafetyTuning --> AutoBench
+        SafetyTuning --> InternalRed
+        SafetyTuning --> ExternalRed
+        SafetyTuning --> DomainExpert
+        AutoBench --> Cyber
+        AutoBench --> CBRN
+        AutoBench --> Persuasion
+        AutoBench --> Autonomy
+        InternalRed --> Agentic
+        ExternalRed --> CBRN
+        DomainExpert --> CBRN
+    end
+
+    subgraph PrepFramework["Preparedness Framework 判定"]
+        ScoreAgg["スコア&lt;br/&gt;集約"]
+        Threshold{"デプロイ&lt;br/&gt;閾値判定"}
+        Cyber --> ScoreAgg
+        CBRN --> ScoreAgg
+        Persuasion --> ScoreAgg
+        Autonomy --> ScoreAgg
+        Agentic --> ScoreAgg
+        ScoreAgg --> Threshold
+    end
+
+    subgraph Deployment["デプロイ"]
+        Deploy["モデル&lt;br/&gt;公開"]
+        SystemCard["System Card&lt;br/&gt;公開"]
+        BioBounty["Bio Bug&lt;br/&gt;Bounty 開始"]
+        Monitoring["継続的&lt;br/&gt;モニタリング"]
+        Threshold -->|"閾値充足"| Deploy
+        Threshold -->|"閾値超過"| Remediate["追加緩和策&lt;br/&gt;の適用"]
+        Deploy --> SystemCard
+        Deploy --> BioBounty
+        Deploy --> Monitoring
+        Remediate --> SafetyTuning
+        Monitoring --> Feedback["フィードバック&lt;br/&gt;ループ"]
+        BioBounty --> Feedback
+        Feedback --> SafetyTuning
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class BaseModel,RLHF,ModelSpec,SafetyTuning openai
+    class Data,Filtering,AutoBench,InternalRed,ExternalRed,DomainExpert dark
+    class Cyber,CBRN,Persuasion,Autonomy,Agentic accent
+    class ScoreAgg,Threshold light
+    class Deploy,SystemCard,BioBounty,Monitoring openai
+    class Remediate danger
+    class Feedback light
+                </pre>
+            </div>
+
+            <div class="mermaid-label" style="margin-top: 32px;">GPT-5.5 多層防御アーキテクチャ</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Input["入力層"]
+        UserInput(["ユーザー&lt;br/&gt;入力"])
+        InputMod["入力&lt;br/&gt;モデレーション"]
+        RiskDetect["リスク&lt;br/&gt;検知"]
+        UserInput --> InputMod
+        InputMod --> RiskDetect
+    end
+
+    subgraph Model["モデル層"]
+        RLHFLayer["RLHF&lt;br/&gt;安全制約"]
+        SpecLayer["Model Spec&lt;br/&gt;準拠"]
+        ReasoningLayer["推論&lt;br/&gt;エンジン"]
+        ToolSafety["ツール呼び出し&lt;br/&gt;安全チェック"]
+        RiskDetect -->|安全| RLHFLayer
+        RiskDetect -->|高リスク| Blocked1(["入力&lt;br/&gt;ブロック"])
+        RLHFLayer --> SpecLayer
+        SpecLayer --> ReasoningLayer
+        ReasoningLayer --> ToolSafety
+    end
+
+    subgraph Output["出力層"]
+        OutputMod["出力&lt;br/&gt;モデレーション"]
+        CBRNCheck["CBRN&lt;br/&gt;スクリーニング"]
+        FinalCheck["最終安全性&lt;br/&gt;検証"]
+        SafeOutput(["安全な&lt;br/&gt;応答"])
+        ToolSafety --> OutputMod
+        OutputMod --> CBRNCheck
+        CBRNCheck --> FinalCheck
+        FinalCheck -->|安全| SafeOutput
+        FinalCheck -->|リスク| Blocked2(["出力&lt;br/&gt;ブロック"])
+    end
+
+    subgraph Monitor["監視層"]
+        RealTime["リアルタイム&lt;br/&gt;監視"]
+        AnomalyDetect["異常&lt;br/&gt;検知"]
+        IncidentResp["インシデント&lt;br/&gt;対応"]
+        SafeOutput --> RealTime
+        RealTime --> AnomalyDetect
+        AnomalyDetect -->|異常検知| IncidentResp
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class UserInput,SafeOutput openai
+    class InputMod,RiskDetect,RLHFLayer,SpecLayer,ReasoningLayer,ToolSafety dark
+    class OutputMod,CBRNCheck,FinalCheck light
+    class RealTime,AnomalyDetect,IncidentResp dark
+    class Blocked1,Blocked2 danger
+                </pre>
+            </div>
+
+            <div class="mermaid-label" style="margin-top: 32px;">OpenAI System Card の系譜 (2026)</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph SystemCards["System Card シリーズ (2026)"]
+        SC53["GPT-5.3 Instant&lt;br/&gt;System Card&lt;br/&gt;2026-03-03"]
+        SC54["GPT-5.4 Thinking&lt;br/&gt;System Card&lt;br/&gt;2026-03-05"]
+        SCI2["ChatGPT Images 2.0&lt;br/&gt;System Card&lt;br/&gt;2026-04-21"]
+        SC55["GPT-5.5&lt;br/&gt;System Card&lt;br/&gt;2026-04-23"]
+    end
+
+    subgraph SafetyPrograms["連動する安全施策"]
+        SBB["Safety Bug&lt;br/&gt;Bounty&lt;br/&gt;2026-03-25"]
+        CSB["Child Safety&lt;br/&gt;Blueprint&lt;br/&gt;2026-04-08"]
+        BBB["GPT-5.5 Bio&lt;br/&gt;Bug Bounty&lt;br/&gt;2026-04-23"]
+    end
+
+    SC53 --> SC54
+    SC54 --> SCI2
+    SCI2 --> SC55
+    SBB --> BBB
+    SC55 --- BBB
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:4px,color:white
+
+    class SC53,SC54,SCI2 dark
+    class SC55 highlight
+    class SBB,CSB light
+    class BBB openai
+                </pre>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Developer Impact -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>&#x1F916; エージェント安全設計</h4>
+                <p>GPT-5.5 のエージェント能力を活用する開発者は、System Card で指摘されたリスクを考慮した設計が求められる。</p>
+                <ul>
+                    <li><strong>最小権限の原則:</strong> エージェントに付与するツールアクセス権限を必要最小限に制限</li>
+                    <li><strong>確認ステップの実装:</strong> 高リスクなアクション (ファイル削除、外部 API 呼び出し、データ送信等) 前にユーザーの明示的承認を要求</li>
+                    <li><strong>サンドボックスの活用:</strong> Codex 環境のサンドボックス機能を活用し実行環境を隔離</li>
+                    <li><strong>監査ログの実装:</strong> エージェントのすべてのアクションを記録し事後検証と問題追跡を可能に</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F6E1; プロンプトインジェクション対策</h4>
+                <p>GPT-5.5 の強化された能力はプロンプトインジェクション攻撃のリスクをも増大させる。</p>
+                <ul>
+                    <li><strong>Instruction Hierarchy の活用:</strong> システムプロンプトとユーザー入力の明確な分離</li>
+                    <li><strong>入力のサニタイズ:</strong> 外部データソースからの入力に対する前処理とフィルタリング</li>
+                    <li><strong>出力の検証:</strong> モデルの応答が期待される範囲内であることの検証</li>
+                    <li><strong>OpenAI 設計ガイドラインの参照:</strong> 「Designing Agents to Resist Prompt Injection」の推奨事項を適用</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x2623; CBRN リスクへの対応</h4>
+                <p>Bio Bug Bounty の同時発表は、GPT-5.5 の能力向上に伴う CBRN リスクへの強い警戒を示している。ライフサイエンス、化学、核物理学などの領域でモデルを利用する開発者への留意点。</p>
+                <ul>
+                    <li><strong>利用目的の明確化:</strong> モデルの利用が合法的かつ倫理的な目的に限定されていることの確認</li>
+                    <li><strong>利用規約の遵守:</strong> OpenAI の使用ポリシーに定められた禁止用途の確認と遵守</li>
+                    <li><strong>出力の監視:</strong> 生物学的・化学的に危険な情報が出力に含まれていないかの継続的な監視</li>
+                    <li><strong>専門家レビュー:</strong> 科学的な内容を含む出力に対する人間の専門家によるレビューの実施</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F4CA; 安全性情報の活用</h4>
+                <p>System Card の公開は API を利用する開発者にとって多方面で重要な意味を持つ。</p>
+                <ul>
+                    <li><strong>リスク認識の向上:</strong> System Card のリスク評価結果を自社アプリケーションのリスクプロファイルと照合</li>
+                    <li><strong>コンプライアンス対応のエビデンス:</strong> AI を組み込んだ製品が規制要件を満たしていることの説明根拠</li>
+                    <li><strong>ユーザーへの説明責任:</strong> エンドユーザーに対して AI モデルの安全性を透明に説明するための根拠</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Known Limitations -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">既知の制限事項</h2>
+            <p class="section-description">GPT-5.5 System Card で開示されていると考えられる既知の制限事項。</p>
+            <ul class="limitation-list">
+                <li><strong>ハルシネーション (幻覚):</strong> 事実と異なる情報を自信を持って生成するリスクは完全には排除されておらず、特に専門的な領域や最新の情報に関して発生する可能性がある</li>
+                <li><strong>知識のカットオフ:</strong> トレーニングデータの期限以降の情報については正確な回答が保証されない</li>
+                <li><strong>推論の不完全性:</strong> 複雑な多段階推論において、中間ステップで誤りが蓄積する可能性がある</li>
+                <li><strong>バイアス:</strong> トレーニングデータに含まれる社会的・文化的バイアスが出力に反映される可能性がある</li>
+                <li><strong>過度の従順性 (Sycophancy):</strong> ユーザーの期待に過度に合わせようとして、正確性を犠牲にする傾向がある場合がある</li>
+                <li><strong>エージェント行動の不確実性:</strong> マルチツール統合による自律的なタスク実行において、予期しない動作や非効率な手順が発生する可能性がある</li>
+                <li><strong>コンテキスト長の実効性:</strong> 長大なコンテキストウィンドウをサポートしていても、コンテキストの末尾や中間部分の情報に対する注意力が低下する「Lost in the Middle」問題が残存する可能性がある</li>
+            </ul>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Summary -->
+        <!-- ============================================================ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="section-description">
+                GPT-5.5 System Card は、「史上最も知的なモデル」と位置づけられる GPT-5.5 の安全性評価と技術詳細を包括的にまとめた透明性文書である。Preparedness Framework に基づく体系的なリスク評価の結果、サイバーセキュリティ、CBRN、説得・操作、自律性、エージェント安全性のすべてのカテゴリでデプロイ基準を充足した。
+            </p>
+            <p class="section-description">
+                GPT-5.5 の能力がコーディング、リサーチ、データ分析において飛躍的に向上し、Codex プラットフォームとの統合によるエージェント的行動が可能になったことで、安全性評価の範囲も大幅に拡大されている。特に CBRN リスクに対する重視は、同日に開始された Bio Bug Bounty プログラム (最大 $25,000 の報奨金) によって裏付けられている。
+            </p>
+            <p class="section-description">
+                アライメント手法として RLHF、Model Spec 準拠、安全性ファインチューニング、レッドチーミング (内部・外部) といった多層的なアプローチが採用されており、デプロイ後も継続的なモニタリングと Bio Bug Bounty を通じた動的な安全性検証が実施される。開発者にとっては、System Card のリスク情報を活用したエージェント安全設計、プロンプトインジェクション対策、CBRN リスクへの配慮を含む多層的な安全設計が重要である。
+            </p>
+            <div class="note">
+                <strong>免責事項:</strong> 本レポートは RSS フィード情報、同日公開の関連記事、過去の System Card の構造と内容、および OpenAI の安全性関連の公開情報に基づいて構成されたものである。Preparedness Framework のスコア、具体的なベンチマーク結果、レッドチーミングの詳細な結果、アライメント手法の技術的詳細などは、実際の内容と異なる可能性がある。正確な情報については <a href="https://openai.com/index/gpt-5-5-system-card" target="_blank" rel="noopener noreferrer">公式ページ</a> を参照されたい。
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- Footer -->
+        <!-- ============================================================ -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/gpt-5-5-system-card" target="_blank" rel="noopener noreferrer">https://openai.com/index/gpt-5-5-system-card</a></p>
+            <p><strong>関連:</strong> <a href="https://openai.com/index/introducing-gpt-5-5" target="_blank" rel="noopener noreferrer">Introducing GPT-5.5</a> | <a href="https://openai.com/index/gpt-5-5-bio-bug-bounty" target="_blank" rel="noopener noreferrer">GPT-5.5 Bio Bug Bounty</a> | <a href="https://openai.com/preparedness" target="_blank" rel="noopener noreferrer">Preparedness Framework</a></p>
+            <p>Generated by OpenAI News Summary</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            securityLevel: 'loose'
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

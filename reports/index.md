@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-23](2026/2026-04-23-introducing-gpt-5-5.md) - GPT-5.5 の発表: OpenAI 史上最も知的なモデル -- コーディング、リサーチ、データ分析を統合する次世代 AI
+- [2026-04-23](2026/2026-04-23-gpt-5-5-system-card.md) - GPT-5.5 System Card: OpenAI 史上最も知的なモデルの安全性評価と透明性文書
+- [2026-04-23](2026/2026-04-23-gpt-5-5-bio-bug-bounty.md) - GPT-5.5 Bio Bug Bounty: 生物兵器リスクに対するレッドチーミング報奨金プログラム
+- [2026-04-23](2026/2026-04-23-codex-academy-guides.md) - Codex Academy 包括的入門ガイドを 7 本同時公開: OpenAI が Codex プラットフォームの体系的学習リソースを整備
 - [2026-04-22](2026/2026-04-22-workspace-agents-chatgpt.md) - ChatGPT に Workspace Agents を導入: Codex ベースのクラウドエージェントでチームワークフローを自動化
 - [2026-04-22](2026/2026-04-22-websockets-responses-api.md) - Responses API における WebSocket サポート: エージェントワークフローのレイテンシを大幅削減
 - [2026-04-22](2026/2026-04-22-openai-privacy-filter.md) - OpenAI Privacy Filter を発表: PII 検出・墨消しのためのオープンウェイトモデル

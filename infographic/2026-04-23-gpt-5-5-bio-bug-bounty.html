@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.5 Bio Bug Bounty - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --danger: #FF6B6B;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        tbody tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .severity-critical {
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .severity-high {
+            color: #D97706;
+            font-weight: 700;
+        }
+
+        .severity-medium {
+            color: #2563EB;
+            font-weight: 700;
+        }
+
+        .severity-low {
+            color: #059669;
+            font-weight: 700;
+        }
+
+        .reward-amount {
+            font-weight: 700;
+            color: var(--openai-green);
+        }
+
+        /* Bio Risk Cards */
+        .bio-risk-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .bio-risk-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FEE2E2 100%);
+            border-left: 4px solid #F87171;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .bio-risk-item .risk-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .bio-risk-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #991B1B;
+            margin-bottom: 4px;
+        }
+
+        .bio-risk-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--openai-green) 0%, var(--openai-gray) 100%);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 3px solid var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .timeline-item.highlight::before {
+            background: var(--openai-green);
+            border-color: var(--openai-green);
+            box-shadow: 0 0 0 4px rgba(16, 163, 127, 0.2);
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Safety / Bug Bounty</span>
+                <h1>GPT-5.5 Bio Bug Bounty</h1>
+                <p class="subtitle">生物兵器リスクに対するレッドチーミング報奨金プログラム</p>
+                <p class="date">2026-04-23</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F41B;</div>
+                    <div class="key-point-content">
+                        <h3>バグバウンティ</h3>
+                        <p>GPT-5.5 モデルに対する「ユニバーサルジェイルブレイク」を発見するレッドチーミングチャレンジ。外部セキュリティ研究者の知見を活用し、モデルの安全性を検証・強化する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9EC;</div>
+                    <div class="key-point-content">
+                        <h3>生物学的安全性</h3>
+                        <p>生物兵器・化学兵器に関する危険な情報をモデルから引き出す攻撃手法の発見に焦点。フロンティア AI モデルにおける最重要リスク領域。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4B0;</div>
+                    <div class="key-point-content">
+                        <h3>最大 $25,000</h3>
+                        <p>発見された脆弱性の深刻度と影響範囲に応じて、最大 25,000 ドルの報奨金を提供。段階的な報奨金構造を設定。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F513;</div>
+                    <div class="key-point-content">
+                        <h3>ユニバーサルジェイルブレイク</h3>
+                        <p>単発の偶然的な攻撃ではなく、複数回の試行にわたって再現性をもって動作する体系的な攻撃手法の発見が報奨対象。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>安全性強化</h3>
+                        <p>GPT-5.5 System Card の公開と連動。2026 年 3 月 25 日導入の Safety Bug Bounty プログラムの拡張として位置づけ。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るプログラム</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">$25K</div>
+                    <div class="stat-label">最大報奨金</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">深刻度レベル</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5+</div>
+                    <div class="stat-label">生物リスクカテゴリ</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Universal Jailbreak Definition -->
+        <section class="section">
+            <h2 class="section-title">ユニバーサルジェイルブレイクの定義</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">本プログラムの核心は「ユニバーサルジェイルブレイク」の発見にある。単発のプロンプトで偶然に成功する一回限りの攻撃ではなく、複数回の試行にわたって再現性をもって動作する体系的な攻撃手法を指す。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F504; 再現性</h3>
+                    <p>同一の手法が、異なるセッションや異なるタイミングで繰り返し成功すること</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F310; 汎用性</h3>
+                    <p>特定の一つの質問に限定されず、生物学的リスクに関する複数の異なるトピックに対して有効であること</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4DD; 体系性</h3>
+                    <p>攻撃手法が文書化可能であり、他の研究者が追試できる明確な手順を持つこと</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A1; 有効性</h3>
+                    <p>モデルの安全ガードレールを実質的に無効化し、危険な情報の生成を引き出すことができること</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reward Tiers -->
+        <section class="section">
+            <h2 class="section-title">報奨金ティア</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">発見された脆弱性の深刻度と影響範囲に応じて、段階的な報奨金が設定されている。</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>深刻度</th>
+                            <th>報奨金範囲 (推定)</th>
+                            <th>基準</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="severity-critical">Critical</span></td>
+                            <td><span class="reward-amount">$15,000 - $25,000</span></td>
+                            <td>複数の生物リスクカテゴリにまたがるユニバーサルジェイルブレイク</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-high">High</span></td>
+                            <td><span class="reward-amount">$5,000 - $15,000</span></td>
+                            <td>特定カテゴリの生物リスクに対する再現性のあるジェイルブレイク</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-medium">Medium</span></td>
+                            <td><span class="reward-amount">$1,000 - $5,000</span></td>
+                            <td>限定的な条件下で動作する部分的なジェイルブレイク</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-low">Low</span></td>
+                            <td><span class="reward-amount">$500 - $1,000</span></td>
+                            <td>安全ガードレールの軽微な弱点の報告</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Bio Risk Categories -->
+        <section class="section">
+            <h2 class="section-title">対象となる生物学的リスクカテゴリ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Bio Bug Bounty が対象とする生物学的リスクは、フロンティア AI モデルの安全性評価において一般的に検討される以下のカテゴリを含む。</p>
+            <div class="bio-risk-grid">
+                <div class="bio-risk-item">
+                    <span class="risk-icon">&#x2623;</span>
+                    <div>
+                        <h4>生物兵器の製造</h4>
+                        <p>病原体の培養、遺伝子操作、生物兵器の設計に関する具体的な技術情報</p>
+                    </div>
+                </div>
+                <div class="bio-risk-item">
+                    <span class="risk-icon">&#x2697;</span>
+                    <div>
+                        <h4>化学兵器の合成</h4>
+                        <p>毒性化学物質の合成経路、製造プロセス、散布方法に関する情報</p>
+                    </div>
+                </div>
+                <div class="bio-risk-item">
+                    <span class="risk-icon">&#x1F512;</span>
+                    <div>
+                        <h4>バイオセキュリティの回避</h4>
+                        <p>研究施設のセキュリティプロトコルを回避するための知識</p>
+                    </div>
+                </div>
+                <div class="bio-risk-item">
+                    <span class="risk-icon">&#x26A0;</span>
+                    <div>
+                        <h4>デュアルユース研究の悪用</h4>
+                        <p>合法的な生物学研究の成果を兵器化するための情報</p>
+                    </div>
+                </div>
+                <div class="bio-risk-item">
+                    <span class="risk-icon">&#x1F9A0;</span>
+                    <div>
+                        <h4>パンデミック誘発リスク</h4>
+                        <p>感染症の人工的な増強や拡散に関する技術的知識</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Table: Safety Bug Bounty vs Bio Bug Bounty -->
+        <section class="section">
+            <h2 class="section-title">Safety Bug Bounty vs Bio Bug Bounty</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Bio Bug Bounty は、2026 年 3 月 25 日に導入された Safety Bug Bounty プログラムの発展形として位置づけられる。</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>観点</th>
+                            <th>Safety Bug Bounty (2026-03-25)</th>
+                            <th>Bio Bug Bounty (2026-04-23)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>対象範囲</strong></td>
+                            <td>AI 安全性全般</td>
+                            <td>生物学的安全性に特化</td>
+                        </tr>
+                        <tr>
+                            <td><strong>対象モデル</strong></td>
+                            <td>OpenAI の全モデル</td>
+                            <td>GPT-5.5</td>
+                        </tr>
+                        <tr>
+                            <td><strong>脆弱性の種類</strong></td>
+                            <td>エージェント脆弱性、プロンプトインジェクション、データ流出</td>
+                            <td>ユニバーサルジェイルブレイク (生物リスク)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>最大報奨金</strong></td>
+                            <td>未公開</td>
+                            <td>$25,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>目的</strong></td>
+                            <td>AI システム全体の安全性向上</td>
+                            <td>フロンティアモデルの生物リスク評価</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram 1: Evaluation Process -->
+        <section class="section">
+            <h2 class="section-title">脆弱性報告の評価プロセス</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Bio Bug Bounty における脆弱性報告は、自動スクリーニング、専門家評価、脆弱性分類、報奨金決定、修正・改善の各段階を経て処理される。</p>
+            <div class="mermaid-container">
+                <p class="mermaid-label">評価プロセスフロー</p>
+                <pre class="mermaid">
+flowchart TD
+    subgraph Submission["報告提出"]
+        Researcher(["セキュリティ&lt;br/&gt;研究者"])
+        Report["脆弱性レポート&lt;br/&gt;提出"]
+        Researcher --> Report
+    end
+
+    subgraph Screening["自動スクリーニング"]
+        AutoTest["自動再現&lt;br/&gt;テスト"]
+        Reproduce{"再現性&lt;br/&gt;確認"}
+        Report --> AutoTest
+        AutoTest --> Reproduce
+    end
+
+    subgraph Evaluation["専門家評価"]
+        AISafety["AI 安全性&lt;br/&gt;専門家レビュー"]
+        BioExpert["生物学&lt;br/&gt;専門家レビュー"]
+        TechDepth["技術的深度&lt;br/&gt;評価"]
+        RiskLevel["危険度&lt;br/&gt;評価"]
+        Reproduce -->|再現成功| AISafety
+        Reproduce -->|再現失敗| Rejected1(["不採用:&lt;br/&gt;再現不可"])
+        AISafety --> TechDepth
+        BioExpert --> RiskLevel
+        AISafety --> BioExpert
+    end
+
+    subgraph Classification["脆弱性分類"]
+        Universal{"ユニバーサル&lt;br/&gt;ジェイルブレイク&lt;br/&gt;判定"}
+        TechDepth --> Universal
+        RiskLevel --> Universal
+    end
+
+    subgraph Reward["報奨金決定"]
+        Critical["Critical&lt;br/&gt;$15,000-$25,000"]
+        High["High&lt;br/&gt;$5,000-$15,000"]
+        Medium["Medium&lt;br/&gt;$1,000-$5,000"]
+        Low["Low&lt;br/&gt;$500-$1,000"]
+        Universal -->|"高再現性&lt;br/&gt;高汎用性"| Critical
+        Universal -->|"高再現性&lt;br/&gt;限定的汎用性"| High
+        Universal -->|"部分的&lt;br/&gt;再現性"| Medium
+        Universal -->|"軽微な&lt;br/&gt;弱点"| Low
+    end
+
+    subgraph Remediation["修正・改善"]
+        ModelUpdate["モデル&lt;br/&gt;安全性更新"]
+        SystemCard["System Card&lt;br/&gt;更新"]
+        Critical --> ModelUpdate
+        High --> ModelUpdate
+        Medium --> ModelUpdate
+        Low --> ModelUpdate
+        ModelUpdate --> SystemCard
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class Researcher,Report light
+    class AutoTest,Reproduce dark
+    class AISafety,BioExpert,TechDepth,RiskLevel openai
+    class Universal accent
+    class Critical danger
+    class High dark
+    class Medium,Low light
+    class ModelUpdate,SystemCard openai
+    class Rejected1 light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram 2: Multi-layer Biosafety Guardrail -->
+        <section class="section">
+            <h2 class="section-title">安全ガードレールの多層防御構造</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">GPT-5.5 における生物学的安全性のガードレールは、入力層・モデル層・出力層の多層構造で実装されている。</p>
+            <div class="mermaid-container">
+                <p class="mermaid-label">多層バイオセーフティガードレール構造</p>
+                <pre class="mermaid">
+flowchart LR
+    subgraph Input["入力層"]
+        UserPrompt(["ユーザー&lt;br/&gt;プロンプト"])
+        InputFilter["入力&lt;br/&gt;フィルタリング"]
+        BioDetect["生物リスク&lt;br/&gt;検知"]
+        UserPrompt --> InputFilter
+        InputFilter --> BioDetect
+    end
+
+    subgraph Model["モデル層"]
+        RLHF["RLHF&lt;br/&gt;安全学習"]
+        ModelSpec["Model Spec&lt;br/&gt;準拠"]
+        Generation["応答&lt;br/&gt;生成"]
+        BioDetect -->|安全| RLHF
+        BioDetect -->|リスク検知| Blocked1(["生成拒否"])
+        RLHF --> ModelSpec
+        ModelSpec --> Generation
+    end
+
+    subgraph Output["出力層"]
+        OutputFilter["出力&lt;br/&gt;フィルタリング"]
+        BioCheck["生物リスク&lt;br/&gt;再検証"]
+        SafeResponse(["安全な応答"])
+        Generation --> OutputFilter
+        OutputFilter --> BioCheck
+        BioCheck -->|安全| SafeResponse
+        BioCheck -->|リスク| Blocked2(["出力ブロック"])
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class UserPrompt,SafeResponse openai
+    class InputFilter,BioDetect,RLHF,ModelSpec,Generation,OutputFilter,BioCheck dark
+    class Blocked1,Blocked2 danger
+                </pre>
+            </div>
+        </section>
+
+        <!-- Industry Comparison -->
+        <section class="section">
+            <h2 class="section-title">業界における類似プログラムとの比較</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">GPT-5.5 Bio Bug Bounty は、AI 業界における生物学的安全性テストの先駆的な取り組みの一つである。</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>企業 / 組織</th>
+                            <th>プログラム</th>
+                            <th>対象</th>
+                            <th>特徴</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>OpenAI</strong></td>
+                            <td>Bio Bug Bounty</td>
+                            <td>GPT-5.5 の生物リスク</td>
+                            <td>ユニバーサルジェイルブレイクに特化、最大 $25,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenAI</strong></td>
+                            <td>Safety Bug Bounty</td>
+                            <td>AI 安全性全般</td>
+                            <td>エージェント脆弱性、プロンプトインジェクション、データ流出</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Anthropic</strong></td>
+                            <td>Responsible Disclosure</td>
+                            <td>Claude モデル</td>
+                            <td>安全性リスクの報告制度</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Google DeepMind</strong></td>
+                            <td>AI Safety Research</td>
+                            <td>Gemini モデル</td>
+                            <td>内部レッドチーミング中心</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DARPA</strong></td>
+                            <td>AIxBio</td>
+                            <td>国防領域</td>
+                            <td>生物学的脅威と AI の交差点に関する研究プログラム</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 16px;">
+                <div class="use-case">
+                    <h4>OpenAI のアプローチの特徴</h4>
+                    <p>生物学的安全性という特定の高リスク領域に焦点を絞り、外部研究者に対して明確な報奨金を設定した公開プログラムである点が特徴的。多くの AI 企業が内部レッドチーミングに依存する中、外部の多様な攻撃手法を積極的に収集するアプローチは、安全性テストの網羅性を高める上で重要な意義を持つ。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2 class="section-title">OpenAI 2026 年安全性施策タイムライン</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">Bio Bug Bounty は、OpenAI が展開する包括的な安全性戦略の中で重要な位置を占めている。</p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-03-11</div>
+                    <div class="timeline-title">Designing Agents to Resist Prompt Injection</div>
+                    <div class="timeline-desc">プロンプトインジェクション対策の技術的アプローチ</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-03-17</div>
+                    <div class="timeline-title">Japan Teen Safety Blueprint</div>
+                    <div class="timeline-desc">日本市場向けティーン安全施策</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-03-19</div>
+                    <div class="timeline-title">Monitoring Internal Coding Agents for Misalignment</div>
+                    <div class="timeline-desc">社内エージェントの安全性監視</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-03-24</div>
+                    <div class="timeline-title">Teen Safety Policies / gpt-oss-safeguard</div>
+                    <div class="timeline-desc">開発者向けティーン安全ツール</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-03-25</div>
+                    <div class="timeline-title">Safety Bug Bounty</div>
+                    <div class="timeline-desc">AI 安全性バグバウンティプログラム</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-03-25</div>
+                    <div class="timeline-title">Our Approach to the Model Spec</div>
+                    <div class="timeline-desc">モデル仕様に関する方針</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-04-06</div>
+                    <div class="timeline-title">OpenAI Safety Fellowship</div>
+                    <div class="timeline-desc">安全性研究フェローシップ</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-04-08</div>
+                    <div class="timeline-title">Child Safety Blueprint</div>
+                    <div class="timeline-desc">子どもの安全に関する包括的フレームワーク</div>
+                </div>
+                <div class="timeline-item highlight">
+                    <div class="timeline-date">2026-04-23</div>
+                    <div class="timeline-title">GPT-5.5 Bio Bug Bounty</div>
+                    <div class="timeline-desc">生物学的安全性に特化したバグバウンティ</div>
+                </div>
+                <div class="timeline-item highlight">
+                    <div class="timeline-date">2026-04-23</div>
+                    <div class="timeline-title">GPT-5.5 System Card</div>
+                    <div class="timeline-desc">GPT-5.5 の安全性評価結果</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details: Attack Vectors & Evaluation -->
+        <section class="section">
+            <h2 class="section-title">技術的詳細: 攻撃ベクトルと評価手法</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">GPT-5.5 に実装されている安全ガードレールの堅牢性を評価するために、以下の攻撃ベクトルが検討される。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F3AF; 直接的な攻撃</h3>
+                    <p>生物兵器に関する情報を直接的に要求するプロンプト</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50D; 間接的な攻撃</h3>
+                    <p>合法的な研究目的を装い、段階的に危険な情報に誘導するプロンプト</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F3AD; ロールプレイ攻撃</h3>
+                    <p>架空のシナリオや役割設定を通じて安全制約を回避する手法</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F524; トークン操作</h3>
+                    <p>特殊文字、エンコーディング、言語混在を利用した攻撃</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4C4; コンテキストウィンドウ攻撃</h3>
+                    <p>長大なコンテキストを利用してモデルの安全性制御を弱める手法</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4AC; マルチターン攻撃</h3>
+                    <p>複数回の対話を通じて段階的に安全制約を緩和する手法</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-top: 28px; margin-bottom: 16px;">ユニバーサルジェイルブレイクの技術的分類</h3>
+            <div class="bio-risk-grid">
+                <div class="bio-risk-item" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-left-color: #3B82F6;">
+                    <span class="risk-icon">&#x1F4BB;</span>
+                    <div>
+                        <h4 style="color: #1E40AF;">プロンプトレベルの攻撃</h4>
+                        <p>システムプロンプトやユーザープロンプトの構造を操作し、安全ガードレールを回避する手法。トークンの配置、特殊なフォーマット指定、メタ命令の挿入などが含まれる。</p>
+                    </div>
+                </div>
+                <div class="bio-risk-item" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-left-color: #3B82F6;">
+                    <span class="risk-icon">&#x1F504;</span>
+                    <div>
+                        <h4 style="color: #1E40AF;">コンテキスト操作</h4>
+                        <p>対話の文脈を操作することで、モデルの安全性判断を誤導する手法。合法的な文脈から段階的に危険な領域へ遷移する「ボイルフロッグ攻撃」などが含まれる。</p>
+                    </div>
+                </div>
+                <div class="bio-risk-item" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-left-color: #3B82F6;">
+                    <span class="risk-icon">&#x1F510;</span>
+                    <div>
+                        <h4 style="color: #1E40AF;">エンコーディング攻撃</h4>
+                        <p>危険な要求を暗号化、エンコーディング、または間接的な表現に変換することで、安全フィルターの検出を回避する手法。</p>
+                    </div>
+                </div>
+                <div class="bio-risk-item" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-left-color: #3B82F6;">
+                    <span class="risk-icon">&#x2699;</span>
+                    <div>
+                        <h4 style="color: #1E40AF;">モデル内部状態の操作</h4>
+                        <p>特定の入力パターンによってモデルの内部状態を操作し、通常とは異なる動作モードに遷移させる手法。</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-top: 28px; margin-bottom: 16px;">評価プロセスの 4 段階</h3>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: var(--gradient-header); font-size: 16px; color: white; font-weight: 700;">1</div>
+                    <div class="key-point-content">
+                        <h3>自動スクリーニング</h3>
+                        <p>提出された攻撃手法を自動化されたテスト環境で実行し、再現性を検証</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: var(--gradient-header); font-size: 16px; color: white; font-weight: 700;">2</div>
+                    <div class="key-point-content">
+                        <h3>人間による評価</h3>
+                        <p>AI 安全性の専門家が攻撃手法の技術的深度と影響範囲を評価</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: var(--gradient-header); font-size: 16px; color: white; font-weight: 700;">3</div>
+                    <div class="key-point-content">
+                        <h3>生物学専門家の審査</h3>
+                        <p>生物学・化学の専門家が、引き出された情報の実際の危険度を評価</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: var(--gradient-header); font-size: 16px; color: white; font-weight: 700;">4</div>
+                    <div class="key-point-content">
+                        <h3>影響度の判定</h3>
+                        <p>攻撃の再現性、汎用性、引き出される情報の危険度を総合的に評価し、報奨金額を決定</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">GPT-5.5 Bio Bug Bounty の導入は、OpenAI の API を利用する開発者に対して以下のような影響をもたらす。</p>
+            <div class="use-case">
+                <h4>&#x1F6E1; 安全性の向上</h4>
+                <p>Bio Bug Bounty を通じて発見・修正された脆弱性により、GPT-5.5 の生物学的安全性ガードレールが強化され、開発者が構築するアプリケーションの安全性も向上する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4C4; 安全性ドキュメントの充実</h4>
+                <p>System Card の更新を通じて、モデルの生物学的安全性に関する情報がより詳細に公開され、開発者がリスク評価を行う際の判断材料が増える。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x2705; コンプライアンス対応の支援</h4>
+                <p>バイオセキュリティに関する規制要件への対応において、GPT-5.5 の安全性テスト結果をエビデンスとして活用できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4DD; 利用規約への影響</h4>
+                <p>Bio Bug Bounty の結果を踏まえ、生物学的に危険な用途に関する利用規約が更新される可能性がある。</p>
+            </div>
+        </section>
+
+        <!-- Security Researcher Opportunities -->
+        <section class="section">
+            <h2 class="section-title">セキュリティ研究者への機会</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Bio Bug Bounty は、AI セキュリティ研究者にとって以下の機会を提供する。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4B0; 報奨金の獲得</h3>
+                    <p>最大 25,000 ドルの報奨金を通じて、AI 安全性研究への経済的インセンティブが提供される</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4DA; 研究成果の活用</h3>
+                    <p>発見された脆弱性は (責任ある開示を経た後) 学術論文やセキュリティカンファレンスでの発表に活用できる可能性がある</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F91D; コミュニティ形成</h3>
+                    <p>Bio Bug Bounty への参加を通じて、AI 安全性の専門家コミュニティとのネットワークが形成される</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F511; フロンティアモデルへのアクセス</h3>
+                    <p>バグバウンティ参加者には、テスト目的でのモデルアクセスが提供されると考えられる</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-top: 28px; margin-bottom: 16px;">レッドチーミングのベストプラクティス</h3>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#x1F4CB;</div>
+                    <div class="key-point-content">
+                        <h3>体系的なアプローチ</h3>
+                        <p>攻撃手法を体系的に分類し、各カテゴリを網羅的にテストする</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>再現性の確保</h3>
+                        <p>攻撃が成功した場合、複数回の試行で再現性を確認し、成功率を記録する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>影響範囲の評価</h3>
+                        <p>攻撃が有効な範囲 (モデルバージョン、言語、トピック領域) を特定する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>責任ある開示</h3>
+                        <p>発見した脆弱性は、公開前に必ず OpenAI に報告し、修正期間を設ける</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#x2696;</div>
+                    <div class="key-point-content">
+                        <h3>倫理的配慮</h3>
+                        <p>テスト過程で得られた危険な情報を外部に共有・公開しない</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                OpenAI が GPT-5.5 のリリースと同日に発表した「GPT-5.5 Bio Bug Bounty」は、フロンティア AI モデルにおける生物学的安全性リスクに特化した画期的なバグバウンティプログラムである。最大 25,000 ドルの報奨金を通じて外部のセキュリティ研究者にユニバーサルジェイルブレイクの発見を促すこの取り組みは、AI の安全性テストにおける新たな業界標準を確立するものである。
+            </p>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                ユニバーサルジェイルブレイク -- すなわち再現性と汎用性を持つ体系的な攻撃手法 -- の発見に焦点を当てることで、一回限りの偶発的な脆弱性ではなく、モデルの安全メカニズムにおける構造的な弱点の特定を目指している。
+            </p>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                フロンティア AI モデルの能力が急速に向上する中、OpenAI の Bio Bug Bounty は、内部レッドチーミングを外部に開放し、多様な攻撃手法を体系的に収集するプロアクティブなアプローチとして、責任ある AI 展開の模範的な実践例であるといえる。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/gpt-5-5-bio-bug-bounty" target="_blank" rel="noopener noreferrer">https://openai.com/index/gpt-5-5-bio-bug-bounty</a></p>
+            <p><strong>関連リンク:</strong>
+                <a href="https://openai.com/index/safety-bug-bounty" target="_blank" rel="noopener noreferrer">Safety Bug Bounty</a> |
+                <a href="https://openai.com/index/designing-agents-to-resist-prompt-injection" target="_blank" rel="noopener noreferrer">Prompt Injection 対策</a> |
+                <a href="https://openai.com/index/introducing-child-safety-blueprint" target="_blank" rel="noopener noreferrer">Child Safety Blueprint</a> |
+                <a href="https://openai.com/index/openai-safety-fellowship" target="_blank" rel="noopener noreferrer">Safety Fellowship</a> |
+                <a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety</a>
+            </p>
+            <p style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">本レポートは RSS フィード情報および関連する公開情報に基づいて構成されたものであり、正確な詳細については公式ページを参照されたい。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            securityLevel: 'loose'
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.5 の発表 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-description {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #F87171;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #34D399;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-sublabel {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid-container h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Model Selection Table */
+        .model-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .model-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .model-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .model-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .model-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .model-table tbody tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        .model-table tbody tr:hover {
+            background: rgba(16, 163, 127, 0.08);
+        }
+
+        .model-table tbody tr:first-child td {
+            background: rgba(16, 163, 127, 0.1);
+            font-weight: 600;
+        }
+
+        .model-highlight {
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Migration Notes */
+        .migration-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .migration-list li {
+            padding: 12px 16px;
+            border-left: 3px solid var(--openai-green);
+            margin-bottom: 12px;
+            background: var(--openai-gray);
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .migration-list li strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 6px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product</span>
+                <h1>GPT-5.5 の発表</h1>
+                <p class="subtitle">OpenAI 史上最も知的なモデル -- コーディング、リサーチ、データ分析を統合する次世代 AI</p>
+                <p class="date">2026-04-23</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">キーポイント</h2>
+            <p class="section-description">OpenAI は 2026 年 4 月 23 日、最新のフラッグシップモデル「GPT-5.5」を発表した。「史上最も知的なモデル (our smartest model yet)」と位置づけられ、前世代の GPT-5.4 を上回る速度と能力を兼ね備えている。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-content">
+                        <h3>最高知性 -- マルチツール統合推論</h3>
+                        <p>コーディング、Web 検索、データ分析、ファイル操作など複数のツールをシームレスに連携させ、一つの複雑なタスクを端から端まで遂行。深い文脈理解と自律的なタスク分解を実現。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4BB;</div>
+                    <div class="key-point-content">
+                        <h3>コーディング能力の飛躍</h3>
+                        <p>リポジトリ全体のアーキテクチャ理解に基づく大規模リファクタリング、マルチファイル編集、テスト駆動開発支援、デバッグの高度化。Python、TypeScript、Rust、Go など主要言語のサポートがさらに強化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F52C;</div>
+                    <div class="key-point-content">
+                        <h3>リサーチ能力の強化</h3>
+                        <p>複数の情報ソースを横断的に調査する深層 Web 検索、学術論文の構造的理解と批判的評価、ファクトチェック、構造化されたレポートの自動生成。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>データ分析のクロスツール統合</h3>
+                        <p>CSV、Excel、JSON、データベースなど多様なソースからのデータ取り込みから可視化まで一貫実行。統計分析の自動化とインサイトの自動発見。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>精度と速度の両立</h3>
+                        <p>GPT-5.4 対比で推論精度を向上させつつ、応答速度も改善。従来トレードオフとされていた 2 つの指標を同時に向上させた。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">GPT-5.4 vs GPT-5.5 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>GPT-5.4</h4>
+                    <ul>
+                        <li>総合知性: フロンティアモデル</li>
+                        <li>コーディング: 最先端</li>
+                        <li>リサーチ: 高性能</li>
+                        <li>データ分析: 対応</li>
+                        <li>応答速度: 標準</li>
+                        <li>ツール統合: ツール検索対応</li>
+                        <li>Computer Use: 対応</li>
+                        <li>コンテキスト長: 1M トークン</li>
+                        <li>Codex 統合: 基本対応</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>GPT-5.5</h4>
+                    <ul>
+                        <li>総合知性: 史上最高の知性</li>
+                        <li>コーディング: さらに向上</li>
+                        <li>リサーチ: クロスツール統合リサーチ</li>
+                        <li>データ分析: ツール横断型の統合分析</li>
+                        <li>応答速度: 高速化</li>
+                        <li>ツール統合: マルチツール統合推論</li>
+                        <li>Computer Use: 強化・安定化</li>
+                        <li>コンテキスト長: 1M トークン以上 (拡張の可能性)</li>
+                        <li>Codex 統合: Codex Academy との深い連携</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4BB; コーディング</h3>
+                    <p>GPT-5 シリーズ史上最高のコーディング性能</p>
+                    <ul>
+                        <li>大規模リファクタリング</li>
+                        <li>マルチファイル編集</li>
+                        <li>テスト駆動開発支援</li>
+                        <li>デバッグの高度化</li>
+                        <li>多言語対応の拡充</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F52C; リサーチ</h3>
+                    <p>調査・研究タスクにおける大幅な進化</p>
+                    <ul>
+                        <li>深層 Web 検索</li>
+                        <li>論文分析</li>
+                        <li>ファクトチェック</li>
+                        <li>レポート生成</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CA; データ分析</h3>
+                    <p>複数ツールの横断的な活用</p>
+                    <ul>
+                        <li>データ取り込みから可視化まで</li>
+                        <li>統計分析の自動化</li>
+                        <li>インサイトの自動発見</li>
+                        <li>コード生成による再現性</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F517; マルチツール統合</h3>
+                    <p>複数のツールをシームレスに連携</p>
+                    <ul>
+                        <li>Code Interpreter</li>
+                        <li>Web Search</li>
+                        <li>File Search</li>
+                        <li>Computer Use</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="section">
+            <h2 class="section-title">GPT-5 シリーズの進化</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">5.3</div>
+                    <div class="stat-label">GPT-5.3 Instant</div>
+                    <div class="stat-sublabel">2026-03-03</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5.4</div>
+                    <div class="stat-label">GPT-5.4</div>
+                    <div class="stat-sublabel">2026-03-05</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">mini</div>
+                    <div class="stat-label">GPT-5.4 mini</div>
+                    <div class="stat-sublabel">2026-03-17</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">nano</div>
+                    <div class="stat-label">GPT-5.4 nano</div>
+                    <div class="stat-sublabel">2026-03-17</div>
+                </div>
+                <div class="stat-card" style="border: 2px solid var(--openai-green);">
+                    <div class="stat-value">5.5</div>
+                    <div class="stat-label">GPT-5.5</div>
+                    <div class="stat-sublabel">2026-04-23</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <p class="section-description">GPT-5.5 は OpenAI API の Chat Completions エンドポイントおよび Responses API から <code style="background:#343541;color:#10A37F;padding:2px 8px;border-radius:4px;font-size:13px;">gpt-5.5</code> モデル名で利用可能と想定される。</p>
+
+            <!-- Code Sample 1: Basic Chat Completions -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">基本的な Chat Completions API の呼び出し</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.5 による基本的な対話
+response = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are a senior software architect with deep expertise in distributed systems."
+        },
+        {
+            "role": "user",
+            "content": "Design a fault-tolerant event sourcing architecture for a financial trading platform."
+        }
+    ],
+    max_tokens=4096
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <!-- Code Sample 2: Streaming -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">ストリーミングによるリアルタイム応答</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.5 のストリーミング応答
+stream = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are a data scientist. Analyze data and provide actionable insights."
+        },
+        {
+            "role": "user",
+            "content": (
+                "Analyze the following quarterly revenue data and identify trends:\n"
+                "Q1: $2.3M, Q2: $2.8M, Q3: $2.1M, Q4: $3.5M, "
+                "Q5: $3.2M, Q6: $4.1M, Q7: $3.8M, Q8: $5.2M"
+            )
+        }
+    ],
+    stream=True
+)
+
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+print()</code></pre>
+            </div>
+
+            <!-- Code Sample 3: Function Calling -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Function Calling によるマルチツール統合</span>
+                </div>
+                <pre><code class="language-python">import json
+from openai import OpenAI
+
+client = OpenAI()
+
+# マルチツール定義
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "search_codebase",
+            "description": "Search for code patterns, functions, or classes in a repository",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Search query for code patterns"
+                    },
+                    "language": {
+                        "type": "string",
+                        "description": "Programming language filter"
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "run_analysis",
+            "description": "Execute data analysis on a dataset",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "dataset_path": {
+                        "type": "string",
+                        "description": "Path to the dataset file"
+                    },
+                    "analysis_type": {
+                        "type": "string",
+                        "enum": ["descriptive", "correlation", "regression", "clustering"],
+                        "description": "Type of analysis to perform"
+                    }
+                },
+                "required": ["dataset_path", "analysis_type"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "description": "Search the web for current information",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Search query"
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    }
+]
+
+# GPT-5.5 によるマルチツール活用
+response = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a research assistant that can search codebases, "
+                "analyze data, and search the web. Use multiple tools as "
+                "needed to provide comprehensive answers."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Our API response times have increased by 40% this week. "
+                "Search our codebase for recent changes to the request handler, "
+                "analyze the performance metrics dataset, and check if there are "
+                "any known issues with our cloud provider."
+            )
+        }
+    ],
+    tools=tools,
+    tool_choice="auto"
+)
+
+# ツール呼び出しの処理
+message = response.choices[0].message
+if message.tool_calls:
+    print(f"GPT-5.5 selected {len(message.tool_calls)} tools:")
+    for tool_call in message.tool_calls:
+        func = tool_call.function
+        args = json.loads(func.arguments)
+        print(f"  - {func.name}: {json.dumps(args, indent=2)}")</code></pre>
+            </div>
+
+            <!-- Code Sample 4: Responses API -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Responses API での利用</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Responses API を使用したリサーチタスク
+response = client.responses.create(
+    model="gpt-5.5",
+    input="Summarize the latest advances in quantum error correction published in 2026.",
+    tools=[
+        {"type": "web_search_preview"}
+    ]
+)
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <!-- Code Sample 5: Codex Integration -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Codex との統合利用</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Codex タスクとしての非同期コード生成
+codex_response = client.responses.create(
+    model="gpt-5.5",
+    input=(
+        "Refactor the authentication module to use OAuth 2.0 with PKCE flow. "
+        "Update all related test files and ensure backward compatibility. "
+        "Create a migration guide document."
+    ),
+    tools=[
+        {"type": "code_interpreter"},
+        {"type": "file_search"}
+    ]
+)
+
+print(codex_response.output_text)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagrams -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+
+            <!-- Diagram 1: System Architecture -->
+            <div class="mermaid-container">
+                <h4>GPT-5.5 のシステムアーキテクチャ</h4>
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー環境"]
+        ChatGPT["ChatGPT"]
+        App["アプリケーション"]
+        Codex["Codex プラットフォーム"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph API["OpenAI API"]
+        Gateway["API Gateway"]
+        subgraph GPT55["GPT-5.5 コアエンジン"]
+            Brain["統合推論エンジン"]
+            CodingEngine["コーディングエンジン"]
+            ResearchEngine["リサーチエンジン"]
+            DataEngine["データ分析エンジン"]
+            ToolOrch["ツールオーケストレーター"]
+            Context["拡張コンテキスト管理"]
+        end
+        subgraph Tools["統合ツール群"]
+            CodeInterp["Code Interpreter"]
+            WebSearch["Web Search"]
+            FileSearch["File Search"]
+            CompUse["Computer Use"]
+        end
+    end
+
+    subgraph External["外部リソース"]
+        WebSource["Web 情報ソース"]
+        DataSource["データソース"]
+        CodeRepo["コードリポジトリ"]
+    end
+
+    ChatGPT --> Gateway
+    App --> Gateway
+    Codex --> Gateway
+    SDK --> Gateway
+    Gateway --> Brain
+    Brain --> CodingEngine
+    Brain --> ResearchEngine
+    Brain --> DataEngine
+    Brain --> ToolOrch
+    Brain <--> Context
+    ToolOrch --> CodeInterp
+    ToolOrch --> WebSearch
+    ToolOrch --> FileSearch
+    ToolOrch --> CompUse
+    WebSearch --> WebSource
+    FileSearch --> DataSource
+    CodeInterp --> CodeRepo
+    CompUse --> WebSource
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D9D9E3,stroke-width:2px,color:#343541
+
+    class Brain,CodingEngine,ResearchEngine,DataEngine,ToolOrch,Context openai
+    class Gateway,CodeInterp,WebSearch,FileSearch,CompUse dark
+    class ChatGPT,App,Codex,SDK light
+    class WebSource,DataSource,CodeRepo gray
+                </pre>
+            </div>
+
+            <!-- Diagram 2: GPT-5 Series Lineage -->
+            <div class="mermaid-container">
+                <h4>GPT-5 シリーズ進化の系譜</h4>
+                <pre class="mermaid">
+flowchart LR
+    subgraph Timeline["GPT-5 シリーズ進化の系譜 (2026)"]
+        GPT53["GPT-5.3 Instant\n2026-03-03\n日常会話最適化"]
+        GPT54["GPT-5.4\n2026-03-05\nコーディング / Computer Use"]
+        GPT54Mini["GPT-5.4 mini\n2026-03-17\n高速・汎用"]
+        GPT54Nano["GPT-5.4 nano\n2026-03-17\n超軽量"]
+        GPT55["GPT-5.5\n2026-04-23\n最高知性 / マルチツール統合"]
+    end
+
+    GPT53 --> GPT54
+    GPT54 --> GPT54Mini
+    GPT54 --> GPT54Nano
+    GPT54Mini --> GPT55
+    GPT54Nano --> GPT55
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:4px,color:white
+
+    class GPT53,GPT54 dark
+    class GPT54Mini,GPT54Nano light
+    class GPT55 highlight
+                </pre>
+            </div>
+
+            <!-- Diagram 3: Multi-Tool Integration Flow -->
+            <div class="mermaid-container">
+                <h4>マルチツール統合の動作フロー</h4>
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["入力"]
+        UserReq(["ユーザーリクエスト"])
+    end
+
+    subgraph Planning["タスク計画フェーズ"]
+        Analyze["リクエスト解析"]
+        Decompose["タスク分解"]
+        ToolSelect["ツール選択・順序決定"]
+    end
+
+    subgraph Execution["実行フェーズ"]
+        Step1["Step 1: コード検索"]
+        Step2["Step 2: データ分析"]
+        Step3["Step 3: Web 調査"]
+        Step4["Step 4: 結果統合"]
+    end
+
+    subgraph Output["出力"]
+        Result(["統合レポート・回答"])
+    end
+
+    UserReq --> Analyze
+    Analyze --> Decompose
+    Decompose --> ToolSelect
+    ToolSelect --> Step1
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Step4
+    Step4 --> Result
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D9D9E3,stroke-width:2px,color:#343541
+
+    class Analyze,Decompose,ToolSelect openai
+    class Step1,Step2,Step3,Step4 dark
+    class UserReq light
+    class Result gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+
+            <div class="use-case">
+                <h4>&#x1F4BB; コーディングワークフローの変革</h4>
+                <ul>
+                    <li><strong>エンドツーエンドの開発支援:</strong> 要件定義からコード実装、テスト、デプロイまでの一連のプロセスを AI が一貫して支援。Codex プラットフォームとの連携により、非同期でのコードタスク実行が実用的なレベルに到達</li>
+                    <li><strong>コードレビューの高度化:</strong> リポジトリ全体のコンテキストを踏まえた精緻なコードレビューが可能。セキュリティ脆弱性やパフォーマンスボトルネックの検出精度が向上</li>
+                    <li><strong>技術的負債の解消:</strong> 大規模リファクタリングやアーキテクチャ移行を AI が計画・実行支援することで、技術的負債の解消が加速</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F52C; リサーチ・分析業務の効率化</h4>
+                <ul>
+                    <li><strong>自動調査レポート:</strong> Web 検索、論文分析、データ分析を組み合わせた包括的な調査レポートの自動生成</li>
+                    <li><strong>意思決定支援:</strong> データドリブンなインサイトの抽出から、アクションプランの提案までを一気通貫で実行</li>
+                    <li><strong>競合分析の自動化:</strong> 公開情報の収集、分析、レポート化を自動的に実行し、戦略立案を支援</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F4CA; Codex プラットフォームとの統合</h4>
+                <ul>
+                    <li><strong>オートメーション:</strong> 定型的な開発タスクの自動化パイプラインを GPT-5.5 ベースで構築</li>
+                    <li><strong>プラグイン:</strong> サードパーティツールとの連携プラグインを活用した拡張エコシステム</li>
+                    <li><strong>スキル:</strong> カスタムスキルの定義により、チーム固有のワークフローに GPT-5.5 を適応</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Model Selection Guide -->
+        <section class="section">
+            <h2 class="section-title">GPT-5 シリーズ モデル選択ガイド</h2>
+            <p class="section-description">GPT-5.5 の追加により、開発者は用途に応じてさらに細かくモデルを選択できるようになった。</p>
+            <table class="model-table">
+                <thead>
+                    <tr>
+                        <th>ユースケース</th>
+                        <th>推奨モデル</th>
+                        <th>理由</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>最高精度のコーディング・リサーチ</td>
+                        <td class="model-highlight">GPT-5.5</td>
+                        <td>最高の知性とマルチツール統合</td>
+                    </tr>
+                    <tr>
+                        <td>高度な専門タスク</td>
+                        <td>GPT-5.4</td>
+                        <td>高性能かつ安定した実績</td>
+                    </tr>
+                    <tr>
+                        <td>汎用開発・エージェント</td>
+                        <td>GPT-5.4 mini</td>
+                        <td>コストと性能のバランス</td>
+                    </tr>
+                    <tr>
+                        <td>大量 API / サブエージェント</td>
+                        <td>GPT-5.4 nano</td>
+                        <td>超低レイテンシ・最低コスト</td>
+                    </tr>
+                    <tr>
+                        <td>日常会話・カスタマーサポート</td>
+                        <td>GPT-5.3 Instant</td>
+                        <td>高速応答・自然な対話</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響 -- 移行時の考慮事項</h2>
+            <ul class="migration-list">
+                <li>
+                    <strong>プロンプトの最適化</strong>
+                    GPT-5.5 はマルチツール統合を前提とした設計のため、ツール定義を含むプロンプトの再設計が効果的
+                </li>
+                <li>
+                    <strong>コスト管理</strong>
+                    フラッグシップモデルとしてトークン単価が GPT-5.4 以上になる可能性があるため、モデルルーティングによるコスト最適化を検討すべき
+                </li>
+                <li>
+                    <strong>段階的移行</strong>
+                    GPT-5.4 からの移行は、まず非本番環境でのベンチマーク比較を実施し、性能向上を確認した上で本番環境に適用する段階的アプローチが推奨
+                </li>
+                <li>
+                    <strong>System Card の確認</strong>
+                    同日公開の GPT-5.5 System Card を確認し、安全性ガイドラインや制限事項を把握した上で統合を進めることが重要
+                </li>
+                <li>
+                    <strong>セキュリティ</strong>
+                    GPT-5.5 Bio Bug Bounty プログラムが同時に開始。プロダクション利用時にはセキュリティレビューを実施すべき
+                </li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="section-description">GPT-5.5 は、OpenAI が「史上最も知的なモデル」と位置づける最新のフラッグシップモデルであり、2026 年に入ってから急速に進化してきた GPT-5 シリーズの集大成と言える存在である。最大の革新はマルチツール統合推論であり、コーディング、リサーチ、データ分析という 3 つの高度なタスクを、複数のツールを横断的に活用しながらシームレスに遂行する能力を備えている。</p>
+            <p class="section-description">同日に公開された GPT-5.5 System Card、Bio Bug Bounty プログラム、Codex Academy ガイドは、OpenAI が新モデルの性能向上と安全性確保、そしてエコシステムの拡張を三位一体で推進していることを示している。今後は GPT-5.5 mini や nano といった小型バリアントの登場も予想され、GPT-5 シリーズのエコシステムがさらに拡大していくことが期待される。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/introducing-gpt-5-5" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-gpt-5-5</a></p>
+            <p><strong>関連リンク:</strong> <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI API ドキュメント</a> | <a href="https://platform.openai.com/docs/models" target="_blank" rel="noopener noreferrer">モデル一覧</a> | <a href="https://openai.com/pricing" target="_blank" rel="noopener noreferrer">Pricing</a> | <a href="https://openai.com/index/codex" target="_blank" rel="noopener noreferrer">Codex プラットフォーム</a></p>
+            <p style="margin-top: 12px; font-size: 12px; opacity: 0.7;">本レポートは OpenAI の公式発表に基づいて作成されている。正確な詳細については公式ページを参照されたい。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
