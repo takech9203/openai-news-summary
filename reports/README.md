@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-25](2026/2026-04-25-openai-executive-fired-discrimination.md) - OpenAI 幹部が性差別で解雇: 「アダルトモード」反対派の退場
+- [2026-04-25](2026/2026-04-25-musk-drops-fraud-claims-openai-trial.md) - Musk が裁判直前に OpenAI および Altman に対する詐欺請求を自主取り下げ
+- [2026-04-25](2026/2026-04-25-altman-apologizes-tumbler-ridge-shooting.md) - OpenAI CEO Sam Altman がカナダ Tumbler Ridge 銃撃事件を巡り「深くお詫び」-- 容疑者の ChatGPT 利用を警察に通報せず
+- [2026-04-25](2026/2026-04-25-ai-talent-war-software-executives-openai.md) - AI 人材争奪戦の新局面: ソフトウェア業界の経営幹部が続々と OpenAI に移籍
+- [2026-04-24](2026/2026-04-24-open-sourcing-monitorability-evaluations.md) - モニタビリティ評価フレームワークのオープンソース化: AI システムの監視可能性を測定するベンチマークを公開
+- [2026-04-24](2026/2026-04-24-gpt-5-4-cyber-limited-release.md) - GPT-5.4-Cyber の限定リリース: Anthropic に続く段階的公開アプローチの採用
 - [2026-04-23](2026/2026-04-23-introducing-gpt-5-5.md) - GPT-5.5 の発表: OpenAI 史上最も知的なモデル -- コーディング、リサーチ、データ分析を統合する次世代 AI
 - [2026-04-23](2026/2026-04-23-gpt-5-5-system-card.md) - GPT-5.5 System Card: OpenAI 史上最も知的なモデルの安全性評価と透明性文書
 - [2026-04-23](2026/2026-04-23-gpt-5-5-bio-bug-bounty.md) - GPT-5.5 Bio Bug Bounty: 生物兵器リスクに対するレッドチーミング報奨金プログラム
