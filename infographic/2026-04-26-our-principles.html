@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI の 5 つの原則: Sam Altman が AGI 開発の指針を公表</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white; padding: 48px 32px; border-radius: 24px;
+            margin-bottom: 32px; position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header-content { position: relative; z-index: 1; }
+        .category-badge {
+            display: inline-block; background: #10A37F; color: white;
+            padding: 6px 16px; border-radius: 20px; font-size: 12px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+        }
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white; border-radius: 20px; padding: 32px;
+            margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+        .section-title {
+            font-size: 1.25rem; font-weight: 700; color: #343541;
+            margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+        }
+        .section-title::before {
+            content: ''; width: 4px; height: 24px;
+            background: #10A37F; border-radius: 2px; flex-shrink: 0;
+        }
+
+        .summary-text {
+            font-size: 15px; color: #565869; line-height: 1.8;
+            margin-bottom: 0;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+        .key-point {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 20px; background: #ECECF1; border-radius: 12px;
+        }
+        .key-point-icon {
+            width: 48px; height: 48px; background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; flex-shrink: 0;
+        }
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2); border-radius: 16px; padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15); }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .use-case {
+            background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%);
+            border-left: 4px solid #10A37F; padding: 20px 24px;
+            border-radius: 0 12px 12px 0; margin-bottom: 16px;
+        }
+        .use-case:last-child { margin-bottom: 0; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .mermaid-container {
+            background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2); overflow-x: auto;
+        }
+        .mermaid { display: flex; justify-content: center; }
+
+        .footer {
+            margin-top: 40px; padding: 24px 32px; background: #ECECF1;
+            border-radius: 16px; font-size: 13px; color: #8E8EA0;
+        }
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+
+        .context-note {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border-left: 4px solid #10A37F;
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #565869;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">COMPANY</span>
+                <h1>OpenAI の 5 つの原則: Sam Altman が AGI 開発の指針を公表</h1>
+                <div class="date">2026-04-26 | OpenAI Blog</div>
+            </div>
+        </div>
+
+        <!-- 概要 -->
+        <div class="section">
+            <div class="section-title">概要</div>
+            <p class="summary-text">
+                OpenAI CEO の Sam Altman は 2026 年 4 月 26 日、「Our principles」と題するブログ記事を公開し、OpenAI の活動を導く 5 つの原則を明らかにした。記事の冒頭では「私たちのミッションは、AGI が人類全体に利益をもたらすことを確実にすることである」と改めて宣言し、そのミッションを実現するための具体的な行動指針として 5 つの原則を提示している。Altman は安全性を理由に将来のモデル能力を制限する可能性にも言及しており、AGI 開発における安全性と能力のバランスに関する OpenAI の姿勢を明確に示した。
+            </p>
+            <div class="context-note" style="margin-top: 16px;">
+                この発表は、Musk 対 Altman/OpenAI 裁判が翌日の 4 月 27 日に開廷を控えるタイミングで行われた。OpenAI の非営利ミッションからの逸脱が裁判の核心的争点となる中、Altman が自ら「原則」を公表したことは、戦略的コミュニケーションと位置づけられる。
+            </div>
+        </div>
+
+        <!-- 5 つの原則 -->
+        <div class="section">
+            <div class="section-title">5 つの原則</div>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F30D;</div>
+                    <div class="key-point-content">
+                        <h3>1. AGI が人類全体に利益をもたらすこと (Benefit for All Humanity)</h3>
+                        <p>OpenAI の設立以来の中核ミッションの再確認。AGI の開発が特定の企業や国家ではなく、人類全体に恩恵をもたらすことを最優先の原則として位置づけている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>2. 安全性の最優先 (Safety First)</h3>
+                        <p>「将来のモデル能力を安全性の理由で制限する可能性がある」と明言。モデルの能力が高度化するほど安全性の確保が重要になるという認識のもと、必要に応じて能力の制限も辞さない姿勢を示している。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F91D;</div>
+                    <div class="key-point-content">
+                        <h3>3. 広範なアクセスと公平な分配 (Broad Access and Equitable Distribution)</h3>
+                        <p>AGI の恩恵を広く分配し、一部の特権層に偏らないようにする原則。OpenAI Foundation の 10 億ドル投資計画や People-First AI Fund の設立と整合する方向性である。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>4. 透明性と説明責任 (Transparency and Accountability)</h3>
+                        <p>Model Spec の公開、安全性レポートの公開、非営利委員会 (Nonprofit Commission) の設立など、OpenAI が近年取り組んできた透明性施策の根拠となる原則。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-content">
+                        <h3>5. 責任あるデプロイメント (Responsible Deployment)</h3>
+                        <p>AI モデルの段階的な公開、安全性評価の実施、外部専門家によるレッドチーミングなど、責任ある技術展開を継続するための原則。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 安全性によるモデル能力制限 -->
+        <div class="section">
+            <div class="section-title">安全性によるモデル能力制限 -- 3 つの形態</div>
+            <p class="summary-text" style="margin-bottom: 20px;">
+                Altman が「将来のモデル能力を安全性の理由で制限する可能性がある」と明言した点は特に注目される。これは OpenAI が以下のような判断を行いうることを意味する。
+            </p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F512; 特定の能力の非公開化</h3>
+                    <p>モデルが持つ能力の一部について、安全性評価が完了するまで一般公開を行わない。高リスクな能力を慎重に管理する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CA; 段階的なロールアウト</h3>
+                    <p>高度な能力を持つモデルを、限定的なユーザーグループに段階的に提供し、リスクの検証を行った上で一般公開に移行する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A0; 能力の意図的な抑制</h3>
+                    <p>安全性上のリスクが許容範囲を超えると判断された場合、モデルの特定の能力を意図的に制限または無効化する。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- タイムライン Mermaid 図 -->
+        <div class="section">
+            <div class="section-title">裁判と原則公表のタイムライン</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    A["4 月 23 日\nGPT-5.5 発表\nBio Bug Bounty"] --> B["4 月 25 日\nMusk が詐欺請求\nを自主取り下げ"]
+    B --> C["4 月 26 日\nAltman が\n5 つの原則を公表"]
+    C --> D["4 月 27 日\nMusk 対 OpenAI\n裁判開廷"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class A accent
+    class B dark
+    class C openai
+    class D dark
+                </pre>
+            </div>
+        </div>
+
+        <!-- アーキテクチャ Mermaid 図 -->
+        <div class="section">
+            <div class="section-title">OpenAI の 5 つの原則とステークホルダーの関係</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Principles["OpenAI の 5 つの原則"]
+        P1["人類全体への利益\n(Benefit for All Humanity)"]
+        P2["安全性の最優先\n(Safety First)"]
+        P3["広範なアクセスと公平な分配\n(Broad Access)"]
+        P4["透明性と説明責任\n(Transparency)"]
+        P5["責任あるデプロイメント\n(Responsible Deployment)"]
+    end
+
+    Mission(["ミッション:\nAGI が人類全体に\n利益をもたらすことを\n確実にする"])
+    Mission --> P1
+    Mission --> P2
+    Mission --> P3
+    Mission --> P4
+    Mission --> P5
+
+    subgraph Actions["原則に基づく具体的な施策"]
+        A1["OpenAI Foundation\n10 億ドル投資"]
+        A2["モデル能力の\n安全性による制限"]
+        A3["People-First\nAI Fund"]
+        A4["Model Spec\n公開フレームワーク"]
+        A5["段階的な\nモデル公開"]
+    end
+
+    P1 --> A1
+    P2 --> A2
+    P3 --> A3
+    P4 --> A4
+    P5 --> A5
+
+    subgraph Stakeholders["ステークホルダー"]
+        Dev["開発者"]
+        User["ユーザー"]
+        Society["社会全体"]
+        Regulator["規制当局"]
+    end
+
+    A1 --> Society
+    A2 --> Dev
+    A2 --> User
+    A3 --> Society
+    A4 --> Dev
+    A4 --> Regulator
+    A5 --> Dev
+    A5 --> User
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Mission openai
+    class P1,P2,P3,P4,P5 dark
+    class A1,A2,A3,A4,A5 accent
+    class Dev,User,Society,Regulator light
+                </pre>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <div class="section-title">開発者への影響</div>
+            <div class="use-case">
+                <h4>&#x26A0; モデル能力の制限リスク</h4>
+                <p>安全性を理由に将来のモデル能力が制限される可能性が公式に示されたことで、開発者は特定の高度な機能に依存するアプリケーション設計において、代替手段やフォールバック戦略を検討する必要がある。新しいモデルが必ずしもすべての能力で前世代を上回るとは限らないという前提での設計が求められる。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4C8; 段階的アクセスの常態化</h4>
+                <p>責任あるデプロイメントの原則に基づき、新しいモデルや機能が限定的なアクセスから段階的に一般公開される傾向が強まる可能性がある。GPT-5.4 Cyber の限定リリース (4 月 24 日) はこの方針の具体例である。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F91D; 安全性評価への開発者の参加機会</h4>
+                <p>透明性と説明責任の原則は、Model Spec へのフィードバックや Safety Bug Bounty プログラムなど、開発者が OpenAI の安全性向上に直接貢献できる機会の拡大を示唆する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3D7; 長期的なプラットフォームの安定性</h4>
+                <p>明確な原則の公表は、OpenAI の長期的な方向性に対する予測可能性を高める。企業やスタートアップが OpenAI のプラットフォーム上で長期的な投資判断を行う際の参考指標となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4DC; 規制対応への準備</h4>
+                <p>OpenAI が安全性と透明性を公式の原則として掲げたことは、EU DSA や各国の AI 規制への対応を見据えたものでもある。OpenAI API を利用する開発者も、同様の安全性基準への準拠が求められる可能性がある。</p>
+            </div>
+        </div>
+
+        <!-- まとめ -->
+        <div class="section">
+            <div class="section-title">まとめ</div>
+            <p class="summary-text">
+                Sam Altman は裁判開廷の前日にあたる 2026 年 4 月 26 日、OpenAI の活動を導く 5 つの原則を公表した。「AGI が人類全体に利益をもたらすことを確実にする」というミッションのもと、安全性の最優先、広範なアクセス、透明性、責任あるデプロイメントを柱とする原則が示された。特に注目すべきは、安全性を理由に将来のモデル能力を制限する可能性に言及した点であり、OpenAI が AGI 開発において能力の追求と安全性の確保のバランスを慎重に取る姿勢を明確にした。裁判前日という発表タイミングは、Musk 側が主張する「非営利ミッションからの逸脱」に対する OpenAI 側の戦略的な応答としての側面も持つ。開発者にとっては、モデル能力の制限や段階的アクセスの常態化など、実務的な影響を考慮した設計が今後求められる可能性がある一方、明確な原則の存在はプラットフォームの長期的な方向性に対する予測可能性を高めるものでもある。
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Source:</strong> <a href="https://openai.com/index/our-principles" target="_blank" rel="noopener noreferrer">https://openai.com/index/our-principles</a></p>
+            <p style="margin-top: 8px;">Generated from OpenAI News Summary Reports | 2026-04-26</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

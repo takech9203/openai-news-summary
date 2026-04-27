@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-27](2026/2026-04-27-musk-altman-openai-trial-begins.md) - Musk 対 Altman/OpenAI 裁判が開廷 -- AI 業界史上最大の $1800 億訴訟が本格始動
+- [2026-04-26](2026/2026-04-26-our-principles.md) - OpenAI の 5 つの原則: Sam Altman が AGI 開発の指針を公表
 - [2026-04-25](2026/2026-04-25-openai-executive-fired-discrimination.md) - OpenAI 幹部が性差別で解雇: 「アダルトモード」反対派の退場
 - [2026-04-25](2026/2026-04-25-musk-drops-fraud-claims-openai-trial.md) - Musk が裁判直前に OpenAI および Altman に対する詐欺請求を自主取り下げ
 - [2026-04-25](2026/2026-04-25-altman-apologizes-tumbler-ridge-shooting.md) - OpenAI CEO Sam Altman がカナダ Tumbler Ridge 銃撃事件を巡り「深くお詫び」-- 容疑者の ChatGPT 利用を警察に通報せず
