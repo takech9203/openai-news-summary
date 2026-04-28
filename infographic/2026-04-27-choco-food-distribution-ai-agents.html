@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choco が AI エージェントで食品流通を自動化 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            font-size: 14px;
+            padding-left: 18px;
+            line-height: 1.8;
+        }
+
+        .comparison-card.before ul {
+            color: #991B1B;
+        }
+
+        .comparison-card.after ul {
+            color: #065F46;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Quote */
+        .quote {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .quote-author {
+            font-style: normal;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Lessons */
+        .lesson-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .lesson-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .lesson-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .lesson-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div>
+                    <span class="category-badge">Customer Story</span>
+                    <span class="category-badge">AI Agent</span>
+                    <span class="category-badge">Food & Beverage</span>
+                </div>
+                <h1>Choco が AI エージェントで食品流通を自動化</h1>
+                <p class="date">2026-04-27 | OpenAI Customer Story</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🍽️</div>
+                    <div class="key-point-content">
+                        <h3>食品流通の AI 変革</h3>
+                        <p>Choco は 21,000 社以上のディストリビューターと 100,000 社以上のバイヤーにサービスを提供する AI プラットフォーム。米国、英国、欧州、GCC 地域で展開</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>AI エージェントによる注文自動化</h3>
+                        <p>OrderAgent (マルチモーダル注文処理) と VoiceAgent (リアルタイム音声注文) の 2 つの AI エージェントで業務を自動化</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>圧倒的な導入成果</h3>
+                        <p>年間 880 万件以上の注文処理、手動作業 50% 削減、営業生産性 2 倍向上を実現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>動的インコンテキスト学習</h3>
+                        <p>顧客固有の SKU マッピング、単位の好み、配送パターンを動的に学習するインフラを構築</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">880 万+</div>
+                    <div class="stat-label">年間注文処理数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2,000 億+</div>
+                    <div class="stat-label">AI トークン処理数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">50%</div>
+                    <div class="stat-label">手動入力削減</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2x</div>
+                    <div class="stat-label">営業生産性向上</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;1-5%</div>
+                    <div class="stat-label">エラー率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">注文受付体制</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <ul>
+                        <li>手動での注文入力・処理</li>
+                        <li>営業時間内のみ注文受付</li>
+                        <li>顧客固有の暗黙知に依存</li>
+                        <li>人員増加でしかスケールできない</li>
+                        <li>多様な入力形式の手動対応</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <ul>
+                        <li>AI エージェントが自動で注文処理</li>
+                        <li>24 時間 365 日の注文受付</li>
+                        <li>動的インコンテキスト学習で暗黙知をモデル化</li>
+                        <li>人員追加なしで生産性 2 倍</li>
+                        <li>マルチモーダル入力を統合処理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主要プロダクト</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📋 OrderAgent</h3>
+                    <p>マルチモーダル入力 (メール、SMS、画像、ドキュメント) を ERP 対応の構造化注文データに変換</p>
+                    <ul>
+                        <li>動的インコンテキスト学習</li>
+                        <li>顧客固有の SKU 解決</li>
+                        <li>設定可能な自動化閾値</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🎙️ VoiceAgent</h3>
+                    <p>OpenAI Realtime API による電話注文システム。サブ秒レイテンシで営業時間外の注文受付を実現</p>
+                    <ul>
+                        <li>リアルタイム音声処理</li>
+                        <li>自然な対話体験</li>
+                        <li>24 時間 365 日稼働</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術スタック</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔧 OpenAI SDK / API</h3>
+                    <p>中核となる AI 処理基盤</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🗣️ Speech-to-Text</h3>
+                    <p>VoiceAgent の音声認識</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Embeddings</h3>
+                    <p>顧客コンテキスト学習・類似注文検索</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ Function Calling</h3>
+                    <p>構造化出力・ERP 連携</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎤 Realtime API</h3>
+                    <p>サブ秒レイテンシの音声処理</p>
+                </div>
+            </div>
+
+            <div class="quote" style="margin-top: 24px;">
+                <p>「本当の課題は暗黙的なコンテキストだった。顧客固有の SKU マッピング、単位の好み、配送パターンといった情報をどう処理するかが鍵だった」</p>
+                <p class="quote-author">-- Narbeh Mirzaei, VP Engineering, Choco</p>
+            </div>
+            <div class="quote">
+                <p>「本当のエンジニアリング上の課題は、動的インコンテキスト学習インフラの構築だった」</p>
+                <p class="quote-author">-- Narbeh Mirzaei, VP Engineering, Choco</p>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["マルチモーダル入力"]
+        Email["メール"]
+        SMS["SMS"]
+        Image["画像"]
+        Phone["電話"]
+        Doc["ドキュメント"]
+    end
+
+    subgraph Agents["AI エージェント"]
+        OrderAgent["OrderAgent\nマルチモーダル注文処理"]
+        VoiceAgent["VoiceAgent\nリアルタイム音声注文"]
+        ICL["動的インコンテキスト\n学習インフラ"]
+    end
+
+    subgraph OpenAIAPI["OpenAI API"]
+        GPT4O["GPT-4o"]
+        Realtime["Realtime API"]
+        STT["Speech-to-Text"]
+        Embed["Embeddings"]
+        FC["Function Calling"]
+    end
+
+    subgraph Output["出力"]
+        ERP["ERP システム"]
+        Structured["構造化注文データ"]
+        Monitor["モニタリング\nダッシュボード"]
+    end
+
+    subgraph Eval["評価フレームワーク"]
+        GT["グラウンドトゥルース\nデータセット"]
+        AB["A/B テスト"]
+        CM["継続的モニタリング"]
+    end
+
+    Email --> OrderAgent
+    SMS --> OrderAgent
+    Image --> OrderAgent
+    Doc --> OrderAgent
+    Phone --> VoiceAgent
+
+    OrderAgent --> GPT4O
+    OrderAgent --> Embed
+    OrderAgent --> FC
+    ICL --> OrderAgent
+    VoiceAgent --> Realtime
+    VoiceAgent --> STT
+
+    GPT4O --> Structured
+    FC --> ERP
+    Realtime --> Structured
+    Structured --> ERP
+
+    OrderAgent --> Monitor
+    VoiceAgent --> Monitor
+    Monitor --> GT
+    Monitor --> AB
+    Monitor --> CM
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT4O,Realtime,STT,Embed,FC openai
+    class OrderAgent,VoiceAgent,ICL dark
+    class Email,SMS,Image,Phone,Doc,ERP,Structured,Monitor,GT,AB,CM light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">OrderAgent: マルチモーダル注文処理の概念例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# OrderAgent: マルチモーダル注文処理
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an order processing agent for food distribution. "
+                "Parse incoming orders from various formats and output "
+                "structured ERP-ready order data. Use customer-specific "
+                "SKU mappings and unit preferences."
+            )
+        },
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Process this order from customer #1234:"},
+                {
+                    "type": "image_url",
+                    "image_url": {"url": "https://example.com/order-image.jpg"}
+                }
+            ]
+        }
+    ],
+    tools=[
+        {
+            "type": "function",
+            "function": {
+                "name": "create_erp_order",
+                "description": "Create a structured order in the ERP system",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "customer_id": {"type": "string"},
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "sku": {"type": "string"},
+                                    "quantity": {"type": "number"},
+                                    "unit": {"type": "string"}
+                                }
+                            }
+                        },
+                        "delivery_date": {"type": "string"}
+                    },
+                    "required": ["customer_id", "items"]
+                }
+            }
+        }
+    ]
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Leadership Lessons -->
+        <section class="section">
+            <h2 class="section-title">リーダーシップからの教訓</h2>
+            <div class="lesson-list">
+                <div class="lesson-item">
+                    <div class="lesson-number">1</div>
+                    <div class="lesson-content">
+                        <h4>初日から評価を始める</h4>
+                        <p>10-20 件のグラウンドトゥルースデータからでも、評価フレームワークを構築し精度を定量的に測定することが重要</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-number">2</div>
+                    <div class="lesson-content">
+                        <h4>AI ネイティブなオブザーバビリティに投資する</h4>
+                        <p>モデルの入力、出力、推論トレースを可視化する監視基盤を構築し、本番運用の品質を担保する</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-number">3</div>
+                    <div class="lesson-content">
+                        <h4>早期に適切な期待値を設定する</h4>
+                        <p>LLM は確率的であり決定論的ではないことをステークホルダーに伝え、設定可能な自動化閾値で柔軟に運用する</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>動的インコンテキスト学習の設計</h4>
+                <p>顧客固有のコンテキスト (SKU マッピング、単位の好みなど) を動的に学習するインフラにより、汎用モデルを業界特化型ソリューションに変換可能</p>
+            </div>
+            <div class="use-case">
+                <h4>マルチモーダル入力の統合</h4>
+                <p>OpenAI のテキスト、ビジョン、音声機能を単一エコシステムで活用し、多様な入力チャネルに対応する注文処理を実現</p>
+            </div>
+            <div class="use-case">
+                <h4>Realtime API の活用</h4>
+                <p>サブ秒レイテンシの Realtime API により、電話注文のような即応性が求められるユースケースにも AI エージェントを適用可能</p>
+            </div>
+        </section>
+
+        <!-- What's Next -->
+        <section class="section">
+            <h2 class="section-title">今後の展望</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>AI 機能の拡張</h3>
+                        <p>Choco は AI エージェントの機能をさらに拡張し、食品流通のあらゆるプロセスをカバーすることを目指している</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👥</div>
+                    <div class="key-point-content">
+                        <h3>非エンジニアのエージェントオーケストレーター化</h3>
+                        <p>エンジニア以外のメンバーが「エージェントオーケストレーター」として AI エージェントを管理・運用できる環境の構築を進めている</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/choco/" target="_blank" rel="noopener noreferrer">https://openai.com/index/choco/</a></p>
+            <div class="footer-links">
+                <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI API Docs</a>
+                <a href="https://platform.openai.com/docs/guides/realtime" target="_blank" rel="noopener noreferrer">Realtime API</a>
+                <a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener noreferrer">Function Calling</a>
+                <a href="https://platform.openai.com/docs/guides/embeddings" target="_blank" rel="noopener noreferrer">Embeddings</a>
+                <a href="https://platform.openai.com/docs/guides/speech-to-text" target="_blank" rel="noopener noreferrer">Speech-to-Text</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

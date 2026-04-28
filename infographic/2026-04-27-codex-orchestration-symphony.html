@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symphony: Codex エージェントを大規模にオーケストレーションするオープンソース仕様</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --openai-green: #10A37F; --openai-dark: #343541; --openai-light: #F7F7F8; --openai-gray: #ECECF1;
+    --text-primary: #343541; --text-secondary: #565869; --text-muted: #8E8EA0;
+    --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+    --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+}
+body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--openai-light); color: var(--text-primary); line-height: 1.7; }
+.container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+.header { background: var(--gradient-header); color: white; padding: 48px 32px; border-radius: 24px; margin-bottom: 32px; position: relative; overflow: hidden; }
+.header::before { content: ''; position: absolute; top: -50%; right: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%); border-radius: 50%; }
+.header-content { position: relative; z-index: 1; }
+.category-badge { display: inline-block; background: var(--openai-green); color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+.header .date { font-size: 14px; opacity: 0.8; }
+.section { background: white; border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(16,163,127,0.1); }
+.section-title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+.section-title::before { content: ''; width: 4px; height: 24px; background: var(--openai-green); border-radius: 2px; }
+.key-points { display: grid; gap: 16px; }
+.key-point { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: var(--openai-gray); border-radius: 12px; }
+.key-point-icon { width: 48px; height: 48px; background: var(--gradient-accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+.key-point-content p { font-size: 14px; color: var(--text-secondary); }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.feature-card { background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%); border: 2px solid rgba(16,163,127,0.2); border-radius: 16px; padding: 24px; }
+.feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+.stat-card { background: var(--gradient-header); color: white; padding: 24px; border-radius: 16px; text-align: center; }
+.stat-value { font-size: 2.5rem; font-weight: 700; color: var(--openai-green); margin-bottom: 8px; }
+.stat-label { font-size: 14px; opacity: 0.9; }
+.use-case { background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%); border-left: 4px solid var(--openai-green); padding: 20px 24px; border-radius: 0 12px 12px 0; margin-bottom: 16px; }
+.use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--openai-dark); }
+.use-case p { font-size: 14px; color: var(--text-secondary); }
+.mermaid-container { background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid rgba(16,163,127,0.2); overflow-x: auto; }
+.mermaid { display: flex; justify-content: center; }
+.footer { margin-top: 40px; padding: 24px 32px; background: var(--openai-gray); border-radius: 16px; font-size: 13px; color: var(--text-muted); }
+.footer a { color: var(--openai-green); text-decoration: none; word-break: break-all; }
+.summary-text { font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px; }
+.principle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.principle-card { background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%); border: 2px solid rgba(16,163,127,0.2); border-radius: 16px; padding: 24px; }
+.principle-card .principle-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: var(--openai-green); }
+.principle-card .principle-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.lang-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.lang-card { background: var(--gradient-header); color: white; padding: 20px; border-radius: 16px; text-align: center; }
+.lang-card .lang-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+.lang-card .lang-author { font-size: 12px; opacity: 0.8; }
+.lang-card .lang-badge { display: inline-block; margin-top: 8px; background: var(--openai-green); color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.lang-card.reference { border: 2px solid var(--openai-green); }
+@media (max-width: 600px) { .header { padding: 32px 24px; } .header h1 { font-size: 1.5rem; } .section { padding: 24px; } .feature-grid { grid-template-columns: 1fr; } .principle-grid { grid-template-columns: 1fr; } .lang-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <span class="category-badge">Engineering</span>
+            <h1>Symphony: Codex エージェントを大規模にオーケストレーションするオープンソース仕様</h1>
+            <div class="date">2026-04-27 | エンジニアリング / Codex / オープンソース</div>
+        </div>
+    </div>
+
+    <!-- 概要 + Stats -->
+    <div class="section">
+        <h2 class="section-title">概要</h2>
+        <p class="summary-text">
+            OpenAI は、Codex エージェントを大規模にオーケストレーションするためのオープンソース仕様「Symphony」を公開した。Symphony は SPEC.md という書かれた仕様書 (written spec) として機能し、イシュートラッカー (Linear) をエージェントオーケストレーターへと変換する。OpenAI の一部チームでは導入後 3 週間でマージされた PR 数が 500% 増加し、GitHub では 15,000 以上のスターを獲得している。リファレンス実装は Elixir で記述され、Codex 自身が TypeScript、Go、Rust、Java、Python の各実装を生成した。
+        </p>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">500%</div>
+                <div class="stat-label">PR 数増加 (3 週間)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">15K+</div>
+                <div class="stat-label">GitHub スター</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">言語実装</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 背景 -->
+    <div class="section">
+        <h2 class="section-title">背景 -- コンテキストスイッチのボトルネック</h2>
+        <div class="key-points">
+            <div class="key-point">
+                <div class="key-point-icon">&#128187;</div>
+                <div class="key-point-content">
+                    <h3>手書きコードゼロのリポジトリ</h3>
+                    <p>OpenAI のチームは、Codex を用いて人間の手書きコードを一切含まないリポジトリを構築した経験を持つ。この取り組みは「harness engineering」ブログ記事で紹介されている。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#128256;</div>
+                <div class="key-point-content">
+                    <h3>コンテキストスイッチの課題</h3>
+                    <p>複数のエージェントに並行して作業を割り振り、進捗を追跡し、依存関係を管理する――こうしたオーケストレーション課題を解決するために Symphony が生まれた。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#127926;</div>
+                <div class="key-point-content">
+                    <h3>Symphony の誕生</h3>
+                    <p>Symphony は単なるソフトウェアツールではなく、SPEC.md という書かれた仕様 (written spec) である。ドキュメントがスーパーバイザーの役割を果たし、エージェントによる作業のオーケストレーションを定義する。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Symphony の仕組み -->
+    <div class="section">
+        <h2 class="section-title">Symphony の仕組み -- Linear をステートマシンとして活用</h2>
+        <div class="key-points">
+            <div class="key-point">
+                <div class="key-point-icon">&#128204;</div>
+                <div class="key-point-content">
+                    <h3>イシュートラッカーをオーケストレーターに変換</h3>
+                    <p>Linear の各オープンイシューが専用のエージェントワークスペースにマッピングされる。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#128065;</div>
+                <div class="key-point-content">
+                    <h3>継続的な監視</h3>
+                    <p>Symphony はタスクボードを常時監視し、すべてのアクティブタスクにエージェントが稼働していることを保証する。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#128279;</div>
+                <div class="key-point-content">
+                    <h3>セッションや PR からの分離</h3>
+                    <p>作業をセッションや個別の PR から切り離すことで、エージェントの中断・再開が容易になる。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#128736;</div>
+                <div class="key-point-content">
+                    <h3>状態遷移の流れ</h3>
+                    <p><strong>Todo</strong> (タスク登録) → <strong>In Progress</strong> (エージェント起動) → <strong>Human Review</strong> (人間のレビュー待ち) → <strong>Done</strong> (レビュー承認後完了)。エージェント自身がフォローアップタスクを作成し、作業の分解と並列化が自律的に行われる。</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1rem; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: var(--text-primary);">ステートマシンのフロー</h3>
+        <div class="mermaid-container">
+            <div class="mermaid">
+stateDiagram-v2
+    [*] --> Todo: イシュー作成
+    Todo --> InProgress: Symphony が検知しエージェント起動
+    InProgress --> HumanReview: エージェントが作業完了
+    HumanReview --> Done: レビュー承認
+    HumanReview --> InProgress: 修正要求
+    InProgress --> Todo: エージェントがフォローアップタスク作成
+
+    note right of Todo: Linear のイシューとして管理
+    note right of InProgress: 専用ワークスペースで\nCodex エージェントが実行
+    note right of HumanReview: 人間がコードレビュー
+            </div>
+        </div>
+    </div>
+
+    <!-- SPEC.md の構成要素 -->
+    <div class="section">
+        <h2 class="section-title">SPEC.md の構成要素</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>&#9881;&#65039; ステートマシン</h3>
+                <p>タスクの状態遷移ルールと制約を定義する、オーケストレーターの中核コンポーネント。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128193; ワークスペース管理</h3>
+                <p>エージェントごとの隔離された作業環境の作成と管理を規定する。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128225; エージェントランナー</h3>
+                <p>Codex App Server モード (JSON-RPC API) を使用したエージェントの起動と通信プロトコル。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128260; イシュートラッカー統合</h3>
+                <p>Linear との双方向統合プロトコルにより、シームレスなタスク管理を実現する。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128221; プロンプト構築</h3>
+                <p>エージェントへのコンテキスト提供と指示の構造化方法を定義する。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128200; ロギングとオブザーバビリティ</h3>
+                <p>エージェントの動作追跡と監視のための仕組み。WORKFLOW.md が開発ワークフロー全体を規定する。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設計原則 -->
+    <div class="section">
+        <h2 class="section-title">核となる設計原則</h2>
+        <div class="principle-grid">
+            <div class="principle-card">
+                <div class="principle-name">Humans steer. Agents execute.</div>
+                <div class="principle-desc">人間が方向性を定め、エージェントが実行する。人間とエージェントの明確な役割分担を規定する中核原則。</div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-name">Progressive disclosure</div>
+                <div class="principle-desc">コンテキスト管理において段階的に情報を開示する。必要な情報を必要なタイミングで提供する。</div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-name">目標の付与</div>
+                <div class="principle-desc">エージェントに目標 (objectives) を与え、厳密な状態遷移は強制しない。自律性を尊重した設計。</div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-name">AGENTS.md は目次</div>
+                <div class="principle-desc">AGENTS.md はエンサイクロペディアではなく目次として設計する。過剰なコンテキストではなく参照パスを提供する。</div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-name">Golden principles</div>
+                <div class="principle-desc">自動クリーンアップのための原則。ガベージコレクションに相当する仕組みで環境を清潔に保つ。</div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-name">手書きコードゼロ</div>
+                <div class="principle-desc">人間が手動でコードを書くことを前提としない設計思想。仕様の定義とレビューに役割が移行する。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- アーキテクチャ -->
+    <div class="section">
+        <h2 class="section-title">アーキテクチャ</h2>
+        <p class="summary-text">
+            Symphony は開発者によるイシュー作成から、タスクボードウォッチャーによる検知、スケジューラーによる DAG 実行、ワークスペースマネージャーによるエージェント割り当て、そして人間のレビューまでを一貫して管理する。Codex App Server (JSON-RPC) がエージェントの起動・通信を担い、エージェント自身がフォローアップタスクを自動生成することで並列作業を実現する。
+        </p>
+        <div class="mermaid-container">
+            <div class="mermaid">
+flowchart TD
+    subgraph Human["人間 (Human)"]
+        Dev["開発者"]
+        Review["レビュアー"]
+    end
+    subgraph Orchestrator["Symphony Orchestrator"]
+        Watcher["タスクボード\nウォッチャー"]
+        Scheduler["スケジューラー\n(DAG 実行)"]
+        WS_Manager["ワークスペース\nマネージャー"]
+    end
+    subgraph Linear["Linear (ステートマシン)"]
+        Todo["Todo"]
+        InProgress["In Progress"]
+        HumanReview["Human Review"]
+        Done["Done"]
+    end
+    subgraph Workspaces["エージェントワークスペース"]
+        WS1["Workspace 1"]
+        WS2["Workspace 2"]
+        WS3["Workspace N"]
+    end
+    subgraph Codex["Codex App Server (JSON-RPC)"]
+        Agent1["Agent 1"]
+        Agent2["Agent 2"]
+        Agent3["Agent N"]
+    end
+    Dev -->|"イシュー作成"| Todo
+    Todo -->|"検知"| Watcher
+    Watcher --> Scheduler
+    Scheduler --> WS_Manager
+    WS_Manager --> WS1
+    WS_Manager --> WS2
+    WS_Manager --> WS3
+    WS1 --> Agent1
+    WS2 --> Agent2
+    WS3 --> Agent3
+    Agent1 -->|"作業完了"| InProgress
+    InProgress --> HumanReview
+    HumanReview -->|"レビュー"| Review
+    Review -->|"承認"| Done
+    Agent1 -.->|"フォローアップ\nタスク作成"| Todo
+    Agent2 -.->|"フォローアップ\nタスク作成"| Todo
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    class Todo,InProgress,HumanReview,Done openai
+    class Watcher,Scheduler,WS_Manager dark
+    class WS1,WS2,WS3 accent
+    class Agent1,Agent2,Agent3 dark
+    class Dev,Review light
+            </div>
+        </div>
+    </div>
+
+    <!-- タスクツリーと DAG 実行 -->
+    <div class="section">
+        <h2 class="section-title">タスクツリーと DAG 実行</h2>
+        <p class="summary-text">
+            複雑な機能の実装では、タスクが依存関係を持つツリー構造 (有向非巡回グラフ: DAG) として管理される。エージェントは依存関係のないタスクを並列実行し、依存関係が解消されたタスクから順次着手する。フォローアップタスクはエージェント自身が作成できるため、作業の粒度は動的に調整される。
+        </p>
+        <div class="key-points">
+            <div class="key-point">
+                <div class="key-point-icon">&#128194;</div>
+                <div class="key-point-content">
+                    <h3>タスクツリーの例</h3>
+                    <p>
+                        <strong>Feature A</strong><br>
+                        ├── Task 1 (依存なし) -- 並列実行可能<br>
+                        ├── Task 2 (依存なし) -- 並列実行可能<br>
+                        ├── Task 3 (Task 1, Task 2 に依存)<br>
+                        │&nbsp;&nbsp;&nbsp;&nbsp;└── Task 3.1 (エージェントが自動生成したフォローアップ)<br>
+                        └── Task 4 (Task 3 に依存)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 実装言語 -->
+    <div class="section">
+        <h2 class="section-title">実装言語</h2>
+        <p class="summary-text">
+            Elixir がリファレンス実装として選択された背景には、並行処理やプロセスの監視ツリーといった Elixir/OTP の特性がオーケストレーターの要件と合致していることがある。残りの 5 言語の実装は Codex 自身が Symphony の仕様に基づいて生成しており、「手書きコードゼロ」の思想を体現している。
+        </p>
+        <div class="lang-grid">
+            <div class="lang-card reference">
+                <div class="lang-name">Elixir</div>
+                <div class="lang-author">OpenAI チーム</div>
+                <div class="lang-badge">リファレンス</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-name">TypeScript</div>
+                <div class="lang-author">Codex</div>
+                <div class="lang-badge">生成</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-name">Go</div>
+                <div class="lang-author">Codex</div>
+                <div class="lang-badge">生成</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-name">Rust</div>
+                <div class="lang-author">Codex</div>
+                <div class="lang-badge">生成</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-name">Java</div>
+                <div class="lang-author">Codex</div>
+                <div class="lang-badge">生成</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-name">Python</div>
+                <div class="lang-author">Codex</div>
+                <div class="lang-badge">生成</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Codex App Server モード -->
+    <div class="section">
+        <h2 class="section-title">Codex App Server モード (JSON-RPC)</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>&#9654;&#65039; エージェントの起動と停止</h3>
+                <p>プログラマティックにエージェントのライフサイクルを管理する。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128203; タスクの割り当て</h3>
+                <p>タスクの割り当てとコンテキストの注入を API 経由で実行する。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128295; 動的ツール呼び出し</h3>
+                <p>動的なツール呼び出し (dynamic tool calls) によりエージェントの能力を拡張する。</p>
+            </div>
+            <div class="feature-card">
+                <h3>&#128202; 状態監視</h3>
+                <p>エージェントの状態をリアルタイムで監視し、異常を検知する。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 開発者への影響 -->
+    <div class="section">
+        <h2 class="section-title">開発者への影響</h2>
+        <div class="use-case">
+            <h4>生産性の大幅な向上</h4>
+            <p>OpenAI の一部チームでは、Symphony 導入後の最初の 3 週間でマージされた PR 数が <strong>500% 増加</strong>した。エージェントオーケストレーションが開発生産性に与えるインパクトの大きさを示している。</p>
+        </div>
+        <div class="use-case">
+            <h4>エージェントオーケストレーションの標準化</h4>
+            <p>Symphony が SPEC.md というオープンな仕様として公開されたことで、異なるエージェントフレームワーク間での標準的なオーケストレーションプロトコルの確立、6 言語での実装による幅広いエコシステムの拡大、「Humans steer. Agents execute.」や progressive disclosure といった設計原則の業界全体での活用が期待される。</p>
+        </div>
+        <div class="use-case">
+            <h4>イシュートラッカーの新たな役割</h4>
+            <p>Symphony の設計は、Linear のようなイシュートラッカーを単なるタスク管理ツールから<strong>エージェントオーケストレーター</strong>へと昇格させる。開発者は従来のワークフローを大きく変更することなく、イシューの作成とレビューを通じてエージェントに作業を委任できる。</p>
+        </div>
+        <div class="use-case">
+            <h4>AGENTS.md の設計指針</h4>
+            <p>Symphony は AGENTS.md を「エンサイクロペディアではなく目次」として設計することを推奨している。エージェントに過剰なコンテキストを与えるのではなく、必要な情報への参照パスを提供するという progressive disclosure の原則に基づく。</p>
+        </div>
+        <div class="use-case">
+            <h4>「手書きコードゼロ」の実証</h4>
+            <p>Elixir のリファレンス実装を除く 5 言語の実装が Codex 自身によって生成されたことは、エージェントが仕様書に基づいて実用的なソフトウェアを自律的に実装できることの実証である。開発者の役割が「コードの記述者」から「仕様の定義者とレビュアー」へ移行する未来を示唆している。</p>
+        </div>
+    </div>
+
+    <!-- まとめ -->
+    <div class="section">
+        <h2 class="section-title">まとめ</h2>
+        <p class="summary-text">
+            OpenAI がオープンソースで公開した Symphony は、Codex エージェントの大規模オーケストレーションを実現するための仕様書 (SPEC.md) である。Linear をステートマシンとして活用し、Todo から Done までの状態遷移を通じてエージェントの自律的な作業を管理する。タスクの DAG 実行やエージェントによるフォローアップタスクの自動生成といった機能により、複雑な機能開発を並列化できる。一部チームでは導入 3 週間で PR 数が 500% 増加し、GitHub では 15,000 以上のスターを獲得した。リファレンス実装は Elixir で記述され、TypeScript、Go、Rust、Java、Python の各実装は Codex 自身が生成した。「Humans steer. Agents execute.」という原則に基づく Symphony は、開発者の役割をコードの記述からタスクの定義とレビューへと移行させる、ソフトウェア開発の新たなパラダイムを提示している。
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong>Source:</strong> <a href="https://openai.com/index/open-source-codex-orchestration-symphony/" target="_blank">https://openai.com/index/open-source-codex-orchestration-symphony/</a></p>
+        <p style="margin-top: 8px;"><strong>GitHub:</strong> <a href="https://github.com/openai/symphony" target="_blank">https://github.com/openai/symphony</a></p>
+        <p style="margin-top: 8px;">Generated on 2026-04-28 | OpenAI News Summary</p>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#10A37F', primaryTextColor: '#343541', primaryBorderColor: '#10A37F', lineColor: '#10A37F', background: '#FFFFFF', mainBkg: '#F7F7F8' } });
+</script>
+</body>
+</html>
