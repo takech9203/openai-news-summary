@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-29](2026/2026-04-29-openai-commitment-community-safety.md) - OpenAI のコミュニティ安全への取り組み: AI エコシステム全体の安全性を確保する包括的フレームワーク
+- [2026-04-28](2026/2026-04-28-openai-python-sdk-v2-33-0.md) - OpenAI Python SDK v2.33.0 リリース: API 更新と prompt_cache_retention 修正
+- [2026-04-28](2026/2026-04-28-openai-models-codex-managed-agents-aws.md) - OpenAI モデル、Codex、Managed Agents が AWS に到来: マルチクラウド時代の幕開け
 - [2026-04-27](2026/2026-04-27-openai-fedramp-moderate.md) - OpenAI が FedRAMP Moderate 認証を取得 -- 米国連邦政府機関へのフロンティア AI 提供が本格始動
 - [2026-04-27](2026/2026-04-27-musk-altman-openai-trial-begins.md) - Musk 対 Altman/OpenAI 裁判が開廷 -- AI 業界史上最大の $1800 億訴訟が本格始動
 - [2026-04-27](2026/2026-04-27-microsoft-openai-partnership-amendment.md) - Microsoft-OpenAI パートナーシップの次の段階: 契約改定で柔軟性・確実性・マルチクラウド展開を実現

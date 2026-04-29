@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI のコミュニティ安全への取り組み - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: var(--gradient-header);
+            color: white; padding: 48px 32px; border-radius: 24px; margin-bottom: 32px;
+            position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header::after {
+            content: ''; position: absolute; bottom: -30%; left: -10%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header-content { position: relative; z-index: 1; }
+        .category-badge {
+            display: inline-block; background: var(--openai-green); color: white;
+            padding: 6px 16px; border-radius: 20px; font-size: 12px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
+        }
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white; border-radius: 20px; padding: 32px; margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(16,163,127,0.1);
+        }
+        .section-title {
+            font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-title::before {
+            content: ''; width: 4px; height: 24px; background: var(--openai-green); border-radius: 2px; flex-shrink: 0;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+        .key-point {
+            display: flex; align-items: flex-start; gap: 16px; padding: 20px;
+            background: var(--openai-gray); border-radius: 12px;
+        }
+        .key-point-icon {
+            width: 48px; height: 48px; background: var(--gradient-accent);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
+        }
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: var(--text-secondary); }
+
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;
+        }
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16,163,127,0.2); border-radius: 16px; padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(16,163,127,0.15); }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        .feature-card ul { font-size: 14px; color: var(--text-secondary); line-height: 1.8; padding-left: 20px; margin-top: 8px; }
+
+        .mermaid-wrapper {
+            background: white; border-radius: 12px; padding: 24px; margin-top: 16px;
+            border: 1px solid var(--openai-gray); overflow-x: auto;
+        }
+        .mermaid { text-align: center; }
+
+        .code-block {
+            margin-top: 16px; border-radius: 12px; overflow: hidden;
+        }
+        .code-block-header {
+            background: #282C34; color: #ABB2BF; padding: 12px 20px;
+            font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid #3E4451;
+        }
+        .code-block-header .lang-badge {
+            background: var(--openai-green); color: white; padding: 2px 8px;
+            border-radius: 4px; font-size: 11px;
+        }
+        .code-block pre {
+            margin: 0; border-radius: 0 0 12px 12px;
+        }
+        .code-block pre code {
+            font-size: 13px; line-height: 1.6; padding: 20px !important;
+        }
+
+        .table-wrapper {
+            overflow-x: auto; margin-top: 16px;
+        }
+        .data-table {
+            width: 100%; border-collapse: collapse; font-size: 14px;
+        }
+        .data-table thead th {
+            background: var(--openai-dark); color: white; padding: 12px 16px;
+            text-align: left; font-weight: 700;
+        }
+        .data-table thead th:first-child { border-radius: 8px 0 0 0; }
+        .data-table thead th:last-child { border-radius: 0 8px 0 0; }
+        .data-table tbody td {
+            padding: 12px 16px; border-bottom: 1px solid var(--openai-gray);
+        }
+        .data-table tbody tr:hover { background: rgba(16,163,127,0.05); }
+        .data-table tbody tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+        .data-table tbody tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+        .data-table code {
+            background: var(--openai-gray); padding: 2px 6px; border-radius: 4px;
+            font-size: 13px; color: var(--openai-dark);
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green); padding: 20px 24px;
+            border-radius: 0 12px 12px 0; margin-bottom: 16px;
+        }
+        .use-case:last-child { margin-bottom: 0; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--openai-dark); }
+        .use-case p { font-size: 14px; color: var(--text-secondary); }
+
+        .tech-subsection { margin-bottom: 20px; }
+        .tech-subsection:last-child { margin-bottom: 0; }
+        .tech-subsection h3 {
+            font-size: 1rem; font-weight: 700; margin-bottom: 10px; color: var(--text-primary);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tech-subsection p { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+        .tech-subsection ul { font-size: 14px; color: var(--text-secondary); line-height: 1.8; padding-left: 20px; }
+        .tech-divider { border: none; border-top: 1px solid var(--openai-gray); margin: 20px 0; }
+
+        .footer {
+            margin-top: 40px; padding: 24px 32px; background: var(--openai-gray);
+            border-radius: 16px; font-size: 13px; color: var(--text-muted);
+        }
+        .footer a { color: var(--openai-green); text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+        .footer p { margin-bottom: 6px; }
+        .footer p:last-child { margin-bottom: 0; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">安全性 / ポリシー</span>
+                <h1>OpenAI のコミュニティ安全への取り組み</h1>
+                <p class="date">2026-04-29 | コミュニティの安全を守るための包括的フレームワークと技術的アプローチ</p>
+            </div>
+        </header>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;&#xFE0F;</div>
+                    <div class="key-point-content">
+                        <h3>コミュニティ安全のための包括的フレームワークを発表</h3>
+                        <p>OpenAI がコミュニティの安全を確保するための多層的なアプローチを体系化。ポリシー、技術、パートナーシップを統合した包括的なフレームワークを公開した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>Moderation API とコンテンツフィルタリングの強化</h3>
+                        <p>omni-moderation-latest モデルを含む最新の Moderation API により、テキスト・画像のマルチモーダルなコンテンツモデレーションを提供。開発者が安全なアプリケーションを構築するための基盤を強化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F91D;</div>
+                    <div class="key-point-content">
+                        <h3>外部パートナーシップと透明性の向上</h3>
+                        <p>GASA (Global AI Safety Alliance)、各国の AI Safety Institute、People-First AI Fund など、外部機関との連携を通じてコミュニティ全体の安全性を向上。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9EA;</div>
+                    <div class="key-point-content">
+                        <h3>Safety Bug Bounty と Bio Bug Bounty プログラムの継続</h3>
+                        <p>外部のセキュリティ研究者やドメインエキスパートと協力し、脆弱性の発見と修正を継続的に実施。報奨金プログラムを通じたオープンな安全性改善の取り組み。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CB;</div>
+                    <div class="key-point-content">
+                        <h3>開発者向け安全ツールとガイドラインの拡充</h3>
+                        <p>API 利用ポリシー、安全ガイドライン、OpenAI Academy を通じて、開発者エコシステム全体の安全性リテラシーを向上させる取り組みを強化。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5 つの柱 -->
+        <section class="section">
+            <h2 class="section-title">5 つの柱</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4DC; コンテンツポリシー</h3>
+                    <p>利用規約に基づくコンテンツ管理の枠組み</p>
+                    <ul>
+                        <li>ハードリミットとソフトリミットの明確化</li>
+                        <li>カテゴリ別モデレーション基準</li>
+                        <li>モデルの振る舞いに関する透明な仕様</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F527; モデレーションツール</h3>
+                    <p>技術的な安全性を実現するための開発者向けツール群</p>
+                    <ul>
+                        <li>Moderation API による自動検出</li>
+                        <li>システムプロンプト制御</li>
+                        <li>C2PA メタデータによる出所証明</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F52C; 安全研究</h3>
+                    <p>AI の安全性を科学的に追求する研究活動</p>
+                    <ul>
+                        <li>アラインメント研究</li>
+                        <li>レッドチーミング</li>
+                        <li>モニタビリティ評価</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F465; 開発者エコシステム</h3>
+                    <p>開発者コミュニティ全体の安全性向上</p>
+                    <ul>
+                        <li>API 利用ポリシーの整備</li>
+                        <li>安全ガイドラインの提供</li>
+                        <li>OpenAI Academy による教育</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F30D; 外部パートナーシップ</h3>
+                    <p>業界・政府・市民社会との連携</p>
+                    <ul>
+                        <li>GASA (Global AI Safety Alliance)</li>
+                        <li>AI Safety Institute との連携</li>
+                        <li>People-First AI Fund</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 安全アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">安全アーキテクチャ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">OpenAI の安全性は、入力から出力まで多層的に設計されている。各レイヤーが連携し、包括的な安全性を実現する。</p>
+            <div class="mermaid-wrapper">
+                <div class="mermaid">
+flowchart TD
+    subgraph Input["入力レイヤー"]
+        User["ユーザー入力"]
+        Dev["開発者設定"]
+    end
+
+    subgraph Safety["安全レイヤー"]
+        Mod["Moderation API"]
+        Filter["コンテンツフィルター"]
+        IH["Instruction Hierarchy"]
+    end
+
+    subgraph Model["モデルレイヤー"]
+        RLHF["RLHF アラインメント"]
+        RedTeam["レッドチーミング"]
+    end
+
+    subgraph Output["出力レイヤー"]
+        C2PA["C2PA メタデータ"]
+        Monitor["モニタリング"]
+    end
+
+    User --> Mod
+    Dev --> IH
+    Mod --> Filter
+    Filter --> RLHF
+    IH --> RLHF
+    RLHF --> C2PA
+    RedTeam --> Monitor
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Mod,Filter,IH openai
+    class RLHF,RedTeam dark
+    class User,Dev,C2PA,Monitor light
+                </div>
+            </div>
+        </section>
+
+        <!-- Moderation API コードサンプル -->
+        <section class="section">
+            <h2 class="section-title">Moderation API コードサンプル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">omni-moderation-latest モデルを使用して、テキストコンテンツのモデレーションを実行するサンプルコード。カテゴリごとのスコアを確認し、閾値を超えたカテゴリをフラグとして検出する。</p>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="lang-badge">Python</span>
+                    Moderation API の基本的な使い方
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# テキストモデレーション
+response = client.moderations.create(
+    model="omni-moderation-latest",
+    input="チェックするテキスト"
+)
+
+result = response.results[0]
+print(f"フラグ: {result.flagged}")
+
+for category, score in result.category_scores.model_dump().items():
+    if score > 0.5:
+        print(f"  {category}: {score:.3f}")</code></pre>
+            </div>
+        </section>
+
+        <!-- モデレーションカテゴリ -->
+        <section class="section">
+            <h2 class="section-title">モデレーションカテゴリ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Moderation API が検出可能な主要カテゴリの一覧。各カテゴリに対して 0 から 1 のスコアが返され、閾値に基づいてフラグが設定される。</p>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>カテゴリ</th>
+                            <th>説明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>hate</code></td>
+                            <td>ヘイトスピーチ</td>
+                        </tr>
+                        <tr>
+                            <td><code>harassment</code></td>
+                            <td>ハラスメント</td>
+                        </tr>
+                        <tr>
+                            <td><code>self-harm</code></td>
+                            <td>自傷行為</td>
+                        </tr>
+                        <tr>
+                            <td><code>sexual</code></td>
+                            <td>性的コンテンツ</td>
+                        </tr>
+                        <tr>
+                            <td><code>violence</code></td>
+                            <td>暴力</td>
+                        </tr>
+                        <tr>
+                            <td><code>illicit</code></td>
+                            <td>違法行為</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ユースケース -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+
+            <div class="use-case">
+                <h4>&#x1F3E2; プラットフォーム運営者</h4>
+                <p>Moderation API を活用してユーザー生成コンテンツ (UGC) を自動フィルタリング。大規模なコンテンツモデレーションを効率的に実現し、安全なプラットフォーム運営を支援する。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F4BB; 企業開発者</h4>
+                <p>Instruction Hierarchy を活用してプロンプトインジェクション対策を実装。システムプロンプトとユーザー入力の優先順位を適切に制御し、意図しない動作を防止する。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F52C; 研究者</h4>
+                <p>Safety Bug Bounty プログラムを通じて脆弱性を報告し、報奨金を獲得。AI システムの安全性向上に直接貢献しながら、セキュリティ研究の成果を社会に還元する。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="key-point" style="background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); border: 1px solid rgba(16,163,127,0.2);">
+                <div class="key-point-icon">&#x1F4DD;</div>
+                <div class="key-point-content">
+                    <p>OpenAI のコミュニティ安全への取り組みは、コンテンツポリシー、モデレーションツール、安全研究、開発者エコシステム、外部パートナーシップの 5 つの柱で構成される包括的なフレームワークである。Moderation API や Instruction Hierarchy などの技術的ツールと、GASA や AI Safety Institute との外部連携を組み合わせることで、多層的な安全性を実現している。Safety Bug Bounty や Bio Bug Bounty プログラムを通じた外部コミュニティとの協働、OpenAI Academy を通じた開発者教育など、エコシステム全体の安全性リテラシー向上にも注力している点が特徴的である。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <p><a href="https://openai.com/index/our-commitment-to-community-safety/" target="_blank" rel="noopener noreferrer">https://openai.com/index/our-commitment-to-community-safety/</a></p>
+            <p style="margin-top: 8px;"><a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety</a> | <a href="https://openai.com/research" target="_blank" rel="noopener noreferrer">OpenAI Research</a> | <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></p>
+            <p style="margin-top: 12px;">本レポートは、公開情報に基づいて作成されています。正確な詳細については公式ページを参照してください。</p>
+        </footer>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#10A37F',
+                secondaryColor: '#F7F7F8',
+                tertiaryColor: '#ECECF1',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#ECECF1',
+                titleColor: '#343541',
+                edgeLabelBackground: '#FFFFFF',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            },
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 16
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

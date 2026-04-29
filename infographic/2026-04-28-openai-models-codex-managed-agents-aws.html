@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI モデル、Codex、Managed Agents が AWS に到来 - OpenAI News Infographic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #f0f0f2;
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 20px;
+            padding: 48px 40px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.9rem;
+            font-weight: 900;
+            line-height: 1.45;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.92rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+        }
+
+        .key-point-emoji {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.7;
+        }
+
+        /* Before/After */
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .ba-card {
+            padding: 24px;
+            border-radius: 14px;
+            position: relative;
+        }
+
+        .ba-card.before {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border: 1px solid #FEB2B2;
+        }
+
+        .ba-card.after {
+            background: linear-gradient(135deg, #F0FFF4 0%, #C6F6D5 100%);
+            border: 1px solid #9AE6B4;
+        }
+
+        .ba-label {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            letter-spacing: 0.05em;
+        }
+
+        .before .ba-label {
+            background: #FC8181;
+            color: white;
+        }
+
+        .after .ba-label {
+            background: #48BB78;
+            color: white;
+        }
+
+        .ba-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        .ba-arrow {
+            display: none;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .feature-card {
+            padding: 22px;
+            background: var(--openai-light);
+            border-radius: 14px;
+            border: 1px solid var(--openai-gray);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 16px rgba(16, 163, 127, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .feature-card-emoji {
+            font-size: 1.5rem;
+        }
+
+        .feature-card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .feature-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 28px 18px;
+            background: var(--gradient-header);
+            border-radius: 14px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background: rgba(16, 163, 127, 0.15);
+            border-radius: 50%;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #10A37F;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Diagram */
+        .mermaid-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            margin-bottom: 18px;
+            overflow-x: auto;
+        }
+
+        .mermaid-wrapper:last-child {
+            margin-bottom: 0;
+        }
+
+        .diagram-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Code */
+        .code-block-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #444654;
+        }
+
+        .code-label {
+            background: #2D2D3A;
+            color: #8E8EA0;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-bottom: 1px solid #444654;
+        }
+
+        .code-block-wrapper pre {
+            margin: 0;
+            padding: 20px;
+            background: #1E1E2E;
+            overflow-x: auto;
+        }
+
+        .code-block-wrapper code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .use-case {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .use-case-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .use-case-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .use-case-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-divider {
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+            margin: 0 auto 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+                border-radius: 14px;
+            }
+
+            .before-after {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 20px 16px;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <span class="category-badge">パートナーシップ / クラウド</span>
+            <h1>OpenAI モデル、Codex、Managed Agents が AWS に到来</h1>
+            <div class="header-date">2026-04-28</div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <div class="section-title">
+                <div class="section-title-icon">&#9670;</div>
+                概要
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="key-point-emoji">&#x1F310;</span>
+                    <span class="key-point-text">OpenAI の GPT-5.5、Codex が Amazon Bedrock で利用可能に</span>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-emoji">&#x1F916;</span>
+                    <span class="key-point-text">Amazon Bedrock Managed Agents (OpenAI 搭載) が限定プレビュー開始</span>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-emoji">&#x1F4CA;</span>
+                    <span class="key-point-text">Databricks 上でも GPT-5.5 + Codex が同時提供開始</span>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-emoji">&#x1F513;</span>
+                    <span class="key-point-text">Microsoft との独占解消から わずか 1 日で AWS 提供を実現</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <div class="section-title">
+                <div class="section-title-icon">&#x21C4;</div>
+                Before / After
+            </div>
+            <div class="before-after">
+                <div class="ba-card before">
+                    <span class="ba-label">BEFORE</span>
+                    <p>Microsoft Azure のみで OpenAI モデルが利用可能、独占契約がマルチクラウド展開を制限</p>
+                </div>
+                <div class="ba-card after">
+                    <span class="ba-label">AFTER</span>
+                    <p>AWS、Azure、Databricks でマルチクラウド展開、統一 API で各プロバイダーのモデルと並列利用が可能</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <div class="section-title">
+                <div class="section-title-icon">&#x2699;</div>
+                主な機能
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <span class="feature-card-emoji">&#x2728;</span>
+                        <span class="feature-card-title">Amazon Bedrock 統合</span>
+                    </div>
+                    <p class="feature-card-desc">統一 API、IAM、VPC エンドポイント、CloudTrail 監査ログ対応</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <span class="feature-card-emoji">&#x1F916;</span>
+                        <span class="feature-card-title">Managed Agents</span>
+                    </div>
+                    <p class="feature-card-desc">OpenAI モデルを推論エンジンとしたフルマネージド AI エージェント</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <span class="feature-card-emoji">&#x1F4BB;</span>
+                        <span class="feature-card-title">Codex on AWS</span>
+                    </div>
+                    <p class="feature-card-desc">AWS ネイティブ統合、低レイテンシ、既存 DevOps ツールとの連携</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-header">
+                        <span class="feature-card-emoji">&#x1F4C8;</span>
+                        <span class="feature-card-title">Databricks 統合</span>
+                    </div>
+                    <p class="feature-card-desc">Unity Catalog、MLflow 連携、Delta Lake 上のデータ活用</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <div class="section-title">
+                <div class="section-title-icon">&#x1F4CA;</div>
+                数字で見るインパクト
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">1 日</div>
+                    <div class="stat-label">Microsoft 独占解消から<br>AWS 提供開始まで</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5 週間</div>
+                    <div class="stat-label">Amazon との協議開始から<br>提供開始まで</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3+</div>
+                    <div class="stat-label">Azure、AWS、Databricks で<br>マルチクラウド展開</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diagrams -->
+        <section class="section">
+            <div class="section-title">
+                <div class="section-title-icon">&#x1F5FA;</div>
+                アーキテクチャ
+            </div>
+            <div class="mermaid-wrapper">
+                <div class="diagram-label">マルチクラウド アーキテクチャ</div>
+                <div class="mermaid">
+flowchart TD
+    subgraph OpenAI["OpenAI Models"]
+        GPT55["GPT-5.5"]
+        CDX["Codex"]
+    end
+
+    subgraph AWS["Amazon Web Services"]
+        Bedrock["Amazon Bedrock"]
+        Agents["Managed Agents"]
+    end
+
+    subgraph Azure["Microsoft Azure"]
+        AOAI["Azure OpenAI Service"]
+    end
+
+    subgraph DB["Databricks"]
+        Unity["Unity Catalog"]
+    end
+
+    GPT55 --> Bedrock
+    CDX --> Bedrock
+    Bedrock --> Agents
+    GPT55 --> AOAI
+    CDX --> AOAI
+    GPT55 --> Unity
+    CDX --> Unity
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef aws fill:#FF9900,stroke:#CC7A00,stroke-width:2px,color:white
+    classDef azure fill:#0078D4,stroke:#005A9E,stroke-width:2px,color:white
+    classDef db fill:#FF3621,stroke:#CC2B1A,stroke-width:2px,color:white
+
+    class GPT55,CDX openai
+    class Bedrock,Agents aws
+    class AOAI azure
+    class Unity db
+                </div>
+            </div>
+            <div class="mermaid-wrapper">
+                <div class="diagram-label">タイムライン</div>
+                <div class="mermaid">
+flowchart LR
+    T1["2026-03-21<br/>Amazon 協議<br/>開始報道"]
+    T2["2026-04-04<br/>Microsoft 自社<br/>AI モデル発表"]
+    T3["2026-04-27<br/>Microsoft 契約<br/>改定発表"]
+    T4["2026-04-28<br/>AWS+Databricks<br/>提供開始"]
+
+    T1 --> T2
+    T2 --> T3
+    T3 --> T4
+
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:3px,color:white
+
+    class T1,T2 dark
+    class T3 dark
+    class T4 highlight
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <div class="section-title">
+                <div class="section-title-icon">&#x1F4DD;</div>
+                コードサンプル
+            </div>
+            <div class="code-block-wrapper">
+                <div class="code-label">Python (boto3) - OpenAI GPT-5.5 via Amazon Bedrock</div>
+                <pre><code class="language-python">import boto3
+import json
+
+bedrock_runtime = boto3.client(
+    "bedrock-runtime",
+    region_name="us-east-1"
+)
+
+# OpenAI GPT-5.5 via Amazon Bedrock
+response = bedrock_runtime.invoke_model(
+    modelId="openai.gpt-5-5",
+    contentType="application/json",
+    accept="application/json",
+    body=json.dumps({
+        "messages": [
+            {"role": "user", "content": "Design a serverless architecture for e-commerce."}
+        ],
+        "max_tokens": 4096,
+        "temperature": 0.7
+    })
+)
+
+result = json.loads(response["body"].read())
+print(result["choices"][0]["message"]["content"])</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <div class="section-title">
+                <div class="section-title-icon">&#x1F4A1;</div>
+                ユースケース
+            </div>
+            <div class="use-cases">
+                <div class="use-case">
+                    <div class="use-case-number">1</div>
+                    <div class="use-case-content">
+                        <h4>エンタープライズ企業</h4>
+                        <p>AWS 既存インフラを活用しながら OpenAI の最先端 AI にアクセス</p>
+                    </div>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-number">2</div>
+                    <div class="use-case-content">
+                        <h4>マルチクラウド戦略</h4>
+                        <p>Azure と AWS の両方で OpenAI モデルを使い分け、ベンダーロックインを回避</p>
+                    </div>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-number">3</div>
+                    <div class="use-case-content">
+                        <h4>AI エージェント開発</h4>
+                        <p>Managed Agents で自律型 AI を AWS のマネージドサービスとして構築</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-divider"></div>
+            <p>Source: <a href="https://openai.com/index/openai-models-codex-and-managed-agents-come-to-aws/" target="_blank" rel="noopener noreferrer">https://openai.com/index/openai-models-codex-and-managed-agents-come-to-aws/</a></p>
+            <p style="margin-top: 8px; color: var(--text-muted);">OpenAI News Infographic | 2026-04-28</p>
+        </footer>
+
+    </div>
+
+    <!-- Highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                background: '#FFFFFF',
+                mainBkg: '#10A37F',
+                nodeBorder: '#0D8A6A',
+                lineColor: '#8E8EA0',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>
