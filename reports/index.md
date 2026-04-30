@@ -5,7 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-04-29](2026/2026-04-29-where-the-goblins-came-from.md) - GPT-5 における「ゴブリン出力」現象の発生原因と対策: モデル行動の大規模デバッグ事例
+- [2026-04-29](2026/2026-04-29-stargate-compute-infrastructure.md) - OpenAI、Stargate プロジェクトを拡大し「知性の時代」を支えるコンピュートインフラを構築
 - [2026-04-29](2026/2026-04-29-openai-commitment-community-safety.md) - OpenAI のコミュニティ安全への取り組み: AI エコシステム全体の安全性を確保する包括的フレームワーク
+- [2026-04-29](2026/2026-04-29-cybersecurity-intelligence-age.md) - インテリジェンス時代のサイバーセキュリティ: OpenAI が提唱する 5 つのアクションプラン
 - [2026-04-28](2026/2026-04-28-openai-python-sdk-v2-33-0.md) - OpenAI Python SDK v2.33.0 リリース: API 更新と prompt_cache_retention 修正
 - [2026-04-28](2026/2026-04-28-openai-models-codex-managed-agents-aws.md) - OpenAI モデル、Codex、Managed Agents が AWS に到来: マルチクラウド時代の幕開け
 - [2026-04-27](2026/2026-04-27-openai-fedramp-moderate.md) - OpenAI が FedRAMP Moderate 認証を取得 -- 米国連邦政府機関へのフロンティア AI 提供が本格始動

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Stargate コンピュートインフラ拡大 - 2026-04-29</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #f0f0f0;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 60%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .header .date {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+        }
+
+        .section {
+            padding: 40px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point .icon {
+            font-size: 1.5rem;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .key-point .content {
+            flex: 1;
+        }
+
+        .key-point .content strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .key-point .content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.15);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-card .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .mermaid-container {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .mermaid-container h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .use-case {
+            padding: 16px 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--openai-green);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 18px;
+            width: 10px;
+            height: 10px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .timeline-item .date-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--openai-green);
+        }
+
+        .timeline-item .event {
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        .timeline-item .meaning {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .table-container th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .table-container td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .table-container tr:hover td {
+            background: var(--openai-light);
+        }
+
+        .footer {
+            background: var(--openai-dark);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 32px 40px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .disclaimer {
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .subsection-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="badge">INFRASTRUCTURE</span>
+            <h1>OpenAI、Stargate プロジェクトを拡大し<br>「知性の時代」を支えるコンピュートインフラを構築</h1>
+            <div class="date">2026-04-29 | OpenAI News</div>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="icon">&#x1F3D7;</div>
+                    <div class="content">
+                        <strong>Stargate プロジェクト再加速</strong>
+                        <p>3 月のデータセンター投資縮小報道から約 1 か月で方針を再調整し、大規模インフラ投資を再び前面に打ち出した</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F4BB;</div>
+                    <div class="content">
+                        <strong>ヘテロジニアスなチップ戦略</strong>
+                        <p>Nvidia GPU、Cerebras WSE、自社 Titan チップを組み合わせた多角的ハードウェアアーキテクチャを採用</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x2601;</div>
+                    <div class="content">
+                        <strong>マルチクラウド戦略との両立</strong>
+                        <p>自社 DC (Stargate) と Azure、Oracle Cloud、AWS を組み合わせたハイブリッドインフラで柔軟性と可用性を両立</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F91D;</div>
+                    <div class="content">
+                        <strong>戦略的パートナーシップ</strong>
+                        <p>SoftBank、Oracle、Microsoft、Cerebras、Samsung との連携でプロジェクトを推進</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x26A1;</div>
+                    <div class="content">
+                        <strong>コンピュート不足の解消</strong>
+                        <p>CFO が認めた需要と供給のギャップを解消し、AGI 開発に必要な計算資源を確保する具体的施策</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 統計情報 (Stats) -->
+        <div class="section">
+            <h2 class="section-title">統計情報</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1,220 億$</div>
+                    <div class="stat-label">資金調達完了額<br>(2026 年 3 月)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">200 億$+</div>
+                    <div class="stat-label">Cerebras チップ<br>契約額</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">数千億$</div>
+                    <div class="stat-label">Stargate<br>総投資額規模</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">GW 級</div>
+                    <div class="stat-label">必要電力<br>インフラ規模</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">72 GPU</div>
+                    <div class="stat-label">GB200 NVL72<br>NVLink 接続</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">400 Gbps+</div>
+                    <div class="stat-label">DC 間光ファイバー<br>リンク帯域</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1.5 TB/s+</div>
+                    <div class="stat-label">HBM4 メモリ帯域<br>(Titan チップ)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5 社</div>
+                    <div class="stat-label">主要戦略<br>パートナー</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要機能 (Feature Cards) -->
+        <div class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F3D7;</div>
+                    <h3>Stargate データセンター群</h3>
+                    <p>米国内で複数のデータセンター拠点を新設・拡張。AI ワークロードに特化した次世代設計を採用</p>
+                    <ul>
+                        <li>安定的な大容量電力供給</li>
+                        <li>気候活用型冷却最適化</li>
+                        <li>低レイテンシ光ファイバー接続</li>
+                        <li>地理的分散と冗長性確保</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F91D;</div>
+                    <h3>戦略的パートナーシップ</h3>
+                    <p>SoftBank、Oracle を中心とする複数パートナーとの協業でプロジェクトを推進</p>
+                    <ul>
+                        <li>SoftBank: 数千億ドル規模の資金提供</li>
+                        <li>Oracle: クラウドインフラ協力</li>
+                        <li>Microsoft: Azure 統合継続</li>
+                        <li>Cerebras / Samsung: チップ供給</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F9E0;</div>
+                    <h3>チップ戦略の多角化</h3>
+                    <p>Nvidia 依存から脱却し、複数チップベンダーを組み合わせたヘテロジニアスアーキテクチャを構築</p>
+                    <ul>
+                        <li>Nvidia H100 / B200 / GB200</li>
+                        <li>Cerebras WSE (推論特化)</li>
+                        <li>自社 Titan チップ (HBM4 搭載)</li>
+                        <li>2026 年後半から Titan 段階投入</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x2601;</div>
+                    <h3>マルチクラウド統合</h3>
+                    <p>自社 DC とクラウドパートナーを組み合わせたハイブリッドインフラで柔軟なリソース配分を実現</p>
+                    <ul>
+                        <li>Microsoft Azure (既存基盤)</li>
+                        <li>Oracle Cloud Infrastructure</li>
+                        <li>AWS Bedrock (4/28 発表)</li>
+                        <li>グローバルロードバランシング</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- チップ仕様テーブル -->
+        <div class="section">
+            <h2 class="section-title">チップ仕様一覧</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>GPU / チップ</th>
+                            <th>用途</th>
+                            <th>特徴</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nvidia H100</strong></td>
+                            <td>トレーニング、推論</td>
+                            <td>80 GB HBM3、3.35 TB/s メモリ帯域</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nvidia B200</strong></td>
+                            <td>次世代トレーニング</td>
+                            <td>Blackwell アーキテクチャ、HBM3E</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GB200 NVL72</strong></td>
+                            <td>超大規模クラスタ</td>
+                            <td>72 GPU を NVLink で接続</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cerebras WSE</strong></td>
+                            <td>AI 推論特化</td>
+                            <td>ウェーハスケール設計、大容量オンチップ SRAM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenAI Titan</strong></td>
+                            <td>トレーニング + 推論</td>
+                            <td>Samsung HBM4 搭載、1.5 TB/s+ 帯域</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 技術詳細 (Mermaid Diagrams) -->
+        <div class="section">
+            <h2 class="section-title">技術詳細</h2>
+
+            <div class="mermaid-container">
+                <h4>Stargate インフラストラクチャ全体像</h4>
+                <div class="mermaid">
+flowchart TD
+    subgraph Stargate["Stargate プロジェクト"]
+        direction TB
+        subgraph DC1["データセンター群"]
+            Site1["サイト A"]
+            Site2["サイト B"]
+            Site3["サイト C"]
+            SiteN["サイト N..."]
+        end
+        subgraph Hardware["ハードウェア"]
+            NVIDIA["Nvidia GPU クラスタ"]
+            Cerebras["Cerebras WSE"]
+            Titan["OpenAI Titan チップ"]
+        end
+    end
+
+    subgraph Partners["戦略パートナー"]
+        SoftBank["SoftBank"]
+        Oracle["Oracle"]
+    end
+
+    subgraph Cloud["マルチクラウド"]
+        Azure["Microsoft Azure"]
+        OCI["Oracle Cloud"]
+        AWS["Amazon Web Services"]
+    end
+
+    subgraph Workloads["AI ワークロード"]
+        Training["モデルトレーニング"]
+        Inference["推論処理"]
+        Agents["エージェント実行"]
+    end
+
+    SoftBank -->|資金提供| Stargate
+    Oracle -->|インフラ協力| Stargate
+    DC1 --> Hardware
+    Hardware --> Workloads
+    Cloud --> Workloads
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef partner fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Site1,Site2,Site3,SiteN openai
+    class NVIDIA,Cerebras,Titan dark
+    class Training,Inference,Agents openai
+    class Azure,OCI,AWS light
+    class SoftBank,Oracle partner
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h4>チップ供給エコシステム</h4>
+                <div class="mermaid">
+flowchart LR
+    subgraph Suppliers["チップサプライヤー"]
+        NVDA["Nvidia"]
+        CRBS["Cerebras"]
+        SMSG["Samsung"]
+        TSMC["TSMC"]
+    end
+
+    subgraph OpenAI["OpenAI チップ戦略"]
+        GPU["GPU 調達"]
+        WSE["WSE 調達"]
+        TitanDev["Titan 開発"]
+        HBM["HBM4 調達"]
+    end
+
+    subgraph Deployment["デプロイ先"]
+        SGate["Stargate DC"]
+        CloudDC["クラウド DC"]
+    end
+
+    NVDA -->|H100 / B200| GPU
+    CRBS -->|WSE チップ| WSE
+    SMSG -->|HBM4| HBM
+    TSMC -->|製造| TitanDev
+    HBM --> TitanDev
+
+    GPU --> SGate
+    WSE --> SGate
+    TitanDev --> SGate
+    GPU --> CloudDC
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPU,WSE,TitanDev,HBM openai
+    class SGate,CloudDC dark
+    class NVDA,CRBS,SMSG,TSMC light
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h4>マルチクラウド配信アーキテクチャ</h4>
+                <div class="mermaid">
+flowchart TD
+    subgraph Users["ユーザー"]
+        Dev["開発者"]
+        Ent["エンタープライズ"]
+        ChatGPT["ChatGPT ユーザー"]
+    end
+
+    subgraph LB["ロードバランシング"]
+        GLB["グローバル LB"]
+    end
+
+    subgraph Infra["コンピュートインフラ"]
+        subgraph Self["Stargate 自社 DC"]
+            SG1["Stargate クラスタ A"]
+            SG2["Stargate クラスタ B"]
+        end
+        subgraph Cloud["クラウドパートナー"]
+            AZ["Azure"]
+            OC["Oracle Cloud"]
+            AW["AWS Bedrock"]
+        end
+    end
+
+    subgraph Models["モデル"]
+        GPT55["GPT-5.5"]
+        Codex["Codex"]
+        Future["次世代モデル"]
+    end
+
+    Users --> GLB
+    GLB --> Self
+    GLB --> Cloud
+    Self --> Models
+    Cloud --> Models
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class SG1,SG2 openai
+    class GPT55,Codex,Future openai
+    class AZ,OC,AW light
+    class GLB dark
+    class Dev,Ent,ChatGPT light
+                </div>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>API 応答速度の向上</h4>
+                <p>データセンター容量の増加により、推論処理のキューイング時間が短縮され、API のレイテンシが改善される見込み</p>
+            </div>
+            <div class="use-case">
+                <h4>レート制限の緩和</h4>
+                <p>コンピュートリソースの拡充に伴い、API のレート制限 (RPM / TPM) が段階的に引き上げられる可能性</p>
+            </div>
+            <div class="use-case">
+                <h4>可用性の向上</h4>
+                <p>複数データセンターへの地理的分散により、障害時のフェイルオーバーが強化され、サービスの可用性が向上</p>
+            </div>
+            <div class="use-case">
+                <h4>マルチクラウド対応</h4>
+                <p>AWS、Azure、Oracle Cloud のいずれからでも OpenAI モデルにアクセス可能。既存クラウドインフラとの統合が容易に</p>
+            </div>
+            <div class="use-case">
+                <h4>Codex エージェントのスケーラビリティ</h4>
+                <p>コンピュートリソースの増加により、Codex エージェントの同時実行数やタスク処理能力が向上</p>
+            </div>
+            <div class="use-case">
+                <h4>コスト最適化の可能性</h4>
+                <p>インフラの効率化とスケールメリットにより、長期的には API 利用料金の引き下げにつながる可能性</p>
+            </div>
+            <div class="use-case">
+                <h4>新モデルへのアクセス</h4>
+                <p>十分なコンピュートリソース確保により、次世代モデルのリリース頻度や同時利用可能なモデル数が増加</p>
+            </div>
+            <div class="use-case">
+                <h4>エンタープライズ対応強化</h4>
+                <p>データレジデンシー要件への対応、専用インスタンスの提供など、エンタープライズ向けオプションの拡充</p>
+            </div>
+
+            <h3 class="subsection-title">短期的な影響 (2026 年下半期)</h3>
+            <div class="use-case">
+                <h4>段階的なキャパシティ増加</h4>
+                <p>データセンターの新規稼働に伴い段階的に容量が拡大。一部リージョンでの API レイテンシ改善。AWS Bedrock 経由での利用開始 (4/28 発表済み)</p>
+            </div>
+
+            <h3 class="subsection-title">中長期的な影響 (2027 年以降)</h3>
+            <div class="use-case">
+                <h4>次世代インフラの本格稼働</h4>
+                <p>Titan チップによる推論コスト大幅削減、Cerebras WSE によるリアルタイム推論能力の飛躍的向上、AGI 級モデルの開発・提供を可能にするコンピュート基盤の完成</p>
+            </div>
+        </div>
+
+        <!-- 時系列 -->
+        <div class="section">
+            <h2 class="section-title">時系列: OpenAI インフラ戦略の変遷</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="date-label">2026-03-21</div>
+                    <div class="event">Samsung HBM4 の OpenAI Titan チップ向け供給が判明</div>
+                    <div class="meaning">自社チップ開発の本格化</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-03-22</div>
+                    <div class="event">データセンター投資縮小、Nvidia 契約見直しが報道</div>
+                    <div class="meaning">IPO に向けた財務規律重視への転換</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-03-31</div>
+                    <div class="event">1,220 億ドルの資金調達完了</div>
+                    <div class="meaning">史上最大規模の AI 投資資金確保</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-04-05</div>
+                    <div class="event">CFO がコンピュート不足を認める</div>
+                    <div class="meaning">需要と供給のギャップの深刻さが顕在化</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-04-10</div>
+                    <div class="event">Stargate 主要幹部 3 名が Meta へ移籍</div>
+                    <div class="meaning">インフラチームの再編が必要に</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-04-17</div>
+                    <div class="event">Cerebras と 200 億ドル超のチップ契約締結</div>
+                    <div class="meaning">Nvidia 依存脱却、推論チップの多角化</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-04-27</div>
+                    <div class="event">Microsoft パートナーシップ契約改定</div>
+                    <div class="meaning">マルチクラウド戦略の法的基盤確立</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-04-28</div>
+                    <div class="event">OpenAI モデルが AWS に展開</div>
+                    <div class="meaning">マルチクラウド戦略の実行開始</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date-label">2026-04-29</div>
+                    <div class="event">Stargate スケールアップ発表 (本記事)</div>
+                    <div class="meaning">コンピュートインフラの本格拡充</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 業界への影響 -->
+        <div class="section">
+            <h2 class="section-title">業界への影響</h2>
+
+            <h3 class="subsection-title">AI インフラ投資競争の激化</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>企業</th>
+                            <th>対応</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Google</strong></td>
+                            <td>TPU v6 (Trillium) の大規模展開と自社データセンターの拡張を継続</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Meta</strong></td>
+                            <td>OpenAI の Stargate 幹部 3 名を引き抜き、自社 AI インフラを積極強化</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Microsoft</strong></td>
+                            <td>独占契約解消後も Azure インフラ拡充を継続、自社モデル開発にも投資</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amazon</strong></td>
+                            <td>AWS Bedrock への OpenAI モデル統合により、AI クラウド市場での存在感を強化</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="subsection-title">半導体サプライチェーンへの影響</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>企業</th>
+                            <th>影響</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nvidia</strong></td>
+                            <td>大口需要は継続するが、Cerebras / Titan への分散により独占的地位は徐々に希薄化</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cerebras</strong></td>
+                            <td>200 億ドル契約に基づく量産体制確立が課題。IPO に向けた追い風</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Samsung</strong></td>
+                            <td>HBM4 の量産能力が Titan チップ展開スケジュールを左右</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TSMC</strong></td>
+                            <td>Titan チップの製造パートナーとして先端プロセスの生産枠確保が重要</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                <a href="https://openai.com/index/building-the-compute-infrastructure-for-the-intelligence-age" target="_blank" rel="noopener noreferrer">
+                    Building the compute infrastructure for the Intelligence Age - OpenAI 公式ブログ
+                </a>
+            </p>
+            <p class="disclaimer">
+                本レポートは OpenAI 公式ブログの RSS フィード情報、関連する報道および過去のレポートに基づいて作成されている。元記事の全文はアクセス制限により取得できなかったため、一部推測を含む可能性がある。投資判断や事業判断には、必ず公式ソースおよび最新情報を参照されたい。
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
