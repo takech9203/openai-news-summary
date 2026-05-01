@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Account Security - OpenAI News Summary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #f0f0f0;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            padding: 40px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .key-point .icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .key-point .content {
+            flex: 1;
+        }
+
+        .key-point .content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point .content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2717';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-card {
+            padding: 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 163, 127, 0.12);
+        }
+
+        .feature-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 8px;
+        }
+
+        .feature-card ul {
+            padding-left: 20px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Tables */
+        .tier-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.85rem;
+        }
+
+        .tier-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .tier-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .tier-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            margin: 24px 0;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            padding: 20px 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .use-case p, .use-case ul {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            margin-bottom: 4px;
+        }
+
+        /* FAQ */
+        .faq-item {
+            margin-bottom: 20px;
+            padding: 20px 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .faq-item .question {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .faq-item .question::before {
+            content: 'Q';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .faq-item .answer {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding-left: 32px;
+        }
+
+        /* Note box */
+        .note-box {
+            padding: 16px 20px;
+            background: #FFF9E6;
+            border: 1px solid #F5E6B8;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            color: #6B5E00;
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 32px 40px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .disclaimer {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Session Security */
+        .session-list {
+            padding-left: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .session-list li {
+            margin-bottom: 6px;
+        }
+
+        .session-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.35rem;
+            }
+
+            .section {
+                padding: 28px 20px;
+            }
+
+            .section-title {
+                font-size: 1.15rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="badge">PRODUCT / SECURITY</span>
+            <h1>Advanced Account Security: フィッシング耐性認証とアカウント保護の強化</h1>
+            <div class="date">2026-04-30 | OpenAI News</div>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="note-box">
+                本レポートは、OpenAI 公式ブログの RSS フィード情報および関連する公開情報に基づいて作成されている。正確な詳細については公式ページを参照されたい。
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="icon">&#x1F510;</div>
+                    <div class="content">
+                        <h4>フィッシング耐性認証</h4>
+                        <p>パスキー / FIDO2 / WebAuthn 標準に準拠。オリジン検証によりフィッシングサイトでの認証を技術的に不可能にし、パスワードレス認証への移行パスを提供</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F504;</div>
+                    <div class="content">
+                        <h4>リカバリー強化</h4>
+                        <p>ソーシャルエンジニアリング耐性、複数のリカバリーパス、冷却期間の導入、信頼できるデバイスの活用によりアカウント復旧の安全性を飛躍的に向上</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F6E1;</div>
+                    <div class="content">
+                        <h4>拡張保護</h4>
+                        <p>セッション管理の強化、API キーのセキュリティ強化、監査ログ、機械学習ベースの異常検出、IP ホワイトリストを含む多層的な防衛を実現</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After 比較 -->
+        <div class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>&#x274C; 従来の認証</h4>
+                    <ul>
+                        <li>パスワード + SMS OTP に依存</li>
+                        <li>SIM スワップ攻撃に脆弱</li>
+                        <li>リアルタイムフィッシングプロキシに無防備</li>
+                        <li>リカバリーがソーシャルエンジニアリングの対象</li>
+                        <li>セッション管理が限定的</li>
+                        <li>異常検出なし</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>&#x2705; Advanced Account Security</h4>
+                    <ul>
+                        <li>パスキー / FIDO2 によるフィッシング耐性</li>
+                        <li>ハードウェアセキュリティキー対応</li>
+                        <li>オリジン自動検証で偽サイト無効化</li>
+                        <li>冷却期間 + 信頼デバイスでリカバリー保護</li>
+                        <li>リスクベース認証とセッション強化</li>
+                        <li>ML ベースの行動異常検出</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要機能カード -->
+        <div class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F511;</div>
+                    <h4>フィッシング耐性認証</h4>
+                    <p>FIDO2/WebAuthn 標準に基づくパスキー認証</p>
+                    <ul>
+                        <li>パスキー (Passkeys) サポート</li>
+                        <li>ハードウェアセキュリティキー対応</li>
+                        <li>オリジン (ドメイン) 自動検証</li>
+                        <li>パスワードレス認証への段階的移行</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F504;</div>
+                    <h4>リカバリー強化</h4>
+                    <p>アカウント復旧の最も脆弱なポイントを保護</p>
+                    <ul>
+                        <li>なりすまし防止の追加検証ステップ</li>
+                        <li>複数のリカバリーパスの設定</li>
+                        <li>暗号学的に安全なリカバリーコード</li>
+                        <li>冷却期間 (Cooling-off Period)</li>
+                        <li>信頼できるデバイスからの確認</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F6E1;</div>
+                    <h4>拡張保護</h4>
+                    <p>多層的なセキュリティレイヤー</p>
+                    <ul>
+                        <li>セッション管理の強化と不審検出</li>
+                        <li>API キーの権限スコープ細分化</li>
+                        <li>詳細な監査ログとリアルタイム通知</li>
+                        <li>ML ベースの行動分析と異常検出</li>
+                        <li>IP アドレスホワイトリスト</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F3E2;</div>
+                    <h4>Enterprise / API</h4>
+                    <p>組織レベルのセキュリティ管理</p>
+                    <ul>
+                        <li>パスキー強制適用ポリシー</li>
+                        <li>API キー自動ローテーション</li>
+                        <li>セキュリティ状態の可視化ダッシュボード</li>
+                        <li>SSO/SAML 連携の強化 (Okta, Azure AD 等)</li>
+                        <li>コンプライアンスレポート生成</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技術詳細 -->
+        <div class="section">
+            <h2 class="section-title">技術詳細</h2>
+
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">FIDO2 / WebAuthn / パスキー</h3>
+            <table class="tier-table">
+                <thead>
+                    <tr>
+                        <th>技術要素</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>WebAuthn</strong></td>
+                        <td>W3C 標準の Web 認証 API。ブラウザとサーバー間の認証プロトコル</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FIDO2</strong></td>
+                        <td>FIDO Alliance が策定した認証フレームワーク。WebAuthn + CTAP2 で構成</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CTAP2</strong></td>
+                        <td>Client to Authenticator Protocol。外部認証器との通信プロトコル</td>
+                    </tr>
+                    <tr>
+                        <td><strong>パスキー</strong></td>
+                        <td>FIDO2 ベースのクレデンシャル。デバイス間同期が可能</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 16px 0; line-height: 1.7;"><strong>認証フロー:</strong> 1. 登録時にデバイスが公開鍵ペアを生成し公開鍵をサーバーに送信 → 2. 認証時にサーバーがチャレンジを送信しデバイスが秘密鍵で署名 → 3. オリジン検証によりフィッシングサイトでの認証を技術的に不可能に</p>
+
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 24px 0 16px 0;">MFA (多要素認証) の階層</h3>
+            <table class="tier-table">
+                <thead>
+                    <tr>
+                        <th>認証要素</th>
+                        <th>具体例</th>
+                        <th>セキュリティレベル</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>所持要素</strong> (Something you have)</td>
+                        <td>パスキー、ハードウェアキー、認証アプリ</td>
+                        <td style="color: var(--openai-green); font-weight: 700;">高</td>
+                    </tr>
+                    <tr>
+                        <td><strong>知識要素</strong> (Something you know)</td>
+                        <td>パスワード、PIN、リカバリーコード</td>
+                        <td style="color: #F59E0B; font-weight: 700;">中</td>
+                    </tr>
+                    <tr>
+                        <td><strong>生体要素</strong> (Something you are)</td>
+                        <td>指紋、顔認証 (デバイス側)</td>
+                        <td style="color: var(--openai-green); font-weight: 700;">高</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 24px 0 16px 0;">セッションセキュリティ</h3>
+            <ul class="session-list">
+                <li><strong>トークンバインディング:</strong> セッショントークンをデバイスの暗号鍵にバインドし、トークン盗用によるセッションハイジャックを防止</li>
+                <li><strong>短命トークン:</strong> アクセストークンの有効期限を短縮し、リフレッシュトークンによる定期的な再認証を強制</li>
+                <li><strong>リスクベース認証:</strong> ログインコンテキスト (デバイス、ネットワーク、地理情報、行動パターン) に基づきリスクスコアを算出し追加認証を要求</li>
+            </ul>
+        </div>
+
+        <!-- アーキテクチャ図 -->
+        <div class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+
+            <div class="mermaid-container">
+                <div class="mermaid-title">Advanced Account Security 全体像</div>
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー"]
+        BROWSER["ブラウザ / アプリ"]
+        PASSKEY["パスキー / セキュリティキー"]
+        BIOMETRIC["生体認証"]
+    end
+
+    subgraph AuthLayer["認証レイヤー"]
+        WEBAUTHN["WebAuthn API"]
+        FIDO2["FIDO2 サーバー"]
+        RISK["リスク分析エンジン"]
+        MFA["MFA オーケストレーター"]
+    end
+
+    subgraph Protection["保護レイヤー"]
+        SESSION["セッション管理"]
+        AUDIT["監査ログ"]
+        ANOMALY["異常検出"]
+        RECOVERY["リカバリーシステム"]
+    end
+
+    subgraph Platform["OpenAI プラットフォーム"]
+        CHATGPT["ChatGPT"]
+        API["API"]
+        ENTERPRISE["Enterprise"]
+        ADMIN["管理コンソール"]
+    end
+
+    BROWSER --> WEBAUTHN
+    PASSKEY --> WEBAUTHN
+    BIOMETRIC --> WEBAUTHN
+    WEBAUTHN --> FIDO2
+    FIDO2 --> RISK
+    RISK --> MFA
+    MFA --> SESSION
+    SESSION --> CHATGPT
+    SESSION --> API
+    SESSION --> ENTERPRISE
+    SESSION --> ADMIN
+    AUDIT --> ANOMALY
+    SESSION --> AUDIT
+    ANOMALY --> MFA
+    RECOVERY --> FIDO2
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class WEBAUTHN,FIDO2,RISK,MFA openai
+    class SESSION,AUDIT,ANOMALY,RECOVERY dark
+    class BROWSER,PASSKEY,BIOMETRIC light
+    class CHATGPT,API,ENTERPRISE,ADMIN accent
+                </pre>
+            </div>
+
+            <div class="mermaid-container">
+                <div class="mermaid-title">認証フロー</div>
+                <pre class="mermaid">
+flowchart LR
+    subgraph Login["ログインフロー"]
+        START["ログイン開始"]
+        CHECK["パスキー確認"]
+        CHALLENGE["チャレンジ送信"]
+        SIGN["秘密鍵で署名"]
+        VERIFY["署名検証"]
+    end
+
+    subgraph RiskAssess["リスク評価"]
+        CONTEXT["コンテキスト収集"]
+        SCORE["リスクスコア算出"]
+        DECISION{"追加認証\n必要?"}
+    end
+
+    subgraph Additional["追加認証"]
+        STEP_UP["ステップアップ認証"]
+        APPROVE_DEVICE["デバイス確認"]
+    end
+
+    subgraph Result["結果"]
+        GRANT["アクセス許可"]
+        DENY["アクセス拒否"]
+        ALERT["セキュリティアラート"]
+    end
+
+    START --> CHECK
+    CHECK --> CHALLENGE
+    CHALLENGE --> SIGN
+    SIGN --> VERIFY
+    VERIFY --> CONTEXT
+    CONTEXT --> SCORE
+    SCORE --> DECISION
+    DECISION -->|"低リスク"| GRANT
+    DECISION -->|"中リスク"| STEP_UP
+    DECISION -->|"高リスク"| DENY
+    STEP_UP --> APPROVE_DEVICE
+    APPROVE_DEVICE --> GRANT
+    DENY --> ALERT
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class CHECK,CHALLENGE,SIGN,VERIFY openai
+    class CONTEXT,SCORE,DECISION dark
+    class STEP_UP,APPROVE_DEVICE accent
+    class START,GRANT,DENY,ALERT light
+                </pre>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>&#x1F4BB; API 開発者</h4>
+                <ul>
+                    <li>API キーの生成・管理フローにパスキー認証が必須化される可能性</li>
+                    <li>自動化スクリプトからのキー管理にはサービスアカウントやトークンベースの認証が必要になる場合がある</li>
+                    <li>ダッシュボードや Playground へのアクセスでセッション有効期限短縮や追加認証要求が増加</li>
+                    <li>セキュリティイベントに対するリアルタイム通知のための Webhook エンドポイント設定が可能に</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3E2; Enterprise 管理者</h4>
+                <ul>
+                    <li>組織内全メンバーにパスキー登録や MFA 有効化を必須とするポリシー設定が可能に</li>
+                    <li>SOC 2、ISO 27001 等のコンプライアンス要件に対応した監査ログとレポートの自動生成</li>
+                    <li>アカウント侵害の疑いがある場合の即座のアクセス停止、セッション無効化の管理者制御</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4AC; ChatGPT ユーザー</h4>
+                <ul>
+                    <li>パスキーによるワンタップ認証で、パスワード入力なしの迅速なログインが可能に</li>
+                    <li>新しいデバイスからのログイン、設定変更等のセキュリティイベントに対する即時通知</li>
+                    <li>会話履歴やカスタム指示等の機密データがより強固な認証によって保護される</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section">
+            <h2 class="section-title">FAQ</h2>
+            <div class="faq-item">
+                <div class="question">パスキーを設定しない場合、既存のパスワード認証は引き続き利用できるか?</div>
+                <div class="answer">現時点では、パスキーへの即座の完全移行が強制されるとは考えにくい。多くのサービスと同様に、段階的な移行アプローチが取られると推測される。ただし、Enterprise プランでは組織管理者がパスキー必須のポリシーを設定できるようになる可能性がある。一般ユーザーについても、将来的にはパスキーが推奨認証方式として位置付けられることが予想される。</div>
+            </div>
+            <div class="faq-item">
+                <div class="question">API の自動化ワークフローに影響はあるか?</div>
+                <div class="answer">API キー自体の利用方法 (Bearer トークンとしてのリクエストヘッダーへの付加) は変更されないと考えられる。影響があるのは、API キーの生成・管理・ローテーションといったダッシュボード操作である。これらの操作にパスキー認証が要求される場合、自動化されたキー管理フローにはサービスアカウントや管理用 API トークンの利用が必要になる可能性がある。</div>
+            </div>
+            <div class="faq-item">
+                <div class="question">リカバリー手段をすべて失った場合のアカウント復旧は可能か?</div>
+                <div class="answer">一般的にフィッシング耐性認証を提供するサービスでは、複数のリカバリー手段 (バックアップパスキー、リカバリーコード、信頼できるデバイス) の事前登録を強く推奨している。すべてのリカバリー手段を失った場合の復旧プロセスは、本人確認に追加の時間と手順が必要になると考えられる。</div>
+            </div>
+            <div class="faq-item">
+                <div class="question">この機能は ChatGPT 無料ユーザーにも提供されるか?</div>
+                <div class="answer">RSS の説明文には対象ユーザーの限定に関する言及がないため、基本的なフィッシング耐性認証 (パスキーサポート) は全ユーザーに提供される可能性が高い。ただし、高度な監査ログ、IP ホワイトリスト、組織レベルのポリシー管理等の Enterprise 向け機能は、有料プランに限定される可能性がある。</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/advanced-account-security" target="_blank" rel="noopener noreferrer">https://openai.com/index/advanced-account-security</a></p>
+            <p class="disclaimer">本レポートは公開情報に基づいて作成されており、OpenAI の公式見解を代表するものではない。具体的な機能の詳細、提供時期、対象プランについては、OpenAI 公式ページを参照されたい。</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
