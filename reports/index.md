@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-02](2026/2026-05-02-openai-agents-sdk-v0-15-1.md) - OpenAI Agents SDK v0.15.1 リリース: WebSocket keepalive オプション公開と PTY シグナル修正
+- [2026-05-01](2026/2026-05-01-openai-agents-sdk-v0-15-0.md) - Agents SDK v0.15.0: ModelRefusalError によるモデル応答拒否の明示的ハンドリング
 - [2026-04-30](2026/2026-04-30-advanced-account-security.md) - OpenAI Advanced Account Security の導入: フィッシング耐性認証とアカウント保護の強化
 - [2026-04-29](2026/2026-04-29-where-the-goblins-came-from.md) - GPT-5 における「ゴブリン出力」現象の発生原因と対策: モデル行動の大規模デバッグ事例
 - [2026-04-29](2026/2026-04-29-stargate-compute-infrastructure.md) - OpenAI、Stargate プロジェクトを拡大し「知性の時代」を支えるコンピュートインフラを構築

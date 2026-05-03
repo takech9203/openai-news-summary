@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Agents SDK v0.15.1 - OpenAI News Summary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #f0f0f0;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            padding: 40px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .key-point .icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .key-point .content {
+            flex: 1;
+        }
+
+        .key-point .content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point .content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2717';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-card {
+            padding: 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 163, 127, 0.12);
+        }
+
+        .feature-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 8px;
+        }
+
+        .feature-card ul {
+            padding-left: 20px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Code Block */
+        .code-block {
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 16px 20px;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-block .code-title {
+            background: #282c34;
+            color: #ABB2BF;
+            padding: 8px 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-bottom: 1px solid #3e4451;
+        }
+
+        /* Tables */
+        .tier-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.85rem;
+        }
+
+        .tier-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .tier-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .tier-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            margin: 24px 0;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            padding: 20px 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .use-case p, .use-case ul {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px 12px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .stat-card .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Note box */
+        .note-box {
+            padding: 16px 20px;
+            background: #FFF9E6;
+            border: 1px solid #F5E6B8;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            color: #6B5E00;
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 32px 40px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .disclaimer {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.35rem;
+            }
+
+            .section {
+                padding: 28px 20px;
+            }
+
+            .section-title {
+                font-size: 1.15rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="badge">API UPDATE / SDK</span>
+            <h1>OpenAI Agents SDK v0.15.1: WebSocket keepalive と PTY シグナル修正</h1>
+            <div class="date">2026-05-02 | OpenAI API Changelog (GitHub Release)</div>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">コミット</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">25</div>
+                    <div class="stat-label">変更ファイル</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">新機能</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">バグ修正</div>
+                </div>
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="icon">&#x1F517;</div>
+                    <div class="content">
+                        <h4>WebSocket keepalive オプション公開</h4>
+                        <p>長時間実行されるエージェントセッションでの WebSocket 接続タイムアウトを防止するため、keepalive_interval と keepalive_timeout パラメータを開発者に公開</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F6E0;</div>
+                    <div class="content">
+                        <h4>PTY SIGINT シグナルのデフォルト復元</h4>
+                        <p>UnixLocal サンドボックスの PTY 子プロセスで Ctrl+C が正常に動作しなかった問題を修正。signal.SIG_DFL へのリセット処理を追加</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F4DA;</div>
+                    <div class="content">
+                        <h4>ドキュメントと品質向上</h4>
+                        <p>Windows クイックスタート改善、日本語/韓国語/中国語翻訳更新、テスト追加、CI フィクスチャ堅牢化を含む包括的な保守リリース</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After 比較 -->
+        <div class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>v0.15.0 (修正前)</h4>
+                    <ul>
+                        <li>WebSocket keepalive が内部固定値</li>
+                        <li>長時間セッションでタイムアウト発生</li>
+                        <li>プロキシ環境で接続切断</li>
+                        <li>PTY 子プロセスが SIGINT を無視</li>
+                        <li>Ctrl+C でプロセスがハング</li>
+                        <li>強制終了 (SIGKILL) が必要</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>v0.15.1 (修正後)</h4>
+                    <ul>
+                        <li>keepalive パラメータをカスタマイズ可能</li>
+                        <li>任意の間隔で Ping/Pong 通信</li>
+                        <li>プロキシのタイムアウトに合わせて設定可能</li>
+                        <li>PTY 子プロセスで SIG_DFL を復元</li>
+                        <li>Ctrl+C で正常にプロセス終了</li>
+                        <li>テストにより動作を保証</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要機能カード -->
+        <div class="section">
+            <h2 class="section-title">主要変更点</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F517;</div>
+                    <h4>WebSocket Keepalive</h4>
+                    <p>PR #3080 により WebSocket 接続の keepalive オプションを開発者に公開</p>
+                    <ul>
+                        <li>keepalive_interval の設定</li>
+                        <li>keepalive_timeout の設定</li>
+                        <li>Ping/Pong フレームによる接続維持</li>
+                        <li>プロキシ/LB タイムアウト対策</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F6E0;</div>
+                    <h4>PTY SIGINT 修正</h4>
+                    <p>PR #3082, #3075 により PTY 子プロセスのシグナルデフォルトを復元</p>
+                    <ul>
+                        <li>signal.SIG_DFL へのリセット</li>
+                        <li>Ctrl+C による正常中断を回復</li>
+                        <li>Issue #3074 の解決</li>
+                        <li>41 行のテストで動作保証</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F4C4;</div>
+                    <h4>ドキュメント改善</h4>
+                    <p>多言語対応とクロスプラットフォーム対応の強化</p>
+                    <ul>
+                        <li>Windows クイックスタート (+24 行)</li>
+                        <li>日本語/韓国語/中国語翻訳更新</li>
+                        <li>v0.15 チェンジログ追加</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x2699;</div>
+                    <h4>テストと CI</h4>
+                    <p>品質保証インフラの強化</p>
+                    <ul>
+                        <li>ガードレール __name__ フォールバックテスト</li>
+                        <li>SIGINT 動作テスト (41 行)</li>
+                        <li>Dapr Redis フィクスチャ堅牢化</li>
+                        <li>合計 100+ 行のテスト追加</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技術詳細 -->
+        <div class="section">
+            <h2 class="section-title">技術詳細</h2>
+
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">WebSocket Keepalive メカニズム</h3>
+            <table class="tier-table">
+                <thead>
+                    <tr>
+                        <th>パラメータ</th>
+                        <th>説明</th>
+                        <th>推奨値</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>keepalive_interval</strong></td>
+                        <td>Ping フレーム送信間隔 (秒)</td>
+                        <td>20-30 秒</td>
+                    </tr>
+                    <tr>
+                        <td><strong>keepalive_timeout</strong></td>
+                        <td>Pong レスポンス待機時間 (秒)</td>
+                        <td>5-10 秒</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 16px 0; line-height: 1.7;"><strong>動作原理:</strong> クライアントが定期的に WebSocket Ping フレームを送信し、サーバーから Pong フレームの応答を受け取ることで接続の活性を維持する。keepalive_timeout 内に Pong が返されない場合、接続が切断されたと判断し再接続を試行する。</p>
+
+            <div class="code-block">
+                <div class="code-title">WebSocket keepalive の使用例</div>
+                <pre><code class="language-python">from agents import Agent
+from agents.responses_websocket_session import ResponsesWebSocketSession
+
+agent = Agent(
+    name="research_agent",
+    instructions="You are a research assistant.",
+    model="gpt-4o",
+)
+
+# keepalive オプションを指定して WebSocket セッションを作成
+session = ResponsesWebSocketSession(
+    agent=agent,
+    keepalive_interval=30,  # 30 秒ごとに Ping 送信
+    keepalive_timeout=10,   # Pong の応答待ち 10 秒
+)
+
+async with session:
+    response = await session.send("Analyze this data...")
+    print(response)</code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 24px 0 16px 0;">PTY SIGINT 修正の技術背景</h3>
+            <table class="tier-table">
+                <thead>
+                    <tr>
+                        <th>概念</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>PTY (疑似端末)</strong></td>
+                        <td>Unix でターミナルをエミュレートするデバイスペア。サンドボックス内のプロセス実行に使用</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SIGINT</strong></td>
+                        <td>割り込みシグナル (Ctrl+C)。デフォルト動作はプロセス終了</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SIG_DFL</strong></td>
+                        <td>シグナルのデフォルトハンドラ。子プロセスで明示的にリセットが必要</td>
+                    </tr>
+                    <tr>
+                        <td><strong>シグナル継承</strong></td>
+                        <td>fork() で生成された子プロセスは親のシグナルハンドラを継承する</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <div class="code-title">PTY シグナル修正の概念 (unix_local.py)</div>
+                <pre><code class="language-python">import signal
+import pty
+
+def spawn_sandbox_process(command: str):
+    """PTY 子プロセスの生成 (v0.15.1 修正後)"""
+
+    pid, fd = pty.fork()
+
+    if pid == 0:
+        # 子プロセス: SIGINT をデフォルトにリセット
+        # これにより Ctrl+C で正常終了が可能に
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+        os.execvp("/bin/sh", ["/bin/sh", "-c", command])
+    else:
+        # 親プロセス
+        return pid, fd</code></pre>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 24px 0 16px 0;">主要ファイル変更</h3>
+            <table class="tier-table">
+                <thead>
+                    <tr>
+                        <th>ファイル</th>
+                        <th>変更</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>openai_responses.py</strong></td>
+                        <td>+35 -4</td>
+                        <td>Responses モデルの拡張</td>
+                    </tr>
+                    <tr>
+                        <td><strong>openai_provider.py</strong></td>
+                        <td>+21 -8</td>
+                        <td>OpenAI プロバイダー更新</td>
+                    </tr>
+                    <tr>
+                        <td><strong>responses_websocket_session.py</strong></td>
+                        <td>+6</td>
+                        <td>keepalive オプション公開</td>
+                    </tr>
+                    <tr>
+                        <td><strong>unix_local.py</strong></td>
+                        <td>+9</td>
+                        <td>SIGINT デフォルト復元</td>
+                    </tr>
+                    <tr>
+                        <td><strong>__init__.py</strong></td>
+                        <td>+6 -1</td>
+                        <td>エクスポート更新</td>
+                    </tr>
+                    <tr>
+                        <td><strong>multi_provider.py</strong></td>
+                        <td>+5</td>
+                        <td>マルチプロバイダー対応</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- アーキテクチャ図 -->
+        <div class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+
+            <div class="mermaid-container">
+                <div class="mermaid-title">Agents SDK v0.15.1 コンポーネント構成</div>
+                <pre class="mermaid">
+flowchart TD
+    subgraph SDK["OpenAI Agents SDK v0.15.1"]
+        subgraph Core["Core"]
+            Agent["Agent"]
+            Runner["Runner"]
+        end
+
+        subgraph Models["Models"]
+            Provider["openai_provider\n(+21 -8)"]
+            Responses["openai_responses\n(+35 -4)"]
+            Multi["multi_provider\n(+5)"]
+        end
+
+        subgraph WS["WebSocket"]
+            Session["websocket_session\n(+6)"]
+            KA["keepalive\n(NEW)"]
+        end
+
+        subgraph SB["Sandbox"]
+            Unix["unix_local\n(+9)"]
+            SIG["SIG_DFL reset\n(FIX)"]
+        end
+    end
+
+    subgraph API["OpenAI API"]
+        RESP["Responses API"]
+        WSEP["WebSocket Endpoint"]
+    end
+
+    subgraph DEV["Developer"]
+        TERM["Terminal\n(Ctrl+C)"]
+        APP["Application"]
+    end
+
+    Agent --> Runner
+    Runner --> Provider
+    Provider --> RESP
+    Session --> WSEP
+    KA --> Session
+    Unix --> SIG
+    TERM --> SIG
+    APP --> KA
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef feature fill:#ECECF1,stroke:#10A37F,stroke-width:3px,color:#343541
+
+    class RESP,WSEP dark
+    class Agent,Runner,Provider,Responses,Multi,Session,Unix openai
+    class TERM,APP light
+    class KA,SIG feature
+                </pre>
+            </div>
+
+            <div class="mermaid-container">
+                <div class="mermaid-title">WebSocket Keepalive シーケンス</div>
+                <pre class="mermaid">
+sequenceDiagram
+    participant C as Agents SDK
+    participant P as Proxy/LB
+    participant S as OpenAI API
+
+    C->>S: WebSocket Upgrade
+    S-->>C: 101 Switching Protocols
+
+    C->>S: Agent Message
+    S-->>C: Response
+
+    Note over C,S: Idle Period
+
+    rect rgb(16, 163, 127, 0.1)
+        Note over C: keepalive_interval elapsed
+        C->>P: Ping Frame
+        P->>S: Ping Frame
+        S-->>P: Pong Frame
+        P-->>C: Pong Frame
+        Note over P: Idle timer reset
+    end
+
+    rect rgb(16, 163, 127, 0.1)
+        Note over C: keepalive_interval elapsed
+        C->>P: Ping Frame
+        P->>S: Ping Frame
+        S-->>P: Pong Frame
+        P-->>C: Pong Frame
+    end
+
+    C->>S: Agent Message
+    S-->>C: Response
+                </pre>
+            </div>
+        </div>
+
+        <!-- ユースケース -->
+        <div class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>&#x1F50D; 長時間リサーチエージェント</h4>
+                <p>複雑な調査タスクを多段階で実行するエージェントセッション。各ステップ間のアイドル時間が発生しても keepalive により WebSocket 接続が維持される。</p>
+                <ul>
+                    <li>データ収集 → 分析 → レポート生成の多段階ワークフロー</li>
+                    <li>ステップ間の処理待ち時間での接続維持</li>
+                    <li>プロキシ環境 (企業ネットワーク) での安定動作</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4BB; ローカルサンドボックス開発</h4>
+                <p>UnixLocal サンドボックスでコードを実行しながら開発する際、Ctrl+C による即座の中断が可能に。</p>
+                <ul>
+                    <li>無限ループやハングしたプロセスの正常中断</li>
+                    <li>テスト実行中の迅速なキャンセル</li>
+                    <li>CI/CD パイプラインでのタイムアウト処理改善</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F310; 不安定なネットワーク環境</h4>
+                <p>モバイル環境や公共 Wi-Fi など、接続品質が不安定な環境でのエージェント運用。</p>
+                <ul>
+                    <li>keepalive による接続死活監視</li>
+                    <li>NAT テーブルタイムアウトの回避</li>
+                    <li>早期の切断検知と再接続トリガー</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="note-box">
+                v0.15.1 は破壊的変更を含まないパッチリリースです。既存のコードは変更なしで動作します。keepalive オプションはデフォルトで従来と同じ動作を維持します。
+            </div>
+            <div class="use-case">
+                <h4>&#x2B06; アップグレード方法</h4>
+                <ul>
+                    <li><code>pip install --upgrade openai-agents</code> で v0.15.1 にアップグレード</li>
+                    <li>既存コードの変更は不要 (後方互換性を維持)</li>
+                    <li>必要に応じて keepalive パラメータを追加設定</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>&#x26A0; 影響を受ける開発者</h4>
+                <ul>
+                    <li><strong>WebSocket セッション利用者:</strong> keepalive オプションを活用して接続安定性を向上可能</li>
+                    <li><strong>UnixLocal サンドボックス利用者:</strong> Ctrl+C の正常動作が自動的に回復</li>
+                    <li><strong>Windows ユーザー:</strong> クイックスタートドキュメントの改善による恩恵</li>
+                    <li><strong>非英語圏ユーザー:</strong> 日本語/韓国語/中国語ドキュメントの更新</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://github.com/openai/openai-agents-python/releases/tag/v0.15.1" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-agents-python/releases/tag/v0.15.1</a></p>
+            <p class="disclaimer">本レポートは公開情報に基づいて作成されており、OpenAI の公式見解を代表するものではない。具体的な機能の詳細については、公式リリースノートを参照されたい。</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
