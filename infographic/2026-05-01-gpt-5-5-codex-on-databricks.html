@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI GPT-5.5 と Codex が Databricks 上で完全ガバナンス統合として利用可能に</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #1a1a2e 50%, #10A37F 100%);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            font-size: 14px;
+            opacity: 0.85;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-source {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid #10A37F;
+            line-height: 1.4;
+        }
+
+        .key-point {
+            background: #F7F7F8;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .key-point-icon {
+            width: 28px;
+            height: 28px;
+            background: #10A37F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .key-point-text {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .key-point-text strong {
+            color: #10A37F;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid #ECECF1;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card h4 {
+            color: #10A37F;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            margin-top: 8px;
+            padding-left: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .comparison-card {
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .comparison-before {
+            background: #FFF3F3;
+            border: 1px solid #FFCDD2;
+        }
+
+        .comparison-after {
+            background: #E8F8F5;
+            border: 1px solid #A3E4D7;
+        }
+
+        .comparison-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .comparison-before .comparison-label {
+            color: #C62828;
+        }
+
+        .comparison-after .comparison-label {
+            color: #10A37F;
+        }
+
+        .comparison-item {
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .stat-card {
+            background: #343541;
+            border-radius: 10px;
+            padding: 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: #10A37F;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .model-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .model-table th {
+            background: #343541;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .model-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .model-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .model-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #ECECF1;
+        }
+
+        .model-table tr:nth-child(even) {
+            background: #F7F7F8;
+        }
+
+        .code-block {
+            background: #343541;
+            border-radius: 10px;
+            padding: 4px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #2d2d3a;
+            border-radius: 8px 8px 0 0;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .code-block-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .code-block pre code {
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .mermaid-container {
+            background: white;
+            border: 2px solid #10A37F;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .use-case {
+            border-left: 3px solid #10A37F;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background: #F7F7F8;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .use-case h4 {
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: #343541;
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .use-case ul li {
+            margin-bottom: 4px;
+            line-height: 1.6;
+        }
+
+        .summary-section {
+            background: linear-gradient(135deg, #f0fdf9 0%, #f7f7f8 100%);
+            border: 1px solid #A3E4D7;
+        }
+
+        .summary-section p {
+            font-size: 15px;
+            line-height: 1.9;
+            color: #444;
+        }
+
+        .footer {
+            background: #ECECF1;
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-top: 32px;
+        }
+
+        .footer-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #343541;
+        }
+
+        .footer a {
+            display: block;
+            color: #10A37F;
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-related {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-related-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .footer-related-item {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .model-table {
+                font-size: 12px;
+            }
+
+            .model-table th,
+            .model-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">パートナーシップ / 製品</span>
+            <h1>OpenAI GPT-5.5 と Codex が Databricks 上で完全ガバナンス統合として利用可能に</h1>
+            <div class="header-date">2026 年 5 月 1 日</div>
+            <div class="header-source">ソース: OpenAI News (Third-party announcement: Databricks)</div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-point">
+                <div class="key-point-icon">1</div>
+                <div class="key-point-text">
+                    Databricks は OpenAI の最新フラッグシップモデル <strong>GPT-5.5</strong> およびクラウドベースコーディングエージェント <strong>Codex</strong> が Databricks プラットフォーム上で完全ガバナンス統合 (fully-governed) として利用可能になったことを発表
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">2</div>
+                <div class="key-point-text">
+                    <strong>Unity Catalog</strong> や <strong>AI Gateway</strong> との統合により、エンタープライズ企業はデータガバナンスを維持しながら OpenAI の最先端 AI モデルを活用可能に
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">3</div>
+                <div class="key-point-text">
+                    OpenAI のマルチプラットフォーム戦略がクラウドプロバイダーの枠を超え、<strong>データ分析プラットフォーム</strong>にまで拡大していることを明確に示す発表
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">4</div>
+                <div class="key-point-text">
+                    2026 年 4 月 28 日の <strong>AWS 展開</strong>に続き、マルチクラウド展開が急速に進行中
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Models -->
+        <div class="section">
+            <h2 class="section-title">Databricks で利用可能な OpenAI モデル</h2>
+            <table class="model-table">
+                <thead>
+                    <tr>
+                        <th>モデル</th>
+                        <th>特徴</th>
+                        <th>Databricks での主な用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>GPT-5.5</strong></td>
+                        <td>OpenAI 最新フラッグシップモデル、マルチツール統合推論</td>
+                        <td>データ分析、リサーチ、コード生成</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Codex</strong></td>
+                        <td>クラウドベースコーディングエージェント</td>
+                        <td>ノートブック自動生成、ETL コード作成、データパイプライン構築</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Fully-Governed Integration -->
+        <div class="section">
+            <h2 class="section-title">完全ガバナンス統合の意義</h2>
+            <p style="margin-bottom: 16px; font-size: 15px; color: #555;">
+                「完全ガバナンス統合」(fully-governed) とは、OpenAI モデルの利用が Databricks の既存ガバナンスフレームワークの中で完全に管理されることを意味する。
+            </p>
+            <div class="feature-card">
+                <h4>Unity Catalog 統合</h4>
+                <p>データアクセス権限、リネージ追跡、監査ログが Unity Catalog を通じて一元管理される</p>
+                <ul>
+                    <li>モデルアクセスの権限管理: テーブルやビューと同様に、OpenAI モデルへのアクセス権限をユーザー / グループ単位で制御</li>
+                    <li>データリネージの追跡: OpenAI モデルがどのデータを入力として使用し、どのような出力を生成したかを追跡可能</li>
+                    <li>コスト配分: 部門やプロジェクトごとの OpenAI モデル利用コストを追跡・配分</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>AI Gateway によるモデルアクセス制御</h4>
+                <p>OpenAI モデルへのリクエストが AI Gateway を経由し、レート制限、コスト管理、利用状況の可視化が実現される</p>
+                <ul>
+                    <li>レート制限: ユーザーやアプリケーションごとに API コールのレート制限を設定</li>
+                    <li>フォールバック設定: OpenAI モデルが応答できない場合の代替モデル (OSS モデル等) への自動切り替え</li>
+                    <li>コスト制御: 月次予算上限の設定とアラート通知</li>
+                    <li>リクエスト / レスポンスのログ記録: すべての通信を記録し、監査やデバッグに活用</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>データレジデンシーの確保</h4>
+                <p>Databricks ワークスペース内でのモデル呼び出しにより、データが管理された環境内に留まる</p>
+            </div>
+            <div class="feature-card">
+                <h4>監査とコンプライアンス</h4>
+                <p>すべての API 呼び出しが記録され、企業のコンプライアンス要件に対応可能</p>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    subgraph Databricks["Databricks Lakehouse Platform"]
+        subgraph Governance["ガバナンス層"]
+            UnityCatalog["Unity Catalog<br/>権限管理 / リネージ"]
+            AIGateway["AI Gateway<br/>レート制限 / ログ"]
+        end
+        subgraph Compute["コンピューティング層"]
+            Notebook["Notebooks"]
+            Jobs["Jobs / Workflows"]
+            MLPipeline["ML Pipelines"]
+        end
+        subgraph Storage["ストレージ層"]
+            DeltaLake["Delta Lake"]
+            FeatureStore["Feature Store"]
+        end
+    end
+
+    subgraph OpenAI["OpenAI Models"]
+        GPT55["GPT-5.5"]
+        Codex["Codex"]
+    end
+
+    subgraph Tools["開発者ツール"]
+        SDK["Databricks SDK"]
+        MLflow["MLflow"]
+        DBConnect["Databricks Connect"]
+    end
+
+    Notebook --> AIGateway
+    Jobs --> AIGateway
+    MLPipeline --> AIGateway
+    AIGateway --> UnityCatalog
+    AIGateway --> GPT55
+    AIGateway --> Codex
+
+    DeltaLake --> Notebook
+    FeatureStore --> MLPipeline
+
+    SDK --> Notebook
+    MLflow --> MLPipeline
+    DBConnect --> Jobs
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef databricks fill:#FF3621,stroke:#CC2A1A,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT55,Codex openai
+    class UnityCatalog,AIGateway dark
+    class Notebook,Jobs,MLPipeline,DeltaLake,FeatureStore databricks
+    class SDK,MLflow,DBConnect light
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Sample 1 -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル: Databricks 上での GPT-5.5 利用</h2>
+            <p style="margin-bottom: 16px; font-size: 14px; color: #555;">Databricks ノートブックから AI Gateway を経由して GPT-5.5 を呼び出す基本的なパターン:</p>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-block-dot" style="background:#ff5f56;"></span>
+                    <span class="code-block-dot" style="background:#ffbd2e;"></span>
+                    <span class="code-block-dot" style="background:#27c93f;"></span>
+                    <span style="margin-left: 8px;">Python</span>
+                </div>
+                <pre><code class="language-python">import mlflow.deployments
+
+# Databricks AI Gateway クライアントの作成
+client = mlflow.deployments.get_deploy_client("databricks")
+
+# GPT-5.5 を利用したチャット補完
+response = client.predict(
+    endpoint="openai-gpt-5-5",
+    inputs={
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a data analyst. Analyze the provided data and generate insights."
+            },
+            {
+                "role": "user",
+                "content": "Summarize the key trends in our Q1 2026 sales data."
+            }
+        ],
+        "max_tokens": 2048,
+        "temperature": 0.3
+    }
+)
+
+print(response["choices"][0]["message"]["content"])</code></pre>
+            </div>
+        </div>
+
+        <!-- Code Sample 2 -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル: Delta Lake データと GPT-5.5 の連携</h2>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-block-dot" style="background:#ff5f56;"></span>
+                    <span class="code-block-dot" style="background:#ffbd2e;"></span>
+                    <span class="code-block-dot" style="background:#27c93f;"></span>
+                    <span style="margin-left: 8px;">Python</span>
+                </div>
+                <pre><code class="language-python">import mlflow.deployments
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.getOrCreate()
+
+# Delta Lake からデータを取得
+sales_df = spark.read.table("catalog.schema.sales_2026_q1")
+summary = sales_df.describe().toPandas().to_string()
+
+# GPT-5.5 でデータ分析
+client = mlflow.deployments.get_deploy_client("databricks")
+
+response = client.predict(
+    endpoint="openai-gpt-5-5",
+    inputs={
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are a senior data analyst. Analyze the statistical summary "
+                    "and provide actionable business insights in Japanese."
+                )
+            },
+            {
+                "role": "user",
+                "content": f"以下のデータサマリーを分析してください:\n\n{summary}"
+            }
+        ],
+        "max_tokens": 4096,
+        "temperature": 0.5
+    }
+)
+
+# 分析結果を Delta Lake に保存
+import pandas as pd
+from datetime import datetime
+
+result_df = spark.createDataFrame([{
+    "analysis_date": datetime.now().isoformat(),
+    "model": "openai-gpt-5-5",
+    "insight": response["choices"][0]["message"]["content"]
+}])
+
+result_df.write.mode("append").saveAsTable("catalog.schema.ai_insights")</code></pre>
+            </div>
+        </div>
+
+        <!-- Code Sample 3 -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル: MLflow によるモデル実験追跡</h2>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-block-dot" style="background:#ff5f56;"></span>
+                    <span class="code-block-dot" style="background:#ffbd2e;"></span>
+                    <span class="code-block-dot" style="background:#27c93f;"></span>
+                    <span style="margin-left: 8px;">Python</span>
+                </div>
+                <pre><code class="language-python">import mlflow
+import mlflow.deployments
+
+client = mlflow.deployments.get_deploy_client("databricks")
+
+# MLflow 実験の開始
+mlflow.set_experiment("/Users/analyst/openai-gpt-5-5-evaluation")
+
+with mlflow.start_run(run_name="gpt-5-5-data-analysis"):
+    # パラメータの記録
+    mlflow.log_param("model", "openai-gpt-5-5")
+    mlflow.log_param("temperature", 0.3)
+    mlflow.log_param("max_tokens", 2048)
+
+    # モデル呼び出し
+    response = client.predict(
+        endpoint="openai-gpt-5-5",
+        inputs={
+            "messages": [
+                {"role": "user", "content": "Analyze customer churn patterns."}
+            ],
+            "max_tokens": 2048,
+            "temperature": 0.3
+        }
+    )
+
+    # メトリクスの記録
+    mlflow.log_metric("response_tokens", response.get("usage", {}).get("total_tokens", 0))
+    mlflow.log_text(
+        response["choices"][0]["message"]["content"],
+        "output/analysis_result.txt"
+    )</code></pre>
+            </div>
+        </div>
+
+        <!-- AI Gateway Config -->
+        <div class="section">
+            <h2 class="section-title">AI Gateway エンドポイントの設定例</h2>
+            <p style="margin-bottom: 16px; font-size: 14px; color: #555;">Databricks AI Gateway で OpenAI GPT-5.5 エンドポイントを構成する設定例:</p>
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span class="code-block-dot" style="background:#ff5f56;"></span>
+                    <span class="code-block-dot" style="background:#ffbd2e;"></span>
+                    <span class="code-block-dot" style="background:#27c93f;"></span>
+                    <span style="margin-left: 8px;">JSON</span>
+                </div>
+                <pre><code class="language-json">{
+  "name": "openai-gpt-5-5",
+  "endpoint_type": "llm/v1/chat",
+  "model": {
+    "name": "gpt-5.5",
+    "provider": "openai"
+  },
+  "rate_limits": [
+    {
+      "calls": 1000,
+      "key": "user",
+      "renewal_period": "minute"
+    }
+  ],
+  "ai_gateway": {
+    "usage_tracking_config": {
+      "enabled": true
+    },
+    "guardrails": {
+      "input": {
+        "pii": {"behavior": "block"},
+        "safety": {"behavior": "block"}
+      },
+      "output": {
+        "pii": {"behavior": "block"}
+      }
+    }
+  }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Before/After Comparison -->
+        <div class="section">
+            <h2 class="section-title">従来の Azure OpenAI Service 利用からの移行</h2>
+            <p style="margin-bottom: 16px; font-size: 14px; color: #555;">これまで Databricks ユーザーが OpenAI モデルを利用するには Azure OpenAI Service への外部接続が必要であった。今回の統合により以下が改善される:</p>
+            <div class="comparison">
+                <div class="comparison-card comparison-before">
+                    <div class="comparison-label">従来 (Azure OpenAI 外部接続)</div>
+                    <div class="comparison-item">ガバナンス: 別途設定が必要</div>
+                    <div class="comparison-item">アクセス制御: Azure AD + Databricks 双方の設定</div>
+                    <div class="comparison-item">コスト管理: Azure 請求書を別途確認</div>
+                    <div class="comparison-item">監査ログ: 分散した監査ログ</div>
+                    <div class="comparison-item">レイテンシ: 外部 API 呼び出しのオーバーヘッド</div>
+                </div>
+                <div class="comparison-card comparison-after">
+                    <div class="comparison-label">新方式 (Databricks 統合)</div>
+                    <div class="comparison-item">ガバナンス: Unity Catalog で一元管理</div>
+                    <div class="comparison-item">アクセス制御: Databricks 権限のみ</div>
+                    <div class="comparison-item">コスト管理: AI Gateway で統合管理</div>
+                    <div class="comparison-item">監査ログ: 統合的なログ管理</div>
+                    <div class="comparison-item">レイテンシ: プラットフォーム内で最適化</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #343541;">データエンジニア・データサイエンティストへの恩恵</h3>
+
+            <div class="use-case">
+                <h4>既存ワークフローへのシームレスな統合</h4>
+                <p>ノートブック、ジョブ、ML パイプラインから直接 GPT-5.5 を呼び出せるため、新たなツールチェーンの導入が不要</p>
+            </div>
+            <div class="use-case">
+                <h4>データガバナンスの維持</h4>
+                <p>Unity Catalog の権限管理が適用されるため、セキュリティチームの追加承認プロセスを最小化</p>
+            </div>
+            <div class="use-case">
+                <h4>コスト可視化</h4>
+                <p>AI Gateway を通じたコスト追跡により、チームやプロジェクトごとの利用状況を正確に把握可能</p>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: 700; margin: 24px 0 16px; color: #343541;">マルチクラウド環境での活用</h3>
+
+            <div class="use-case">
+                <h4>クラウド非依存</h4>
+                <p>Databricks 上の同一コードが、基盤となるクラウドプロバイダーに関係なく OpenAI モデルを利用可能</p>
+            </div>
+            <div class="use-case">
+                <h4>AWS Bedrock との補完関係</h4>
+                <p>AWS 上で Databricks を利用する場合、Bedrock 経由と Databricks AI Gateway 経由の 2 つの選択肢が存在し、ユースケースに応じた使い分けが可能</p>
+            </div>
+            <div class="use-case">
+                <h4>統一的なガバナンス</h4>
+                <p>マルチクラウド環境でも Unity Catalog による一元的なガバナンスが適用される</p>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section summary-section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="margin-bottom: 12px;">
+                Databricks 上での OpenAI GPT-5.5 と Codex の完全ガバナンス統合は、OpenAI のマルチプラットフォーム戦略における重要なマイルストーンである。AWS Bedrock での提供がクラウドインフラとしての統合であるのに対し、Databricks との統合はデータプラットフォームとしての統合であり、データガバナンス、実験管理、マルチクラウド対応という独自の価値を提供する。
+            </p>
+            <p style="margin-bottom: 12px;">
+                特に Unity Catalog と AI Gateway を通じた完全ガバナンス統合は、エンタープライズ企業がセキュリティとコンプライアンスの要件を満たしながら最先端の AI モデルを活用するための重要な基盤となる。
+            </p>
+            <p>
+                2026 年 4 月 27 日の Microsoft 契約改定から始まった OpenAI のマルチクラウド展開は、AWS (4 月 28 日)、Databricks (5 月 1 日) と矢継ぎ早に実体化しており、AI モデルの提供先多角化が急速に進行していることを示している。
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-title">関連リンク</div>
+            <a href="https://www.databricks.com/blog/openai-gpt-55-codex" target="_blank">Databricks 公式ブログ: OpenAI GPT-5.5 + Codex</a>
+            <a href="https://docs.databricks.com/en/data-governance/unity-catalog/index.html" target="_blank">Databricks Unity Catalog ドキュメント</a>
+            <a href="https://docs.databricks.com/en/machine-learning/model-serving/ai-gateway.html" target="_blank">Databricks AI Gateway</a>
+            <a href="https://mlflow.org/" target="_blank">MLflow 公式サイト</a>
+            <a href="https://platform.openai.com/docs/api-reference" target="_blank">OpenAI API リファレンス</a>
+
+            <div class="footer-related">
+                <div class="footer-related-title">関連レポート</div>
+                <div class="footer-related-item">OpenAI モデル、Codex、Managed Agents が AWS に到来 (2026-04-28)</div>
+                <div class="footer-related-item">Microsoft-OpenAI パートナーシップ契約改定 (2026-04-27)</div>
+                <div class="footer-related-item">GPT-5.5 の発表 (2026-04-23)</div>
+                <div class="footer-related-item">Codex Orchestration Symphony (2026-04-27)</div>
+                <div class="footer-related-item">エンタープライズ AI の次なるフェーズ (2026-04-08)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

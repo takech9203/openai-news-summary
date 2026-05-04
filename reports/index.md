@@ -5,8 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-03](2026/2026-05-03-openai-sued-seven-families-shooting.md) - 7 家族が銃撃事件容疑者の ChatGPT 利用を巡り OpenAI を提訴
+- [2026-05-03](2026/2026-05-03-openai-deployco-4b-pe-funding.md) - OpenAI の子会社「DeployCo」が大手 PE ファームから 40 億ドルの資金調達に成功
+- [2026-05-03](2026/2026-05-03-musk-xai-trained-on-openai-testimony.md) - Musk が証言台で xAI モデルが OpenAI 技術を一部利用して学習されたことを認める
+- [2026-05-03](2026/2026-05-03-codex-ai-pets-companions.md) - Codex に AI ペット/コンパニオン機能が追加: 開発者のコーディング体験をパーソナライズ
 - [2026-05-02](2026/2026-05-02-openai-agents-sdk-v0-15-1.md) - OpenAI Agents SDK v0.15.1 リリース: WebSocket keepalive オプション公開と PTY シグナル修正
 - [2026-05-01](2026/2026-05-01-openai-agents-sdk-v0-15-0.md) - Agents SDK v0.15.0: ModelRefusalError によるモデル応答拒否の明示的ハンドリング
+- [2026-05-01](2026/2026-05-01-gpt-5-5-codex-on-databricks.md) - OpenAI GPT-5.5 と Codex が Databricks 上で完全ガバナンス統合として利用可能に
+- [2026-05-01](2026/2026-05-01-chatgpt-marketing-cookies-default.md) - OpenAI が無料版 ChatGPT ユーザーに対しマーケティング Cookie をデフォルトで有効化
 - [2026-04-30](2026/2026-04-30-advanced-account-security.md) - OpenAI Advanced Account Security の導入: フィッシング耐性認証とアカウント保護の強化
 - [2026-04-29](2026/2026-04-29-where-the-goblins-came-from.md) - GPT-5 における「ゴブリン出力」現象の発生原因と対策: モデル行動の大規模デバッグ事例
 - [2026-04-29](2026/2026-04-29-stargate-compute-infrastructure.md) - OpenAI、Stargate プロジェクトを拡大し「知性の時代」を支えるコンピュートインフラを構築
