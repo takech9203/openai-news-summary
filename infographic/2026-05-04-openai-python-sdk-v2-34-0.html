@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Python SDK v2.34.0: Admin API Key サポートと認証機構の改善</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 20px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        /* Key Points */
+        .key-points {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .key-points-list {
+            list-style: none;
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-points-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            transition: transform 0.2s ease;
+        }
+
+        .key-points-list li:hover {
+            transform: translateX(4px);
+        }
+
+        .key-point-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point-text {
+            flex: 1;
+        }
+
+        /* Feature Cards */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card-icon {
+            font-size: 2rem;
+            margin-bottom: 14px;
+        }
+
+        .feature-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .feature-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Diagram */
+        .diagram-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Code Block */
+        .code-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .code-block-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            margin-top: 20px;
+        }
+
+        .code-block-title:first-of-type {
+            margin-top: 16px;
+        }
+
+        .code-block-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .code-block-wrapper pre {
+            margin: 0;
+            padding: 24px;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            overflow-x: auto;
+        }
+
+        .code-block-wrapper code {
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        /* Bug Fixes Table */
+        .bugfix-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .bugfix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+
+        .bugfix-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 18px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .bugfix-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .bugfix-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .bugfix-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--openai-gray);
+            line-height: 1.6;
+        }
+
+        .bugfix-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .bugfix-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .bugfix-table tr:hover td {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        /* Use Cases */
+        .use-cases {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .use-case-list {
+            display: grid;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .use-case-item {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            align-items: flex-start;
+        }
+
+        .use-case-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .use-case-content {
+            flex: 1;
+        }
+
+        .use-case-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .use-case-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Warning / Upgrade Notice */
+        .warning-section {
+            background: #FEF3C7;
+            border: 2px solid #F59E0B;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 32px;
+        }
+
+        .warning-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #92400E;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .warning-list li {
+            font-size: 0.9rem;
+            color: #78350F;
+            line-height: 1.7;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .warning-list li::before {
+            content: '\26A0';
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .footer a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .footer-divider {
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-accent);
+            margin: 0 auto 16px;
+            border-radius: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .feature-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .key-points {
+                padding: 24px 20px;
+            }
+
+            .diagram-section, .code-section, .use-cases, .bugfix-section {
+                padding: 24px 20px;
+            }
+
+            .bugfix-table {
+                font-size: 0.8rem;
+            }
+
+            .bugfix-table th, .bugfix-table td {
+                padding: 10px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="category-badge">API UPDATE</div>
+            <h1>OpenAI Python SDK v2.34.0: Admin API Key サポートと認証機構の改善</h1>
+            <div class="header-date">2026-05-04</div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="key-points">
+            <h2 class="section-title">概要</h2>
+            <ul class="key-points-list">
+                <li>
+                    <span class="key-point-icon">&#x1F511;</span>
+                    <span class="key-point-text">Admin API Key のエンドポイント単位サポート</span>
+                </li>
+                <li>
+                    <span class="key-point-icon">&#x1F510;</span>
+                    <span class="key-point-text">認証機構の包括的改善 (Azure, Bearer, Admin)</span>
+                </li>
+                <li>
+                    <span class="key-point-icon">&#x1F4DD;</span>
+                    <span class="key-point-text">環境変数によるヘッダー設定機能の追加</span>
+                </li>
+                <li>
+                    <span class="key-point-icon">&#x26A1;</span>
+                    <span class="key-point-text">マルチパートリクエストのパフォーマンス最適化</span>
+                </li>
+                <li>
+                    <span class="key-point-icon">&#x1F527;</span>
+                    <span class="key-point-text">型の修正 (prompt_cache_retention, タイムスタンプ)</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Feature Cards -->
+        <section>
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F511;</div>
+                    <div class="feature-card-title">Admin API Key per endpoint</div>
+                    <div class="feature-card-desc">エンドポイントごとに個別のキーを割り当て。権限分離とセキュリティ粒度の向上</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F310;</div>
+                    <div class="feature-card-title">環境変数ヘッダー</div>
+                    <div class="feature-card-desc">OPENAI_HEADERS 環境変数でカスタムヘッダーを注入。デプロイ環境ごとにコード変更不要</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4C2;</div>
+                    <div class="feature-card-title">external_key_id</div>
+                    <div class="feature-card-desc">プロジェクトに外部鍵 ID を設定。外部システムとの統合が容易に</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F3F7;</div>
+                    <div class="feature-card-title">email / metadata</div>
+                    <div class="feature-card-desc">ユーザー管理に email と metadata パラメータを追加</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x26A1;</div>
+                    <div class="feature-card-title">マルチパート最適化</div>
+                    <div class="feature-card-desc">ファイル構造コピーの効率化で大量ファイルアップロード高速化</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="code-section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block-title">環境変数ヘッダー設定</div>
+            <div class="code-block-wrapper">
+                <pre><code class="language-python">import os
+from openai import OpenAI
+
+# v2.34.0: 環境変数でカスタムヘッダーを設定
+os.environ["OPENAI_HEADERS"] = "X-Custom-Header=my-value"
+
+client = OpenAI()
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}]
+)</code></pre>
+            </div>
+            <div class="code-block-title">Admin API Key によるプロジェクト管理</div>
+            <div class="code-block-wrapper">
+                <pre><code class="language-python">from openai import OpenAI
+
+admin_client = OpenAI(api_key="sk-admin-...")
+
+# v2.34.0: external_key_id でプロジェクト管理
+project = admin_client.organization.projects.create(
+    name="Production App",
+    external_key_id="ext-key-prod-001",
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram -->
+        <section class="diagram-section">
+            <h2 class="section-title">認証アーキテクチャ</h2>
+            <div class="mermaid">
+flowchart TD
+    subgraph App["アプリケーション"]
+        EnvHeaders["環境変数ヘッダー"]
+        AdminKey["Admin API Key"]
+        UserKey["User API Key"]
+    end
+
+    subgraph SDK["Python SDK v2.34.0"]
+        AuthManager["認証マネージャ"]
+        HeaderInjector["ヘッダーインジェクター"]
+        RequestBuilder["リクエストビルダー"]
+    end
+
+    subgraph API["OpenAI API"]
+        AdminEndpoint["Admin API"]
+        ChatEndpoint["Chat Completions"]
+        FileEndpoint["Files API"]
+    end
+
+    EnvHeaders --> HeaderInjector
+    AdminKey --> AuthManager
+    UserKey --> AuthManager
+    AuthManager --> RequestBuilder
+    HeaderInjector --> RequestBuilder
+    RequestBuilder --> AdminEndpoint
+    RequestBuilder --> ChatEndpoint
+    RequestBuilder --> FileEndpoint
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class AuthManager,HeaderInjector openai
+    class AdminEndpoint,ChatEndpoint,FileEndpoint dark
+    class EnvHeaders,AdminKey,UserKey light
+    class RequestBuilder openai
+            </div>
+        </section>
+
+        <!-- Bug Fixes -->
+        <section class="bugfix-section">
+            <h2 class="section-title">バグ修正</h2>
+            <table class="bugfix-table">
+                <thead>
+                    <tr>
+                        <th>修正内容</th>
+                        <th>詳細</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Azure 認証ヘッダー</td>
+                        <td>明示的指定が可能に</td>
+                    </tr>
+                    <tr>
+                        <td>prompt_cache_retention</td>
+                        <td>in-memory → in_memory</td>
+                    </tr>
+                    <tr>
+                        <td>Bearer フォールバック</td>
+                        <td>Admin 認証での不適切フォールバック防止</td>
+                    </tr>
+                    <tr>
+                        <td>タイムスタンプ型</td>
+                        <td>created_at / completed_at を float に</td>
+                    </tr>
+                    <tr>
+                        <td>ファイル配列フォーマット</td>
+                        <td>マルチパートの正しいフィールド名</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="use-cases">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case-list">
+                <div class="use-case-item">
+                    <div class="use-case-number">1</div>
+                    <div class="use-case-content">
+                        <div class="use-case-title">組織管理者</div>
+                        <div class="use-case-desc">きめ細かいアクセス制御、外部システム統合</div>
+                    </div>
+                </div>
+                <div class="use-case-item">
+                    <div class="use-case-number">2</div>
+                    <div class="use-case-content">
+                        <div class="use-case-title">Azure ユーザー</div>
+                        <div class="use-case-desc">明示的認証ヘッダーで信頼性向上</div>
+                    </div>
+                </div>
+                <div class="use-case-item">
+                    <div class="use-case-number">3</div>
+                    <div class="use-case-content">
+                        <div class="use-case-title">大量ファイルアップロード</div>
+                        <div class="use-case-desc">マルチパート最適化でパフォーマンス改善</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upgrade Notice -->
+        <section class="warning-section">
+            <div class="warning-title">&#x26A0;&#xFE0F; アップグレード時の注意点</div>
+            <ul class="warning-list">
+                <li>prompt_cache_retention: "in-memory" → "in_memory" に変更が必要</li>
+                <li>Response のタイムスタンプ型変更に注意 (created_at / completed_at が float 型に)</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-divider"></div>
+            <p>出典: <a href="https://github.com/openai/openai-python/releases/tag/v2.34.0" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-python/releases/tag/v2.34.0</a></p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                lineColor: '#8E8EA0',
+                fontSize: '14px'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+        });
+    </script>
+</body>
+</html>

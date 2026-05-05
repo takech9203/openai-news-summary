@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-04](2026/2026-05-04-openai-python-sdk-v2-34-0.md) - OpenAI Python SDK v2.34.0: Admin API Key サポートと認証機構の大幅改善
+- [2026-05-04](2026/2026-05-04-openai-node-sdk-v6-36-0.md) - OpenAI Node SDK v6.36.0 リリース: Admin API Keys のエンドポイント単位スコープと認証強化
+- [2026-05-04](2026/2026-05-04-delivering-low-latency-voice-ai-at-scale.md) - OpenAI が低レイテンシ音声 AI をスケールで実現する方法: WebRTC アーキテクチャの再設計
 - [2026-05-03](2026/2026-05-03-openai-sued-seven-families-shooting.md) - 7 家族が銃撃事件容疑者の ChatGPT 利用を巡り OpenAI を提訴
 - [2026-05-03](2026/2026-05-03-openai-deployco-4b-pe-funding.md) - OpenAI の子会社「DeployCo」が大手 PE ファームから 40 億ドルの資金調達に成功
 - [2026-05-03](2026/2026-05-03-musk-xai-trained-on-openai-testimony.md) - Musk が証言台で xAI モデルが OpenAI 技術を一部利用して学習されたことを認める
