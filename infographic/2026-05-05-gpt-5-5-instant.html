@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.5 Instant: よりスマートで明確、パーソナライズされた ChatGPT のデフォルトモデル</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin: 24px auto;
+            max-width: 900px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .section h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point .icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .key-point .content {
+            flex: 1;
+        }
+
+        .key-point .content strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .key-point .content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 12px;
+            border: 2px solid var(--openai-gray);
+        }
+
+        .comparison-card.before {
+            background: var(--openai-light);
+            border-color: var(--openai-gray);
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.05) 0%, rgba(29, 183, 145, 0.08) 100%);
+            border-color: var(--openai-green);
+        }
+
+        .comparison-card h3 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            margin-top: 0;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            padding: 6px 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .comparison-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .comparison-card.before ul li::before {
+            background: var(--text-muted);
+        }
+
+        .comparison-card.after ul li::before {
+            background: var(--openai-green);
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card {
+            padding: 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.12);
+        }
+
+        .feature-card .feature-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            overflow-x: auto;
+        }
+
+        .stats-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .stats-grid th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .stats-grid td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .stats-grid tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .stats-grid .highlight-cell {
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--openai-green);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1e1e2e;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .code-block .code-header {
+            background: #2d2d3d;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-block .code-header span {
+            color: #a0a0b0;
+            font-size: 0.8rem;
+        }
+
+        .code-block .code-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .code-block .code-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .code-block .code-dots span:nth-child(1) { background: #ff5f56; }
+        .code-block .code-dots span:nth-child(2) { background: #ffbd2e; }
+        .code-block .code-dots span:nth-child(3) { background: #27c93f; }
+
+        .code-block pre {
+            padding: 20px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        .code-block pre code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: white;
+        }
+
+        /* Use Cases */
+        .use-case {
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .use-case p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .use-case .recommended-model {
+            display: inline-block;
+            margin-top: 8px;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 32px 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px;
+                margin: 16px auto;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid table {
+                font-size: 0.75rem;
+            }
+
+            .stats-grid th, .stats-grid td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="container">
+        <p class="date">2026-05-05</p>
+        <h1>GPT-5.5 Instant: よりスマートで明確、パーソナライズされた ChatGPT のデフォルトモデル</h1>
+        <span class="badge">Product</span>
+    </div>
+</div>
+
+<!-- Key Points -->
+<div class="section">
+    <div class="container">
+        <h2>概要</h2>
+        <div class="key-points">
+            <div class="key-point">
+                <div class="icon">1</div>
+                <div class="content">
+                    <strong>よりスマートで正確な回答</strong>
+                    <p>GPT-5.5 フルモデルの知識と推論能力を蒸留技術により効率的に圧縮し、マルチステップ推論能力を継承した高品質な日常会話を実現</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="icon">2</div>
+                <div class="content">
+                    <strong>ハルシネーションの大幅削減</strong>
+                    <p>事実整合性の向上、不確実性の明示、「わからない」と言う能力の向上により、信頼性のある回答を提供</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="icon">3</div>
+                <div class="content">
+                    <strong>パーソナライゼーション制御</strong>
+                    <p>応答スタイルの調整、トーンのカスタマイズ、専門分野の認識、記憶とコンテキストの活用により個人に最適化された体験を提供</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="icon">4</div>
+                <div class="content">
+                    <strong>ChatGPT の新デフォルトモデル</strong>
+                    <p>全プランのユーザーに段階的にロールアウト。数億人規模のユーザーベースに直接影響を与える重要なアップデート</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="icon">5</div>
+                <div class="content">
+                    <strong>GPT-5.3 Instant の後継</strong>
+                    <p>2026 年 3 月 3 日にリリースされた GPT-5.3 Instant から約 2 か月で大きな飛躍。単なる高速応答から高品質かつパーソナライズされたモデルへ進化</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Before/After Comparison -->
+<div class="section">
+    <div class="container">
+        <h2>Before / After 比較</h2>
+        <div class="comparison">
+            <div class="comparison-card before">
+                <h3>GPT-5.3 Instant (旧デフォルト)</h3>
+                <ul>
+                    <li>基本的な推論能力</li>
+                    <li>標準レベルのハルシネーション</li>
+                    <li>基本的なパーソナライゼーション</li>
+                    <li>マルチツール統合: 非対応</li>
+                    <li>スムーズな日常会話に特化</li>
+                    <li>低レイテンシ応答</li>
+                    <li>コスト: 低</li>
+                </ul>
+            </div>
+            <div class="comparison-card after">
+                <h3>GPT-5.5 Instant (新デフォルト)</h3>
+                <ul>
+                    <li>中~高レベルの推論能力</li>
+                    <li>ハルシネーション大幅削減</li>
+                    <li>高度なパーソナライゼーション制御</li>
+                    <li>マルチツール統合: 限定的</li>
+                    <li>スマート + パーソナライズされた応答</li>
+                    <li>高速な応答速度を維持</li>
+                    <li>コスト: 低~中</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feature Cards -->
+<div class="section">
+    <div class="container">
+        <h2>主な機能</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F9E0;</div>
+                <h4>推論能力の向上</h4>
+                <p>GPT-5.5 のマルチステップ推論能力を継承し、複雑な質問に対しても論理的で正確な回答を生成。コンテキスト活用も強化</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x2705;</div>
+                <h4>事実整合性の向上</h4>
+                <p>内部的な事実チェック機構が強化され、不正確な情報の出力頻度を大幅に低減。不確実性の明示により信頼性を向上</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F464;</div>
+                <h4>応答スタイルの自動適応</h4>
+                <p>簡潔な回答か詳細な説明か、フォーマルかカジュアルか、ユーザーの好みに応じた応答スタイルの自動適応を実現</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F4DD;</div>
+                <h4>記憶とコンテキスト</h4>
+                <p>ユーザーの過去の対話から好みや状況を記憶し、継続的な対話でより適切な応答を実現。設定の透明性も確保</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x26A1;</div>
+                <h4>低レイテンシ応答</h4>
+                <p>蒸留・最適化技術により、フルモデルの知性を維持しつつ高速な応答速度を実現。ストリーミング利用にも最適</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F310;</div>
+                <h4>全ユーザーに提供</h4>
+                <p>ChatGPT Free を含む全プランのユーザーがデフォルトでアクセス可能。シームレスな移行で設定変更は不要</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Table -->
+<div class="section">
+    <div class="container">
+        <h2>モデル比較</h2>
+        <div class="stats-grid">
+            <table>
+                <thead>
+                    <tr>
+                        <th>特性</th>
+                        <th>GPT-5.3 Instant</th>
+                        <th>GPT-5.5 Instant</th>
+                        <th>GPT-5.5 (フル)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>主な用途</td>
+                        <td>日常会話</td>
+                        <td class="highlight-cell">日常会話 + パーソナライズ</td>
+                        <td>高度なタスク</td>
+                    </tr>
+                    <tr>
+                        <td>推論能力</td>
+                        <td>基本的</td>
+                        <td class="highlight-cell">中~高</td>
+                        <td>最高</td>
+                    </tr>
+                    <tr>
+                        <td>応答速度</td>
+                        <td>高速</td>
+                        <td class="highlight-cell">高速</td>
+                        <td>標準</td>
+                    </tr>
+                    <tr>
+                        <td>ハルシネーション</td>
+                        <td>標準</td>
+                        <td class="highlight-cell">大幅削減</td>
+                        <td>低</td>
+                    </tr>
+                    <tr>
+                        <td>パーソナライゼーション</td>
+                        <td>基本</td>
+                        <td class="highlight-cell">高度な制御</td>
+                        <td>基本</td>
+                    </tr>
+                    <tr>
+                        <td>マルチツール統合</td>
+                        <td>非対応</td>
+                        <td class="highlight-cell">限定的</td>
+                        <td>フル対応</td>
+                    </tr>
+                    <tr>
+                        <td>コスト (推定)</td>
+                        <td>低</td>
+                        <td class="highlight-cell">低~中</td>
+                        <td>高</td>
+                    </tr>
+                    <tr>
+                        <td>ChatGPT デフォルト</td>
+                        <td>旧デフォルト</td>
+                        <td class="highlight-cell">新デフォルト</td>
+                        <td>プレミアム</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Code Sample -->
+<div class="section">
+    <div class="container">
+        <h2>コードサンプル</h2>
+
+        <h3>基本的な API 呼び出し</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span>Python</span>
+            </div>
+            <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.5 Instant による基本的な対話
+response = client.chat.completions.create(
+    model="gpt-5.5-instant",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "来週の東京の天気予報を教えてください。"}
+    ],
+    max_tokens=1024
+)
+
+print(response.choices[0].message.content)</code></pre>
+        </div>
+
+        <h3>ストリーミング応答</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span>Python - Streaming</span>
+            </div>
+            <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ストリーミングによるリアルタイム応答
+stream = client.chat.completions.create(
+    model="gpt-5.5-instant",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a concise and helpful assistant. "
+                "Provide clear, accurate answers without unnecessary elaboration."
+            )
+        },
+        {
+            "role": "user",
+            "content": "Python で CSV ファイルを読み込んで集計する方法を簡潔に教えてください。"
+        }
+    ],
+    stream=True
+)
+
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+print()</code></pre>
+        </div>
+
+        <h3>Responses API での利用</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span>Python - Responses API</span>
+            </div>
+            <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Responses API を使用した日常的なタスク
+response = client.responses.create(
+    model="gpt-5.5-instant",
+    input="明日の朝 9 時に歯医者の予約があることをリマインドするメッセージを作成してください。",
+)
+
+print(response.output_text)</code></pre>
+        </div>
+
+        <h3>パーソナライゼーションを活用した対話</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span>Python - Personalization</span>
+            </div>
+            <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ユーザーの好みを反映したシステムプロンプトの活用
+response = client.chat.completions.create(
+    model="gpt-5.5-instant",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a helpful assistant. The user prefers concise, "
+                "bullet-point style responses. They are a software engineer "
+                "with expertise in Python and cloud architecture."
+            )
+        },
+        {
+            "role": "user",
+            "content": "AWS Lambda のコールドスタート対策について教えて。"
+        }
+    ],
+    max_tokens=1024
+)
+
+print(response.choices[0].message.content)</code></pre>
+        </div>
+    </div>
+</div>
+
+<!-- Architecture (Mermaid) -->
+<div class="section">
+    <div class="container">
+        <h2>アーキテクチャ</h2>
+
+        <div class="mermaid-container">
+            <h3>GPT-5.5 Instant のシステム構成</h3>
+            <div class="mermaid">
+flowchart TD
+    subgraph User["ユーザー環境"]
+        ChatGPT["ChatGPT"]
+        App["サードパーティアプリ"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph API["OpenAI API"]
+        Gateway["API Gateway"]
+        subgraph Instant["GPT-5.5 Instant エンジン"]
+            Core["蒸留コアモデル"]
+            LowLatency["低レイテンシ推論"]
+            AntiHalluc["ハルシネーション抑制"]
+            Personal["パーソナライゼーション"]
+            Context["コンテキスト管理"]
+        end
+        subgraph Memory["ユーザーメモリ"]
+            Prefs["ユーザー設定"]
+            History["対話履歴"]
+        end
+    end
+
+    ChatGPT --> Gateway
+    App --> Gateway
+    SDK --> Gateway
+    Gateway --> Core
+    Core --> LowLatency
+    Core --> AntiHalluc
+    Core --> Personal
+    Core <--> Context
+    Personal <--> Prefs
+    Personal <--> History
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D9D9E3,stroke-width:2px,color:#343541
+
+    class Core,LowLatency,AntiHalluc,Personal,Context openai
+    class Gateway dark
+    class ChatGPT,App,SDK light
+    class Prefs,History gray
+            </div>
+        </div>
+
+        <div class="mermaid-container">
+            <h3>OpenAI モデル階層における位置づけ</h3>
+            <div class="mermaid">
+flowchart TD
+    subgraph Hierarchy["OpenAI GPT-5 シリーズ モデル階層 (2026 年 5 月時点)"]
+        subgraph Flagship["フラッグシップ (最高性能)"]
+            GPT55["GPT-5.5\n最高知性 / マルチツール統合"]
+        end
+        subgraph Standard["スタンダード (高性能)"]
+            GPT54["GPT-5.4\n高度な推論"]
+        end
+        subgraph Optimized["最適化 (日常利用)"]
+            GPT55Inst["GPT-5.5 Instant\nスマート / パーソナライズ\n★ 新デフォルト"]
+            GPT53Inst["GPT-5.3 Instant\n低レイテンシ会話"]
+        end
+        subgraph Compact["コンパクト (軽量)"]
+            GPT54Mini["GPT-5.4 mini\n高速・汎用"]
+            GPT54Nano["GPT-5.4 nano\n超軽量"]
+        end
+    end
+
+    GPT55 -.->|蒸留| GPT55Inst
+    GPT54 -.->|軽量化| GPT54Mini
+    GPT54Mini -.->|さらに軽量化| GPT54Nano
+    GPT53Inst -.->|後継| GPT55Inst
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:4px,color:white
+
+    class GPT55 dark
+    class GPT54 dark
+    class GPT55Inst highlight
+    class GPT53Inst light
+    class GPT54Mini light
+    class GPT54Nano light
+            </div>
+        </div>
+
+        <div class="mermaid-container">
+            <h3>Instant モデルラインの進化</h3>
+            <div class="mermaid">
+flowchart LR
+    subgraph Evolution["Instant モデルライン進化の系譜"]
+        V1["GPT-5.3 Instant\n2026-03-03\nスムーズな日常会話\n低レイテンシ応答"]
+        V2["GPT-5.5 Instant\n2026-05-05\nスマート + パーソナライズ\nハルシネーション削減"]
+    end
+
+    V1 -->|進化| V2
+
+    classDef old fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef new fill:#10A37F,stroke:#0D8A6A,stroke-width:4px,color:white
+
+    class V1 old
+    class V2 new
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Use Cases -->
+<div class="section">
+    <div class="container">
+        <h2>開発者への影響とユースケース</h2>
+
+        <div class="use-case">
+            <h4>高度なコーディング・リサーチ</h4>
+            <p>最高の知性とマルチツール統合が必要な場面。複雑なコード生成、研究論文の分析、高度なデータ分析に最適</p>
+            <span class="recommended-model">推奨: GPT-5.5</span>
+        </div>
+
+        <div class="use-case">
+            <h4>日常会話・カスタマーサポート</h4>
+            <p>高品質 + 低レイテンシ + 低ハルシネーションが求められる場面。事実に基づいた回答が必要なカスタマーサポートや情報提供サービスに最適</p>
+            <span class="recommended-model">推奨: GPT-5.5 Instant</span>
+        </div>
+
+        <div class="use-case">
+            <h4>汎用開発・エージェント</h4>
+            <p>コストと性能のバランスが重要な場面。汎用的な開発タスクや AI エージェントの構築に最適</p>
+            <span class="recommended-model">推奨: GPT-5.4 mini</span>
+        </div>
+
+        <div class="use-case">
+            <h4>大量 API リクエスト</h4>
+            <p>超低レイテンシと最低コストが求められる場面。大量のリクエスト処理や軽量なタスクに最適</p>
+            <span class="recommended-model">推奨: GPT-5.4 nano</span>
+        </div>
+
+        <h3>移行時の考慮事項</h3>
+        <div class="use-case">
+            <h4>GPT-5.3 Instant からの移行</h4>
+            <p>応答品質が向上するため多くの場合はシームレスに移行可能。ただし応答スタイルの変化に伴いプロンプト調整が必要な場合がある。パーソナライゼーション API が提供される場合、既存のシステムプロンプトベースのカスタマイズからの移行を検討すべき。ハルシネーション対策の見直しにより、アプリケーション側での独自の事実確認ロジックの必要性を再評価可能</p>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <div class="container">
+        <p>Source: <a href="https://openai.com/index/gpt-5-5-instant" target="_blank" rel="noopener noreferrer">https://openai.com/index/gpt-5-5-instant</a></p>
+        <p>OpenAI News Summary - 2026-05-05</p>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#10A37F',
+            primaryTextColor: '#343541',
+            primaryBorderColor: '#10A37F',
+            lineColor: '#10A37F',
+            background: '#FFFFFF',
+            mainBkg: '#F7F7F8'
+        }
+    });
+
+    hljs.highlightAll();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI と PwC が CFO 機能の変革に向けて協業</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .category-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header .date {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section h2 {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .icon {
+            font-size: 1.5rem;
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+        }
+
+        .key-point .icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(16, 163, 127, 0.1);
+        }
+
+        .key-point .content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .key-point .content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .deployment-phases {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .phase-card {
+            text-align: center;
+            padding: 24px 16px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            position: relative;
+            border: 2px solid var(--openai-gray);
+            transition: border-color 0.2s ease;
+        }
+
+        .phase-card:hover {
+            border-color: var(--openai-green);
+        }
+
+        .phase-card .phase-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.9rem;
+            margin: 0 auto 12px;
+        }
+
+        .phase-card h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .phase-card p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .phase-arrow {
+            display: none;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .code-block .code-header {
+            background: #161b22;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .code-block .code-header .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-block .code-header .dot-red { background: #ff5f56; }
+        .code-block .code-header .dot-yellow { background: #ffbd2e; }
+        .code-block .code-header .dot-green { background: #27c93f; }
+
+        .code-block .code-header .filename {
+            margin-left: 12px;
+            color: #8b949e;
+            font-size: 0.85rem;
+        }
+
+        .code-block pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .code-block pre code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .use-case {
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .use-case p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .use-case ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .footer {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 32px 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .logo-text {
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.35rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .deployment-phases {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .deployment-phases {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">Global Affairs</span>
+            <h1>OpenAI と PwC が CFO 機能の変革に向けて協業: AI エージェントによる財務ワークフロー自動化</h1>
+            <div class="date">2026-05-04</div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2><span class="icon">&#x1F4CB;</span> 概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="icon">&#x1F916;</div>
+                    <div class="content">
+                        <h3>財務ワークフロー自動化</h3>
+                        <p>AI エージェントが従来人手に依存していた勘定照合、買掛金/売掛金処理、経費精算、月次決算を自律的に実行。ERP や会計システムと Function Calling で連携し、エンドツーエンドで自動化を実現する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F4C8;</div>
+                    <div class="content">
+                        <h3>予測精度の向上</h3>
+                        <p>複数のデータソースをリアルタイム統合し、動的予測モデル、シナリオ分析の自動化、キャッシュフロー予測、ローリングフォーキャストを実現。スプレッドシートベースの線形外挿から脱却する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F6E1;</div>
+                    <div class="content">
+                        <h3>内部統制の強化</h3>
+                        <p>SOX 法遵守を支援する継続的モニタリング、職務分離の自動検証、コンプライアンスチェック、監査証跡の自動生成、リスク評価の動的更新を AI エージェントが担う。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F3E2;</div>
+                    <div class="content">
+                        <h3>CFO 機能のモダナイゼーション</h3>
+                        <p>トランザクション処理中心の組織から、戦略的意思決定支援を担うインテリジェントな組織へ変革。FP&A チームが高度な戦略分析に注力可能となる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="icon">&#x1F91D;</div>
+                    <div class="content">
+                        <h3>PwC チャネルパートナーモデル</h3>
+                        <p>Big Four の一角 PwC のグローバルクライアントネットワークを通じ、Fortune 500 企業を含む数千社に AI エージェント導入支援を提供。共同ソリューション開発、ベストプラクティス策定、人材育成を推進する。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <h2><span class="icon">&#x2699;</span> 主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F4B0;</div>
+                    <h3>勘定照合 (Reconciliation)</h3>
+                    <ul>
+                        <li>銀行明細と帳簿の自動照合</li>
+                        <li>差異の自動検出と分類</li>
+                        <li>例外処理のエスカレーション判断</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F4C4;</div>
+                    <h3>買掛金/売掛金 (AP/AR)</h3>
+                    <ul>
+                        <li>請求書の自動読取と入力</li>
+                        <li>支払条件の検証と承認</li>
+                        <li>入金消し込みの自動化</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F9FE;</div>
+                    <h3>経費精算 (Expense)</h3>
+                    <ul>
+                        <li>経費申請の自動検証</li>
+                        <li>ポリシー準拠チェック</li>
+                        <li>不正申請の異常検知</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F4C5;</div>
+                    <h3>月次/四半期決算 (Close)</h3>
+                    <ul>
+                        <li>決算タスクの進捗管理</li>
+                        <li>仕訳入力の自動化</li>
+                        <li>連結調整の自動処理</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F4CA;</div>
+                    <h3>財務予測 (Forecasting)</h3>
+                    <ul>
+                        <li>動的予測モデル</li>
+                        <li>シナリオ分析自動化</li>
+                        <li>ローリングフォーキャスト</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F512;</div>
+                    <h3>内部統制 (Controls)</h3>
+                    <ul>
+                        <li>継続的モニタリング</li>
+                        <li>職務分離の自動検証</li>
+                        <li>監査証跡の自動生成</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enterprise Deployment Strategy -->
+        <div class="section">
+            <h2><span class="icon">&#x1F680;</span> エンタープライズ展開戦略</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.92rem;">PwC のグローバルネットワークを活用した段階的なエンタープライズ展開計画</p>
+            <div class="deployment-phases">
+                <div class="phase-card">
+                    <div class="phase-number">1</div>
+                    <h4>パイロット</h4>
+                    <p>選定クライアントでの概念実証 (PoC) 実施</p>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">2</div>
+                    <h4>拡張</h4>
+                    <p>PoC 実証済みユースケースの本番展開</p>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">3</div>
+                    <h4>スケール</h4>
+                    <p>複数財務プロセスへの統合的展開</p>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">4</div>
+                    <h4>最適化</h4>
+                    <p>継続改善と新規ユースケース探索</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Sample: Reconciliation -->
+        <div class="section">
+            <h2><span class="icon">&#x1F4BB;</span> コードサンプル</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.92rem;">AI エージェントによる勘定照合の Function Calling 実装例</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span class="filename">reconciliation_agent.py</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# AI エージェントによる勘定照合の実行例
+response = client.responses.create(
+    model="gpt-4o",
+    tools=[
+        {
+            "type": "function",
+            "function": {
+                "name": "fetch_bank_statements",
+                "description": "銀行明細データを取得する",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "account_id": {"type": "string"},
+                        "start_date": {"type": "string"},
+                        "end_date": {"type": "string"}
+                    }
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "fetch_gl_entries",
+                "description": "総勘定元帳エントリを取得する",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "account_code": {"type": "string"},
+                        "period": {"type": "string"}
+                    }
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "create_reconciliation_report",
+                "description": "照合レポートを生成する",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "matched_items": {"type": "array"},
+                        "unmatched_items": {"type": "array"},
+                        "exceptions": {"type": "array"}
+                    }
+                }
+            }
+        }
+    ],
+    input="2026年4月の普通預金口座(A001)の照合を実行してください。"
+         "銀行明細と総勘定元帳を比較し、不一致項目を特定してレポートを作成してください。"
+)</code></pre>
+            </div>
+
+            <p style="color: var(--text-secondary); margin-top: 24px; margin-bottom: 16px; font-size: 0.92rem;">マルチステップ財務予測エージェントの構成パターン</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span class="filename">forecast_agent.py</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# マルチステップの財務予測エージェント
+response = client.responses.create(
+    model="gpt-4o",
+    tools=[
+        {
+            "type": "function",
+            "function": {
+                "name": "query_historical_financials",
+                "description": "過去の財務データを取得する",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "metric": {"type": "string"},
+                        "periods": {"type": "integer"},
+                        "granularity": {
+                            "type": "string",
+                            "enum": ["monthly", "quarterly", "yearly"]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "get_market_indicators",
+                "description": "市場指標・マクロ経済データを取得する",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "indicators": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "region": {"type": "string"}
+                    }
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "generate_forecast",
+                "description": "予測モデルを実行し結果を生成する",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "forecast_type": {"type": "string"},
+                        "horizon_months": {"type": "integer"},
+                        "scenarios": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    input="次四半期の売上予測を3シナリオ(楽観・中立・悲観)で生成してください。"
+         "過去12ヶ月の実績データと最新の市場指標を考慮してください。"
+)</code></pre>
+            </div>
+        </div>
+
+        <!-- Architecture Mermaid -->
+        <div class="section">
+            <h2><span class="icon">&#x1F3D7;</span> アーキテクチャ</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.92rem;">AI エージェントの財務適用アーキテクチャ: エンタープライズ環境、PwC ソリューション、OpenAI プラットフォーム、CFO オフィスの統合構成</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Enterprise["エンタープライズ環境"]
+        subgraph FinSystems["財務システム"]
+            ERP["ERP&#10;(SAP/Oracle)"]
+            TMS["Treasury&#10;Management"]
+            GL["総勘定元帳"]
+            AP["買掛金システム"]
+            AR["売掛金システム"]
+        end
+
+        subgraph DataLayer["データレイヤー"]
+            DW["データウェアハウス"]
+            Lake["データレイク"]
+        end
+    end
+
+    subgraph PwC["PwC ソリューション"]
+        Advisory["財務変革&#10;アドバイザリー"]
+        Implementation["導入支援"]
+        BestPractice["ベストプラクティス&#10;フレームワーク"]
+    end
+
+    subgraph OpenAIPlatform["OpenAI プラットフォーム"]
+        subgraph AgentLayer["AI エージェント層"]
+            Orchestrator["エージェント&#10;オーケストレーター"]
+            ReconAgent["照合エージェント"]
+            ForecastAgent["予測エージェント"]
+            ControlAgent["統制エージェント"]
+            ReportAgent["レポーティング&#10;エージェント"]
+        end
+
+        subgraph APILayer["API 層"]
+            ChatAPI["Chat Completions&#10;API"]
+            AssistantsAPI["Assistants API"]
+            FunctionCall["Function Calling"]
+        end
+
+        subgraph Knowledge["知識層"]
+            RAG["RAG&#10;(会計基準・ポリシー)"]
+            FinModels["財務モデル"]
+        end
+    end
+
+    subgraph CFO["CFO オフィス"]
+        Dashboard(["経営ダッシュボード"])
+        FPA(["FP&A チーム"])
+        Controller(["経理部門"])
+    end
+
+    Advisory --> Orchestrator
+    Implementation --> AgentLayer
+    BestPractice --> Knowledge
+
+    Orchestrator --> ReconAgent
+    Orchestrator --> ForecastAgent
+    Orchestrator --> ControlAgent
+    Orchestrator --> ReportAgent
+
+    ReconAgent --> FunctionCall
+    ForecastAgent --> FunctionCall
+    ControlAgent --> FunctionCall
+    ReportAgent --> FunctionCall
+
+    FunctionCall --> ERP
+    FunctionCall --> TMS
+    FunctionCall --> GL
+    FunctionCall --> AP
+    FunctionCall --> AR
+    FunctionCall --> DW
+
+    ChatAPI --> Orchestrator
+    AssistantsAPI --> Orchestrator
+    RAG --> AgentLayer
+    FinModels --> ForecastAgent
+
+    ReportAgent --> Dashboard
+    ForecastAgent --> FPA
+    ReconAgent --> Controller
+    ControlAgent --> Controller
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef pwc fill:#E07000,stroke:#B85C00,stroke-width:2px,color:white
+
+    class Orchestrator,ReconAgent,ForecastAgent,ControlAgent,ReportAgent openai
+    class ChatAPI,AssistantsAPI,FunctionCall dark
+    class ERP,TMS,GL,AP,AR,DW,Lake light
+    class Dashboard,FPA,Controller accent
+    class Advisory,Implementation,BestPractice pwc
+                </pre>
+            </div>
+        </div>
+
+        <!-- Use Cases / Impact -->
+        <div class="section">
+            <h2><span class="icon">&#x1F4A1;</span> 開発者への影響とユースケース</h2>
+            <div class="use-case">
+                <h3>エンタープライズ AI ソリューション開発者</h3>
+                <ul>
+                    <li>PwC のグローバルクライアントネットワークを通じた大規模な需要創出により、財務 AI ソリューション市場が急速に拡大</li>
+                    <li>複数の外部システムとの連携を要する財務ワークフローにおける Function Calling の高度活用パターンが確立</li>
+                    <li>照合、予測、統制、レポーティングなど複数の専門エージェントが協調するマルチエージェントアーキテクチャの設計・実装スキルが必要に</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h3>API 利用パターンの進化</h3>
+                <ul>
+                    <li>月次決算のような長時間ワークフローの管理に Assistants API のスレッド管理・ステート管理が重要技術要素に</li>
+                    <li>財務データの高正確性要件に応じた出力検証、ヒューマンインザループ設計、堅牢なエラーハンドリングの重視</li>
+                    <li>SOX 法、GDPR、金融規制に準拠した監査可能なログ記録とガバナンス機能の実装が必須</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h3>CFO 機能のモダナイゼーション</h3>
+                <ul>
+                    <li>戦略的 FP&A: ルーチン業務から解放され、より高度な戦略分析に注力可能</li>
+                    <li>リアルタイム経営ダッシュボード: AI エージェントが集約・分析した情報のリアルタイム可視化</li>
+                    <li>インテリジェントレポーティング: 規制報告・経営報告の自動生成と品質保証</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h3>パートナーシップの戦略的意義</h3>
+                <ul>
+                    <li>OpenAI がコンサルティングファーム経由のチャネルパートナーモデルを本格化。他 Big Four との同様パートナーシップ拡大の可能性</li>
+                    <li>汎用 AI プラットフォームから業界・機能特化型ソリューションへの進化が加速</li>
+                    <li>PoC から本番運用への移行を支援するエコシステム形成。エンタープライズ AI 実用化フェーズが本格到来</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Security Considerations -->
+        <div class="section">
+            <h2><span class="icon">&#x1F510;</span> セキュリティとコンプライアンス</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F510;</div>
+                    <h3>データ暗号化</h3>
+                    <ul>
+                        <li>保存時: AES-256</li>
+                        <li>転送時: TLS 1.3</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F464;</div>
+                    <h3>アクセス制御</h3>
+                    <ul>
+                        <li>RBAC に基づく最小権限原則</li>
+                        <li>職務分離の自動検証</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x1F4DD;</div>
+                    <h3>監査ログ</h3>
+                    <ul>
+                        <li>全 API コールの完全記録</li>
+                        <li>AI エージェント行動ログ</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="card-icon">&#x2705;</div>
+                    <h3>認証基準</h3>
+                    <ul>
+                        <li>SOC 2 Type II 準拠</li>
+                        <li>SOX 法遵守対応</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="logo-text">OpenAI News Summary</div>
+            <p>このインフォグラフィックは OpenAI の公式発表に基づいて作成されています</p>
+            <a href="https://openai.com/index/openai-pwc-finance-collaboration" target="_blank" rel="noopener noreferrer">https://openai.com/index/openai-pwc-finance-collaboration</a>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
