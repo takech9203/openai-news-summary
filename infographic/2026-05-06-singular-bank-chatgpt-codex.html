@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singular Bank が ChatGPT と Codex で銀行業務を加速</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: underline;
+        }
+
+        /* Key Points Section */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .key-points-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--openai-gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .key-points-list li:last-child {
+            border-bottom: none;
+        }
+
+        .key-points-list li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            min-width: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            margin-top: 8px;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 24px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.12);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--openai-green);
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Feature Cards */
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border-top: 4px solid var(--openai-green);
+        }
+
+        .feature-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card-title .badge {
+            background: var(--openai-green);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 12px;
+        }
+
+        .feature-card ul li {
+            padding: 6px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            min-width: 6px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Mermaid Diagram */
+        .diagram-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .mermaid {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Use Cases Section */
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .use-case-item {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .use-case-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .use-case-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="category-badge">B2B STORY</span>
+            <h1>Singular Bank が ChatGPT と Codex で銀行業務を加速</h1>
+            <div class="header-meta">
+                <p>2026-05-06 | <a href="https://openai.com/index/singular-bank" target="_blank" rel="noopener">openai.com/index/singular-bank</a></p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="icon">&#9679;</span>
+                要点
+            </h2>
+            <ul class="key-points-list">
+                <li>社内 AI アシスタント "Singularity" を構築し、バンカーの日常業務を包括的に支援</li>
+                <li>1 日あたり 60 ~ 90 分の時間削減を達成し、生産性を大幅に向上</li>
+                <li>3 つの業務領域 (ミーティング準備、ポートフォリオ分析、フォローアップ) をカバー</li>
+                <li>ChatGPT で自然言語処理・文書生成、Codex でコード生成・データ処理を分担</li>
+                <li>金融業界特化のカスタムソリューションとして設計・実装</li>
+            </ul>
+        </section>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">60-90 分</div>
+                <div class="stat-label">1 日あたりの時間削減</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3 領域</div>
+                <div class="stat-label">カバーする業務領域</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2 モデル</div>
+                <div class="stat-label">ChatGPT + Codex の連携</div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="feature-cards">
+            <div class="feature-card">
+                <h3 class="feature-card-title">
+                    ChatGPT の役割
+                    <span class="badge">NLP</span>
+                </h3>
+                <p>自然言語処理と文書生成を担当し、バンカーのコミュニケーション業務を支援します。</p>
+                <ul>
+                    <li>ミーティング資料の自動生成</li>
+                    <li>顧客向けレポートの作成</li>
+                    <li>フォローアップメールの下書き</li>
+                    <li>自然言語での質問応答</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h3 class="feature-card-title">
+                    Codex の役割
+                    <span class="badge">CODE</span>
+                </h3>
+                <p>コード生成とデータ処理を担当し、複雑な分析タスクを自動化します。</p>
+                <ul>
+                    <li>ポートフォリオデータの処理</li>
+                    <li>カスタム分析スクリプト生成</li>
+                    <li>API 連携コードの自動作成</li>
+                    <li>データ変換・集計処理</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <section class="diagram-section">
+            <h2 class="section-title">
+                <span class="icon">&#9670;</span>
+                アーキテクチャ
+            </h2>
+            <div class="mermaid">
+flowchart TD
+    subgraph BankerWorkflow["バンカーの業務フロー"]
+        MeetingPrep["ミーティング準備"]
+        Portfolio["ポートフォリオ分析"]
+        FollowUp["フォローアップ"]
+    end
+
+    subgraph Singularity["Singularity アシスタント"]
+        NLP["自然言語処理"]
+        CodeGen["コード生成・実行"]
+        DataAnalysis["データ分析"]
+    end
+
+    subgraph OpenAIAPI["OpenAI API"]
+        ChatGPT["ChatGPT"]
+        Codex["Codex"]
+    end
+
+    subgraph InternalSystems["社内システム"]
+        CRM["CRM"]
+        PortfolioDB["ポートフォリオ DB"]
+        Calendar["カレンダー"]
+    end
+
+    MeetingPrep --> NLP
+    Portfolio --> DataAnalysis
+    FollowUp --> NLP
+
+    NLP --> ChatGPT
+    CodeGen --> Codex
+    DataAnalysis --> Codex
+
+    CRM --> Singularity
+    PortfolioDB --> Singularity
+    Calendar --> Singularity
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class ChatGPT,Codex openai
+    class NLP,CodeGen,DataAnalysis dark
+    class MeetingPrep,Portfolio,FollowUp,CRM,PortfolioDB,Calendar light
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="icon">&#9733;</span>
+                ユースケース
+            </h2>
+            <div class="use-cases-grid">
+                <div class="use-case-item">
+                    <h4>ミーティング準備</h4>
+                    <p>CRM とカレンダーから情報を自動収集し、顧客との面談に必要なブリーフィング資料を生成。準備時間を大幅に短縮。</p>
+                </div>
+                <div class="use-case-item">
+                    <h4>ポートフォリオ分析</h4>
+                    <p>ポートフォリオ DB からデータを取得し、Codex でカスタム分析を実行。リスク指標やパフォーマンスレポートを自動作成。</p>
+                </div>
+                <div class="use-case-item">
+                    <h4>フォローアップ</h4>
+                    <p>面談後のアクションアイテムを整理し、顧客へのフォローアップメールや社内報告の下書きを ChatGPT で自動生成。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Source: <a href="https://openai.com/index/singular-bank" target="_blank" rel="noopener">openai.com/index/singular-bank</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary | 2026-05-06</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

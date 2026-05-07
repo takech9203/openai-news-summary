@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Python SDK v2.35.0/v2.35.1: Image 2 API の更新とレガシー CLI の削除</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .category-badge.api-update {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .category-badge.sdk {
+            background: rgba(16, 163, 127, 0.15);
+            color: #10A37F;
+            border: 1px solid rgba(16, 163, 127, 0.3);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 15px;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            line-height: 1.4;
+        }
+
+        .section-title .title-icon {
+            margin-right: 8px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .key-point-content h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Warning Card */
+        .warning-card {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .warning-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .warning-card-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #92400E;
+        }
+
+        .warning-card-header .warning-icon {
+            font-size: 24px;
+        }
+
+        .warning-card p {
+            font-size: 14px;
+            color: #78350F;
+            line-height: 1.7;
+            margin-bottom: 8px;
+        }
+
+        .warning-card code {
+            background: rgba(146, 64, 14, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #92400E;
+        }
+
+        .warning-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 12px;
+        }
+
+        .warning-card ul li {
+            font-size: 13px;
+            color: #78350F;
+            line-height: 1.7;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .warning-card ul li::before {
+            content: '\2022';
+            color: #D97706;
+            font-weight: 700;
+            position: absolute;
+            left: 4px;
+        }
+
+        /* Changes Table */
+        .changes-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .changes-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .changes-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+            width: 120px;
+        }
+
+        .changes-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .changes-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .changes-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .changes-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .changes-table tbody tr:hover {
+            background: var(--openai-light);
+        }
+
+        .change-type {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .change-type.feature {
+            background: rgba(16, 163, 127, 0.15);
+            color: #10A37F;
+        }
+
+        .change-type.breaking {
+            background: rgba(239, 68, 68, 0.15);
+            color: #DC2626;
+        }
+
+        .change-type.bugfix {
+            background: rgba(245, 158, 11, 0.15);
+            color: #D97706;
+        }
+
+        .change-type.docs {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-block:first-of-type {
+            margin-top: 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 8px;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid-container pre.mermaid {
+            background: white !important;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Use Case / Developer Impact */
+        .use-case {
+            padding: 18px 20px;
+            border-left: 4px solid var(--openai-green);
+            background: var(--openai-light);
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 12px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .use-case ul li::before {
+            content: '\2022';
+            color: var(--openai-green);
+            font-weight: 700;
+            position: absolute;
+            left: 4px;
+        }
+
+        /* Architecture description */
+        .arch-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-top: 24px;
+        }
+
+        .footer-source {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-branding {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .code-block code {
+                font-size: 11px;
+            }
+
+            .changes-table {
+                font-size: 12px;
+            }
+
+            .changes-table thead th,
+            .changes-table tbody td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="header-date">2026-05-06</span>
+                <span class="category-badge api-update">API UPDATE</span>
+                <span class="category-badge sdk">PYTHON SDK</span>
+            </div>
+            <h1>OpenAI Python SDK v2.35.0/v2.35.1: Image 2 API の更新とレガシー CLI の削除</h1>
+            <p class="header-subtitle">
+                gpt-image-2 モデル対応のパラメータ更新、レガシー Python CLI の完全削除 (破壊的変更)、top_logprobs パラメータの説明更新、および size enum リグレッション修正のホットフィックスを含むリリース
+            </p>
+        </header>
+
+        <!-- Warning Card: Breaking Change -->
+        <div class="warning-card">
+            <div class="warning-card-header">
+                <span class="warning-icon">&#x26A0;&#xFE0F;</span>
+                <h3>破壊的変更: レガシー CLI の完全削除</h3>
+            </div>
+            <p>
+                v2.35.0 で <code>openai</code> パッケージに同梱されていたレガシー Python CLI が完全に削除されました。これまで <code>openai api</code> コマンドを使用していたワークフローは動作しなくなります。
+            </p>
+            <ul>
+                <li>影響を受けるコマンド: <code>openai api completions.create</code>, <code>openai api chat_completions.create</code> など</li>
+                <li>代替手段: Python スクリプトまたは <code>curl</code> コマンドを使用して API を直接呼び出してください</li>
+                <li>CI/CD パイプラインでレガシー CLI を使用している場合は、スクリプトへの移行が必要です</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Key Points -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4CB;</span> 概要 (Key Points)</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F5BC;</div>
+                    <div class="key-point-content">
+                        <h3>Image Generation API (gpt-image-2) パラメータ更新</h3>
+                        <p>gpt-image-2 モデルに対応した画像生成 API のパラメータが更新されました。新しい size オプションや quality パラメータの型定義が改善され、より正確な型安全性が提供されます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6AB;</div>
+                    <div class="key-point-content">
+                        <h3>レガシー Python CLI の完全削除 (破壊的変更)</h3>
+                        <p>長らく非推奨だったレガシー CLI が完全に削除されました。<code>openai api</code> コマンドに依存するスクリプトやワークフローは直ちに移行が必要です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>top_logprobs パラメータの説明更新</h3>
+                        <p>Chat Completions API の <code>top_logprobs</code> パラメータに関するドキュメンテーションと型定義の説明が更新され、開発者がパラメータの用途をより正確に理解できるようになりました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F527;</div>
+                    <div class="key-point-content">
+                        <h3>v2.35.1 ホットフィックス: size enum リグレッション修正</h3>
+                        <p>v2.35.0 で導入された size enum の型定義にリグレッションが発見され、v2.35.1 で即座に修正されました。画像生成時の size パラメータが正しく動作するようになっています。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Changes Table -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4DD;</span> 変更一覧</h2>
+            <table class="changes-table">
+                <thead>
+                    <tr>
+                        <th>種別</th>
+                        <th>変更内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="change-type feature">機能追加</span></td>
+                        <td>gpt-image-2 対応の画像生成パラメータ型定義を更新</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type breaking">破壊的変更</span></td>
+                        <td>レガシー Python CLI (<code>openai api</code> コマンド) を完全削除</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type docs">ドキュメント</span></td>
+                        <td><code>top_logprobs</code> パラメータの説明を更新</td>
+                    </tr>
+                    <tr>
+                        <td><span class="change-type bugfix">バグ修正</span></td>
+                        <td>v2.35.1: size enum のリグレッションを修正</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 3: Code Sample -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F4BB;</span> コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">gpt-image-2 で画像を生成</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# gpt-image-2 モデルで画像を生成
+response = client.images.generate(
+    model="gpt-image-2",
+    prompt="A serene Japanese garden with cherry blossoms",
+    size="1024x1024",  # v2.35.1 で修正された size enum
+    quality="hd",
+    n=1,
+)
+
+image_url = response.data[0].url
+print(f"Generated image URL: {image_url}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4: Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F3D7;</span> アーキテクチャ</h2>
+            <p class="arch-desc">
+                以下の図は、OpenAI Python SDK v2.35.1 の構成を示しています。Images Client と Chat Client を通じて API エンドポイントにアクセスし、型定義 (size enum 修正済み) により型安全な開発が可能です。レガシー CLI は v2.35.0 で完全に削除されました。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph App["アプリケーション"]
+        PythonCode["Python コード"]
+    end
+
+    subgraph SDK["OpenAI Python SDK v2.35.1"]
+        ImagesClient["Images Client"]
+        ChatClient["Chat Client"]
+        TypeDefs["型定義 (size enum 修正済み)"]
+
+        PythonCode --> ImagesClient
+        PythonCode --> ChatClient
+        TypeDefs -.-> ImagesClient
+    end
+
+    subgraph API["OpenAI API"]
+        ImagesGen["POST /v1/images/generations"]
+        ImagesEdit["POST /v1/images/edits"]
+        ChatComp["POST /v1/chat/completions"]
+    end
+
+    ImagesClient --> ImagesGen
+    ImagesClient --> ImagesEdit
+    ChatClient --> ChatComp
+
+    subgraph Removed["削除済み (v2.35.0)"]
+        LegacyCLI["レガシー CLI"]
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef removed fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class ImagesClient,ChatClient openai
+    class ImagesGen,ImagesEdit,ChatComp dark
+    class PythonCode,TypeDefs light
+    class LegacyCLI removed
+                </pre>
+            </div>
+        </section>
+
+        <!-- Section 5: Developer Impact -->
+        <section class="section">
+            <h2 class="section-title"><span class="title-icon">&#x1F6E0;</span> 開発者への影響</h2>
+
+            <div class="use-case">
+                <h3>画像生成 API 利用者</h3>
+                <ul>
+                    <li><strong>gpt-image-2 の活用:</strong> 新しいモデルに対応した型定義により、IDE の自動補完やバリデーションがより正確に機能し、開発体験が向上する</li>
+                    <li><strong>size enum の修正:</strong> v2.35.1 で修正された size パラメータにより、<code>"1024x1024"</code> などの指定が型エラーなく動作する</li>
+                    <li><strong>quality パラメータ:</strong> HD 品質の画像生成を型安全に指定可能</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>レガシー CLI 利用者 (即時対応が必要)</h3>
+                <ul>
+                    <li><strong>CI/CD パイプライン:</strong> <code>openai api</code> コマンドを使用しているビルドスクリプトは即座に動作しなくなるため、Python スクリプトまたは curl への移行が必須</li>
+                    <li><strong>開発ワークフロー:</strong> ローカル開発で CLI を使用していた場合、SDK の Python API を直接呼び出す方法に切り替える必要がある</li>
+                    <li><strong>ドキュメント更新:</strong> 社内ドキュメントやチュートリアルでレガシー CLI を参照している箇所の更新が必要</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h3>Chat Completions API 利用者</h3>
+                <ul>
+                    <li><strong>top_logprobs の明確化:</strong> パラメータの説明が改善され、各トークンに対して返される上位 N 個のログ確率の用途がより明確になった</li>
+                    <li><strong>型定義の精度向上:</strong> パラメータの有効範囲や組み合わせが型レベルで表現され、実行時エラーを事前に防止できる</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-source">
+                Source: <a href="https://github.com/openai/openai-python/releases/tag/v2.35.0" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-python/releases/tag/v2.35.0</a>
+            </p>
+            <p class="footer-source">
+                Hotfix: <a href="https://github.com/openai/openai-python/releases/tag/v2.35.1" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-python/releases/tag/v2.35.1</a>
+            </p>
+            <p class="footer-source">
+                GitHub: <a href="https://github.com/openai/openai-python" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-python</a>
+            </p>
+            <p class="footer-source">
+                API Reference: <a href="https://platform.openai.com/docs/api-reference/images" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/api-reference/images</a>
+            </p>
+            <p class="footer-branding">OpenAI News Summary -- 2026-05-06</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -5,7 +5,15 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-07](2026/2026-05-07-openai-agents-sdk-v0-16-0.md) - OpenAI Agents SDK v0.16.0: デフォルトモデルが GPT-5.4-mini に変更、ツール実行の並行性制御を追加
+- [2026-05-06](2026/2026-05-06-uber-openai-ai-assistants.md) - Uber が OpenAI を活用し、ドライバーの収益最適化とライダーの迅速な配車を実現
+- [2026-05-06](2026/2026-05-06-singular-bank-chatgpt-codex.md) - Singular Bank が ChatGPT と Codex で銀行業務を加速
+- [2026-05-06](2026/2026-05-06-openai-python-sdk-v2-35.md) - OpenAI Python SDK v2.35.0/v2.35.1: Image 2 API の更新とレガシー CLI の削除
+- [2026-05-06](2026/2026-05-06-openai-agents-sdk-v0-15-2-3.md) - OpenAI Agents SDK v0.15.2 / v0.15.3 リリース: MCP ツール安定性強化とセキュリティ修正
+- [2026-05-06](2026/2026-05-06-introducing-b2b-signals.md) - フロンティア企業が AI の競争優位性を構築する方法 - B2B Signals の紹介
+- [2026-05-06](2026/2026-05-06-chatgpt-futures-class-of-2026.md) - ChatGPT Futures: Class of 2026 の紹介
 - [2026-05-05](2026/2026-05-05-new-ways-to-buy-chatgpt-ads.md) - ChatGPT 広告の新しい購入方法: セルフサーブ Ads Manager と CPC ビディングの導入
+- [2026-05-05](2026/2026-05-05-mrc-supercomputer-networking.md) - MRC (Multipath Reliable Connection): 大規模 AI トレーニングネットワークを実現する新プロトコル
 - [2026-05-05](2026/2026-05-05-gpt-5-5-instant.md) - GPT-5.5 Instant: よりスマートで明確、パーソナライズされた ChatGPT のデフォルトモデル
 - [2026-05-05](2026/2026-05-05-gpt-5-5-instant-system-card.md) - GPT-5.5 Instant システムカード: 安全性評価とリスク軽減策
 - [2026-05-04](2026/2026-05-04-openai-python-sdk-v2-34-0.md) - OpenAI Python SDK v2.34.0: Admin API Key サポートと認証機構の大幅改善

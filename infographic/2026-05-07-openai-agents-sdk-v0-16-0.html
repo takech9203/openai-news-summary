@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Agents SDK v0.16.0 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --danger: #EF4444;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .breaking-badge {
+            display: inline-block;
+            background: var(--danger);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point.breaking {
+            background: #FEF2F2;
+            border: 2px solid #FECACA;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point.breaking .key-point-icon {
+            background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-secondary);
+        }
+
+        .code-block {
+            background: #1E1E2E;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            color: #CDD6F4;
+            line-height: 1.6;
+            white-space: pre;
+        }
+
+        .code-block .comment {
+            color: #6C7086;
+        }
+
+        .code-block .keyword {
+            color: #CBA6F7;
+        }
+
+        .code-block .string {
+            color: #A6E3A1;
+        }
+
+        .code-block .function {
+            color: #89B4FA;
+        }
+
+        .code-block .param {
+            color: #F9E2AF;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API Update</span>
+                <span class="breaking-badge">Breaking Change</span>
+                <h1>OpenAI Agents SDK v0.16.0: デフォルトモデル変更と新機能追加</h1>
+                <p class="date">2026-05-07</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point breaking">
+                    <div class="key-point-icon">!</div>
+                    <div class="key-point-content">
+                        <h3>デフォルトモデルが gpt-5.4-mini に変更 (破壊的変更)</h3>
+                        <p>SDK のデフォルトモデルが gpt-4.1 から gpt-5.4-mini に変更。GPT-5 固有のデフォルト値 (reasoning.effort="none", verbosity="low") が暗黙的に適用されるため、既存エージェントの動作に影響する可能性あり。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#8734;</div>
+                    <div class="key-point-content">
+                        <h3>max_turns=None でターン制限を無効化</h3>
+                        <p>長時間のマルチステップタスクに対応するため、ラン実行のターン数制限を無効化するオプションが追加。デフォルト (10) は維持。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#9881;</div>
+                    <div class="key-point-content">
+                        <h3>ToolExecutionConfig で並行性を制御</h3>
+                        <p>SDK 側でのローカル関数ツール実行の並行数を max_function_tool_concurrency で制限可能に。プロバイダー側の parallel_tool_calls とは独立。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128279;</div>
+                    <div class="key-point-content">
+                        <h3>MCP ツール名にサーバー名を付与</h3>
+                        <p>include_server_in_tool_names オプションにより、複数 MCP サーバー間のツール名衝突を防止可能に。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (v0.15.x)</h4>
+                    <ul>
+                        <li>デフォルトモデル: gpt-4.1</li>
+                        <li>max_turns: 常に数値指定が必要</li>
+                        <li>ツール並行実行: 制御不可</li>
+                        <li>MCP ツール名: サーバー名なし</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (v0.16.0)</h4>
+                    <ul>
+                        <li>デフォルトモデル: gpt-5.4-mini</li>
+                        <li>max_turns=None で無制限実行可</li>
+                        <li>ToolExecutionConfig で並行数制御</li>
+                        <li>サーバー名プレフィックスで衝突防止</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">新機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>デフォルトモデル変更</h3>
+                    <p>gpt-4.1 から gpt-5.4-mini へ。GPT-5 系のデフォルト設定が自動適用される。明示的にモデル指定または環境変数 OPENAI_DEFAULT_MODEL で上書き可能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>ターン制限の無効化</h3>
+                    <p>max_turns=None を指定することで DEFAULT_MAX_TURNS (10) の制限を撤廃。複雑なリサーチやマルチステップワークフローに対応。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>ツール実行スケジューラ</h3>
+                    <p>ToolExecutionConfig の max_function_tool_concurrency で SDK 側のツール実行並行数を制御。レート制限のある外部 API 呼び出しに有効。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>MCP サーバー名付与</h3>
+                    <p>MCPConfig の include_server_in_tool_names=True でツール名に MCP サーバー名を含め、複数サーバー間の名前衝突を防止。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--text-secondary);">モデルの明示的指定 (破壊的変更への対応)</h3>
+            <div class="code-block">
+<code><span class="keyword">from</span> agents <span class="keyword">import</span> Agent
+
+<span class="comment"># gpt-4.1 を明示的に指定して従来動作を維持</span>
+agent = Agent(<span class="param">name</span>=<span class="string">"Assistant"</span>, <span class="param">model</span>=<span class="string">"gpt-4.1"</span>)</code>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-bottom: 12px; margin-top: 24px; color: var(--text-secondary);">ツール実行の並行性制御</h3>
+            <div class="code-block">
+<code><span class="keyword">from</span> agents <span class="keyword">import</span> Agent, Runner
+<span class="keyword">from</span> agents.run <span class="keyword">import</span> RunConfig, ToolExecutionConfig
+
+run_config = RunConfig(
+    <span class="param">tool_execution_config</span>=ToolExecutionConfig(
+        <span class="param">max_function_tool_concurrency</span>=<span class="string">3</span>
+    )
+)
+
+result = <span class="keyword">await</span> Runner.<span class="function">run</span>(
+    agent, <span class="param">input</span>=<span class="string">"task"</span>, <span class="param">run_config</span>=run_config
+)</code>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-bottom: 12px; margin-top: 24px; color: var(--text-secondary);">max_turns の無効化</h3>
+            <div class="code-block">
+<code><span class="comment"># ターン制限なしで実行</span>
+result = <span class="keyword">await</span> Runner.<span class="function">run</span>(
+    agent, <span class="param">input</span>=<span class="string">"complex research"</span>, <span class="param">max_turns</span>=<span class="keyword">None</span>
+)</code>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Config["RunConfig"]
+        Model["モデル設定\ndefault: gpt-5.4-mini"]
+        MaxTurns["max_turns\nNone | int (default: 10)"]
+        ToolExec["ToolExecutionConfig\nmax_function_tool_concurrency"]
+    end
+
+    subgraph Agent["Agent"]
+        AgentDef["Agent 定義"]
+        MCP["MCPConfig\ninclude_server_in_tool_names"]
+        Tools["Function Tools"]
+    end
+
+    subgraph Execution["実行エンジン"]
+        Runner["Runner.run()"]
+        Scheduler["ツール実行スケジューラ"]
+        TurnCounter["ターンカウンター"]
+    end
+
+    subgraph Provider["OpenAI API"]
+        GPT5["gpt-5.4-mini"]
+        GPT41["gpt-4.1"]
+    end
+
+    AgentDef --> Runner
+    Config --> Runner
+    Runner --> TurnCounter
+    Runner --> Scheduler
+    Scheduler --> Tools
+    Scheduler --> MCP
+    Runner --> GPT5
+    Runner --> GPT41
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT5,GPT41 openai
+    class Runner,Scheduler,TurnCounter dark
+    class AgentDef,Model,MaxTurns,ToolExec,MCP,Tools light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>長時間リサーチエージェント</h4>
+                <p>max_turns=None により、Web 検索とドキュメント分析を繰り返す複雑なリサーチタスクをターン制限なしで実行可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>レート制限のある外部 API 連携</h4>
+                <p>ToolExecutionConfig で並行数を制限し、外部 API のレート制限を超えないよう SDK レベルで制御。</p>
+            </div>
+            <div class="use-case">
+                <h4>マルチサーバー MCP 環境</h4>
+                <p>include_server_in_tool_names でサーバー名をプレフィックスとして付与し、ファイルシステムサーバーと DB サーバーの "read" ツールの衝突を防止。</p>
+            </div>
+        </section>
+
+        <!-- Bug Fixes -->
+        <section class="section">
+            <h2 class="section-title">バグ修正</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#128295;</div>
+                    <div class="key-point-content">
+                        <h3>Chat completions ツール呼び出し出力インデックスの安定化</h3>
+                        <p>ツール呼び出し結果の出力インデックスが安定するよう修正。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#128274;</div>
+                    <div class="key-point-content">
+                        <h3>外部シンボリックリンクターゲットの拒否</h3>
+                        <p>hydrate 処理時に外部を指すシンボリックリンクターゲットを拒否するよう修正 (セキュリティ強化)。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon" style="font-size: 16px;">&#128736;</div>
+                    <div class="key-point-content">
+                        <h3>Permissions のハッシュ可能化</h3>
+                        <p>Permissions クラスを User や Group と同様にハッシュ可能に修正。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>Source:</strong> <a href="https://github.com/openai/openai-agents-python/releases/tag/v0.16.0">OpenAI Agents SDK v0.16.0 Release Notes</a></p>
+            <p style="margin-top: 8px;"><strong>Repository:</strong> <a href="https://github.com/openai/openai-agents-python">github.com/openai/openai-agents-python</a></p>
+        </footer>
+    </div>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    </script>
+</body>
+</html>

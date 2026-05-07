@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRC (Multipath Reliable Connection): 大規模 AI トレーニングネットワークを実現する新プロトコル</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin: 24px auto;
+            max-width: 900px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .key-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points li {
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .key-points li strong {
+            color: var(--openai-green);
+        }
+
+        /* Before/After Comparison */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .comparison-card {
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .comparison-card.before h3 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h3 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-card ul li::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .comparison-card.before ul li::before {
+            background-color: #F87171;
+        }
+
+        .comparison-card.after ul li::before {
+            background-color: #34D399;
+        }
+
+        /* Mermaid Diagram */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Component Table */
+        .component-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .component-table thead {
+            background: var(--gradient-header);
+            color: white;
+        }
+
+        .component-table th {
+            padding: 14px 20px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .component-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .component-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .component-table tbody tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        /* Developer Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .impact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .impact-card .icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .impact-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .impact-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Source Link */
+        .source-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: var(--gradient-accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: opacity 0.2s ease;
+        }
+
+        .source-link:hover {
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px;
+                margin: 16px auto;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .component-table {
+                font-size: 0.85rem;
+            }
+
+            .component-table th,
+            .component-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <span class="badge">ENGINEERING</span>
+            <p class="date">2026-05-05</p>
+            <h1>MRC (Multipath Reliable Connection):<br>大規模 AI トレーニングネットワークを実現する新プロトコル</h1>
+        </div>
+    </header>
+
+    <!-- Key Points -->
+    <section class="section">
+        <h2 class="section-title">Key Points</h2>
+        <ul class="key-points">
+            <li><strong>新プロトコル:</strong> 大規模 AI トレーニング向けに設計されたスーパーコンピュータネットワーキングプロトコル MRC を発表</li>
+            <li><strong>マルチパス耐障害性:</strong> 複数パス同時利用、即時フェイルオーバー、動的パス管理により高い可用性を実現</li>
+            <li><strong>オープンソース:</strong> OCP (Open Compute Project) 経由でオープンソースとして公開</li>
+            <li><strong>パフォーマンス改善:</strong> 帯域集約、負荷分散、テール遅延削減によりネットワーク効率を大幅に向上</li>
+            <li><strong>大規模運用実績:</strong> 数万台規模の GPU クラスタでの運用実績を保有</li>
+            <li><strong>従来比の進化:</strong> 単一パスからマルチパスへ、秒単位からミリ秒単位のフェイルオーバーを実現</li>
+        </ul>
+    </section>
+
+    <!-- Before/After Comparison -->
+    <section class="section">
+        <h2 class="section-title">Before / After 比較</h2>
+        <div class="comparison-grid">
+            <div class="comparison-card before">
+                <h3>Before (従来プロトコル)</h3>
+                <ul>
+                    <li>単一パス</li>
+                    <li>秒単位の切り替え</li>
+                    <li>単一リンク帯域</li>
+                    <li>汎用設計</li>
+                </ul>
+            </div>
+            <div class="comparison-card after">
+                <h3>After (MRC)</h3>
+                <ul>
+                    <li>マルチパス</li>
+                    <li>ミリ秒単位の即時フェイルオーバー</li>
+                    <li>複数リンク帯域集約</li>
+                    <li>AI トレーニング特化</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Diagram -->
+    <section class="section">
+        <h2 class="section-title">アーキテクチャ図</h2>
+        <div class="mermaid-container">
+            <pre class="mermaid">
+flowchart TD
+    subgraph Cluster["AI Training Cluster"]
+        subgraph Node_A["GPU Node A"]
+            GPU_A["GPU"]
+            NIC_A["NIC (Multiple Ports)"]
+        end
+        subgraph Node_B["GPU Node B"]
+            GPU_B["GPU"]
+            NIC_B["NIC (Multiple Ports)"]
+        end
+    end
+
+    subgraph Network["Network Fabric"]
+        subgraph MRC_Layer["MRC Protocol Layer"]
+            PM["Path Manager"]
+            PS["Packet Scheduler"]
+            RC["Reliability Controller"]
+        end
+        subgraph Paths["Physical Paths"]
+            P1["Path 1"]
+            P2["Path 2"]
+            P3["Path 3"]
+        end
+    end
+
+    GPU_A --> NIC_A
+    NIC_A --> PM
+    PM --> PS
+    PS --> P1
+    PS --> P2
+    PS --> P3
+    P1 --> RC
+    P2 --> RC
+    P3 --> RC
+    RC --> NIC_B
+    NIC_B --> GPU_B
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPU_A,GPU_B openai
+    class PM,PS,RC dark
+    class P1,P2,P3 light
+            </pre>
+        </div>
+    </section>
+
+    <!-- Component Table -->
+    <section class="section">
+        <h2 class="section-title">MRC コンポーネント詳細</h2>
+        <table class="component-table">
+            <thead>
+                <tr>
+                    <th>コンポーネント</th>
+                    <th>役割</th>
+                    <th>主な機能</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Path Manager</strong></td>
+                    <td>パス管理</td>
+                    <td>利用可能なネットワークパスの検出、監視、動的な追加・削除を管理</td>
+                </tr>
+                <tr>
+                    <td><strong>Packet Scheduler</strong></td>
+                    <td>パケットスケジューリング</td>
+                    <td>複数パスへの負荷分散、帯域集約、最適なパス選択によるテール遅延削減</td>
+                </tr>
+                <tr>
+                    <td><strong>Reliability Controller</strong></td>
+                    <td>信頼性制御</td>
+                    <td>パケットの順序保証、再送制御、即時フェイルオーバーによるデータ整合性確保</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Developer Impact -->
+    <section class="section">
+        <h2 class="section-title">開発者・インフラエンジニアへの影響</h2>
+        <div class="impact-grid">
+            <div class="impact-card">
+                <div class="icon">&#x1F310;</div>
+                <h4>オープンソース活用</h4>
+                <p>OCP 経由で公開されるため、自社 GPU クラスタへの導入が可能</p>
+            </div>
+            <div class="impact-card">
+                <div class="icon">&#x26A1;</div>
+                <h4>高速フェイルオーバー</h4>
+                <p>ミリ秒単位の切り替えにより、トレーニングジョブの中断を最小化</p>
+            </div>
+            <div class="impact-card">
+                <div class="icon">&#x1F4C8;</div>
+                <h4>スケーラビリティ</h4>
+                <p>数万台 GPU 規模での運用実績があり、大規模クラスタに適用可能</p>
+            </div>
+            <div class="impact-card">
+                <div class="icon">&#x1F527;</div>
+                <h4>帯域効率の向上</h4>
+                <p>マルチパス帯域集約により、既存インフラの帯域利用率を最大化</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Source -->
+    <section class="section" style="text-align: center;">
+        <a href="https://openai.com/index/mrc-supercomputer-networking" class="source-link" target="_blank" rel="noopener noreferrer">
+            OpenAI 公式ブログで詳細を読む
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Source: <a href="https://openai.com/index/mrc-supercomputer-networking" target="_blank" rel="noopener noreferrer">openai.com/index/mrc-supercomputer-networking</a></p>
+            <p style="margin-top: 8px;">Generated on 2026-05-07</p>
+        </div>
+    </footer>
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#0D8A6A',
+                secondaryColor: '#343541',
+                tertiaryColor: '#F7F7F8',
+                lineColor: '#8E8EA0',
+                fontSize: '14px',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+    <!-- Highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
