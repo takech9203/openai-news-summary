@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.5 と GPT-5.5-Cyber による Trusted Access for Cyber の拡大</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            border-radius: 24px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid #10A37F;
+            line-height: 1.4;
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+            align-items: start;
+            padding: 16px;
+            background: #F7F7F8;
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 40px;
+            height: 40px;
+            background: #10A37F;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .key-point-text {
+            font-size: 0.95rem;
+        }
+
+        .key-point-text strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #343541;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: #F7F7F8;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #ECECF1;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h4 {
+            color: #10A37F;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            margin: 16px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 10px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border-bottom: 1px solid #3e4451;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-header::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #10A37F;
+            border-radius: 50%;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .code-block pre code {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        .mermaid-container {
+            background: white;
+            border: 2px solid #10A37F;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: #343541;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            color: #10A37F;
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .comparison-card {
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .comparison-card.before {
+            background: #ECECF1;
+            border: 2px solid #444654;
+        }
+
+        .comparison-card.after {
+            background: rgba(16, 163, 127, 0.08);
+            border: 2px solid #10A37F;
+        }
+
+        .comparison-card h4 {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            color: #343541;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.82rem;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .comparison-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .comparison-card.before ul li::before {
+            background: #444654;
+        }
+
+        .comparison-card.after ul li::before {
+            background: #10A37F;
+        }
+
+        .use-case {
+            border-left: 4px solid #10A37F;
+            padding: 16px 20px;
+            margin: 12px 0;
+            background: #F7F7F8;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .use-case h4 {
+            color: #10A37F;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        .use-case p {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .table-wrapper table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper th {
+            background: #343541;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .table-wrapper td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #ECECF1;
+        }
+
+        .table-wrapper tr:nth-child(even) td {
+            background: #F7F7F8;
+        }
+
+        .footer {
+            background: #ECECF1;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .footer a {
+            color: #10A37F;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .timeline-label {
+            display: inline-block;
+            background: rgba(16, 163, 127, 0.1);
+            color: #10A37F;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">セキュリティ</span>
+            <h1>GPT-5.5 と GPT-5.5-Cyber による Trusted Access for Cyber の拡大</h1>
+            <p>次世代サイバー防衛モデルの展開 - 検証済み防衛者への提供開始</p>
+            <span class="date-badge">2026-05-07 | OpenAI News</span>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">1</div>
+                    <div class="key-point-text">
+                        <strong>GPT-5.5-Cyber の導入</strong>
+                        GPT-5.5 をベースにサイバーセキュリティ防衛に特化した次世代専用モデル。GPT-5.4-Cyber の後継として、マルチツール統合推論能力を活用した高度なセキュリティ分析を実現する。
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">2</div>
+                    <div class="key-point-text">
+                        <strong>Trusted Access for Cyber プログラムの GPT-5.5 世代対応</strong>
+                        既存の参加者は GPT-5.5 および GPT-5.5-Cyber にアクセス可能に。新規参加者の受付も拡大され、審査を通過した防衛者に限定提供される。
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">3</div>
+                    <div class="key-point-text">
+                        <strong>重要インフラ防衛への最適化</strong>
+                        OT 環境、SCADA システム、ICS プロトコルに関する深い理解を組み込み、重要インフラ固有の脅威に対応する。IT/OT 統合分析が可能に。
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">4</div>
+                    <div class="key-point-text">
+                        <strong>脆弱性研究の加速</strong>
+                        GPT-5.5 の高速推論により分析スループットが大幅に向上。ゼロデイ脆弱性の発見や CVE 分析、コードベース全体の脆弱性パターン検出を強化。
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">5</div>
+                    <div class="key-point-text">
+                        <strong>自律的なインシデントレスポンス</strong>
+                        セキュリティインシデントの検出からトリアージ、封じ込め手順の生成までを、複数のデータソースを横断的に分析しながら自律的に遂行する。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="section">
+            <h2 class="section-title">GPT-5.5-Cyber の主な能力</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>マルチツール統合分析</h4>
+                    <p>コード分析、ネットワークログ解析、脅威インテリジェンスフィード参照を一貫して実行する高度な分析ワークフローを提供</p>
+                </div>
+                <div class="feature-card">
+                    <h4>高度なマルウェア解析</h4>
+                    <p>バイナリ解析、パッキング解除、難読化解除において GPT-5.5 の推論深度を活用し、複雑なマルウェアファミリーの分析が可能</p>
+                </div>
+                <div class="feature-card">
+                    <h4>重要インフラ防衛</h4>
+                    <p>OT 環境、SCADA、ICS プロトコルへの深い理解。MITRE ATT&CK for ICS フレームワークに基づく評価を実行</p>
+                </div>
+                <div class="feature-card">
+                    <h4>脆弱性研究加速</h4>
+                    <p>コードベース全体を俯瞰しつつ深層的な脆弱性パターンを検出。ゼロデイ発見と CVE 分析のスループットを大幅に向上</p>
+                </div>
+                <div class="feature-card">
+                    <h4>クロスツール統合推論</h4>
+                    <p>GPT-5.5 のマルチツール統合推論能力を活かし、IT/OT 双方のデータソースを統合的に分析する</p>
+                </div>
+                <div class="feature-card">
+                    <h4>全リクエスト監査証跡</h4>
+                    <p>防衛目的利用を担保するため、全 API リクエストの詳細監査証跡を記録。セキュリティコンプライアンスに対応</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verified Defenders -->
+        <div class="section">
+            <h2 class="section-title">検証済み防衛者 (Verified Defenders)</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">CERT</div>
+                    <div class="stat-label">政府機関 / CSIRT</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Vendor</div>
+                    <div class="stat-label">セキュリティベンダー / MSSP</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Research</div>
+                    <div class="stat-label">学術研究機関</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Infra</div>
+                    <div class="stat-label">重要インフラ運用者</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison: GPT-5.4-Cyber vs GPT-5.5-Cyber -->
+        <div class="section">
+            <h2 class="section-title">GPT-5.4-Cyber から GPT-5.5-Cyber への進化</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>GPT-5.4-Cyber (前世代)</h4>
+                    <ul>
+                        <li>GPT-5.4 ベースモデル</li>
+                        <li>標準的なセキュリティ分析</li>
+                        <li>GPT-5.4 ベースの推論速度</li>
+                        <li>高精度な脆弱性検出</li>
+                        <li>重要インフラ基本対応</li>
+                        <li>API 経由の分析</li>
+                        <li>1M トークンコンテキスト</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>GPT-5.5-Cyber (次世代)</h4>
+                    <ul>
+                        <li>GPT-5.5 (史上最も知的なモデル)</li>
+                        <li>マルチツール統合推論</li>
+                        <li>高速化された推論</li>
+                        <li>加速された脆弱性研究</li>
+                        <li>重要インフラ防衛に最適化</li>
+                        <li>クロスツール統合分析</li>
+                        <li>1M+ トークン (拡張の可能性)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Comparison Table -->
+        <div class="section">
+            <h2 class="section-title">API モデル比較</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>パラメータ</th>
+                            <th>GPT-5.5</th>
+                            <th>GPT-5.5-Cyber</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>モデル名</td>
+                            <td><code>gpt-5.5</code></td>
+                            <td><code>gpt-5.5-cyber</code></td>
+                        </tr>
+                        <tr>
+                            <td>アクセス条件</td>
+                            <td>一般提供</td>
+                            <td>Trusted Access 参加者限定</td>
+                        </tr>
+                        <tr>
+                            <td>コンテキスト</td>
+                            <td>1M+ トークン</td>
+                            <td>1M+ トークン</td>
+                        </tr>
+                        <tr>
+                            <td>最適化領域</td>
+                            <td>汎用</td>
+                            <td>サイバーセキュリティ防衛</td>
+                        </tr>
+                        <tr>
+                            <td>出力制御</td>
+                            <td>標準ポリシー</td>
+                            <td>防衛用途限定の強化ポリシー</td>
+                        </tr>
+                        <tr>
+                            <td>監査機能</td>
+                            <td>標準ログ</td>
+                            <td>全リクエストの詳細監査証跡</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Code Sample 1 -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル: 脆弱性研究の加速</h2>
+            <div class="code-block">
+                <div class="code-header">Python - GPT-5.5-Cyber による脆弱性分析</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.5-Cyber による脆弱性研究の加速
+response = client.chat.completions.create(
+    model="gpt-5.5-cyber",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an advanced vulnerability researcher with deep expertise "
+                "in binary analysis, source code auditing, and exploit development. "
+                "Analyze the provided target for security vulnerabilities, classify "
+                "findings by CVSS v3.1 score, map to relevant CWE categories, and "
+                "provide detailed proof-of-concept descriptions and remediation guidance."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Analyze this network service implementation for vulnerabilities:\n\n"
+                "```c\n"
+                "#include &lt;stdio.h&gt;\n"
+                "#include &lt;string.h&gt;\n"
+                "#include &lt;stdlib.h&gt;\n"
+                "#include &lt;unistd.h&gt;\n"
+                "#include &lt;sys/socket.h&gt;\n\n"
+                "void handle_request(int client_fd) {\n"
+                "    char buffer[256];\n"
+                "    char response[512];\n"
+                "    int bytes_read = read(client_fd, buffer, 1024);\n"
+                "    sprintf(response, \"Received: %s\", buffer);\n"
+                "    write(client_fd, response, strlen(response));\n"
+                "}\n"
+                "```\n\n"
+                "Identify all vulnerabilities, assess exploitability, and provide "
+                "remediation recommendations."
+            )
+        }
+    ],
+    max_tokens=8192
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </div>
+
+        <!-- Code Sample 2 -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル: 重要インフラ防衛のための脅威分析</h2>
+            <div class="code-block">
+                <div class="code-header">Python - マルチツール統合推論による IT/OT 脅威分析</div>
+                <pre><code class="language-python">from openai import OpenAI
+import json
+
+client = OpenAI()
+
+
+def analyze_critical_infrastructure_threat(
+    network_logs: str,
+    ot_telemetry: str,
+    threat_intel_feed: str
+) -&gt; dict:
+    """
+    重要インフラ環境における複合的な脅威を分析する。
+    IT/OT 双方のデータソースを統合し、
+    MITRE ATT&CK for ICS フレームワークに基づく評価を返す。
+    """
+    response = client.chat.completions.create(
+        model="gpt-5.5-cyber",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a critical infrastructure security analyst "
+                    "specializing in IT/OT convergence threats. Analyze the "
+                    "provided data sources holistically, correlating IT network "
+                    "indicators with OT telemetry anomalies. Map findings to "
+                    "MITRE ATT&CK for ICS framework and assess potential "
+                    "impact on physical processes. Provide severity assessment "
+                    "and immediate containment recommendations."
+                )
+            },
+            {
+                "role": "user",
+                "content": (
+                    "Analyze the following data for threats to our industrial "
+                    "control system:\n\n"
+                    f"## IT Network Logs\n{network_logs}\n\n"
+                    f"## OT Telemetry\n{ot_telemetry}\n\n"
+                    f"## Threat Intelligence\n{threat_intel_feed}\n\n"
+                    "Provide:\n"
+                    "1. Correlated threat assessment\n"
+                    "2. MITRE ATT&CK for ICS technique mapping\n"
+                    "3. Potential physical impact assessment\n"
+                    "4. Immediate containment actions\n"
+                    "5. Long-term remediation plan"
+                )
+            }
+        ],
+        max_tokens=8192,
+        response_format={"type": "json_object"}
+    )
+
+    return json.loads(response.choices[0].message.content)</code></pre>
+            </div>
+        </div>
+
+        <!-- Code Sample 3 -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル: 脆弱性研究の自動化パイプライン</h2>
+            <div class="code-block">
+                <div class="code-header">Python - 体系的な脆弱性研究パイプライン</div>
+                <pre><code class="language-python">from openai import OpenAI
+from pathlib import Path
+
+client = OpenAI()
+
+
+def vulnerability_research_pipeline(
+    target_files: list[str],
+    known_cves: list[str] | None = None
+) -&gt; str:
+    """
+    複数のソースファイルに対して体系的な脆弱性研究を実行する。
+    GPT-5.5-Cyber のマルチツール統合推論を活用し、
+    ファイル間のデータフロー追跡と攻撃面の網羅的分析を行う。
+    """
+    code_content = ""
+    for path in target_files:
+        content = Path(path).read_text()
+        code_content += f"\n--- {path} ---\n{content}\n"
+
+    cve_context = ""
+    if known_cves:
+        cve_context = (
+            "\n\nKnown CVEs in similar software:\n"
+            + "\n".join(f"- {cve}" for cve in known_cves)
+        )
+
+    response = client.chat.completions.create(
+        model="gpt-5.5-cyber",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a vulnerability researcher conducting systematic "
+                    "security research on the provided codebase. Your goal is to "
+                    "discover novel vulnerabilities by:\n"
+                    "1. Tracing data flows across trust boundaries\n"
+                    "2. Identifying attack surface entry points\n"
+                    "3. Analyzing memory safety issues\n"
+                    "4. Detecting logic flaws and race conditions\n"
+                    "5. Evaluating cryptographic implementations\n"
+                    "6. Checking authentication/authorization bypasses\n\n"
+                    "For each finding, provide: vulnerability class, root cause, "
+                    "proof-of-concept approach, CVSS v3.1 vector and score, "
+                    "and recommended fix."
+                )
+            },
+            {
+                "role": "user",
+                "content": (
+                    "Conduct vulnerability research on this codebase:\n\n"
+                    f"{code_content}"
+                    f"{cve_context}\n\n"
+                    "Focus on discovering novel, exploitable vulnerabilities "
+                    "that could impact confidentiality, integrity, or availability."
+                )
+            }
+        ],
+        max_tokens=16384
+    )
+
+    return response.choices[0].message.content</code></pre>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram 1 -->
+        <div class="section">
+            <h2 class="section-title">アーキテクチャ: Trusted Access for Cyber プログラムの全体構造</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Defenders["検証済み防衛者 (Verified Defenders)"]
+        GovCERT["政府 CERT / CSIRT"]
+        SecVendor["セキュリティベンダー"]
+        Research["学術研究機関"]
+        MSSP["MSSP / MDR"]
+        CritInfra["重要インフラ<br/>運用者"]
+    end
+
+    subgraph TrustedAccess["Trusted Access for Cyber プログラム"]
+        Vetting["審査プロセス"]
+        subgraph VettingSteps["審査ステップ"]
+            OrgReview["組織信頼性評価"]
+            PurposeCheck["利用目的審査"]
+            Clearance["セキュリティ<br/>クリアランス"]
+        end
+        AccessTier["アクセス階層管理"]
+    end
+
+    subgraph Platform["OpenAI プラットフォーム"]
+        Gateway["API Gateway"]
+        subgraph Models["サイバーセキュリティモデル"]
+            GPT55["GPT-5.5"]
+            GPT55Cyber["GPT-5.5-Cyber"]
+            GPT54Cyber["GPT-5.4-Cyber<br/>(レガシー)"]
+        end
+        subgraph Capabilities["統合セキュリティ機能"]
+            VulnResearch["脆弱性研究<br/>加速"]
+            ThreatIntel["脅威インテリジェンス<br/>統合分析"]
+            CritProtect["重要インフラ<br/>防衛"]
+            MalwareRE["マルウェア<br/>解析"]
+            IncidentResp["インシデント<br/>レスポンス"]
+        end
+        subgraph Safeguards["セーフガード"]
+            OutputFilter["出力フィルタリング"]
+            AbuseDetect["悪用検出"]
+            AuditLog["監査ログ"]
+        end
+    end
+
+    subgraph DataSources["脅威データ統合"]
+        CVE["CVE / NVD"]
+        MITRE["MITRE ATT&CK<br/>/ ATT&CK for ICS"]
+        OSINT["OSINT フィード"]
+        ThreatFeed["脅威インテリジェンス<br/>フィード"]
+    end
+
+    GovCERT --> Vetting
+    SecVendor --> Vetting
+    Research --> Vetting
+    MSSP --> Vetting
+    CritInfra --> Vetting
+
+    OrgReview --> PurposeCheck
+    PurposeCheck --> Clearance
+    Clearance --> AccessTier
+
+    AccessTier --> Gateway
+    Gateway --> Models
+    GPT55Cyber --> Capabilities
+    GPT55 --> Capabilities
+
+    Capabilities --> Safeguards
+    Safeguards --> Defenders
+
+    VulnResearch <--> CVE
+    ThreatIntel <--> MITRE
+    ThreatIntel <--> ThreatFeed
+    CritProtect <--> MITRE
+    MalwareRE <--> OSINT
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class GPT55,GPT55Cyber,VulnResearch,ThreatIntel,CritProtect,MalwareRE,IncidentResp openai
+    class Gateway,OutputFilter,AbuseDetect,AuditLog,OrgReview,PurposeCheck,Clearance dark
+    class GovCERT,SecVendor,Research,MSSP,CritInfra,CVE,MITRE,OSINT,ThreatFeed light
+    class AccessTier,GPT54Cyber accent
+                </pre>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram 2 -->
+        <div class="section">
+            <h2 class="section-title">タイムライン: Trusted Access for Cyber の進化</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Timeline["Trusted Access for Cyber の進化"]
+        T1["2026-04-14<br/>プログラム拡大発表<br/>GPT-5.4-Cyber 導入"]
+        T2["2026-04-16<br/>$10M 助成金<br/>エコシステム加速"]
+        T3["2026-04-24<br/>GPT-5.4-Cyber<br/>限定リリース"]
+        T4["2026-04-29<br/>サイバーセキュリティ<br/>ビジョン文書"]
+        T5["2026-05-07<br/>GPT-5.5-Cyber<br/>プログラム拡大"]
+    end
+
+    T1 --> T2
+    T2 --> T3
+    T3 --> T4
+    T4 --> T5
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class T5 openai
+    class T1,T3 dark
+    class T2,T4 accent
+                </pre>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響とユースケース</h2>
+
+            <div class="use-case">
+                <h4>GPT-5.5 世代への移行の加速</h4>
+                <p>既存 GPT-5.4-Cyber ユーザーは GPT-5.5-Cyber への移行を計画すべき。マルチツール統合推論能力により、セキュリティ分析ワークフローの大幅な効率化が期待される。モデル名が gpt-5.5-cyber に変更されるため、インテグレーションの更新が必要。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>重要インフラセキュリティ開発の機会</h4>
+                <p>ICS/SCADA 環境向けセキュリティ監視ツールや異常検知システムの開発が加速。IT/OT 統合分析プラットフォームの構築において GPT-5.5-Cyber のマルチソース分析能力が強力な基盤に。NERC CIP、IEC 62443 等の規制対応支援ツール開発の機会も拡大。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>脆弱性研究コミュニティへのインパクト</h4>
+                <p>高速推論と深い分析能力により研究スループットが向上。静的解析ツールでは検出困難な論理的脆弱性やレースコンディションの発見を促進。CVSS スコアリング、CWE 分類、修正ガイダンスの自動生成により脆弱性開示プロセスを効率化。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>プログラム参加に向けた準備</h4>
+                <p>審査プロセスには数週間から数ヶ月を要するため早期申請を推奨。防衛目的の利用計画を文書化し、データ管理ポリシーとログ保持手順を事前に整備しておくことが重要。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: OpenAI News - 2026-05-07</p>
+            <p><a href="https://openai.com/index/gpt-5-5-with-trusted-access-for-cyber" target="_blank">Scaling Trusted Access for Cyber with GPT-5.5 and GPT-5.5-Cyber (公式)</a></p>
+            <p style="margin-top: 16px; font-size: 0.75rem; color: #999;">本レポートは公式発表の説明文および過去の関連レポートの情報に基づいて構成されたものです。</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

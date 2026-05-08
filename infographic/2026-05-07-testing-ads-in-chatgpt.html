@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT での広告テスト開始 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .category-badge.secondary {
+            background: var(--warning);
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .source {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+        }
+
+        .key-point-icon.info {
+            background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+        }
+
+        .key-point-icon.dark {
+            background: var(--gradient-header);
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background: var(--openai-gray);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .use-case ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Privacy Architecture */
+        .privacy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .privacy-item {
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+            border: 1px solid rgba(16, 163, 127, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .privacy-item .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .privacy-item h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .privacy-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Flow Steps */
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .flow-step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .flow-step p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Business Rationale */
+        .business-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .business-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .business-card .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .business-card h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-green);
+        }
+
+        .business-card p {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-links {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .footer .source-links a {
+            font-size: 12px;
+            padding: 6px 14px;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 163, 127, 0.3);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+            margin-top: 16px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--openai-green);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .timeline-item h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .timeline-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .privacy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .business-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">OpenAI News</span>
+                <span class="category-badge secondary">Business / Strategy</span>
+                <h1>ChatGPT での広告テスト開始: 無料アクセスを支える新たな収益モデル</h1>
+                <p class="date">2026-05-07</p>
+                <p class="source">Source: OpenAI News - Testing ads in ChatGPT</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">
+                        <span>&#x1F4E2;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>ChatGPT 無料ティアに広告表示テスト開始</h3>
+                        <p>OpenAI は無料ユーザー向けに ChatGPT の会話インターフェース内に広告を表示する実験を 2026 年 5 月 7 日に開始。有料プラン (Plus、Pro、Team 等) には広告非表示。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon info">
+                        <span>&#x1F6E1;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>4 つの基本原則に基づく設計</h3>
+                        <p>明確なラベリング、回答の独立性、プライバシー保護、ユーザーコントロールの 4 原則を技術アーキテクチャレベルで実装。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon dark">
+                        <span>&#x1F512;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>プライバシーを技術的に保証</h3>
+                        <p>会話処理と広告配信を物理的に分離し、ゼロアクセス設計により会話データが広告主に共有されることを技術的に不可能にしている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon warning">
+                        <span>&#x1F4B0;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>広告インフラの段階的構築の集大成</h3>
+                        <p>2026 年 3 月以降の Meta 広告幹部の採用、The Trade Desk とのパートナーシップ、セルフサーブ Ads Manager の導入を経て、実際の広告表示フェーズへ移行。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 Principles -->
+        <section class="section">
+            <h2 class="section-title">4 つの基本原則</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span>&#x1F3F7;</span> 明確なラベリング</h3>
+                    <p>広告コンテンツには必ず「広告」「Sponsored」ラベルを付与。視覚的な差別化により、オーガニック応答との混同を完全に防止。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>&#x2696;</span> 回答の独立性</h3>
+                    <p>ChatGPT の応答内容は広告によって一切影響を受けない。回答生成と広告配信は完全に独立したプロセスとして動作。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>&#x1F512;</span> プライバシー保護</h3>
+                    <p>ユーザーの会話内容は広告主と一切共有されない。匿名化された集約データのみを使用した広告ターゲティング。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>&#x1F39B;</span> ユーザーコントロール</h3>
+                    <p>広告の表示頻度調整、カテゴリ非表示、フィードバック送信など、ユーザーが主体的に広告体験をコントロール可能。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Delivery Flow -->
+        <section class="section">
+            <h2 class="section-title">広告配信の流れ</h2>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="flow-step-number">1</div>
+                    <p>ユーザーが ChatGPT にメッセージを送信</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">2</div>
+                    <p>会話エンジンが通常通り応答を生成 (広告システムとは独立して動作)</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">3</div>
+                    <p>広告配信エンジンが匿名化コンテキストシグナルに基づき、適切な広告候補を選定</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">4</div>
+                    <p>オークションシステムが表示する広告を決定</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-number">5</div>
+                    <p>応答と広告が明確に区別された状態でユーザーのインターフェースに表示</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Privacy Architecture -->
+        <section class="section">
+            <h2 class="section-title">プライバシー保護アーキテクチャ</h2>
+            <div class="privacy-grid">
+                <div class="privacy-item">
+                    <div class="icon">&#x1F3E2;</div>
+                    <h4>物理的分離</h4>
+                    <p>会話データストアと広告データストアが異なるインフラ上に配置</p>
+                </div>
+                <div class="privacy-item">
+                    <div class="icon">&#x1F575;</div>
+                    <h4>匿名化処理</h4>
+                    <p>差分プライバシーや k-匿名性の技術で広告シグナルを保護</p>
+                </div>
+                <div class="privacy-item">
+                    <div class="icon">&#x1F6AB;</div>
+                    <h4>ゼロアクセス設計</h4>
+                    <p>広告システムから会話データへのアクセスパスが技術的に存在しない</p>
+                </div>
+                <div class="privacy-item">
+                    <div class="icon">&#x1F510;</div>
+                    <h4>暗号化</h4>
+                    <p>データ転送時および保存時の暗号化を施行</p>
+                </div>
+                <div class="privacy-item">
+                    <div class="icon">&#x1F4CB;</div>
+                    <h4>アクセスログ監査</h4>
+                    <p>全データアクセスを記録し異常検知システムで監視</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram -->
+        <section class="section">
+            <h2 class="section-title">システムアーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph UserLayer["ユーザーインターフェース"]
+        User(["無料ティアユーザー"])
+        Settings["広告設定・コントロール"]
+    end
+
+    subgraph ChatGPTCore["ChatGPT コア (会話処理)"]
+        Input["メッセージ入力"]
+        LLM["LLM 推論エンジン"]
+        Response["応答生成"]
+    end
+
+    subgraph AdSystem["広告配信システム (独立)"]
+        AdEngine["広告配信エンジン"]
+        Auction["オークション"]
+        AdCreative["広告クリエイティブ"]
+        QualityCheck["品質管理"]
+    end
+
+    subgraph PrivacyWall["プライバシー保護壁"]
+        Anonymizer["匿名化処理"]
+        DataIsolation["データ分離"]
+        ZeroAccess["ゼロアクセス制御"]
+    end
+
+    subgraph Signals["匿名化シグナル"]
+        Region["地域"]
+        Device["デバイスタイプ"]
+        Language["言語"]
+        Time["時間帯"]
+    end
+
+    subgraph Display["表示レイヤー"]
+        ResponseArea["応答表示エリア"]
+        AdArea["広告表示エリア<br/>(ラベル付き)"]
+    end
+
+    User --> Input
+    Input --> LLM
+    LLM --> Response
+    Response --> ResponseArea
+
+    Signals --> Anonymizer
+    Anonymizer --> AdEngine
+    AdEngine --> Auction
+    Auction --> QualityCheck
+    QualityCheck --> AdCreative
+    AdCreative --> AdArea
+
+    ResponseArea --> User
+    AdArea --> User
+    Settings --> AdEngine
+
+    DataIsolation -.->|完全分離| ChatGPTCore
+    DataIsolation -.->|完全分離| AdSystem
+    ZeroAccess -.->|アクセス不可| LLM
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef privacy fill:#E8F5E9,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef user fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class LLM,Response openai
+    class AdEngine,Auction,QualityCheck,AdCreative dark
+    class Input,ResponseArea,AdArea light
+    class Anonymizer,DataIsolation,ZeroAccess privacy
+    class User,Settings user
+                </pre>
+            </div>
+        </section>
+
+        <!-- Business Rationale -->
+        <section class="section">
+            <h2 class="section-title">ビジネス上の合理性</h2>
+            <div class="business-grid">
+                <div class="business-card">
+                    <div class="icon">&#x1F310;</div>
+                    <h4>無料アクセスの持続</h4>
+                    <p>より多くのユーザーに AI を届けるための財源確保</p>
+                </div>
+                <div class="business-card">
+                    <div class="icon">&#x1F4BB;</div>
+                    <h4>インフラコスト増大</h4>
+                    <p>LLM 推論コストの膨大化に対応する収入源</p>
+                </div>
+                <div class="business-card">
+                    <div class="icon">&#x1F4C8;</div>
+                    <h4>収益源の多様化</h4>
+                    <p>サブスクリプションに加え広告という新たな収益柱</p>
+                </div>
+                <div class="business-card">
+                    <div class="icon">&#x1F3C6;</div>
+                    <h4>競争力の維持</h4>
+                    <p>Google、Meta に対抗し AI 時代の広告市場を開拓</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2 class="section-title">広告事業の構築タイムライン</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>2026 年 3 月 - Meta 広告幹部の採用</h4>
+                    <p>広告事業の本格的な人材基盤を構築</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2026 年 3 月 - The Trade Desk とのパートナーシップ</h4>
+                    <p>プログラマティック広告インフラとの接続を確立</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2026 年 3 月以降 - セルフサーブ Ads Manager 導入</h4>
+                    <p>広告主が自ら広告を管理できるプラットフォームを提供</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2026 年 5 月 7 日 - ChatGPT 内広告テスト開始</h4>
+                    <p>無料ティアユーザーに対する広告表示の実験フェーズに移行</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Quality Management -->
+        <section class="section">
+            <h2 class="section-title">広告品質管理</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span>&#x2705;</span> 広告審査プロセス</h3>
+                    <p>全ての広告クリエイティブが事前審査を経て配信される</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>&#x26D4;</span> カテゴリ制限</h3>
+                    <p>医薬品、ギャンブル等の特定カテゴリに対する厳格な規制</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>&#x1F4CA;</span> リアルタイムモニタリング</h3>
+                    <p>広告表示後のユーザーフィードバックをリアルタイムで監視</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>&#x1F6D1;</span> 自動停止メカニズム</h3>
+                    <p>問題のある広告を自動的に配信停止するシステム</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Control -->
+        <section class="section">
+            <h2 class="section-title">ユーザーコントロール機能</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">
+                        <span>&#x2699;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>広告設定ページ</h3>
+                        <p>ChatGPT の設定メニューから広告に関する設定を確認・変更可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon info">
+                        <span>&#x1F4C2;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>カテゴリ選択</h3>
+                        <p>表示を希望しない広告カテゴリの指定が可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon warning">
+                        <span>&#x1F4AC;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>フィードバック機能</h3>
+                        <p>不適切な広告の報告、広告の非表示リクエストが可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon dark">
+                        <span>&#x1F50D;</span>
+                    </div>
+                    <div class="key-point-content">
+                        <h3>透明性ツール</h3>
+                        <p>広告が表示される理由の確認が可能</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>OpenAI API 開発者</h4>
+                <ul>
+                    <li>API 経由のアプリケーションへの影響はなし (コンシューマー向けインターフェースに限定)</li>
+                    <li>将来的な広告 SDK やサードパーティ向け広告収益化プログラムの可能性</li>
+                    <li>会話データと広告データの分離アーキテクチャがプライバシー設計の参考モデルに</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>広告テクノロジー開発者</h4>
+                <ul>
+                    <li>ChatGPT が広告配信のインベントリとして利用可能に (DSP からの接続ニーズ拡大)</li>
+                    <li>AI チャットインターフェースに最適化された対話型広告フォーマットの開発需要</li>
+                    <li>AI 対話型広告における効果計測・アトリビューション手法の確立が必要</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>プライバシー・コンプライアンス開発者</h4>
+                <ul>
+                    <li>OpenAI のプライバシー保護設計が AI 広告のプライバシー基準として参照される可能性</li>
+                    <li>GDPR、CCPA、日本の個人情報保護法への準拠におけるベストプラクティス</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>ユーザー体験設計者</h4>
+                <ul>
+                    <li>広告と AI 応答の共存設計パターンが業界全体の参考事例に</li>
+                    <li>広告設定の UI 設計が他の AI プラットフォームにおける標準を形成する可能性</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                OpenAI による ChatGPT 内での広告テスト開始は、AI チャットインターフェースにおける広告ビジネスモデルの確立に向けた重要な一歩である。2026 年 3 月以降に段階的に構築してきた広告インフラを活用し、いよいよ実際のユーザーに対して広告表示を開始する段階に入った。
+            </p>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                最も注目すべきは、4 つの基本原則が技術アーキテクチャのレベルで実装されている点である。会話処理と広告配信を物理的に分離し、ゼロアクセス設計によりプライバシーを技術的に保証するアプローチは、従来のウェブ広告とは一線を画す。
+            </p>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                AI アシスタントの会話体験に広告を導入することへのユーザーの反応は未知数であり、無料アクセスの持続可能性とユーザー体験のバランスが今後の成否を左右する。Google、Meta に次ぐ第 3 の広告プラットフォームとしての地位確立に向けた、極めて重要な戦略的転換点となる。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>OpenAI News Summary - Infographic</p>
+            <p>Generated: 2026-05-08</p>
+            <div class="source-links">
+                <a href="https://openai.com/index/testing-ads-in-chatgpt" target="_blank">Testing ads in ChatGPT</a>
+                <a href="https://openai.com/index/new-ways-to-buy-chatgpt-ads" target="_blank">New ways to buy ChatGPT ads</a>
+                <a href="https://openai.com/index/openai-trade-desk-ad-partnership" target="_blank">The Trade Desk Partnership</a>
+                <a href="https://openai.com/index/powering-product-discovery-in-chatgpt" target="_blank">Product Discovery in ChatGPT</a>
+                <a href="https://openai.com/news" target="_blank">OpenAI News</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

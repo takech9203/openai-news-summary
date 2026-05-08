@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Python SDK v2.36.0 - Realtime 2 サポート</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #F7F7F8;
+            color: #343541;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #343541, #444654);
+            border-radius: 24px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 70% 60%, rgba(16, 163, 127, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            color: #FFFFFF;
+            font-size: 1.9rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.05rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid #10A37F;
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            align-items: start;
+            gap: 12px;
+        }
+
+        .key-point-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10A37F, #0D8A6A);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .key-point-text {
+            padding-top: 6px;
+        }
+
+        .key-point-text strong {
+            color: #10A37F;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: #F7F7F8;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #ECECF1;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.12);
+        }
+
+        .feature-card h4 {
+            color: #10A37F;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .code-block {
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #21252b;
+            color: #abb2bf;
+            padding: 10px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-header .lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10A37F;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .code-block pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border: 2px solid #10A37F;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container h4 {
+            color: #343541;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .use-case {
+            border-left: 3px solid #10A37F;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: #F7F7F8;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .use-case h4 {
+            color: #343541;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .use-case p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .footer {
+            background: #ECECF1;
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 32px;
+        }
+
+        .footer h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #343541;
+        }
+
+        .footer a {
+            color: #10A37F;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .generated {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(16, 163, 127, 0.1);
+            color: #10A37F;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #ECECF1;
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10A37F;
+            flex-shrink: 0;
+        }
+
+        .timeline-dot.gray {
+            background: #ECECF1;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 16px;
+            }
+            .header {
+                padding: 32px 24px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .section {
+                padding: 24px 20px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">API UPDATE</span>
+            <h1>OpenAI Python SDK v2.36.0</h1>
+            <p class="subtitle">Realtime 2 サポートを追加し次世代音声インテリジェンスに対応</p>
+            <p class="date">2026-05-07 | OpenAI API Changelog</p>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3A4;</div>
+                    <div class="key-point-text">
+                        <strong>Realtime 2 モデルの完全サポート:</strong> 第 2 世代リアルタイム音声モデルの SDK サポートが追加され、音声推論、リアルタイム翻訳、高度な文字起こしが Python で利用可能に
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-text">
+                        <strong>音声推論 (Voice Reasoning):</strong> 音声会話中にモデルが「考える」能力を持ち、複雑な質問や多段階の思考が必要なタスクに音声インターフェースで対応
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F310;</div>
+                    <div class="key-point-text">
+                        <strong>リアルタイム翻訳:</strong> 音声入力を受け取りながら即座に別の言語に翻訳して音声出力。多言語音声エージェントの構築が可能に
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-text">
+                        <strong>わずか 1 日でのリリース:</strong> 前バージョン v2.35.1 から 1 日でのリリース。プラットフォームの急速な進化に SDK が追従
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="section">
+            <h2 class="section-title">Realtime 2 の 3 つの新機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Voice Reasoning</h4>
+                    <p>音声会話中にモデルが複雑な質問や多段階の思考が必要なタスクに対応。音声 AI に推論能力を付与</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Realtime Translate</h4>
+                    <p>音声入力をリアルタイムで翻訳して音声出力。単一エージェントで多言語対応のサービスを構築可能</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Advanced Transcription</h4>
+                    <p>ストリーミング特性を活かした発話中のリアルタイム文字起こし。会議字幕や議事録作成に最適</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Version Timeline -->
+        <div class="section">
+            <h2 class="section-title">SDK バージョン進化</h2>
+            <div class="timeline-item">
+                <div class="timeline-dot gray"></div>
+                <div>
+                    <span class="version-badge">v2.35.1</span>
+                    <span style="font-size: 0.85rem; color: #888;"> 2026-05-06</span>
+                    <p style="font-size: 0.9rem; color: #555;">Image 2 API 更新 / レガシー CLI 削除 / size enum 修正</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div>
+                    <span class="version-badge">v2.36.0</span>
+                    <span style="font-size: 0.85rem; color: #888;"> 2026-05-07</span>
+                    <p style="font-size: 0.9rem; color: #555;">Realtime 2 サポート / 音声推論 / リアルタイム翻訳 / 高度な文字起こし</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Samples -->
+        <div class="section">
+            <h2 class="section-title">Code Samples</h2>
+
+            <div class="code-block">
+                <div class="code-header"><span class="lang-dot"></span>BASH - SDK のアップグレード</div>
+                <pre><code class="language-bash"># v2.36.0 へのアップグレード
+pip install --upgrade openai
+
+# バージョン確認
+python -c "import openai; print(openai.__version__)"
+# 出力: 2.36.0
+
+# 特定バージョンを指定してインストール
+pip install openai==2.36.0</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header"><span class="lang-dot"></span>PYTHON - Realtime 2 セッションの作成 (音声推論)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Realtime 2 モデルを使用した音声セッションの作成
+session = client.realtime.sessions.create(
+    model="gpt-4o-realtime-preview",
+    modalities=["text", "audio"],
+    instructions=(
+        "You are a helpful assistant with advanced reasoning capabilities. "
+        "Think step by step when answering complex questions."
+    ),
+    voice="alloy",
+    input_audio_transcription={
+        "model": "whisper-1"
+    },
+    turn_detection={
+        "type": "server_vad",
+        "threshold": 0.5,
+        "prefix_padding_ms": 300,
+        "silence_duration_ms": 500
+    }
+)
+
+print(f"Session ID: {session.id}")
+print(f"Client secret: {session.client_secret.value}")</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header"><span class="lang-dot"></span>PYTHON - リアルタイム翻訳セッションの設定</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# リアルタイム翻訳用セッションの作成
+# 英語から日本語への同時通訳を設定
+session = client.realtime.sessions.create(
+    model="gpt-4o-realtime-preview",
+    modalities=["text", "audio"],
+    instructions=(
+        "You are a real-time translator. "
+        "Listen to the user's speech in English and translate it into Japanese. "
+        "Respond only with the translated audio. "
+        "Maintain natural speech patterns and appropriate honorifics."
+    ),
+    voice="shimmer",
+    input_audio_transcription={
+        "model": "whisper-1"
+    },
+    turn_detection={
+        "type": "server_vad",
+        "threshold": 0.4,
+        "prefix_padding_ms": 200,
+        "silence_duration_ms": 300
+    }
+)
+
+print(f"Translation session created: {session.id}")</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header"><span class="lang-dot"></span>PYTHON - WebRTC 接続でのリアルタイム音声ストリーミング</div>
+                <pre><code class="language-python">import asyncio
+import json
+import websockets
+from openai import OpenAI
+
+client = OpenAI()
+
+# セッションの作成
+session = client.realtime.sessions.create(
+    model="gpt-4o-realtime-preview",
+    modalities=["text", "audio"],
+    instructions="You are a helpful voice assistant with reasoning capabilities.",
+    voice="coral",
+    input_audio_transcription={
+        "model": "whisper-1"
+    }
+)
+
+# WebSocket 経由でのリアルタイム接続
+async def connect_realtime():
+    url = "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview"
+    headers = {
+        "Authorization": f"Bearer {session.client_secret.value}",
+        "OpenAI-Beta": "realtime=v2"
+    }
+
+    async with websockets.connect(url, extra_headers=headers) as ws:
+        # セッション更新イベントの送信
+        await ws.send(json.dumps({
+            "type": "session.update",
+            "session": {
+                "modalities": ["text", "audio"],
+                "instructions": "Respond concisely with reasoning.",
+            }
+        }))
+
+        # イベントの受信ループ
+        async for message in ws:
+            event = json.loads(message)
+            if event["type"] == "response.audio_transcript.done":
+                print(f"Transcript: {event['transcript']}")
+            elif event["type"] == "response.done":
+                print("Response complete")
+                break
+
+asyncio.run(connect_realtime())</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header"><span class="lang-dot"></span>PYTHON - 高度な文字起こし機能の活用</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 高度な文字起こし機能を有効にしたセッション
+session = client.realtime.sessions.create(
+    model="gpt-4o-realtime-preview",
+    modalities=["text", "audio"],
+    instructions="Transcribe all speech accurately with punctuation and formatting.",
+    voice="alloy",
+    input_audio_transcription={
+        "model": "whisper-1"
+    },
+    turn_detection={
+        "type": "server_vad",
+        "threshold": 0.3,
+        "prefix_padding_ms": 500,
+        "silence_duration_ms": 800
+    }
+)
+
+print(f"Transcription session: {session.id}")
+print(f"Ephemeral key: {session.client_secret.value}")</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header"><span class="lang-dot"></span>BASH - SDK アップグレードの推奨</div>
+                <pre><code class="language-bash">pip install openai>=2.36.0</code></pre>
+            </div>
+        </div>
+
+        <!-- Mermaid Diagrams -->
+        <div class="section">
+            <h2 class="section-title">Architecture Diagrams</h2>
+
+            <div class="mermaid-container">
+                <h4>Python SDK v2.36.0 における Realtime 2 統合アーキテクチャ</h4>
+                <div class="mermaid">
+flowchart TD
+    subgraph App["Python アプリケーション"]
+        UserCode["ユーザーコード"]
+        SDK["OpenAI Python SDK v2.36.0"]
+    end
+
+    subgraph SDKModules["SDK モジュール"]
+        RealtimeClient["realtime.sessions.create()"]
+        SessionConfig["セッション設定\n(modalities, voice, instructions)"]
+        TypeDefs["型定義\n(Realtime 2 対応)"]
+    end
+
+    subgraph Transport["接続方式"]
+        WebSocket["WebSocket\n(wss://api.openai.com)"]
+        WebRTC["WebRTC\n(SDP over HTTPS)"]
+    end
+
+    subgraph RealtimeAPI["OpenAI Realtime API (第 2 世代)"]
+        Session["セッション管理"]
+        VAD["Voice Activity Detection"]
+    end
+
+    subgraph Models["Realtime 2 モデル群"]
+        Reasoning["音声推論\nVoice Reasoning"]
+        Translate["リアルタイム翻訳\nRealtime Translate"]
+        Transcription["高度な文字起こし\nAdvanced Transcription"]
+    end
+
+    UserCode --> SDK
+    SDK --> RealtimeClient
+    RealtimeClient --> SessionConfig
+    SessionConfig --> TypeDefs
+    RealtimeClient --> WebSocket
+    RealtimeClient --> WebRTC
+    WebSocket --> Session
+    WebRTC --> Session
+    Session --> VAD
+    VAD --> Reasoning
+    VAD --> Translate
+    VAD --> Transcription
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Reasoning,Translate,Transcription openai
+    class Session,VAD,WebSocket,WebRTC dark
+    class UserCode,SDK,RealtimeClient,SessionConfig,TypeDefs light
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h4>SDK バージョン進化: v2.35.1 から v2.36.0 への変更</h4>
+                <div class="mermaid">
+flowchart LR
+    subgraph V235["v2.35.1 (2026-05-06)"]
+        V235_Image["Image 2 API 更新"]
+        V235_CLI["レガシー CLI 削除"]
+        V235_Fix["size enum 修正"]
+    end
+
+    subgraph V236["v2.36.0 (2026-05-07)"]
+        V236_RT2["Realtime 2 サポート"]
+        V236_Reason["音声推論"]
+        V236_Trans["リアルタイム翻訳"]
+        V236_STT["高度な文字起こし"]
+    end
+
+    V235 -->|1 日| V236
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class V236_RT2,V236_Reason,V236_Trans,V236_STT openai
+    class V235_Image,V235_CLI,V235_Fix light
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2 class="section-title">Developer Impact</h2>
+
+            <div class="use-case">
+                <h4>多言語音声エージェント</h4>
+                <p>リアルタイム翻訳により、Python バックエンドから単一のエージェントで多言語対応の音声サービスを構築可能。カスタマーサポート、コンシェルジュ、ヘルプデスクなどに適用できる</p>
+            </div>
+
+            <div class="use-case">
+                <h4>インテリジェント音声アシスタント</h4>
+                <p>推論能力を持つ音声モデルにより、複雑な計算や論理的思考を伴う音声アシスタントを Python で開発可能</p>
+            </div>
+
+            <div class="use-case">
+                <h4>リアルタイム字幕・議事録システム</h4>
+                <p>高度な文字起こし機能を活用し、会議やイベントのリアルタイム字幕生成、自動議事録作成を実装可能</p>
+            </div>
+
+            <div class="use-case">
+                <h4>WebRTC スタック再設計との組み合わせ</h4>
+                <p>2026 年 5 月 4 日に発表された WebRTC スタックの再設計 (Relay + Transceiver アーキテクチャ) により、低レイテンシかつスケーラブルなインフラストラクチャ上で動作</p>
+            </div>
+
+            <div class="use-case">
+                <h4>Node SDK との同時リリース</h4>
+                <p>Node SDK v6.37.0 も同等の Realtime 2 サポートを提供。Python と Node.js の両方で統一された API インターフェースが利用可能</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <h3>Source Links</h3>
+            <a href="https://github.com/openai/openai-python/releases/tag/v2.36.0">OpenAI Python SDK v2.36.0 リリースノート</a>
+            <a href="https://github.com/openai/openai-python">openai-python GitHub リポジトリ</a>
+            <a href="https://openai.com/index/advancing-voice-intelligence-with-new-models-in-the-api">Advancing voice intelligence with new models in the API</a>
+            <a href="https://platform.openai.com/docs/guides/realtime">OpenAI Realtime API ドキュメント</a>
+            <a href="https://github.com/openai/openai-node/releases/tag/v6.37.0">OpenAI Node SDK v6.37.0</a>
+            <a href="https://openai.com/index/delivering-low-latency-voice-ai-at-scale">Delivering low-latency voice AI at scale</a>
+            <a href="https://platform.openai.com/docs/api-reference">OpenAI API リファレンス</a>
+            <p class="generated">Generated on 2026-05-08 | OpenAI News Summary Infographic</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

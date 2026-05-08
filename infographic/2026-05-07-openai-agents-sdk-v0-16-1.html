@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Agents SDK v0.16.1 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --danger: #EF4444;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card .issue-tag {
+            display: inline-block;
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--openai-green);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .category-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .category-label.stability {
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+
+        .category-label.security {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .category-label.integrity {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .code-block {
+            background: #1E1E2E;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            color: #CDD6F4;
+            line-height: 1.6;
+            white-space: pre;
+        }
+
+        .code-block .comment {
+            color: #6C7086;
+        }
+
+        .code-block .keyword {
+            color: #CBA6F7;
+        }
+
+        .code-block .string {
+            color: #A6E3A1;
+        }
+
+        .code-block .function {
+            color: #89B4FA;
+        }
+
+        .code-block .param {
+            color: #F9E2AF;
+        }
+
+        .fix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .fix-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .fix-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .fix-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .fix-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .fix-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .fix-table tr:hover td {
+            background: rgba(16, 163, 127, 0.03);
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 6px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px 16px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API UPDATE</span>
+                <h1>OpenAI Agents SDK v0.16.1: 安定性・セキュリティ・データ整合性に関するバグ修正リリース</h1>
+                <p class="date">2026-05-07</p>
+                <p class="subtitle">v0.16.0 に対する 7 件のバグ修正。ストリーミング出力の安定性、MCP セキュリティポリシー検証、セッション管理の堅牢性を向上。</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主なポイント</h2>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="number">7</div>
+                    <div class="label">バグ修正</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">3</div>
+                    <div class="label">カテゴリ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">0</div>
+                    <div class="label">破壊的変更</div>
+                </div>
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#9889;</div>
+                    <div class="key-point-content">
+                        <h3>ストリーミング出力インデックスの安定化</h3>
+                        <p>Chat Completions API のストリーミングレスポンスにおいて、ツール呼び出し結果のインデックスが変動する問題を修正。エージェントの応答組み立て信頼性が向上。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128274;</div>
+                    <div class="key-point-content">
+                        <h3>MCP セキュリティポリシーの適切な検証</h3>
+                        <p>require_approval ポリシー設定が正しく検証されるようになり、意図しないツール実行の自動承認を防止。MCP ツールのセキュリティガバナンスを強化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128190;</div>
+                    <div class="key-point-content">
+                        <h3>セッション管理の堅牢性向上</h3>
+                        <p>コンパクション失敗後の履歴復元、Dapr セッション状態の破損検出、暗号化アイテムの正確なカウントなど、分散環境での長期運用における信頼性を大幅改善。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bug Fixes - Stability -->
+        <section class="section">
+            <h2 class="section-title">安定性の修正</h2>
+            <span class="category-label stability">Stability</span>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>ストリーム出力インデックス安定化</h3>
+                    <p>ストリーミング中にツール呼び出し結果のインデックスが変動し、エージェントの応答組み立てに失敗するケースを修正。</p>
+                    <span class="issue-tag">#3109</span>
+                </div>
+                <div class="feature-card">
+                    <h3>セッション履歴のコンパクション復元</h3>
+                    <p>コンパクション処理の置換操作が失敗した場合にセッション履歴が消失する問題を修正。失敗時に元の履歴が正しく復元される。</p>
+                    <span class="issue-tag">#3116</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bug Fixes - Security -->
+        <section class="section">
+            <h2 class="section-title">セキュリティの修正</h2>
+            <span class="category-label security">Security</span>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>MCP require_approval ポリシー検証</h3>
+                    <p>MCP ツール実行時の require_approval ポリシー設定が正しく検証されるようになった。不正なポリシー設定の黙認を防止。</p>
+                    <span class="issue-tag">#3168</span>
+                </div>
+                <div class="feature-card">
+                    <h3>非オブジェクト型 Function Tool 入力の拒否</h3>
+                    <p>Function Tool に渡される入力 JSON がオブジェクト型でない場合 (配列や文字列が直接渡される場合) に拒否するバリデーションを追加。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bug Fixes - Data Integrity -->
+        <section class="section">
+            <h2 class="section-title">データ整合性の修正</h2>
+            <span class="category-label integrity">Data Integrity</span>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Dapr セッション状態の破損検出</h3>
+                    <p>Dapr を使用したセッション状態管理において、破損したセッション状態の更新を拒否。分散環境でのセッション管理の信頼性が向上。</p>
+                    <span class="issue-tag">#3171</span>
+                </div>
+                <div class="feature-card">
+                    <h3>暗号化セッションアイテムの正確なカウント</h3>
+                    <p>セッション制限の計算において、暗号化されたセッションアイテムのうち有効なもののみをカウントするよう修正。利用可能容量の正確性が向上。</p>
+                    <span class="issue-tag">#3174</span>
+                </div>
+                <div class="feature-card">
+                    <h3>Git 一時クローンの失敗時クリーンアップ</h3>
+                    <p>Git リポジトリの一時クローン処理が失敗した際に、不完全な一時ディレクトリが残存する問題を修正。ディスクスペースのリークを防止。</p>
+                    <span class="issue-tag">#3170</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">v0.16.1 修正対象の構成要素</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Runtime["Agents SDK ランタイム"]
+        Stream["ストリーミング処理<br/>出力インデックス安定化"]
+        InputVal["入力バリデーション<br/>非オブジェクト JSON 拒否"]
+    end
+
+    subgraph Session["セッション管理"]
+        Compaction["コンパクション処理<br/>失敗時の履歴復元"]
+        Encryption["暗号化アイテム<br/>有効カウント修正"]
+        Dapr["Dapr 状態管理<br/>破損データ拒否"]
+    end
+
+    subgraph Security["セキュリティ"]
+        MCP["MCP ポリシー検証<br/>require_approval 検証"]
+    end
+
+    subgraph Resources["リソース管理"]
+        GitClone["Git 一時クローン<br/>失敗時クリーンアップ"]
+    end
+
+    subgraph API["OpenAI API"]
+        ChatAPI["Chat Completions API"]
+    end
+
+    Stream --> ChatAPI
+    InputVal --> Stream
+    MCP --> Runtime
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class ChatAPI openai
+    class Stream,InputVal,Compaction,Encryption,Dapr,MCP,GitClone dark
+    class Runtime,Session,Security,Resources light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>ストリーミング利用時</h4>
+                <p>出力インデックスの不安定性により、ツール呼び出しの結果が正しく処理されない可能性がある。ストリーミングモードでエージェントを実行している場合は速やかにアップデートが必要。</p>
+            </div>
+            <div class="use-case">
+                <h4>MCP ツール利用時</h4>
+                <p>セキュリティポリシーが正しく適用されず、意図しない自動承認が発生する恐れがある。MCP ツールを使用している環境ではセキュリティ上の観点からアップデートが重要。</p>
+            </div>
+            <div class="use-case">
+                <h4>長時間セッション利用時</h4>
+                <p>コンパクション処理の失敗により、会話コンテキストが消失するリスクがある。長時間のセッションを運用している場合は特に影響が大きい。</p>
+            </div>
+            <div class="use-case">
+                <h4>Dapr 環境での運用時</h4>
+                <p>破損した状態更新が処理されることで、セッション全体が不正な状態になる恐れがある。分散環境で Agents SDK を使用している場合は最優先でアップデートを推奨。</p>
+            </div>
+        </section>
+
+        <!-- Update Method -->
+        <section class="section">
+            <h2 class="section-title">アップデート方法</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">本リリースはバグ修正のみであり、API インターフェースや動作仕様の変更は含まれていない。コードの修正は不要。</p>
+            <div class="code-block">
+<code><span class="comment"># pip でのアップデート</span>
+pip install --upgrade openai-agents
+
+<span class="comment"># バージョン確認</span>
+pip show openai-agents | grep Version
+<span class="comment"># Version: 0.16.1</span></code>
+            </div>
+        </section>
+
+        <!-- Fix Summary Table -->
+        <section class="section">
+            <h2 class="section-title">修正一覧</h2>
+            <div style="overflow-x: auto;">
+                <table class="fix-table">
+                    <thead>
+                        <tr>
+                            <th>修正内容</th>
+                            <th>Issue</th>
+                            <th>担当者</th>
+                            <th>影響範囲</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ストリーム出力インデックスの安定化</td>
+                            <td>#3109</td>
+                            <td>@seratch</td>
+                            <td>ストリーミング実行</td>
+                        </tr>
+                        <tr>
+                            <td>MCP require_approval ポリシー検証</td>
+                            <td>#3168</td>
+                            <td>@seratch</td>
+                            <td>MCP ツール実行</td>
+                        </tr>
+                        <tr>
+                            <td>コンパクション失敗後のセッション履歴復元</td>
+                            <td>#3116</td>
+                            <td>@Aphroq</td>
+                            <td>セッション管理</td>
+                        </tr>
+                        <tr>
+                            <td>Dapr セッション状態の破損拒否</td>
+                            <td>#3171</td>
+                            <td>@Aphroq</td>
+                            <td>分散セッション</td>
+                        </tr>
+                        <tr>
+                            <td>Git 一時クローンのクリーンアップ</td>
+                            <td>#3170</td>
+                            <td>@Aphroq</td>
+                            <td>リソース管理</td>
+                        </tr>
+                        <tr>
+                            <td>暗号化セッションアイテムの正確なカウント</td>
+                            <td>#3174</td>
+                            <td>@Aphroq</td>
+                            <td>セッション制限</td>
+                        </tr>
+                        <tr>
+                            <td>非オブジェクト Function Tool 入力の拒否</td>
+                            <td>-</td>
+                            <td>@ioleksiuk</td>
+                            <td>ツール入力検証</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>Source:</strong> <a href="https://github.com/openai/openai-agents-python/releases/tag/v0.16.1">OpenAI Agents SDK v0.16.1 Release Notes</a></p>
+            <p><strong>Repository:</strong> <a href="https://github.com/openai/openai-agents-python">github.com/openai/openai-agents-python</a></p>
+            <p><strong>Related:</strong> <a href="https://github.com/openai/openai-agents-python/releases/tag/v0.16.0">v0.16.0 Release Notes</a></p>
+            <p style="margin-top: 12px;"><strong>References:</strong> <a href="https://platform.openai.com/docs">OpenAI API Docs</a> | <a href="https://dapr.io/">Dapr</a> | <a href="https://modelcontextprotocol.io/">MCP Spec</a></p>
+        </footer>
+    </div>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,16 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-07](2026/2026-05-07-testing-ads-in-chatgpt.md) - ChatGPT での広告テスト開始: 無料アクセスを支える新たな収益モデル
+- [2026-05-07](2026/2026-05-07-simplex-codex-development.md) - Simplex が ChatGPT Enterprise と Codex でソフトウェア開発を再構築
+- [2026-05-07](2026/2026-05-07-parloa-voice-agents.md) - Parloa が OpenAI モデルを活用し「顧客が話したくなる」音声 AI カスタマーサービスエージェントを構築
+- [2026-05-07](2026/2026-05-07-openai-python-sdk-v2-36-0.md) - OpenAI Python SDK v2.36.0: Realtime 2 サポートを追加し次世代音声インテリジェンスに対応
+- [2026-05-07](2026/2026-05-07-openai-node-sdk-v6-37-0.md) - OpenAI Node SDK v6.37.0: Realtime 2 翻訳機能、Web Search Results 出力オプション、GPT Image 2 更新を追加
+- [2026-05-07](2026/2026-05-07-openai-agents-sdk-v0-16-1.md) - OpenAI Agents SDK v0.16.1: 安定性・セキュリティ・データ整合性に関するバグ修正リリース
 - [2026-05-07](2026/2026-05-07-openai-agents-sdk-v0-16-0.md) - OpenAI Agents SDK v0.16.0: デフォルトモデルが GPT-5.4-mini に変更、ツール実行の並行性制御を追加
+- [2026-05-07](2026/2026-05-07-introducing-trusted-contact-chatgpt.md) - ChatGPT に「信頼できる連絡先」機能を導入: 自傷行為の懸念を検知し指定した相手に通知する安全機能
+- [2026-05-07](2026/2026-05-07-gpt-5-5-trusted-access-cyber.md) - GPT-5.5 と GPT-5.5-Cyber による Trusted Access for Cyber の拡大: 次世代サイバー防衛モデルの展開
+- [2026-05-07](2026/2026-05-07-advancing-voice-intelligence-api.md) - OpenAI Realtime API に新しい音声モデルを追加: 推論・翻訳・文字起こしを統合した次世代音声インテリジェンス
 - [2026-05-06](2026/2026-05-06-uber-openai-ai-assistants.md) - Uber が OpenAI を活用し、ドライバーの収益最適化とライダーの迅速な配車を実現
 - [2026-05-06](2026/2026-05-06-singular-bank-chatgpt-codex.md) - Singular Bank が ChatGPT と Codex で銀行業務を加速
 - [2026-05-06](2026/2026-05-06-openai-python-sdk-v2-35.md) - OpenAI Python SDK v2.35.0/v2.35.1: Image 2 API の更新とレガシー CLI の削除

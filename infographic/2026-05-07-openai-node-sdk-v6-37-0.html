@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Node SDK v6.37.0: Realtime 2 翻訳機能、Web Search Results 出力オプション、GPT Image 2 更新 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #282c34;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #21252b;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #abb2bf;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #3e4451;
+        }
+
+        .code-block pre {
+            padding: 16px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        .code-block pre code {
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background: var(--openai-light);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .use-case h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* Change Table */
+        .change-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .change-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            font-size: 13px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .change-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .change-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .change-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .change-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .change-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .change-table tr:hover td {
+            background: var(--openai-light);
+        }
+
+        .badge-feature {
+            display: inline-block;
+            background: #D1FAE5;
+            color: #059669;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-fix {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #D97706;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-security {
+            display: inline-block;
+            background: #DBEAFE;
+            color: #2563EB;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(16, 163, 127, 0.3);
+            transition: background 0.2s;
+        }
+
+        .footer-links a:hover {
+            background: rgba(16, 163, 127, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">API UPDATE</span>
+                <h1>OpenAI Node SDK v6.37.0</h1>
+                <p class="subtitle">Realtime 2 翻訳機能、Web Search Results 出力オプション、GPT Image 2 更新を追加</p>
+                <p class="date">2026-05-07 | OpenAI API Changelog (GitHub)</p>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎙</div>
+                    <div class="key-point-content">
+                        <h3>Realtime 2 モデルのフルサポート</h3>
+                        <p>第 2 世代リアルタイム音声モデルの SDK サポートを追加。音声会話中の推論、リアルタイム翻訳、高度な文字起こしをネイティブにサポートする次世代音声モデル</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌐</div>
+                    <div class="key-point-content">
+                        <h3>リアルタイム翻訳機能</h3>
+                        <p>音声入力を受け取りながら即座に別の言語に翻訳して音声出力する機能を SDK に統合。同時通訳、多言語カスタマーサポート、教育に活用可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>Web Search Results 出力オプション</h3>
+                        <p>Responses API に web_search_call.results 出力オプションを追加。Web 検索結果を構造化データとして取得し、引用元 URL や要約テキストをプログラム的に活用可能に</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🖼</div>
+                    <div class="key-point-content">
+                        <h3>GPT Image 2 モデル更新</h3>
+                        <p>GPT Image 2 (gpt-image-2) の SDK 型定義とパラメータを最新の API 仕様に更新。size 列挙型のリグレッションも修正</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔒</div>
+                    <div class="key-point-content">
+                        <h3>API キーリダクション</h3>
+                        <p>デバッグログ出力時に api-key ヘッダーを自動マスキング。開発中の誤った API キー漏洩リスクを排除</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="section">
+            <h2 class="section-title">リリースの数字</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">機能追加</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">バグ修正</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">セキュリティ改善</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 日</div>
+                    <div class="stat-label">前バージョンからの間隔</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Grid -->
+        <div class="section">
+            <h2 class="section-title">新機能の詳細</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🎙 Realtime 2</h3>
+                    <p>次世代リアルタイム音声モデル</p>
+                    <ul>
+                        <li>音声会話中の推論 (reasoning)</li>
+                        <li>高度な文字起こし</li>
+                        <li>新しいモデル識別子</li>
+                        <li>TypeScript 型安全性</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 Realtime Translate</h3>
+                    <p>リアルタイム翻訳</p>
+                    <ul>
+                        <li>同時通訳</li>
+                        <li>多言語カスタマーサポート</li>
+                        <li>外国語学習支援</li>
+                        <li>アクセシビリティ</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Web Search Results</h3>
+                    <p>構造化された検索結果</p>
+                    <ul>
+                        <li>引用元 URL の取得</li>
+                        <li>要約テキスト活用</li>
+                        <li>ファクトチェック実装</li>
+                        <li>Responses API 連携</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🖼 GPT Image 2</h3>
+                    <p>画像生成モデル更新</p>
+                    <ul>
+                        <li>型定義の最新化</li>
+                        <li>size 列挙型修正</li>
+                        <li>1536x1024 サポート</li>
+                        <li>高品質画像生成</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Admin Usage</h3>
+                    <p>組織使用量の強化</p>
+                    <ul>
+                        <li>quantity フィールド追加</li>
+                        <li>定量的把握</li>
+                        <li>詳細分析</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🔒 セキュリティ</h3>
+                    <p>API キーの保護</p>
+                    <ul>
+                        <li>デバッグログのリダクション</li>
+                        <li>api-key ヘッダーマスキング</li>
+                        <li>安全なログ共有</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Samples -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">bash - SDK のアップグレード</div>
+                <pre><code class="language-bash"># npm を使用したアップグレード
+npm install openai@latest
+
+# バージョン指定でのインストール
+npm install openai@6.37.0
+
+# yarn を使用している場合
+yarn upgrade openai@^6.37.0
+
+# pnpm を使用している場合
+pnpm update openai</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">typescript - リアルタイム翻訳セッションの開始</div>
+                <pre><code class="language-typescript">import OpenAI from "openai";
+
+const client = new OpenAI();
+
+// Realtime 2 モデルを使用した翻訳セッションの作成
+const session = await client.realtime.sessions.create({
+  model: "gpt-4o-realtime-preview",
+  modalities: ["audio", "text"],
+  // リアルタイム翻訳の設定
+  translate: {
+    source_language: "ja", // 日本語入力
+    target_language: "en", // 英語出力
+  },
+  voice: "alloy",
+  input_audio_format: "pcm16",
+  output_audio_format: "pcm16",
+});
+
+console.log(`Session ID: ${session.id}`);
+console.log(`Client Secret: ${session.client_secret?.value}`);</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">typescript - WebRTC を使用したリアルタイム翻訳接続</div>
+                <pre><code class="language-typescript">import OpenAI from "openai";
+
+const client = new OpenAI();
+
+// エフェメラルキーを取得
+const session = await client.realtime.sessions.create({
+  model: "gpt-4o-realtime-preview",
+  modalities: ["audio", "text"],
+  translate: {
+    source_language: "ja",
+    target_language: "en",
+  },
+  voice: "shimmer",
+});
+
+// WebRTC 接続の確立 (ブラウザ環境)
+const pc = new RTCPeerConnection();
+const audioEl = document.createElement("audio");
+audioEl.autoplay = true;
+
+pc.ontrack = (event) =&gt; {
+  audioEl.srcObject = event.streams[0];
+};
+
+// マイクからの音声入力を追加
+const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+pc.addTrack(stream.getTracks()[0]);
+
+const offer = await pc.createOffer();
+await pc.setLocalDescription(offer);
+
+// OpenAI Realtime API に接続
+const response = await fetch(
+  "https://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session.client_secret?.value}`,
+      "Content-Type": "application/sdp",
+    },
+    body: offer.sdp,
+  }
+);
+
+const answerSdp = await response.text();
+await pc.setRemoteDescription({ type: "answer", sdp: answerSdp });</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">typescript - Web Search Results 出力オプションの使用</div>
+                <pre><code class="language-typescript">import OpenAI from "openai";
+
+const client = new OpenAI();
+
+// Responses API で web_search_call.results を含むレスポンスを取得
+const response = await client.responses.create({
+  model: "gpt-4o",
+  tools: [{ type: "web_search_preview" }],
+  input: "OpenAI の最新ニュースを教えてください",
+  // Web 検索結果を出力に含める
+  include: ["web_search_call.results"],
+});
+
+// レスポンスの出力を解析
+for (const output of response.output) {
+  if (output.type === "web_search_call") {
+    console.log(`検索クエリ: ${output.query}`);
+    // web_search_call.results が含まれる場合
+    if (output.results) {
+      for (const result of output.results) {
+        console.log(`  タイトル: ${result.title}`);
+        console.log(`  URL: ${result.url}`);
+        console.log(`  スニペット: ${result.snippet}`);
+      }
+    }
+  } else if (output.type === "message") {
+    for (const content of output.content) {
+      if (content.type === "output_text") {
+        console.log(`\n回答: ${content.text}`);
+        // 引用情報の取得
+        if (content.annotations) {
+          for (const annotation of content.annotations) {
+            if (annotation.type === "url_citation") {
+              console.log(`  引用: ${annotation.url}`);
+            }
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">typescript - GPT Image 2 による画像生成</div>
+                <pre><code class="language-typescript">import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI();
+
+// GPT Image 2 を使用した画像生成
+const response = await client.images.generate({
+  model: "gpt-image-2",
+  prompt: "A serene Japanese garden with cherry blossoms in spring",
+  size: "1536x1024", // v6.37.0 で修正された size 列挙型
+  quality: "high",
+  n: 1,
+});
+
+// Base64 でエンコードされた画像を保存
+if (response.data[0].b64_json) {
+  const buffer = Buffer.from(response.data[0].b64_json, "base64");
+  fs.writeFileSync("generated-image.png", buffer);
+  console.log("画像を保存しました: generated-image.png");
+}</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">typescript - デバッグモードでの安全なログ出力</div>
+                <pre><code class="language-typescript">import OpenAI from "openai";
+
+// デバッグモードを有効化
+// v6.37.0 以降、api-key ヘッダーは自動的にリダクションされる
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// DEBUG 環境変数で有効化する場合
+// OPENAI_LOG=debug node app.js
+// ログ出力例:
+// &gt; Request headers: { "authorization": "Bearer sk-...REDACTED", ... }</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">bash - アップグレード手順</div>
+                <pre><code class="language-bash"># 1. 依存関係の更新
+npm install openai@6.37.0
+
+# 2. TypeScript の型チェック (型定義の追加に伴う確認)
+npx tsc --noEmit
+
+# 3. テストの実行
+npm test
+
+# 4. Realtime API 関連コードの確認 (任意)
+grep -rn "realtime" --include="*.ts" --include="*.js" .</code></pre>
+            </div>
+        </div>
+
+        <!-- Mermaid Diagrams -->
+        <div class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+
+            <div class="mermaid-container">
+                <h4>v6.37.0 の新機能アーキテクチャ</h4>
+                <div class="mermaid">
+flowchart TD
+    subgraph Client["Node.js アプリケーション"]
+        SDK["OpenAI Node SDK\nv6.37.0"]
+        WebRTC["WebRTC Client"]
+    end
+
+    subgraph RealtimeAPI["Realtime API (第 2 世代)"]
+        RT2["Realtime 2 モデル"]
+        Translate["リアルタイム翻訳"]
+        Reasoning["音声推論"]
+        Transcription["高度な文字起こし"]
+    end
+
+    subgraph ResponsesAPI["Responses API"]
+        WebSearch["Web Search Tool"]
+        SearchResults["web_search_call.results"]
+    end
+
+    subgraph ImageAPI["Images API"]
+        GPTImage2["GPT Image 2\n(gpt-image-2)"]
+    end
+
+    subgraph AdminAPI["Admin API"]
+        Usage["Organization Usage\n+ quantity フィールド"]
+    end
+
+    SDK --> RT2
+    WebRTC --> RT2
+    RT2 --> Translate
+    RT2 --> Reasoning
+    RT2 --> Transcription
+
+    SDK --> WebSearch
+    WebSearch --> SearchResults
+
+    SDK --> GPTImage2
+    SDK --> Usage
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class RT2,Translate,Reasoning,Transcription openai
+    class SDK,WebRTC dark
+    class WebSearch,SearchResults,GPTImage2,Usage light
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h4>リアルタイム翻訳のデータフロー</h4>
+                <div class="mermaid">
+sequenceDiagram
+    participant User as ユーザー (日本語)
+    participant Client as Node SDK v6.37.0
+    participant RT as Realtime API
+    participant Model as Realtime 2 モデル
+    participant Output as 出力 (英語)
+
+    User->>Client: 音声入力 (日本語)
+    Client->>RT: WebRTC / WebSocket 接続
+    RT->>Model: 音声ストリーム転送
+    Model->>Model: 音声認識 + 翻訳処理
+    Model->>RT: 翻訳済み音声生成
+    RT->>Client: 翻訳音声ストリーム
+    Client->>Output: 英語音声出力
+
+    Note over Model: Realtime 2 の推論能力により<br/>文脈を考慮した高精度翻訳
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h4>SDK リリースタイムライン</h4>
+                <div class="mermaid">
+flowchart LR
+    subgraph NodeSDK["Node SDK"]
+        V635["v6.35.0\n2026-04-28"]
+        V636["v6.36.0\n2026-05-04"]
+        V637["v6.37.0\n2026-05-07"]
+    end
+
+    subgraph Features["v6.37.0 新機能"]
+        RT2["Realtime 2"]
+        Trans["リアルタイム翻訳"]
+        WS["Web Search Results"]
+        Img2["GPT Image 2 更新"]
+        Sec["API キーリダクション"]
+    end
+
+    V635 --> V636
+    V636 --> V637
+    V637 --- Features
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class V637 openai
+    class V635,V636 dark
+    class RT2,Trans,WS,Img2,Sec light
+                </div>
+            </div>
+        </div>
+
+        <!-- Changes Table -->
+        <div class="section">
+            <h2 class="section-title">変更一覧</h2>
+            <table class="change-table">
+                <thead>
+                    <tr>
+                        <th>種別</th>
+                        <th>変更内容</th>
+                        <th>コミット</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge-feature">機能追加</span></td>
+                        <td>Admin Organization Usage に quantity フィールド追加</td>
+                        <td><code>273a8f7</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-feature">機能追加</span></td>
+                        <td>web_search_call.results 出力オプション追加</td>
+                        <td><code>91c75e0</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-feature">機能追加</span></td>
+                        <td>Realtime Translate + GPT Image 2 更新</td>
+                        <td><code>a296b66</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-feature">機能追加</span></td>
+                        <td>API 手動更新</td>
+                        <td><code>794b905</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-feature">機能追加</span></td>
+                        <td>API 手動更新</td>
+                        <td><code>6963729</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-feature">機能追加</span></td>
+                        <td>Realtime 2 サポート</td>
+                        <td><code>f4b7177</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-fix">バグ修正</span></td>
+                        <td>画像生成 size 列挙型のリグレッション修正</td>
+                        <td><code>4fe8469</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-security">メンテナンス</span></td>
+                        <td>デバッグログでの api-key ヘッダーのリダクション</td>
+                        <td><code>99c9c80</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>リアルタイム音声アプリケーションの高度化</h4>
+                <p>Realtime 2 モデルのサポートにより、推論能力を持つ音声エージェントを Node.js で構築できるようになった。従来の単純な音声応答から、複雑な質問への論理的回答が可能な音声 AI へと進化する</p>
+            </div>
+
+            <div class="use-case">
+                <h4>多言語対応の劇的な簡素化</h4>
+                <p>リアルタイム翻訳機能により、翻訳サービスの別途統合が不要になった。セッション設定で言語ペアを指定するだけで、低レイテンシの同時通訳が実現する</p>
+            </div>
+
+            <div class="use-case">
+                <h4>Web 検索結果の活用</h4>
+                <p>web_search_call.results 出力オプションにより、Responses API の Web 検索結果を構造化データとして取得し、引用元の表示やファクトチェック機能の実装が容易になった</p>
+            </div>
+
+            <div class="use-case">
+                <h4>画像生成の安定性向上</h4>
+                <p>size 列挙型のリグレッション修正により、GPT Image 2 で利用可能なすべてのサイズオプション (1024x1024、1536x1024、1024x1536 など) を型安全に指定できるようになった</p>
+            </div>
+
+            <div class="use-case">
+                <h4>セキュリティの向上</h4>
+                <p>デバッグログでの API キーリダクションにより、開発中のログ出力やエラーレポートに API キーが含まれるリスクが排除された。本番環境でのインシデント調査時にも安全にログを共有できる</p>
+            </div>
+
+            <div class="use-case">
+                <h4>既存コードへの影響は最小限</h4>
+                <p>本リリースは追加的な機能であり、破壊的変更は含まれていない。安全にアップグレードできる</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>OpenAI News Summary | 2026-05-07</p>
+            <div class="footer-links">
+                <a href="https://github.com/openai/openai-node/releases/tag/v6.37.0">Node SDK v6.37.0 リリースノート</a>
+                <a href="https://github.com/openai/openai-node/compare/v6.36.0...v6.37.0">v6.36.0...v6.37.0 差分</a>
+                <a href="https://openai.com/index/advancing-voice-intelligence-with-new-models-in-the-api">Voice Intelligence ブログ</a>
+                <a href="https://platform.openai.com/docs/guides/realtime">Realtime API ドキュメント</a>
+                <a href="https://platform.openai.com/docs/guides/responses">Responses API ドキュメント</a>
+                <a href="https://platform.openai.com/docs/guides/images">GPT Image 2 ドキュメント</a>
+                <a href="https://github.com/openai/openai-node">openai-node GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/typescript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        hljs.highlightAll();
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+</body>
+</html>
