@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-08](2026/2026-05-08-running-codex-safely.md) - OpenAI における Codex の安全な運用: サンドボックス、承認フロー、ネットワークポリシー、テレメトリによるセキュアなエージェント管理
+- [2026-05-08](2026/2026-05-08-openai-agents-sdk-v0-17-0.md) - OpenAI Agents SDK v0.17.0: RealtimeAgent のデフォルトモデル変更と Sandbox セキュリティ強化
 - [2026-05-07](2026/2026-05-07-testing-ads-in-chatgpt.md) - ChatGPT での広告テスト開始: 無料アクセスを支える新たな収益モデル
 - [2026-05-07](2026/2026-05-07-simplex-codex-development.md) - Simplex が ChatGPT Enterprise と Codex でソフトウェア開発を再構築
 - [2026-05-07](2026/2026-05-07-parloa-voice-agents.md) - Parloa が OpenAI モデルを活用し「顧客が話したくなる」音声 AI カスタマーサービスエージェントを構築
@@ -20,6 +22,7 @@ OpenAI の最新ニュースレポート一覧
 - [2026-05-06](2026/2026-05-06-openai-python-sdk-v2-35.md) - OpenAI Python SDK v2.35.0/v2.35.1: Image 2 API の更新とレガシー CLI の削除
 - [2026-05-06](2026/2026-05-06-openai-agents-sdk-v0-15-2-3.md) - OpenAI Agents SDK v0.15.2 / v0.15.3 リリース: MCP ツール安定性強化とセキュリティ修正
 - [2026-05-06](2026/2026-05-06-introducing-b2b-signals.md) - フロンティア企業が AI の競争優位性を構築する方法 - B2B Signals の紹介
+- [2026-05-06](2026/2026-05-06-chatgpt-privacy-learning.md) - ChatGPT がプライバシーを保護しながら世界について学ぶ仕組み
 - [2026-05-06](2026/2026-05-06-chatgpt-futures-class-of-2026.md) - ChatGPT Futures: Class of 2026 の紹介
 - [2026-05-05](2026/2026-05-05-new-ways-to-buy-chatgpt-ads.md) - ChatGPT 広告の新しい購入方法: セルフサーブ Ads Manager と CPC ビディングの導入
 - [2026-05-05](2026/2026-05-05-mrc-supercomputer-networking.md) - MRC (Multipath Reliable Connection): 大規模 AI トレーニングネットワークを実現する新プロトコル

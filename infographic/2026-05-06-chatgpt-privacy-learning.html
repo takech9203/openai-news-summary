@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT がプライバシーを保護しながら世界について学ぶ仕組み - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card .default-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        /* Pipeline Table */
+        .pipeline-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .pipeline-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .pipeline-table tbody td {
+            padding: 14px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .pipeline-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .pipeline-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pipeline-table .stage-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Stats Table */
+        .stats-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .stats-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .stats-table tbody td {
+            padding: 14px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .stats-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .stats-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline-table {
+                font-size: 12px;
+            }
+
+            .pipeline-table thead th,
+            .pipeline-table tbody td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">PRIVACY</span>
+                <h1>ChatGPT がプライバシーを保護しながら世界について学ぶ仕組み</h1>
+                <p class="date">2026-05-06</p>
+            </div>
+        </header>
+
+        <!-- Key Points: 4 Privacy Principles -->
+        <section class="section">
+            <h2 class="section-title">プライバシー保護の 4 原則</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📉</div>
+                    <div class="key-point-content">
+                        <h3>データ最小化</h3>
+                        <p>学習に必要な最小限のデータのみを収集し、不要な個人情報は事前に排除します。目的達成に必要な範囲を超えたデータ保持を行いません。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>目的制限</h3>
+                        <p>収集したデータは明示された目的 (モデル改善) にのみ使用し、その他の用途に転用しません。利用目的を厳格に管理します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👁️</div>
+                    <div class="key-point-content">
+                        <h3>透明性</h3>
+                        <p>どのようなデータが収集され、どのように使用されるかをユーザーに明確に開示。プライバシーポリシーと設定画面で確認可能です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔑</div>
+                    <div class="key-point-content">
+                        <h3>ユーザーコントロール</h3>
+                        <p>ユーザーが自身のデータについて主体的にコントロールできる仕組みを提供。オプトアウト、データエクスポート、アカウント削除が可能です。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Controls: Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">ユーザーコントロール設定</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>💬 チャット履歴</h3>
+                    <p>会話履歴の保存設定。オフにすると会話は 30 日後に完全削除されます。</p>
+                    <span class="default-badge">デフォルト: 有効</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🧠 モデル改善</h3>
+                    <p>データをモデルの学習に使用するかどうか。オプトアウトが利用可能です。</p>
+                    <span class="default-badge">デフォルト: 有効 (オプトアウト可)</span>
+                </div>
+                <div class="feature-card">
+                    <h3>📦 データエクスポート</h3>
+                    <p>全てのデータをダウンロードし、自身がどのような情報を提供しているか確認できます。</p>
+                    <span class="default-badge">利用可能</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🗑️ アカウント削除</h3>
+                    <p>アカウントと全関連データの完全削除をリクエストできます。</p>
+                    <span class="default-badge">リクエスト可能</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Data Table -->
+        <section class="section">
+            <h2 class="section-title">プライバシー設定一覧</h2>
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>設定項目</th>
+                        <th>説明</th>
+                        <th>デフォルト</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Chat history</strong></td>
+                        <td>会話履歴の保存</td>
+                        <td>有効</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model improvement</strong></td>
+                        <td>学習へのデータ利用</td>
+                        <td>有効 (オプトアウト可)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data export</strong></td>
+                        <td>全データのダウンロード</td>
+                        <td>利用可能</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Account deletion</strong></td>
+                        <td>完全削除</td>
+                        <td>リクエスト可能</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Privacy Pipeline Table -->
+        <section class="section">
+            <h2 class="section-title">プライバシー保護パイプライン</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">データの収集から削除まで、各段階で適用されるプライバシー保護技術の全体像</p>
+            <table class="pipeline-table">
+                <thead>
+                    <tr>
+                        <th>ステージ</th>
+                        <th>技術</th>
+                        <th>目的</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="stage-badge">収集</span></td>
+                        <td>ソースフィルタリング、robots.txt</td>
+                        <td>不適切なデータを事前排除</td>
+                    </tr>
+                    <tr>
+                        <td><span class="stage-badge">前処理</span></td>
+                        <td>PII 検出、匿名化、デデュプリケーション</td>
+                        <td>個人情報の除去</td>
+                    </tr>
+                    <tr>
+                        <td><span class="stage-badge">学習</span></td>
+                        <td>差分プライバシー、勾配クリッピング</td>
+                        <td>数学的プライバシー保証</td>
+                    </tr>
+                    <tr>
+                        <td><span class="stage-badge">推論</span></td>
+                        <td>出力フィルタリング、安全性チェック</td>
+                        <td>PII 漏洩の防止</td>
+                    </tr>
+                    <tr>
+                        <td><span class="stage-badge">保管</span></td>
+                        <td>暗号化、アクセス制御、保持期限</td>
+                        <td>データセキュリティ</td>
+                    </tr>
+                    <tr>
+                        <td><span class="stage-badge">削除</span></td>
+                        <td>安全削除、残留データ確認</td>
+                        <td>完全消去</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Techniques Section -->
+        <section class="section">
+            <h2 class="section-title">プライバシー保護技術の詳細</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔒</div>
+                    <div class="key-point-content">
+                        <h3>差分プライバシー (DP-SGD)</h3>
+                        <p>学習過程にノイズを付加し、個々のデータポイントがモデルに与える影響を数学的に制限。特定の個人データが学習に使用されたかどうかを判別不可能にします。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧹</div>
+                    <div class="key-point-content">
+                        <h3>Memorization 対策</h3>
+                        <p>モデルが学習データを丸暗記してしまうことを防止。デデュプリケーション、勾配クリッピング、出力フィルタリングの多層防御で記憶化リスクを最小化します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔐</div>
+                    <div class="key-point-content">
+                        <h3>暗号化とアクセス制御</h3>
+                        <p>保存データおよび通信中のデータを暗号化。厳格なアクセス制御と監査ログにより、不正アクセスを防止し、データの安全性を担保します。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ図</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">データ収集からユーザーへの応答まで、プライバシー保護がどのように組み込まれているかの全体像</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph UserLayer["ユーザー層"]
+        ChatUser(["ChatGPT ユーザー"])
+        APIUser(["API ユーザー"])
+        EnterpriseUser(["Enterprise ユーザー"])
+    end
+
+    subgraph ControlLayer["コントロール層"]
+        Settings["プライバシー設定\n(オプトアウト / オプトイン)"]
+        DataExport["データエクスポート"]
+        Deletion["データ削除リクエスト"]
+    end
+
+    subgraph DataFlow["データフロー"]
+        subgraph Collection["データ収集"]
+            SourceFilter["ソースフィルタリング"]
+            RobotsCheck["robots.txt 確認"]
+        end
+
+        subgraph Preprocessing["前処理"]
+            PIIDetect["PII 検出\n(Privacy Filter)"]
+            Anonymize["匿名化 / 墨消し"]
+            Dedup["デデュプリケーション"]
+        end
+
+        subgraph Training["学習プロセス"]
+            DiffPrivacy["差分プライバシー\n(DP-SGD)"]
+            GradClip["勾配クリッピング"]
+            MemCheck["Memorization チェック"]
+        end
+
+        subgraph Inference["推論"]
+            OutputFilter["出力フィルタリング"]
+            SafetyCheck["安全性チェック"]
+        end
+    end
+
+    subgraph Storage["データ管理"]
+        Encrypted["暗号化ストレージ"]
+        RetentionPolicy["保持期間ポリシー"]
+        AuditLog["監査ログ"]
+    end
+
+    ChatUser --> Settings
+    APIUser --> Settings
+    EnterpriseUser --> Settings
+
+    Settings --> SourceFilter
+    ChatUser --> OutputFilter
+
+    SourceFilter --> RobotsCheck
+    RobotsCheck --> PIIDetect
+    PIIDetect --> Anonymize
+    Anonymize --> Dedup
+    Dedup --> DiffPrivacy
+    DiffPrivacy --> GradClip
+    GradClip --> MemCheck
+    MemCheck --> OutputFilter
+    OutputFilter --> SafetyCheck
+    SafetyCheck --> ChatUser
+
+    Settings --> Encrypted
+    DataExport --> Encrypted
+    Deletion --> RetentionPolicy
+    Encrypted --> RetentionPolicy
+    RetentionPolicy --> AuditLog
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class PIIDetect,Anonymize,Dedup openai
+    class DiffPrivacy,GradClip,MemCheck openai
+    class OutputFilter,SafetyCheck dark
+    class SourceFilter,RobotsCheck light
+    class Settings,DataExport,Deletion light
+    class Encrypted,RetentionPolicy,AuditLog gray
+    class ChatUser,APIUser,EnterpriseUser gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- User Impact Section -->
+        <section class="section">
+            <h2 class="section-title">ユーザーへの影響</h2>
+            <div class="use-case">
+                <h4>🔌 API ユーザー</h4>
+                <p>API 経由で送信されたデータはデフォルトでモデル学習に使用されません。Enterprise 向けのデータ処理契約 (DPA) により、厳格なデータ保護が保証されます。安心してビジネスデータを処理できます。</p>
+            </div>
+            <div class="use-case">
+                <h4>💻 アプリ開発者</h4>
+                <p>プライバシー・バイ・デザインの原則に基づき、OpenAI のインフラを活用することで、独自のプライバシー保護レイヤーを一から構築する負担を軽減できます。PII フィルタリングや暗号化が標準で組み込まれています。</p>
+            </div>
+            <div class="use-case">
+                <h4>👤 エンドユーザー</h4>
+                <p>設定画面からワンクリックで学習への利用をオプトアウト可能。データエクスポートで自分のデータを確認し、アカウント削除で完全消去をリクエストできます。プライバシーの主導権はユーザーにあります。</p>
+            </div>
+        </section>
+
+        <!-- Training Data Reduction -->
+        <section class="section">
+            <h2 class="section-title">学習データにおける個人データ削減</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔍 ソースフィルタリング</h3>
+                    <p>個人情報を多く含む可能性が高いソース (SNS の個人投稿、非公開ページなど) を学習データから事前に除外します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏷️ PII 検出・除去</h3>
+                    <p>名前、メールアドレス、電話番号、住所などの個人識別情報を自動検出し、学習データから除去または匿名化します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 デデュプリケーション</h3>
+                    <p>重複データを除去することで、特定の個人情報がモデルに過度に影響を与えることを防止。記憶化リスクを低減します。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/how-chatgpt-protects-privacy" target="_blank" rel="noopener noreferrer">https://openai.com/index/how-chatgpt-protects-privacy</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - 2026-05-06</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
