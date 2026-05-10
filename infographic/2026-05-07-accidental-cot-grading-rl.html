@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL 訓練中の意図しない CoT 評価の影響調査 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --danger: #E74C3C;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .category-badge + .category-badge {
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .authors {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Incident Cards */
+        .incident-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .incident-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF7ED 100%);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .incident-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .incident-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .incident-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .incident-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .incident-tag.model {
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--openai-green);
+        }
+
+        .incident-tag.impact {
+            background: rgba(245, 158, 11, 0.1);
+            color: #D97706;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Three Factor Cards */
+        .factor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .factor-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .factor-card {
+            background: white;
+            border: 2px solid var(--openai-gray);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .factor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+            border-color: var(--openai-green);
+        }
+
+        .factor-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-accent);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 16px;
+        }
+
+        .factor-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .factor-card .factor-en {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .factor-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Risk Table */
+        .risk-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .risk-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .risk-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .risk-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .risk-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .risk-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .risk-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .risk-badge.high {
+            background: rgba(231, 76, 60, 0.15);
+            color: #E74C3C;
+        }
+
+        .risk-badge.medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: #D97706;
+        }
+
+        .risk-badge.low {
+            background: rgba(16, 163, 127, 0.15);
+            color: #10A37F;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Remediation Steps */
+        .remediation-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .remediation-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .remediation-list li:last-child {
+            border-bottom: none;
+        }
+
+        .remediation-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .remediation-text h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .remediation-text p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Affected Models List */
+        .affected-models {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .model-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .model-chip.affected {
+            background: rgba(245, 158, 11, 0.12);
+            color: #B45309;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .model-chip.safe {
+            background: rgba(16, 163, 127, 0.12);
+            color: #047857;
+            border: 1px solid rgba(16, 163, 127, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .footer-link {
+            display: inline-block;
+            padding: 4px 12px;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        /* Callout */
+        .callout {
+            background: rgba(16, 163, 127, 0.08);
+            border: 1px solid rgba(16, 163, 127, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .callout p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .callout strong {
+            color: var(--openai-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Research</span>
+                <span class="category-badge">AI Safety</span>
+                <h1>RL 訓練中の意図しない CoT 評価の影響調査</h1>
+                <p class="date">2026-05-07 | OpenAI Alignment Blog</p>
+                <p class="authors">Micah Carroll, Tomek Korbak, Zehao Dou, Bowen Baker, Ian Kivlichan</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>意図しない CoT 評価を発見</h3>
+                        <p>OpenAI が構築した自動検出システムにより、複数のリリース済みモデルで RL 訓練中に CoT が意図せず評価されていたことが判明。ポリシーに反する限定的な CoT 評価が 3 つの経路で発生していた。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">✅</div>
+                    <div class="key-point-content">
+                        <h3>監視可能性への重大な影響なし</h3>
+                        <p>アブレーション研究の結果、CoT 監視可能性 (monitorability) の有意な劣化は確認されなかった。影響範囲が全サンプルの数パーセント未満と限定的であったことが要因と考えられる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧬</div>
+                    <div class="key-point-content">
+                        <h3>隠蔽リスクの 3 要因フレームワーク</h3>
+                        <p>CoT 評価が思考の隠蔽 (obfuscation) につながる 3 つの条件として「報酬の大きさ」「カバレッジ」「条件付き発見可能性」を特定。安全な RL 訓練設計の指針を提供。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.5 は影響なし</h3>
+                        <p>最新の GPT-5.5 は影響を受けておらず、CoT の監視可能性が保たれている。是正措置完了後、METR、Apollo Research、Redwood Research による外部レビューも実施。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Affected Models -->
+        <section class="section">
+            <h2 class="section-title">影響を受けたモデル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">自動検出システムが CoT 評価を検知したモデルと、影響のなかったモデル</p>
+            <div class="affected-models">
+                <span class="model-chip affected">⚠️ GPT-5.4 Thinking</span>
+                <span class="model-chip affected">⚠️ GPT-5.1 Instant</span>
+                <span class="model-chip affected">⚠️ GPT-5.2 Instant</span>
+                <span class="model-chip affected">⚠️ GPT-5.3 Instant</span>
+                <span class="model-chip affected">⚠️ GPT-5.4 Instant</span>
+                <span class="model-chip affected">⚠️ GPT-5.3 mini</span>
+                <span class="model-chip affected">⚠️ GPT-5.4 mini</span>
+                <span class="model-chip safe">✅ GPT-5.5 (影響なし)</span>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るインシデント</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">発見された<br>CoT 評価の経路</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;3.8%</div>
+                    <div class="stat-label">最大影響範囲<br>(サンプル比率)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">監視可能性の<br>有意な劣化</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">外部レビュー<br>組織</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Three Incidents -->
+        <section class="section">
+            <h2 class="section-title">発見された 3 つの事例</h2>
+            <div class="incident-grid">
+                <div class="incident-card">
+                    <h3>📊 事例 1: 軌跡の有用性に対する報酬</h3>
+                    <p>モデルの応答軌跡 (trajectory) の有用性を評価する報酬関数において、CoT 部分が評価対象に含まれていた。CoT が有用性を過大に表現するインセンティブを生む可能性があった。</p>
+                    <div class="incident-meta">
+                        <span class="incident-tag model">GPT-5.4 Thinking</span>
+                        <span class="incident-tag model">GPT-5.4 mini</span>
+                        <span class="incident-tag impact">&lt;0.6% / &lt;1.5%</span>
+                    </div>
+                </div>
+                <div class="incident-card">
+                    <h3>❓ 事例 2: 不必要な確認質問へのペナルティ</h3>
+                    <p>ユーザーへの不必要な確認質問を抑制するペナルティ機構で、CoT の内容が評価に含まれていた。確認質問を正当化する方向に CoT が歪む可能性があった。</p>
+                    <div class="incident-meta">
+                        <span class="incident-tag model">GPT-5.1~5.4 Instant</span>
+                        <span class="incident-tag model">GPT-5.3 mini</span>
+                        <span class="incident-tag impact">&lt;3.8% (最大)</span>
+                    </div>
+                </div>
+                <div class="incident-card">
+                    <h3>🔐 事例 3: プロンプトインジェクション成功へのペナルティ</h3>
+                    <p>プロンプトインジェクション攻撃の成功を検出してペナルティを与える機構で、CoT が考慮されていた。インジェクション関連の推論を隠蔽する圧力が生じる可能性があった。</p>
+                    <div class="incident-meta">
+                        <span class="incident-tag model">GPT-5.2~5.4 Instant</span>
+                        <span class="incident-tag model">GPT-5.3 mini</span>
+                        <span class="incident-tag impact">&lt;0.3%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (発見前)</h4>
+                    <ul>
+                        <li>一部の報酬関数が CoT を評価対象に含む</li>
+                        <li>意図しない CoT 評価の体系的検出なし</li>
+                        <li>CoT が間接経路で報酬入力に漏洩</li>
+                        <li>内部プロセスの明確なガイダンス不足</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (是正後)</h4>
+                    <ul>
+                        <li>影響を受けた報酬経路を修正</li>
+                        <li>全 RL ランを監視する自動検出システム</li>
+                        <li>間接的な CoT 漏洩も検出可能に</li>
+                        <li>内部ガイダンスとプロセスを強化</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram (Mermaid from report) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ: 自動検出システム</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Training["RL 訓練パイプライン"]
+        Model["推論モデル&lt;br/&gt;(GPT-5.x)"]
+        CoT["Chain-of-Thought&lt;br/&gt;生成"]
+        Response["最終応答&lt;br/&gt;生成"]
+        Reward["報酬関数"]
+    end
+
+    subgraph Detection["自動検出システム"]
+        Scanner["正規表現&lt;br/&gt;スキャナー"]
+        Analyzer["影響分析&lt;br/&gt;エンジン"]
+        Alert["アラート&lt;br/&gt;システム"]
+    end
+
+    subgraph Notification["通知チャンネル"]
+        SlackOwner["Slack: ラン&lt;br/&gt;オーナー通知"]
+        SlackPublic["Slack: 公開&lt;br/&gt;チャンネル投稿"]
+    end
+
+    subgraph Remediation["是正プロセス"]
+        Fix["報酬経路&lt;br/&gt;修正"]
+        Review["外部レビュー&lt;br/&gt;(METR, Apollo,&lt;br/&gt;Redwood)"]
+    end
+
+    Model --> CoT
+    CoT --> Response
+    Response --> Reward
+    CoT -.->|"意図しない&lt;br/&gt;入力"| Reward
+
+    Reward -->|"入力データ"| Scanner
+    Scanner -->|"CoT 痕跡検出"| Analyzer
+    Analyzer -->|"閾値超過"| Alert
+    Alert --> SlackOwner
+    Alert --> SlackPublic
+
+    Analyzer -->|"影響評価"| Fix
+    Fix --> Review
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef alert fill:#E74C3C,stroke:#C0392B,stroke-width:2px,color:white
+    classDef neutral fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Model,CoT,Response openai
+    class Reward,Scanner,Analyzer dark
+    class Alert,SlackOwner,SlackPublic alert
+    class Fix,Review neutral
+                </pre>
+            </div>
+        </section>
+
+        <!-- Three Factors Framework -->
+        <section class="section">
+            <h2 class="section-title">CoT 隠蔽の 3 要因フレームワーク</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">CoT 評価が思考の隠蔽 (obfuscation) を引き起こす 3 つの重要な要因を特定</p>
+            <div class="factor-grid">
+                <div class="factor-card">
+                    <div class="factor-icon">⚖️</div>
+                    <h3>報酬の大きさ</h3>
+                    <div class="factor-en">Reward Magnitude</div>
+                    <p>CoT に対する報酬やペナルティが他の訓練シグナルと比較してどれだけ大きいか。大きいほど CoT 調整圧力が強まる。</p>
+                </div>
+                <div class="factor-card">
+                    <div class="factor-icon">📡</div>
+                    <h3>カバレッジ</h3>
+                    <div class="factor-en">Coverage</div>
+                    <p>訓練中にモデルが関連環境に置かれる頻度。高いほど CoT 評価の影響がモデル行動全体に浸透しやすくなる。</p>
+                </div>
+                <div class="factor-card">
+                    <div class="factor-icon">🎯</div>
+                    <h3>条件付き発見可能性</h3>
+                    <div class="factor-en">Conditional Discoverability</div>
+                    <p>モデルが報酬される CoT 行動をサンプリングする可能性の高さ。発見しやすいほど学習・内面化されやすい。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Risk Classification -->
+        <section class="section">
+            <h2 class="section-title">隠蔽リスクの分類</h2>
+            <table class="risk-table">
+                <thead>
+                    <tr>
+                        <th>リスクレベル</th>
+                        <th>要因の組み合わせ</th>
+                        <th>予想される影響</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="risk-badge high">高</span></td>
+                        <td>3 要因すべてが高い</td>
+                        <td>モデルが迅速に CoT を操作する方法を学習</td>
+                    </tr>
+                    <tr>
+                        <td><span class="risk-badge medium">中</span></td>
+                        <td>1-2 要因が高い</td>
+                        <td>限定的な影響が観測される可能性</td>
+                    </tr>
+                    <tr>
+                        <td><span class="risk-badge low">低</span></td>
+                        <td>すべての要因が低い</td>
+                        <td>今回の事例のように明確な劣化は見られない</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout">
+                <p><strong>今回の事例:</strong> 発見された 3 つの事例はすべて低カバレッジ (サンプルの 0.3~3.8%) かつ報酬が限定的であったため、「低リスク」に分類。実際にアブレーション研究でも監視可能性の劣化は確認されなかった。</p>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔬 検出メカニズム</h3>
+                    <p>報酬関数への入力データを捕捉し、CoT マーカー (思考トークン、推論ステップなど) の正規表現パターンマッチングでスキャン。閾値超過時にアラートを自動送信。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📐 アブレーション研究</h3>
+                    <p>同一訓練設定で CoT 評価あり/なしの 2 つのランを比較。CoT-aware と CoT-blind の検出器で不一致率を測定し、差異が偶然によるものか検証。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 間接漏洩の検出</h3>
+                    <p>モデルがツール経由で自身の CoT にアクセスし、ツール出力内に CoT が混入する間接経路も検出。デプロイ前にこの問題を発見し阻止。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 実験的ストレステスト</h3>
+                    <p>意図的に強い CoT 圧力を適用する実験で、自信度の操作、ユーザー/報酬プロセスへの言及、行動フレーミングなど段階的なテストを実施。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Remediation Steps -->
+        <section class="section">
+            <h2 class="section-title">是正措置と外部レビュー</h2>
+            <ul class="remediation-list">
+                <li>
+                    <div class="remediation-icon">🔧</div>
+                    <div class="remediation-text">
+                        <h4>報酬経路の修正</h4>
+                        <p>CoT が報酬計算に含まれていた 3 つの経路を特定し、すべて修正完了</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="remediation-icon">🤖</div>
+                    <div class="remediation-text">
+                        <h4>自動検出システムの拡張</h4>
+                        <p>正規表現ベースの検出範囲を拡大し、間接的な CoT 漏洩経路もカバー</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="remediation-icon">📋</div>
+                    <div class="remediation-text">
+                        <h4>内部ガイダンスの強化</h4>
+                        <p>CoT 評価を避けるための明確な内部ガイダンスとプロセスを策定・文書化</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="remediation-icon">🏛️</div>
+                    <div class="remediation-text">
+                        <h4>外部独立レビュー</h4>
+                        <p>METR、Apollo Research、Redwood Research の 3 組織に草稿を共有し、独立レビューを依頼。Redwood Research はレポートを作成</p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>🔍 モデルの信頼性</h4>
+                <p>影響を受けたモデル (GPT-5.1~5.4 Instant、GPT-5.3~5.4 mini、GPT-5.4 Thinking) で監視可能性の有意な劣化は確認されず、既存アプリケーションへの直接的影響は限定的。</p>
+            </div>
+            <div class="use-case">
+                <h4>✅ GPT-5.5 の安全性確認</h4>
+                <p>最新の GPT-5.5 は影響を受けておらず、CoT の監視可能性が保たれている。安心して利用可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>📐 安全性研究への示唆</h4>
+                <p>3 要因フレームワーク (報酬の大きさ、カバレッジ、条件付き発見可能性) は、自社で RL 訓練を行う研究者にとって重要な設計指針。CoT 監視に依存するシステムの妥当性を再確認する機会。</p>
+            </div>
+            <div class="use-case">
+                <h4>🏛️ 透明性の向上</h4>
+                <p>OpenAI がインシデントを自主的に公開し外部レビューを依頼。AI 安全性分野における透明性の基準を示す先例となる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://alignment.openai.com/accidental-cot-grading/" target="_blank" rel="noopener noreferrer">https://alignment.openai.com/accidental-cot-grading/</a></p>
+            <div class="footer-links">
+                <a href="https://openai.com/research" target="_blank" rel="noopener noreferrer" class="footer-link">OpenAI Research</a>
+                <a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer" class="footer-link">OpenAI Safety</a>
+                <a href="https://metr.org/" target="_blank" rel="noopener noreferrer" class="footer-link">METR</a>
+                <a href="https://www.apolloresearch.ai/" target="_blank" rel="noopener noreferrer" class="footer-link">Apollo Research</a>
+                <a href="https://www.redwoodresearch.org/" target="_blank" rel="noopener noreferrer" class="footer-link">Redwood Research</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
