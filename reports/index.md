@@ -5,8 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-12](2026/2026-05-12-openai-agents-sdk-v0-17-1-2.md) - OpenAI Agents SDK v0.17.1 / v0.17.2: v0.17.0 後の大規模安定化リリース
 - [2026-05-11](2026/2026-05-11-openai-hires-porterfield-youth-safety.md) - OpenAI が元 Roblox コミュニケーション責任者 Eric Porterfield を採用: 青少年安全と教育の強化
 - [2026-05-11](2026/2026-05-11-openai-employee-share-sale-400b.md) - OpenAI 社員向け株式売却プログラム: 1 人最大 3,000 万ドル、評価額 4,000 億ドルに到達
+- [2026-05-11](2026/2026-05-11-openai-deployment-company-launch.md) - OpenAI Deployment Company が正式に発足 -- 19 社のグローバルパートナーと FDE モデルで企業 AI 導入を加速
+- [2026-05-11](2026/2026-05-11-openai-daybreak-cyber-defenders.md) - Daybreak: OpenAI サイバー防衛イニシアチブの統合ブランドが始動
 - [2026-05-11](2026/2026-05-11-chatgpt-ads-expand-south-korea.md) - ChatGPT 広告パイロットが韓国に拡大: OpenAI のグローバル広告戦略の加速
 - [2026-05-10](2026/2026-05-10-openai-chatgpt-smartphone-2027.md) - OpenAI が ChatGPT スマートフォンの開発を加速: 2027 年の発売に向けた取り組み
 - [2026-05-10](2026/2026-05-10-musk-openai-trial-week-2.md) - Musk v. OpenAI 裁判第 2 週: 元幹部の爆弾証言と法廷闘争の激化

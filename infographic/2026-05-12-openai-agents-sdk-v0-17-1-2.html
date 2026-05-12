@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Agents SDK v0.17.1 / v0.17.2: 大規模安定化リリース - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content { position: relative; z-index: 1; }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #343541;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px; height: 24px;
+            background: #10A37F;
+            border-radius: 2px;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+
+        .key-point {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 20px;
+            background: #ECECF1;
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
+        }
+
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .feature-card .fix-count {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison { grid-template-columns: 1fr; }
+        }
+
+        .comparison-card { padding: 24px; border-radius: 16px; }
+        .comparison-card.before { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); border: 2px solid #F87171; }
+        .comparison-card.after { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border: 2px solid #34D399; }
+        .comparison-card h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .comparison-card.before h4 { color: #DC2626; }
+        .comparison-card.after h4 { color: #059669; }
+        .comparison-card ul { padding-left: 20px; font-size: 14px; line-height: 1.8; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: #10A37F; margin-bottom: 8px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+
+        .code-block { background: #343541; border-radius: 12px; overflow: hidden; margin: 20px 0; }
+        .code-header { background: #444654; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .code-lang { color: #10A37F; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+        .code-block pre { margin: 0; padding: 0; }
+        .code-block code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.6; padding: 20px !important; }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid { display: flex; justify-content: center; }
+
+        .use-case {
+            background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%);
+            border-left: 4px solid #10A37F;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: #ECECF1;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #8E8EA0;
+        }
+
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">SDK UPDATE</span>
+                <h1>OpenAI Agents SDK v0.17.1 / v0.17.2: v0.17.0 後の大規模安定化リリース</h1>
+                <p class="date">2026-05-11 / 2026-05-12</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F527;</div>
+                    <div class="key-point-content">
+                        <h3>50 件以上のバグ修正</h3>
+                        <p>v0.17.0 リリース後に報告された問題を 2 日間で集中的に修正。新機能追加なしの品質特化リリース。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AF;</div>
+                    <div class="key-point-content">
+                        <h3>6 つのサブシステムを横断</h3>
+                        <p>Core、Realtime Agents、Sessions、Sandbox、Extensions、Tracing の全領域にわたる修正を実施。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-content">
+                        <h3>安定性に全集中</h3>
+                        <p>破壊的変更ゼロ。既存の API 互換性を完全に維持しつつ、内部品質を大幅に向上。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>即時アップグレード推奨</h3>
+                        <p>AudioInput バッファ破壊、セッション破損、トレーシングのシャットダウン問題など重大なバグを修正。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るリリース</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">50+</div>
+                    <div class="stat-label">バグ修正</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">サブシステム</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">破壊的変更</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">日間で 2 リリース</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fix Distribution Pie Chart -->
+        <section class="section">
+            <h2 class="section-title">修正件数の分布</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+pie title 修正件数の分布
+    "コアモジュール" : 28
+    "Realtime Agents" : 11
+    "Sessions" : 5
+    "Sandbox" : 5
+    "Extensions" : 4
+    "Tracing" : 3
+                </pre>
+            </div>
+        </section>
+
+        <!-- Feature Cards - Subsystem Fixes -->
+        <section class="section">
+            <h2 class="section-title">サブシステム別の修正内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F9E9; コアモジュール</h3>
+                    <p>handoff 履歴の保持、guardrail のクリーンアップ、スキーマバリデーションの修正を含む大規模な安定化。</p>
+                    <span class="fix-count">28 件修正</span>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F3A4; Realtime Agents</h3>
+                    <p>ツール承認のスコープ分離、オーディオバッファの安全性確保、トランスクリプト保持の修正。</p>
+                    <span class="fix-count">11 件修正</span>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4BE; Sessions</h3>
+                    <p>破損アイテムのスキップ処理、MongoDB / Redis タイムスタンプ保持の修正。</p>
+                    <span class="fix-count">5 件修正</span>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4E6; Sandbox</h3>
+                    <p>アーカイブ展開の制限強化、git リポジトリのサブパスバリデーション修正。</p>
+                    <span class="fix-count">5 件修正</span>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50C; Extensions</h3>
+                    <p>並列ツール呼び出し時のコンテンツ重複排除 (any-llm, litellm 対応)。</p>
+                    <span class="fix-count">4 件修正</span>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50D; Tracing</h3>
+                    <p>ベストエフォート・シャットダウン、BatchTraceProcessor のレジリエンス向上。</p>
+                    <span class="fix-count">3 件修正</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">SDK アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Core["Agents SDK コア"]
+        Agent["Agent"]
+        Runner["Runner"]
+        Handoff["Handoff"]
+        Guardrails["Guardrails"]
+    end
+
+    subgraph Realtime["Realtime Agents"]
+        RA["RealtimeAgent"]
+        AudioIO["AudioInput/Output"]
+        ToolApproval["Tool Approval"]
+    end
+
+    subgraph Sessions["Sessions"]
+        SQLite["SQLiteSession"]
+        MongoDB["MongoDBSession"]
+        Redis["RedisSession"]
+    end
+
+    subgraph Sandbox["Sandbox"]
+        SandboxProvider["Provider"]
+        GitRepo["GitRepo"]
+        Archive["Archive"]
+    end
+
+    subgraph Tracing["Tracing"]
+        BatchProcessor["BatchProcessor"]
+        Shutdown["Shutdown"]
+    end
+
+    Agent --> Runner
+    Runner --> Realtime
+    Runner --> Sessions
+    Runner --> Sandbox
+    Runner --> Tracing
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Agent,Runner openai
+    class RA,AudioIO,ToolApproval,SQLite,MongoDB,Redis,SandboxProvider,GitRepo,Archive,BatchProcessor,Shutdown dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Realtime ツール承認のスコープ分離 (v0.17.1 修正)</span>
+                </div>
+                <pre><code class="language-python"># Realtime ツール承認のスコープ分離 (v0.17.1 修正)
+from agents import RealtimeAgent
+
+agent_a = RealtimeAgent(
+    name="AssistantA",
+    tools=["web_search", "code_exec"],
+    tool_approval_required=True,
+)
+
+agent_b = RealtimeAgent(
+    name="AssistantB",
+    tools=["file_read"],
+    tool_approval_required=True,
+)
+# 各エージェントのツール承認が独立して管理される</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">AudioInput バッファ安全性 (v0.17.1 修正)</span>
+                </div>
+                <pre><code class="language-python"># AudioInput バッファ安全性 (v0.17.1 修正)
+from agents.voice import AudioInput
+
+audio_buffer = bytearray(b"\x00\x01\x02\x03...")
+base64_data = audio_input.to_base64()
+# v0.17.1以降: 元のバッファは変更されない
+assert audio_buffer == bytearray(b"\x00\x01\x02\x03...")</code></pre>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (v0.17.0)</h4>
+                    <ul>
+                        <li>AudioInput.to_base64() が元のバッファを破壊的に変更</li>
+                        <li>セッションに破損データが含まれるとクラッシュ</li>
+                        <li>トレーシングのシャットダウン時にデータ消失の可能性</li>
+                        <li>複数エージェントのツール承認が共有状態で競合</li>
+                        <li>handoff 時に会話履歴が欠落</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (v0.17.2)</h4>
+                    <ul>
+                        <li>バッファのコピーを作成し元データを安全に保持</li>
+                        <li>破損アイテムを graceful にスキップして継続</li>
+                        <li>ベストエフォート・シャットダウンで確実にフラッシュ</li>
+                        <li>各エージェント固有のスコープで承認を管理</li>
+                        <li>handoff 時の会話履歴を完全に保持</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">アップグレードが必要なユーザー</h2>
+            <div class="use-case">
+                <h4>&#x1F3A4; Realtime Agents ユーザー</h4>
+                <p>音声入力のバッファ安全性とツール承認のスコープ分離が修正されました。複数の RealtimeAgent を並行利用している場合は即時アップグレードを推奨します。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4BE; MongoDB / Redis セッションユーザー</h4>
+                <p>タイムスタンプ保持の問題と破損データ時のクラッシュが修正されました。本番環境でセッション永続化を利用している場合は v0.17.2 への更新が必須です。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F91D; マルチエージェント handoff ユーザー</h4>
+                <p>エージェント間の会話履歴保持と guardrail のクリーンアップが修正されました。複数エージェントを連携させるワークフローの信頼性が大幅に向上します。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <p><a href="https://github.com/openai/openai-agents-python/releases/tag/v0.17.2" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-agents-python/releases/tag/v0.17.2</a></p>
+            <p><a href="https://github.com/openai/openai-agents-python/releases/tag/v0.17.1" target="_blank" rel="noopener noreferrer">https://github.com/openai/openai-agents-python/releases/tag/v0.17.1</a></p>
+            <p style="margin-top: 12px;">v0.17.0 コンテキスト: デフォルトモデルが gpt-5.4-mini に変更、RealtimeAgent デフォルトが gpt-realtime-2 に変更</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
