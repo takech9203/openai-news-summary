@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NVIDIA エンジニアと研究者が Codex で構築する方法 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Table */
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .tech-table thead {
+            background: var(--gradient-header);
+            color: white;
+        }
+
+        .tech-table th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .tech-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .tech-table tbody tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        .tech-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .impact-card {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .impact-card .impact-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .impact-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .impact-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">カスタマーストーリー</span>
+                <h1>NVIDIA エンジニアと研究者が Codex で構築する方法</h1>
+                <p class="date">2026-05-12</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🏢</div>
+                    <div class="key-point-content">
+                        <h3>NVIDIA の戦略的導入</h3>
+                        <p>NVIDIA が全社規模で OpenAI の Codex プラットフォームを導入し、エンジニアリングおよび研究ワークフローを大幅に強化。AI インフラの巨人が自らの開発プロセスに AI コーディングアシスタントを統合する戦略的判断。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚙️</div>
+                    <div class="key-point-content">
+                        <h3>エンジニアリングチームの活用</h3>
+                        <p>インフラコード生成、API 開発、テスト自動化、コードレビュー、ドキュメント生成など、ソフトウェア開発ライフサイクル全体で Codex を活用。本番品質のコードを高速に生成し、レビュー工程を効率化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-content">
+                        <h3>研究チームの活用</h3>
+                        <p>研究アイデアのプロトタイピング加速、実験コードの自動生成、論文実装の迅速な再現。研究から本番コードへの移行をシームレスに実現し、研究サイクルを大幅に短縮。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.5 の能力</h3>
+                        <p>Codex は GPT-5.5 を基盤とし、高度なコード理解、マルチファイル対応、コンテキスト認識型のコード生成を実現。NVIDIA の複雑な CUDA カーネルやドライバコードにも対応可能な高精度を達成。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🏗️ インフラコード生成</h3>
+                    <p>CUDA カーネル、ドライバコード、GPU 最適化コードなど、NVIDIA 特有のインフラストラクチャコードを高精度に自動生成。DGX クラスタ向けの設定も効率化。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔌 API 開発</h3>
+                    <p>NVIDIA の各種 SDK や API エンドポイントの設計・実装を加速。RESTful API、gRPC サービス、GraphQL スキーマの自動生成に対応。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧪 テスト自動化</h3>
+                    <p>ユニットテスト、統合テスト、パフォーマンステストの自動生成。GPU ワークロードの回帰テストやベンチマークスクリプトも含む包括的なテストカバレッジを実現。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👁️ コードレビュー</h3>
+                    <p>プルリクエストの自動レビュー、潜在的なバグの検出、パフォーマンスボトルネックの特定。NVIDIA コーディング規約への準拠チェックも自動化。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📝 ドキュメント生成</h3>
+                    <p>API リファレンス、コード内コメント、技術仕様書の自動生成。既存コードベースからのドキュメント抽出と整理を効率化。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 従来の手動プロセス</h4>
+                    <ul>
+                        <li>研究アイデアからプロトタイプまで数週間</li>
+                        <li>手動でのコードレビューに大量の時間</li>
+                        <li>研究コードから本番コードへの移行が困難</li>
+                        <li>テスト作成が開発のボトルネック</li>
+                        <li>ドキュメントが常に遅延・不完全</li>
+                        <li>エンジニア間のナレッジ共有が非効率</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: Codex 支援パイプライン</h4>
+                    <ul>
+                        <li>研究アイデアからプロトタイプまで数日</li>
+                        <li>AI によるコードレビューで即時フィードバック</li>
+                        <li>Codex がリファクタリングを自動化</li>
+                        <li>テスト自動生成でカバレッジ向上</li>
+                        <li>コードと同時にドキュメント生成</li>
+                        <li>Codex がベストプラクティスを自動適用</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Research["研究チーム"]
+        Ideas["研究アイデア / 論文"]
+        Prototype["プロトタイプ"]
+        Experiments["実験実行"]
+    end
+    subgraph Engineering["エンジニアリングチーム"]
+        ProdDesign["本番設計"]
+        Implementation["実装"]
+        Testing["テスト / QA"]
+        Deploy["デプロイ"]
+    end
+    subgraph CodexPlatform["Codex (GPT-5.5)"]
+        CodeGen["コード生成"]
+        CodeReview["コードレビュー"]
+        TestGen["テスト生成"]
+        Refactor["リファクタリング"]
+        DocGen["ドキュメント生成"]
+    end
+    subgraph Infrastructure["NVIDIA 開発インフラ"]
+        GitHub["GitHub Enterprise"]
+        CI["CI/CD パイプライン"]
+        DGX["DGX クラスタ"]
+        Registry["コンテナレジストリ"]
+    end
+    Ideas --> CodeGen
+    CodeGen --> Prototype
+    Prototype --> Experiments
+    Experiments --> DGX
+    ProdDesign --> CodeGen
+    CodeGen --> Implementation
+    Implementation --> CodeReview
+    CodeReview --> GitHub
+    GitHub --> CI
+    CI --> TestGen
+    TestGen --> Testing
+    Testing --> Deploy
+    Deploy --> Registry
+    Prototype -.->|本番化| Refactor
+    Refactor --> Implementation
+    Implementation --> DocGen
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef nvidia fill:#76B900,stroke:#5A8C00,stroke-width:2px,color:white
+    class CodeGen,CodeReview,TestGen,Refactor,DocGen openai
+    class Ideas,Prototype,Experiments,ProdDesign,Implementation,Testing,Deploy dark
+    class GitHub,CI,DGX,Registry nvidia
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">研究プロトタイプから本番コードへの変換例: Codex が研究コードを本番品質にリファクタリング</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">研究プロトタイプ (Before)</span>
+                </div>
+                <pre><code class="language-python"># 研究チームによるプロトタイプ: GPU メモリ最適化実験
+import torch
+import numpy as np
+
+def experiment_memory_opt(data, batch_size=32):
+    """Quick prototype for memory optimization research"""
+    results = []
+    for i in range(0, len(data), batch_size):
+        batch = torch.tensor(data[i:i+batch_size]).cuda()
+        # 実験的な最適化ロジック
+        out = torch.nn.functional.relu(batch @ batch.T)
+        results.append(out.cpu().numpy())
+    return np.concatenate(results)</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">本番コード (After - Codex による変換)</span>
+                </div>
+                <pre><code class="language-python"># Codex が生成した本番品質コード: GPU メモリ最適化モジュール
+import torch
+import numpy as np
+from typing import Optional
+from dataclasses import dataclass
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class MemoryOptConfig:
+    """メモリ最適化の設定パラメータ"""
+    batch_size: int = 32
+    device: str = "cuda"
+    dtype: torch.dtype = torch.float32
+    enable_amp: bool = True
+    max_memory_fraction: float = 0.8
+
+
+class GPUMemoryOptimizer:
+    """GPU メモリ最適化モジュール (本番用)
+
+    NVIDIA DGX クラスタ向けに最適化された
+    メモリ管理とバッチ処理を提供。
+    """
+
+    def __init__(self, config: Optional[MemoryOptConfig] = None):
+        self.config = config or MemoryOptConfig()
+        self._validate_device()
+        torch.cuda.set_per_process_memory_fraction(
+            self.config.max_memory_fraction
+        )
+
+    def _validate_device(self) -> None:
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA device not available")
+        logger.info(
+            f"Initialized on {torch.cuda.get_device_name()}"
+        )
+
+    @torch.inference_mode()
+    def optimize(self, data: np.ndarray) -> np.ndarray:
+        """バッチ処理によるメモリ最適化を実行"""
+        results: list[np.ndarray] = []
+        total_batches = (len(data) + self.config.batch_size - 1) // self.config.batch_size
+
+        for idx in range(0, len(data), self.config.batch_size):
+            batch = torch.tensor(
+                data[idx:idx + self.config.batch_size],
+                device=self.config.device,
+                dtype=self.config.dtype,
+            )
+            with torch.cuda.amp.autocast(enabled=self.config.enable_amp):
+                output = torch.nn.functional.relu(batch @ batch.T)
+            results.append(output.cpu().numpy())
+            logger.debug(f"Batch {idx // self.config.batch_size + 1}/{total_batches}")
+
+        return np.concatenate(results, axis=0)</code></pre>
+            </div>
+        </section>
+
+        <!-- Tech Stack Table -->
+        <section class="section">
+            <h2 class="section-title">技術スタック</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">NVIDIA の開発環境と Codex の統合ポイント</p>
+            <table class="tech-table">
+                <thead>
+                    <tr>
+                        <th>カテゴリ</th>
+                        <th>技術 / ツール</th>
+                        <th>Codex との連携</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ソースコード管理</td>
+                        <td>GitHub Enterprise</td>
+                        <td>PR レビュー自動化、コード提案</td>
+                    </tr>
+                    <tr>
+                        <td>CI/CD</td>
+                        <td>GitHub Actions / Jenkins</td>
+                        <td>テスト生成、パイプライン最適化</td>
+                    </tr>
+                    <tr>
+                        <td>コンピュート</td>
+                        <td>DGX クラスタ</td>
+                        <td>CUDA コード生成、GPU 最適化</td>
+                    </tr>
+                    <tr>
+                        <td>コンテナ</td>
+                        <td>NGC コンテナレジストリ</td>
+                        <td>Dockerfile 生成、デプロイ設定</td>
+                    </tr>
+                    <tr>
+                        <td>言語</td>
+                        <td>Python / C++ / CUDA</td>
+                        <td>マルチ言語コード生成・変換</td>
+                    </tr>
+                    <tr>
+                        <td>AI フレームワーク</td>
+                        <td>PyTorch / TensorRT</td>
+                        <td>モデル最適化コード生成</td>
+                    </tr>
+                    <tr>
+                        <td>AI プラットフォーム</td>
+                        <td>Codex (GPT-5.5)</td>
+                        <td>全開発フェーズを横断的に支援</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>1. CUDA カーネル開発の加速</h4>
+                <p>研究チームが新しい GPU アルゴリズムを考案した際、Codex が CUDA カーネルのプロトタイプを即座に生成。従来数日かかっていた初期実装を数時間に短縮。メモリアクセスパターンの最適化や warp レベルの並列化も自動提案し、パフォーマンスチューニングの出発点を提供。</p>
+            </div>
+            <div class="use-case">
+                <h4>2. ドライバ品質保証の自動化</h4>
+                <p>NVIDIA ドライバのアップデートに伴う回帰テストの自動生成。Codex が変更差分を分析し、影響範囲に対応したテストケースを自動作成。エッジケースの検出精度が向上し、リリースサイクルの品質と速度を同時に改善。</p>
+            </div>
+            <div class="use-case">
+                <h4>3. 研究論文の実装再現</h4>
+                <p>最新の機械学習論文のアルゴリズムを Codex が解析し、NVIDIA の GPU アーキテクチャに最適化された実装を生成。研究者は論文の PDF を入力するだけで、動作するプロトタイプコードを取得可能。再現実験の立ち上げ時間を大幅に削減。</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-icon">⚡</div>
+                    <h4>開発速度の向上</h4>
+                    <p>プロトタイプから本番までの期間を大幅短縮。反復的なコーディングタスクを自動化し、エンジニアが設計と問題解決に集中可能に。</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🎯</div>
+                    <h4>コード品質の改善</h4>
+                    <p>一貫したコーディング標準の適用、自動テスト生成によるカバレッジ向上、AI によるレビューで潜在バグを早期発見。</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🔄</div>
+                    <h4>研究と本番の橋渡し</h4>
+                    <p>研究コードから本番品質コードへの変換が自動化され、アイデアの実用化までの障壁が低下。イノベーション速度が加速。</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">📈</div>
+                    <h4>スケーラビリティ</h4>
+                    <p>チーム規模に関係なく高品質なコード生成が可能。新メンバーのオンボーディング時間短縮にも貢献。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/nvidia" target="_blank" rel="noopener noreferrer">https://openai.com/index/nvidia</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - 2026-05-12</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
