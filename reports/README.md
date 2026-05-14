@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-14](2026/2026-05-14-openai-wrongful-death-lawsuits-chatgpt.md) - OpenAI に対する不法死亡訴訟 -- ChatGPT の薬物アドバイスが致命的過量摂取に関与との主張
+- [2026-05-14](2026/2026-05-14-openai-global-ai-governance-body.md) - OpenAI、米国主導のグローバル AI ガバナンス機関の創設を支持 — 中国の参加も含む
+- [2026-05-13](2026/2026-05-13-musk-altman-trial-week-3.md) - Musk 対 Altman 裁判第 3 週: Altman が証言台に立ち、Musk は中国へ -- 裁判終盤の決定的攻防
+- [2026-05-13](2026/2026-05-13-microsoft-post-openai-startup-deals.md) - Microsoft、OpenAI 後を見据えスタートアップとの提携を模索: 1,000 億ドル超投資からの戦略的転換
+- [2026-05-13](2026/2026-05-13-codex-windows-sandbox.md) - Windows 向け Codex の安全なサンドボックス構築: セキュアな隔離環境でクロスプラットフォーム対応を実現
+- [2026-05-13](2026/2026-05-13-codex-enterprise-free.md) - OpenAI、エンタープライズ向け Codex を無料で提供開始 -- 企業 AI コーディング市場の覇権争いが新局面に
 - [2026-05-12](2026/2026-05-12-parameter-golf-ai-research.md) - Parameter Golf が AI 支援研究について教えてくれたこと
 - [2026-05-12](2026/2026-05-12-openai-agents-sdk-v0-17-1-2.md) - OpenAI Agents SDK v0.17.1 / v0.17.2: v0.17.0 後の大規模安定化リリース
 - [2026-05-12](2026/2026-05-12-nvidia-engineers-codex.md) - NVIDIA エンジニアと研究者が Codex で構築する方法: GPT-5.5 による本番システム開発と研究実験の加速

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 向け Codex の安全なサンドボックス構築 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">セキュリティ / Codex</span>
+                <h1>Windows 向け Codex の安全なサンドボックス構築</h1>
+                <p class="date">2026-05-13</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>Windows ネイティブセキュリティ活用</h3>
+                        <p>Windows Sandbox、Hyper-V 隔離、AppContainer を多層的に組み合わせ、macOS / Linux と同等以上のセキュリティレベルを実現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F310;</div>
+                    <div class="key-point-content">
+                        <h3>クロスプラットフォーム統一アーキテクチャ</h3>
+                        <p>プラットフォーム非依存の共通ポリシーエンジンにより、macOS と Windows で一貫したセキュリティガバナンスを実現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4BB;</div>
+                    <div class="key-point-content">
+                        <h3>デスクトップ + Chrome 対応</h3>
+                        <p>Codex デスクトップアプリが macOS と Windows の両方で利用可能に。Chrome ブラウザ上での動作も両プラットフォームでサポート</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3E2;</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズ統合</h3>
+                        <p>ETW、WDAC、Credential Guard、Windows Firewall Platform など Windows 標準セキュリティ基盤と完全統合</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>統一テレメトリ</h3>
+                        <p>プラットフォームに関わらず同一フォーマットのテレメトリデータを出力し、セキュリティ監視の一元化を実現</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <ul>
+                        <li>macOS / Linux のみ対応</li>
+                        <li>Windows 開発者は利用不可</li>
+                        <li>プラットフォーム固有のポリシー管理</li>
+                        <li>Chrome サポートは macOS のみ</li>
+                        <li>.NET / Visual Studio ワークフロー非対応</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <ul>
+                        <li>macOS / Linux / Windows 全対応</li>
+                        <li>Windows ネイティブのセキュリティ保証</li>
+                        <li>共通ポリシーエンジンで一元管理</li>
+                        <li>Chrome サポートが両 OS で利用可能</li>
+                        <li>NuGet / .NET エコシステムに対応</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4E6; Windows Sandbox</h3>
+                    <p>Windows 10/11 組み込みの軽量仮想化技術をベースレイヤーとして採用。カーネルレベルの隔離を提供し、ホストシステムへの影響を防止</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F512; Hyper-V 隔離</h3>
+                    <p>ハードウェアレベルの仮想化により、カーネル脆弱性を突いた脱出攻撃にも耐性を持つ強化隔離モードを提供</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F5C3; AppContainer</h3>
+                    <p>プロセスレベルの権限制御により、ファイルシステム、レジストリ、ネットワークへのアクセスを細粒度で制限</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F30D; Chrome ブラウザ対応</h3>
+                    <p>Chrome 拡張機能 / ウェブアプリを通じてサンドボックス環境を起動・管理。サイト分離メカニズムでセキュリティ境界を維持</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; WDAC 統合</h3>
+                    <p>Windows Defender Application Control により、サンドボックス内で実行可能なバイナリをポリシーで制限し未署名コードの実行を防止</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50D; ETW トレーシング</h3>
+                    <p>Windows Event Tracing と統合し、既存の SIEM ソリューション (Microsoft Sentinel、Splunk) との接続を容易に実現</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Windows Security Integration -->
+        <section class="section">
+            <h2 class="section-title">Windows 固有のセキュリティ統合</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F511; Credential Guard</h3>
+                    <p>サンドボックス内からホストの認証情報へのアクセスを完全に遮断し、資格情報の窃取を防止</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4BF; BitLocker 暗号化</h3>
+                    <p>サンドボックスの一時ストレージに BitLocker 暗号化を適用し、物理アクセスによるデータ抽出を防止</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F525; Windows Firewall Platform</h3>
+                    <p>ネットワークポリシーの実施に WFP を使用し、サンドボックスからの通信を OS レベルで制御</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+
+            <h3 style="margin-bottom: 12px; font-size: 1rem; color: var(--text-primary);">Windows サンドボックスの構成例</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">XML</span>
+                    <span class="code-title">codex-sandbox.wsb</span>
+                </div>
+                <pre><code class="language-xml">&lt;!-- codex-sandbox.wsb --&gt;
+&lt;Configuration&gt;
+  &lt;VGpu&gt;Disable&lt;/VGpu&gt;
+  &lt;Networking&gt;Disable&lt;/Networking&gt;
+  &lt;MappedFolders&gt;
+    &lt;MappedFolder&gt;
+      &lt;HostFolder&gt;C:\Projects\target-repo&lt;/HostFolder&gt;
+      &lt;SandboxFolder&gt;C:\workspace&lt;/SandboxFolder&gt;
+      &lt;ReadOnly&gt;false&lt;/ReadOnly&gt;
+    &lt;/MappedFolder&gt;
+    &lt;MappedFolder&gt;
+      &lt;HostFolder&gt;C:\Codex\tools&lt;/HostFolder&gt;
+      &lt;SandboxFolder&gt;C:\tools&lt;/SandboxFolder&gt;
+      &lt;ReadOnly&gt;true&lt;/ReadOnly&gt;
+    &lt;/MappedFolder&gt;
+  &lt;/MappedFolders&gt;
+  &lt;LogonCommand&gt;
+    &lt;Command&gt;C:\tools\codex-agent-init.exe --policy production&lt;/Command&gt;
+  &lt;/LogonCommand&gt;
+  &lt;MemoryInMB&gt;8192&lt;/MemoryInMB&gt;
+&lt;/Configuration&gt;</code></pre>
+            </div>
+
+            <h3 style="margin: 24px 0 12px; font-size: 1rem; color: var(--text-primary);">クロスプラットフォームポリシー定義</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">YAML</span>
+                    <span class="code-title">codex-cross-platform-policy.yaml</span>
+                </div>
+                <pre><code class="language-yaml"># codex-cross-platform-policy.yaml
+apiVersion: codex.openai.com/v1
+kind: CrossPlatformSandboxPolicy
+metadata:
+  name: windows-codex-agent
+spec:
+  platform:
+    windows:
+      isolation: hyper-v
+      defender_integration: true
+      etw_logging: true
+      credential_guard: true
+    macos:
+      isolation: app-sandbox
+      seatbelt_profile: codex-strict
+    linux:
+      isolation: namespace
+      seccomp_profile: codex-restricted
+  common:
+    filesystem:
+      workspace_writable: true
+      system_readonly: true
+      temp_ephemeral: true
+      blocked_paths:
+        - "*/credentials*"
+        - "*/.ssh/*"
+        - "*/secrets*"
+    network:
+      default_policy: deny
+      allowed_endpoints:
+        - host: "pypi.org"
+          port: 443
+        - host: "registry.npmjs.org"
+          port: 443
+        - host: "github.com"
+          port: 443
+        - host: "nuget.org"
+          port: 443
+    resources:
+      cpu_limit: 4
+      memory_limit_gb: 8
+      disk_limit_gb: 20
+      execution_timeout_minutes: 60
+  telemetry:
+    format: unified
+    export_targets:
+      - type: etw  # Windows
+      - type: oslog  # macOS
+      - type: journald  # Linux</code></pre>
+            </div>
+
+            <h3 style="margin: 24px 0 12px; font-size: 1rem; color: var(--text-primary);">Python SDK によるサンドボックス管理</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">OpenAI Python SDK</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Windows 向けサンドボックスポリシーを指定して Codex タスクを作成
+task = client.codex.tasks.create(
+    description="Windows プロジェクトの .NET テストカバレッジ改善",
+    repository="org/windows-app",
+    sandbox_policy={
+        "platform": "windows",
+        "isolation_level": "hyper-v",
+        "mapped_folders": [
+            {
+                "host_path": "C:\\Projects\\windows-app",
+                "sandbox_path": "C:\\workspace",
+                "read_only": False
+            }
+        ],
+        "security": {
+            "wdac_enabled": True,
+            "credential_guard": True,
+            "etw_integration": True
+        }
+    },
+    network_policy={
+        "default": "deny",
+        "allowed_hosts": ["nuget.org", "github.com"],
+        "wfp_enforcement": True
+    },
+    approval_policy={
+        "level": "single_reviewer",
+        "auto_approve_paths": ["tests/*", "docs/*"]
+    }
+)
+
+# サンドボックスの状態確認
+sandbox_status = client.codex.tasks.get_sandbox_status(task.id)
+print(f"プラットフォーム: {sandbox_status.platform}")
+print(f"隔離レベル: {sandbox_status.isolation_level}")
+print(f"セキュリティ状態: {sandbox_status.security_state}")
+print(f"リソース使用量: CPU {sandbox_status.cpu_usage}%, "
+      f"メモリ {sandbox_status.memory_usage_mb}MB")</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph UserLayer["ユーザーインターフェース"]
+        Desktop["Codex デスクトップアプリ<br/>(Windows / macOS)"]
+        Chrome["Chrome ブラウザ"]
+    end
+
+    subgraph PolicyEngine["共通ポリシーエンジン"]
+        PolicyDef["ポリシー定義<br/>(YAML)"]
+        PolicyRouter["プラットフォーム<br/>ルーター"]
+    end
+
+    subgraph WindowsSandbox["Windows サンドボックス"]
+        subgraph HyperV["Hyper-V 隔離層"]
+            WinSandbox["Windows Sandbox"]
+            AppCont["AppContainer<br/>プロセス"]
+            Agent["Codex エージェント"]
+        end
+        subgraph WinSecurity["Windows セキュリティ統合"]
+            WDAC["WDAC"]
+            CredGuard["Credential Guard"]
+            WFP["Windows Firewall<br/>Platform"]
+            ETW["ETW トレーシング"]
+        end
+    end
+
+    subgraph MacSandbox["macOS サンドボックス"]
+        AppSB["App Sandbox"]
+        Seatbelt["seatbelt プロファイル"]
+        MacAgent["Codex エージェント"]
+    end
+
+    subgraph Telemetry["統一テレメトリ"]
+        Unified["統一フォーマット<br/>コレクター"]
+        SIEM["SIEM / 監視"]
+        AuditLog["監査ログ"]
+    end
+
+    subgraph External["外部リソース"]
+        Allowed["許可済みエンドポイント<br/>(NuGet, PyPI, GitHub)"]
+    end
+
+    Desktop --> PolicyEngine
+    Chrome --> PolicyEngine
+    PolicyDef --> PolicyRouter
+    PolicyRouter -->|Windows| WindowsSandbox
+    PolicyRouter -->|macOS| MacSandbox
+
+    Agent --> AppCont
+    AppCont --> WinSandbox
+    WDAC --> Agent
+    CredGuard --> HyperV
+    Agent -->|ネットワーク要求| WFP
+    WFP -->|許可| Allowed
+    Agent -.->|イベント| ETW
+
+    MacAgent --> AppSB
+    AppSB --> Seatbelt
+
+    ETW --> Unified
+    MacSandbox -.->|イベント| Unified
+    Unified --> SIEM
+    Unified --> AuditLog
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Agent,MacAgent,PolicyRouter,WFP openai
+    class HyperV,WinSandbox,AppCont,WDAC,CredGuard,ETW dark
+    class Desktop,Chrome,PolicyDef light
+    class Allowed,SIEM,AuditLog,Unified accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>Windows 開発者への Codex アクセス拡大</h4>
+                <p>.NET、C#、PowerShell、Visual Studio を中心に開発を行う Windows ネイティブの開発者が、macOS / Linux 環境のユーザーと同等のセキュリティ保証の下で Codex を利用可能に。エンタープライズ環境で多数を占める Windows 開発者にとって大きな前進</p>
+            </div>
+            <div class="use-case">
+                <h4>クロスプラットフォームポリシーの一元管理</h4>
+                <p>組織のセキュリティチームは、プラットフォーム非依存のポリシー定義を一度作成するだけで、macOS と Windows の両方に適用可能。運用管理の負荷が大幅に軽減される</p>
+            </div>
+            <div class="use-case">
+                <h4>既存 Windows セキュリティインフラとの統合</h4>
+                <p>ETW、WDAC、Windows Firewall Platform など Windows 標準のセキュリティ機構との統合により、企業の既存セキュリティ監視基盤 (Microsoft Sentinel、Splunk など) をそのまま活用してエージェントの動作を監視可能</p>
+            </div>
+            <div class="use-case">
+                <h4>Chrome ブラウザ経由のアクセス</h4>
+                <p>デスクトップアプリのインストールが困難な環境でも、Chrome ブラウザを通じて Codex のサンドボックス機能を利用可能。IT ポリシーが厳格な組織での導入ハードルが低下</p>
+            </div>
+            <div class="use-case">
+                <h4>段階的な隔離レベルの選択</h4>
+                <p>AppContainer レベルの軽量隔離から Hyper-V ベースのハードウェア隔離まで、セキュリティ要件とパフォーマンスのトレードオフに応じて隔離レベルを選択可能</p>
+            </div>
+            <div class="use-case">
+                <h4>NuGet エコシステムへのネイティブ対応</h4>
+                <p>ネットワークポリシーの許可リストに nuget.org が含まれることで、.NET プロジェクトにおけるパッケージ依存関係の解決がサンドボックス内で完結</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI が公開した本記事は、Codex のセキュリティアーキテクチャを Windows プラットフォームに拡張するための技術的アプローチを示したものである。Windows Sandbox、Hyper-V 隔離、AppContainer といった Windows ネイティブのセキュリティ機構を多層的に組み合わせることで、macOS / Linux と同等のセキュリティ保証を Windows 上で実現。さらに、プラットフォーム非依存の共通ポリシーエンジンを導入することで、クロスプラットフォーム環境における一貫したセキュリティガバナンスを可能にしている。5 月 8 日の「Running Codex safely」で示された 4 つの柱 (サンドボックス、承認ワークフロー、ネットワークポリシー、テレメトリ) が Windows 固有のセキュリティエコシステムと統合されたことで、エンタープライズにおける Codex の本格的なクロスプラットフォーム展開が現実的なものとなった。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/building-safe-sandbox-codex-windows/" target="_blank" rel="noopener noreferrer">https://openai.com/index/building-safe-sandbox-codex-windows/</a></p>
+            <p><strong>関連:</strong> <a href="https://openai.com/index/running-codex-safely" target="_blank" rel="noopener noreferrer">Running Codex safely at OpenAI</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/xml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

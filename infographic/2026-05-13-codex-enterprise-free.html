@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI、エンタープライズ向け Codex を無料で提供開始 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        tbody tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .highlight-row {
+            background: rgba(16, 163, 127, 0.08);
+            font-weight: 700;
+        }
+
+        .highlight-row td {
+            color: var(--openai-green);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases / Impact */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            thead th, tbody td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Codex / 企業活用 / プライシング</span>
+                <h1>OpenAI、エンタープライズ向け Codex を無料で提供開始 -- 企業 AI コーディング市場の覇権争いが新局面に</h1>
+                <p class="date">2026-05-13</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🆓</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズ無料提供</h3>
+                        <p>GPT-5.5 基盤のクラウドベース AI コーディングエージェント Codex を、企業が無料で試用・導入可能に。導入障壁を完全に撤廃</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏢</div>
+                    <div class="key-point-content">
+                        <h3>ランド・アンド・エクスパンド戦略</h3>
+                        <p>無料ティアで企業内に定着させた後、従量課金 → Pro → Enterprise プランへと段階的にアップセルする戦略モデルを採用</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚔️</div>
+                    <div class="key-point-content">
+                        <h3>競合への攻勢</h3>
+                        <p>Anthropic Claude Code、GitHub Copilot Enterprise ($39/月)、Google Gemini Code Assist に対し、プライシングで最も直接的な攻勢</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>Deployment Company との連携</h3>
+                        <p>5 月 11 日設立の OpenAI Deployment Company と組み合わせ、導入から定着・有料拡張までワンストップ支援体制を構築</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>データフライホイール効果</h3>
+                        <p>多くの企業が利用することでユースケースの多様性とフィードバックが蓄積され、プロダクト品質のさらなる向上につながる</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2 class="section-title">Codex エンタープライズ展開タイムライン</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>施策</th>
+                            <th>内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2026-04-02</td>
+                            <td>柔軟な従量課金制</td>
+                            <td>チーム向け Codex 専用シートの従量課金制を導入。固定シート料金なし</td>
+                        </tr>
+                        <tr>
+                            <td>2026-04-08</td>
+                            <td>エンタープライズ AI の次なるフェーズ</td>
+                            <td>大企業向け AI 戦略の方針発表</td>
+                        </tr>
+                        <tr>
+                            <td>2026-04-11</td>
+                            <td>ChatGPT Pro $100 プラン</td>
+                            <td>Codex アクセス 5 倍の個人向けプラン</td>
+                        </tr>
+                        <tr>
+                            <td>2026-04-16</td>
+                            <td>Codex for almost everything</td>
+                            <td>スーパーアプリ化、全 ChatGPT ユーザーへの開放</td>
+                        </tr>
+                        <tr>
+                            <td>2026-04-21</td>
+                            <td>エンタープライズ展開加速</td>
+                            <td>Accenture、PwC 等とのパートナーシップ。WAU 400 万人到達</td>
+                        </tr>
+                        <tr>
+                            <td>2026-05-11</td>
+                            <td>OpenAI Deployment Company</td>
+                            <td>企業の AI 構築を支援する専門組織の設立</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>2026-05-13</td>
+                            <td>エンタープライズ無料提供</td>
+                            <td>本発表。導入障壁の完全撤廃</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Competitive Comparison -->
+        <section class="section">
+            <h2 class="section-title">競合環境と市場ポジショニング</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>サービス</th>
+                            <th>提供企業</th>
+                            <th>モデル基盤</th>
+                            <th>エンタープライズ価格</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight-row">
+                            <td>Codex</td>
+                            <td>OpenAI</td>
+                            <td>GPT-5.5</td>
+                            <td>無料ティアあり (本発表)</td>
+                        </tr>
+                        <tr>
+                            <td>Claude Code</td>
+                            <td>Anthropic</td>
+                            <td>Claude</td>
+                            <td>有料 (Claude for Enterprise)</td>
+                        </tr>
+                        <tr>
+                            <td>Copilot Enterprise</td>
+                            <td>GitHub / Microsoft</td>
+                            <td>GPT-4o + Copilot</td>
+                            <td>$39 / ユーザー / 月</td>
+                        </tr>
+                        <tr>
+                            <td>Gemini Code Assist</td>
+                            <td>Google</td>
+                            <td>Gemini</td>
+                            <td>Enterprise プラン</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Enterprise Features -->
+        <section class="section">
+            <h2 class="section-title">エンタープライズ向け主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧠 GPT-5.5 基盤</h3>
+                    <p>最新フラッグシップモデルによる高精度なコード生成・理解能力。クラウドサンドボックスで安全に実行</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔒 エンタープライズセキュリティ</h3>
+                    <p>SOC 2 Type II / ISO 27001 準拠。SSO、SCIM 統合、データ暗号化、アクセス制御</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔌 Plugins & Automations</h3>
+                    <p>外部ツールとのインテグレーション、ワークフロー自動化。CI/CD パイプラインとの API 連携</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 管理者コンソール</h3>
+                    <p>利用状況のモニタリング、ポリシー管理、チームメンバーのロール設定</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 無料コンピュートクレジット</h3>
+                    <p>試用期間中に使用できるコンピュートリソースの無料枠を提供。段階的に有料プランへ移行</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏗️ Deployment Company 支援</h3>
+                    <p>導入支援、カスタマイズ、トレーニング、継続的改善まで一貫した専門支援体制</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">エンタープライズ向け自動コードレビュー</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+
+def automated_code_review(repo_path: str, pr_diff: str) -> dict:
+    """Codex を使用したエンタープライズ向け自動コードレビュー"""
+
+    response = client.responses.create(
+        model="codex",
+        instructions="""あなたはシニアソフトウェアエンジニアです。
+        以下の観点でコードレビューを実施してください:
+        1. セキュリティ脆弱性 (SQL インジェクション、XSS、認証不備等)
+        2. パフォーマンス上の問題 (N+1 クエリ、不要なメモリ確保等)
+        3. コーディング規約への準拠
+        4. テストカバレッジの十分性
+        5. アーキテクチャ上の懸念
+
+        結果は JSON 形式で返してください:
+        {
+            "severity": "critical|high|medium|low",
+            "issues": [...],
+            "suggestions": [...],
+            "approved": true|false
+        }""",
+        input=f"リポジトリ: {repo_path}\n\nPR Diff:\n{pr_diff}",
+        tools=[
+            {
+                "type": "code_interpreter"
+            }
+        ]
+    )
+
+    return response.output_text</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">エンタープライズオンボーディング</span>
+                </div>
+                <pre><code class="language-python">def enterprise_codex_onboarding(org_name: str, team_size: int) -> str:
+    """エンタープライズ無料ティアのオンボーディングフロー"""
+
+    response = client.responses.create(
+        model="codex",
+        instructions="""エンタープライズ向け Codex の初期設定を支援してください。
+        以下の手順を含むセットアップガイドを生成:
+        1. ワークスペースの作成と SSO 統合
+        2. チームメンバーの招待とロール設定
+        3. セキュリティポリシーの構成
+        4. 既存リポジトリとの連携設定
+        5. Plugins / Automations の初期構成
+        6. 利用ガイドラインの策定""",
+        input=f"組織名: {org_name}\nチーム規模: {team_size} 名",
+        tools=[
+            {
+                "type": "code_interpreter"
+            }
+        ]
+    )
+
+    return response.output_text
+
+
+# 使用例
+if __name__ == "__main__":
+    # コードレビューの自動化
+    review_result = automated_code_review(
+        repo_path="github.com/example-corp/main-app",
+        pr_diff="+ def get_user(id):\n+     query = f'SELECT * FROM users WHERE id={id}'\n+     return db.execute(query)"
+    )
+    print(f"レビュー結果: {review_result}")
+
+    # エンタープライズオンボーディング
+    guide = enterprise_codex_onboarding(
+        org_name="Example Corporation",
+        team_size=50
+    )
+    print(f"セットアップガイド:\n{guide}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram 1: Enterprise Codex導入フロー -->
+        <section class="section">
+            <h2 class="section-title">エンタープライズ Codex 導入フロー</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Enterprise["エンタープライズ顧客"]
+        Admin["IT 管理者"]
+        DevTeam["開発チーム"]
+        Security["セキュリティチーム"]
+    end
+
+    subgraph FreeTier["Codex 無料ティア"]
+        Signup["無料サインアップ"]
+        SSO["SSO 統合"]
+        Sandbox["サンドボックス環境"]
+        Credits["無料コンピュート\nクレジット"]
+    end
+
+    subgraph Codex["Codex プラットフォーム (GPT-5.5)"]
+        Agent["Codex エージェント"]
+        CodeGen["コード生成"]
+        Review["コードレビュー"]
+        Plugins["Plugins"]
+        Auto["Automations"]
+    end
+
+    subgraph Expansion["有料プランへの拡張"]
+        PayAsYouGo["従量課金制"]
+        ProPlan["Pro プラン\n($100 / 月)"]
+        EntPlan["Enterprise プラン"]
+    end
+
+    Admin --> Signup
+    Signup --> SSO
+    SSO --> Sandbox
+    Sandbox --> Credits
+
+    DevTeam --> Agent
+    Credits --> Agent
+    Agent --> CodeGen
+    Agent --> Review
+    Agent --> Plugins
+    Agent --> Auto
+
+    Security --> SSO
+
+    Credits -.->|"利用拡大"| PayAsYouGo
+    PayAsYouGo -.->|"チーム拡大"| ProPlan
+    ProPlan -.->|"全社展開"| EntPlan
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Agent,CodeGen,Review,Plugins,Auto openai
+    class Signup,SSO,Sandbox,Credits dark
+    class Admin,DevTeam,Security light
+    class PayAsYouGo,ProPlan,EntPlan accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram 2: プライシング戦略の全体像 -->
+        <section class="section">
+            <h2 class="section-title">プライシング戦略の全体像</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Free["無料ティア"]
+        EntFree["エンタープライズ無料\n(本発表)"]
+    end
+
+    subgraph Individual["個人プラン"]
+        Plus["Plus\n$20 / 月"]
+        Pro["Pro\n$100 / 月"]
+    end
+
+    subgraph Team["チームプラン"]
+        BizSeat["Business シート\n$20 / シート / 年"]
+        CodexSeat["Codex 専用シート\n従量課金"]
+    end
+
+    subgraph Enterprise["エンタープライズ"]
+        EntPlan["Enterprise プラン\nカスタム"]
+        DeployCo["Deployment Company\n専門支援"]
+    end
+
+    EntFree -->|"導入・試用"| CodexSeat
+    EntFree -->|"個人利用"| Plus
+    Plus -->|"ヘビーユーザー"| Pro
+    CodexSeat -->|"全社展開"| EntPlan
+    EntPlan -->|"戦略支援"| DeployCo
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class EntFree openai
+    class Plus,Pro,BizSeat,CodexSeat dark
+    class EntPlan,DeployCo light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>導入障壁の撤廃</h4>
+                <p>エンタープライズ環境の開発者が、予算承認プロセスを経ることなく Codex を試用できるようになる。ボトムアップでの AI コーディングエージェント導入が加速</p>
+            </div>
+            <div class="use-case">
+                <h4>評価・比較の容易化</h4>
+                <p>無料で Codex を試せることで、GitHub Copilot や Claude Code との公平な比較検証 (PoC) が容易に。実際のプロジェクトで各ツールの性能を評価した上で最適なソリューションを選定可能</p>
+            </div>
+            <div class="use-case">
+                <h4>開発ワークフローの変革</h4>
+                <p>Plugins、Automations、CI/CD 統合を無料で利用できることで、AI を活用した開発ワークフローの実験と最適化が気軽に行えるように</p>
+            </div>
+            <div class="use-case">
+                <h4>スキルセットの進化</h4>
+                <p>AI コーディングエージェントを効果的に活用するスキル (プロンプトエンジニアリング、エージェント設計、品質管理) が開発者の必須スキルとなる傾向が加速</p>
+            </div>
+            <div class="use-case">
+                <h4>市場競争の恩恵</h4>
+                <p>OpenAI の無料戦略に対抗して、Anthropic や GitHub も価格引き下げやフリーティア拡充を行う可能性が高く、開発者にとっては選択肢とコストパフォーマンスの両面で恩恵</p>
+            </div>
+            <div class="use-case">
+                <h4>セキュリティ要件の確認</h4>
+                <p>無料ティアであってもセキュリティ要件 (データ保持ポリシー、コンプライアンス認証、アクセス制御) が満たされているか確認が必要。セキュリティチームと連携し利用規約を精査した上で導入を推奨</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI によるエンタープライズ向け Codex の無料提供は、AI コーディングエージェント市場における競争戦略の新たな局面を象徴する発表である。GPT-5.5 を基盤とするクラウドベースの AI コーディングエージェントを無料で企業に提供することで、導入障壁を完全に取り除き、市場シェアの早期確保を狙う。
+            </p>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-top: 12px;">
+                2026 年 4 月以降、OpenAI は従量課金制の導入、Pro プランの価格引き下げ、スーパーアプリ化、グローバルコンサルティング企業との連携と、段階的にエンタープライズ展開を加速してきた。今回の無料提供は、この一連の戦略の最終段階として位置付けられ、OpenAI Deployment Company による専門支援体制と組み合わせることで、企業の AI コーディングエージェント導入から定着、そして有料プランへの拡張までを一貫して支援するエコシステムが完成する。
+            </p>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-top: 12px;">
+                Anthropic の Claude Code、GitHub Copilot Enterprise との三つ巴の競争において、OpenAI はプライシングという最も直接的な手段で攻勢をかけた。開発者にとっては、無料で最先端の AI コーディングエージェントを評価できる絶好の機会であり、今後のエンタープライズ AI コーディング市場の動向を注視すべきである。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/get-codex-for-your-enterprise-free/" target="_blank" rel="noopener noreferrer">https://openai.com/index/get-codex-for-your-enterprise-free/</a></p>
+            <p style="margin-top: 8px;"><strong>関連:</strong> OpenAI Enterprise / OpenAI Codex / OpenAI Deployment Company</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
