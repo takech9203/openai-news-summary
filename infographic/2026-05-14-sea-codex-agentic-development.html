@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sea Limited が Codex でエージェント型開発を推進</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Zen Maru Gothic', sans-serif; background: #F7F7F8; color: #343541; line-height: 1.7; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+        .header { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 48px 32px; border-radius: 24px; margin-bottom: 32px; position: relative; overflow: hidden; }
+        .header::before { content: ''; position: absolute; top: -50%; right: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%); border-radius: 50%; }
+        .header::after { content: ''; position: absolute; bottom: -30%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(16,163,127,0.1) 0%, transparent 70%); border-radius: 50%; }
+        .category-badge { display: inline-block; background: #10A37F; color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+        .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; position: relative; z-index: 1; }
+        .header .date { font-size: 14px; opacity: 0.8; position: relative; z-index: 1; }
+        .header .subtitle { font-size: 15px; opacity: 0.9; margin-top: 12px; position: relative; z-index: 1; line-height: 1.6; }
+        .section { background: white; border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(16,163,127,0.1); }
+        .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .section-title::before { content: ''; width: 4px; height: 24px; background: #10A37F; border-radius: 2px; }
+        .key-point { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: #ECECF1; border-radius: 12px; margin-bottom: 16px; }
+        .key-point:last-child { margin-bottom: 0; }
+        .key-point-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .key-point-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card { background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%); border: 2px solid rgba(16,163,127,0.2); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s; }
+        .feature-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,163,127,0.15); }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; }
+        .feature-card .card-icon { font-size: 20px; }
+        .stat-card { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 24px; border-radius: 16px; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: #10A37F; }
+        .stat-label { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .mermaid-container { background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid rgba(16,163,127,0.3); overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+        .code-block { background: #343541; border-radius: 12px; overflow: hidden; margin: 20px 0; }
+        .code-header { background: #444654; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .code-lang { color: #10A37F; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+        .code-block pre { margin: 0; padding: 20px; overflow-x: auto; }
+        .code-block pre code { font-size: 13px; line-height: 1.6; }
+        .use-case { background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%); border-left: 4px solid #10A37F; padding: 20px 24px; border-radius: 0 12px 12px 0; margin-bottom: 16px; }
+        .use-case:last-child { margin-bottom: 0; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .use-case p { font-size: 14px; color: #565869; }
+        .footer { margin-top: 40px; padding: 24px 32px; background: #ECECF1; border-radius: 16px; font-size: 13px; color: #8E8EA0; }
+        .footer a { color: #10A37F; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        .impact-list { list-style: none; padding: 0; }
+        .impact-list li { padding: 12px 16px; border-bottom: 1px solid #ECECF1; font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+        .impact-list li:last-child { border-bottom: none; }
+        .impact-list li::before { content: ''; width: 8px; height: 8px; background: #10A37F; border-radius: 50%; margin-top: 8px; flex-shrink: 0; }
+        @media (max-width: 600px) { .header { padding: 32px 24px; } .header h1 { font-size: 1.5rem; } .feature-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">CUSTOMER STORY</span>
+            <h1>Sea Limited が Codex でエージェント型開発を推進</h1>
+            <div class="date">2026-05-14</div>
+            <p class="subtitle">東南アジア最大級のテクノロジーコングロマリットが OpenAI Codex を全エンジニアリング組織に展開し、AI ネイティブなソフトウェア開発体制を構築</p>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <div class="section-title">概要</div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F30F;</div>
+                <div class="key-point-content">
+                    <h4>全社横断的な Codex 導入</h4>
+                    <p>Sea Limited の CPO David Chen 氏が、Shopee・Garena・SeaMoney の全事業部門のエンジニアリングチームに Codex を展開する戦略を発表</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F916;</div>
+                <div class="key-point-content">
+                    <h4>エージェント型開発への移行</h4>
+                    <p>単なるコード補完にとどまらず、AI エージェントが開発プロセスに自然に介在する「AI ネイティブ開発」体制を確立</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F3AF;</div>
+                <div class="key-point-content">
+                    <h4>多言語・多市場対応</h4>
+                    <p>英語、中国語、タイ語、ベトナム語、インドネシア語など多言語環境での開発に Codex を活用し、各国規制に準拠</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F680;</div>
+                <div class="key-point-content">
+                    <h4>アジア太平洋地域のモデルケース</h4>
+                    <p>Sea Limited の事例がアジア地域におけるエージェント型開発のデファクトスタンダードとして他テック企業の参考モデルに</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x26A1;</div>
+                <div class="key-point-content">
+                    <h4>開発速度と品質の両立</h4>
+                    <p>Shopee のキャンペーン開発サイクル短縮、コード品質統一、技術的負債解消を Codex の自動化で実現</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="section">
+            <div class="section-title">主要データ</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">4M+</div>
+                    <div class="stat-label">Codex WAU (週間アクティブユーザー)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7+</div>
+                    <div class="stat-label">Sea Limited 展開国数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">主要事業部門 (Shopee / Garena / SeaMoney)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">対応通貨数 (SGD, IDR, THB 等)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <div class="section-title">主な機能と展開領域</div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span class="card-icon">&#x1F6D2;</span> Shopee EC 開発</h3>
+                    <p>数百のマイクロサービスで構成される大規模 EC プラットフォームで、サービス間連携コード生成、API スタブ作成、テストケース自動生成を実現</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="card-icon">&#x1F3AE;</span> Garena ゲーミング</h3>
+                    <p>Free Fire 等のモバイルゲーム開発で、リアルタイム性が求められるゲームサーバーの開発・保守を Codex が支援</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="card-icon">&#x1F4B3;</span> SeaMoney フィンテック</h3>
+                    <p>各国の決済規制やデータプライバシー法への準拠コード生成を自動化。Bank Indonesia QRIS 標準など地域固有の対応を効率化</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="card-icon">&#x1F4F1;</span> モバイルファースト開発</h3>
+                    <p>東南アジアのモバイルファースト市場に対応し、UI コンポーネント生成やプラットフォーム間共通化を Codex で加速</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="card-icon">&#x1F9EA;</span> テスト自動生成</h3>
+                    <p>マルチセラーチェックアウト、越境配送計算、バウチャースタッキングロジックなど複雑なテストケースを自動生成</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="card-icon">&#x1F504;</span> リファクタリング</h3>
+                    <p>大規模コードベースの技術的負債を Codex エージェントが自動的に検出・解消し、一貫したコード品質基準を維持</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Section -->
+        <div class="section">
+            <div class="section-title">アーキテクチャ</div>
+            <p style="font-size: 14px; color: #565869; margin-bottom: 16px;">Sea Limited のエンジニアリング組織と OpenAI Codex プラットフォームの統合アーキテクチャ</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph SeaLimited["Sea Limited エンジニアリング組織"]
+        subgraph Shopee["Shopee EC"]
+            ShopeeEng["EC 開発チーム"]
+            ShopeeMS["マイクロサービス群"]
+        end
+        subgraph Garena["Garena ゲーミング"]
+            GarenaEng["ゲーム開発チーム"]
+            GameServer["ゲームサーバー"]
+        end
+        subgraph SeaMoney["SeaMoney フィンテック"]
+            FinEng["金融開発チーム"]
+            PaymentSys["決済システム"]
+        end
+    end
+
+    subgraph CodexPlatform["OpenAI Codex プラットフォーム"]
+        CodexAgent["Codex エージェント"]
+        CodeGen["コード生成"]
+        TestGen["テスト自動生成"]
+        CodeReview["コードレビュー"]
+        Refactor["リファクタリング"]
+    end
+
+    subgraph CICD["CI/CD & DevOps"]
+        Pipeline["ビルドパイプライン"]
+        QA["品質保証"]
+        Deploy["マルチリージョンデプロイ"]
+    end
+
+    subgraph Markets["アジア太平洋市場"]
+        SG["シンガポール"]
+        ID["インドネシア"]
+        TH["タイ"]
+        VN["ベトナム"]
+        MY["マレーシア"]
+        PH["フィリピン"]
+        TW["台湾"]
+    end
+
+    ShopeeEng --> CodexAgent
+    GarenaEng --> CodexAgent
+    FinEng --> CodexAgent
+
+    CodexAgent --> CodeGen
+    CodexAgent --> TestGen
+    CodexAgent --> CodeReview
+    CodexAgent --> Refactor
+
+    CodeGen --> Pipeline
+    TestGen --> QA
+    CodeReview --> Pipeline
+    Refactor --> Pipeline
+
+    Pipeline --> Deploy
+    QA --> Deploy
+
+    Deploy --> SG
+    Deploy --> ID
+    Deploy --> TH
+    Deploy --> VN
+    Deploy --> MY
+    Deploy --> PH
+    Deploy --> TW
+
+    ShopeeMS --> Pipeline
+    GameServer --> Pipeline
+    PaymentSys --> Pipeline
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class CodexAgent,CodeGen,TestGen,CodeReview,Refactor openai
+    class Pipeline,QA,Deploy dark
+    class ShopeeEng,GarenaEng,FinEng,ShopeeMS,GameServer,PaymentSys,SG,ID,TH,VN,MY,PH,TW light
+                </pre>
+            </div>
+        </div>
+
+        <!-- Code Sample Section -->
+        <div class="section">
+            <div class="section-title">コードサンプル</div>
+            <p style="font-size: 14px; color: #565869; margin-bottom: 16px;">Sea Limited のマルチリージョン EC 開発における Codex 活用例</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Shopee 決済モジュール - ローカライゼーション対応</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Sea Limited のマルチリージョン EC 開発における Codex 活用例
+# Shopee の決済モジュールにおけるローカライゼーション対応
+response = client.chat.completions.create(
+    model="codex-1",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a coding agent for a Southeast Asian e-commerce platform. "
+                "Generate payment integration code that handles multiple currencies "
+                "(SGD, IDR, THB, VND, MYR, PHP, TWD) and complies with local "
+                "regulations for each market."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Create a payment validation module for the Indonesian market "
+                "that complies with Bank Indonesia's QRIS standard and "
+                "integrates with our existing SeaMoney wallet API."
+            )
+        }
+    ],
+    temperature=0.2,
+)</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Codex タスクによる自動テスト生成</span>
+                </div>
+                <pre><code class="language-python"># Codex タスクによる自動テスト生成の例
+response = client.responses.create(
+    model="codex-1",
+    input="Generate comprehensive unit tests for the Shopee cart service "
+          "that covers multi-seller checkout, cross-border shipping calculation, "
+          "and voucher stacking logic across 7 Southeast Asian markets.",
+    tools=[
+        {
+            "type": "codex",
+            "sandbox": {
+                "environment": "sea-dev-sandbox",
+                "languages": ["python", "java", "go"],
+            }
+        }
+    ],
+)</code></pre>
+            </div>
+        </div>
+
+        <!-- Use Cases Section -->
+        <div class="section">
+            <div class="section-title">ユースケース</div>
+            <div class="use-case">
+                <h4>&#x1F6D2; Shopee キャンペーン開発の高速化</h4>
+                <p>独身の日、12.12 セールなど頻繁なキャンペーンに対応するための機能開発サイクルを短縮。多国展開のローカライゼーションを Codex が自動化し、キャンペーンページ、決済フロー、プロモーションロジックの迅速な実装を実現する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3AE; Garena ゲーム開発の効率化</h4>
+                <p>Free Fire 等のモバイルゲームにおいて、リアルタイム性が求められるゲームサーバーの開発・保守を Codex が支援。低レイテンシーシステムのパフォーマンス最適化やイベント機能の迅速な実装に活用する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4B3; SeaMoney フィンテック規制対応</h4>
+                <p>東南アジア各国の決済規制 (インドネシア Bank Indonesia QRIS、シンガポール MAS 等) に準拠するコードを Codex が生成。多通貨対応、データプライバシー法への適合を自動化し、コンプライアンスコストを削減する。</p>
+            </div>
+        </div>
+
+        <!-- Developer Impact Section -->
+        <div class="section">
+            <div class="section-title">開発者への影響</div>
+            <ul class="impact-list">
+                <li>Sea Limited クラスの大企業による採用で、アジア地域におけるエージェント型開発がデファクトスタンダードとして普及</li>
+                <li>東南アジア特有の多言語・多通貨環境での Codex 活用パターンが確立され、他企業の参照モデルに</li>
+                <li>エンジニアの役割が「コードを書く人」から「AI エージェントを指揮する人」へシフトする流れが加速</li>
+                <li>各国固有の金融規制対応コード生成の自動化モデルが、アジアのフィンテック企業全体に波及</li>
+                <li>Shopee のようなハイパースケール EC 成功事例が Lazada、Tokopedia 等の導入判断材料に</li>
+                <li>Garena での活用がリアルタイムゲーム開発ドメインにおける AI コーディングの適用可能性を実証</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Source:</strong> <a href="https://openai.com/index/sea-david-chen" target="_blank" rel="noopener">https://openai.com/index/sea-david-chen</a></p>
+            <p style="margin-top: 8px;">Sea Limited CPO David Chen 氏インタビュー | OpenAI 公式ブログ | 2026-05-14</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

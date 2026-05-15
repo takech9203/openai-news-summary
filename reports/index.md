@@ -5,8 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-14](2026/2026-05-14-sea-codex-agentic-development.md) - Sea Limited が Codex でアジアにおけるエージェント型ソフトウェア開発の未来を推進
 - [2026-05-14](2026/2026-05-14-openai-wrongful-death-lawsuits-chatgpt.md) - OpenAI に対する不法死亡訴訟 -- ChatGPT の薬物アドバイスが致命的過量摂取に関与との主張
 - [2026-05-14](2026/2026-05-14-openai-global-ai-governance-body.md) - OpenAI、米国主導のグローバル AI ガバナンス機関の創設を支持 — 中国の参加も含む
+- [2026-05-14](2026/2026-05-14-codex-mobile-anywhere.md) - Codex がモバイルに対応 — どこからでもコーディングタスクを監視・操作可能に
+- [2026-05-14](2026/2026-05-14-chatgpt-sensitive-context-safety.md) - ChatGPT のセンシティブな会話におけるコンテキスト認識の強化
+- [2026-05-13](2026/2026-05-13-tanstack-npm-supply-chain-attack.md) - OpenAI の TanStack npm サプライチェーン攻撃 "Mini Shai-Hulud" への対応 -- 署名証明書の保護と macOS アプリの強制アップデート期限を発表
 - [2026-05-13](2026/2026-05-13-musk-altman-trial-week-3.md) - Musk 対 Altman 裁判第 3 週: Altman が証言台に立ち、Musk は中国へ -- 裁判終盤の決定的攻防
 - [2026-05-13](2026/2026-05-13-microsoft-post-openai-startup-deals.md) - Microsoft、OpenAI 後を見据えスタートアップとの提携を模索: 1,000 億ドル超投資からの戦略的転換
 - [2026-05-13](2026/2026-05-13-codex-windows-sandbox.md) - Windows 向け Codex の安全なサンドボックス構築: セキュアな隔離環境でクロスプラットフォーム対応を実現

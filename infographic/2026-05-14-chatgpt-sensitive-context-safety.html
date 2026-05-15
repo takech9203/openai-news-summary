@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT のセンシティブな会話におけるコンテキスト認識の強化</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Zen Maru Gothic', sans-serif; background: #F7F7F8; color: #343541; line-height: 1.7; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+        .header { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 48px 32px; border-radius: 24px; margin-bottom: 32px; position: relative; overflow: hidden; }
+        .header::before { content: ''; position: absolute; top: -50%; right: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%); border-radius: 50%; }
+        .header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 12px; position: relative; z-index: 1; }
+        .header .date { font-size: 0.9rem; color: rgba(255,255,255,0.7); position: relative; z-index: 1; }
+        .category-badge { display: inline-block; background: #10A37F; color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; position: relative; z-index: 1; }
+        .section { background: white; border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(16,163,127,0.1); }
+        .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .section-title::before { content: ''; width: 4px; height: 24px; background: #10A37F; border-radius: 2px; }
+        .key-point { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: #ECECF1; border-radius: 12px; margin-bottom: 16px; }
+        .key-point:last-child { margin-bottom: 0; }
+        .key-point-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .key-point-content h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card { background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%); border: 2px solid rgba(16,163,127,0.2); border-radius: 16px; padding: 24px; }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+        .feature-card p { font-size: 14px; color: #565869; }
+        .feature-card .feature-icon { font-size: 28px; margin-bottom: 12px; }
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .comparison-card { padding: 24px; border-radius: 16px; }
+        .comparison-card.before { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); border: 2px solid #F87171; }
+        .comparison-card.after { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border: 2px solid #34D399; }
+        .comparison-card.before h4 { color: #DC2626; font-size: 14px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .comparison-card.after h4 { color: #059669; font-size: 14px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .comparison-card ul { list-style: none; padding: 0; }
+        .comparison-card ul li { font-size: 14px; padding: 6px 0; padding-left: 20px; position: relative; }
+        .comparison-card.before ul li::before { content: '\2717'; position: absolute; left: 0; color: #DC2626; font-weight: 700; }
+        .comparison-card.after ul li::before { content: '\2713'; position: absolute; left: 0; color: #059669; font-weight: 700; }
+        .mermaid-container { background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid rgba(16,163,127,0.3); overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+        .use-case { background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%); border-left: 4px solid #10A37F; padding: 20px 24px; border-radius: 0 12px 12px 0; margin-bottom: 16px; }
+        .use-case:last-child { margin-bottom: 0; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+        .use-case p { font-size: 14px; color: #565869; }
+        .footer { margin-top: 40px; padding: 24px 32px; background: #ECECF1; border-radius: 16px; font-size: 13px; color: #8E8EA0; }
+        .footer a { color: #10A37F; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        .overview { font-size: 15px; color: #565869; line-height: 1.8; }
+        .overview p { margin-bottom: 12px; }
+        .tech-layer { background: #F7F7F8; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border-left: 4px solid #10A37F; }
+        .tech-layer:last-child { margin-bottom: 0; }
+        .tech-layer h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: #10A37F; }
+        .tech-layer p { font-size: 14px; color: #565869; }
+        .tech-layer ul { list-style: disc; padding-left: 20px; margin-top: 8px; }
+        .tech-layer ul li { font-size: 14px; color: #565869; padding: 3px 0; }
+        .sensitive-categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+        .sensitive-category { background: #F7F7F8; border: 1px solid #ECECF1; border-radius: 12px; padding: 16px; text-align: center; }
+        .sensitive-category .cat-icon { font-size: 28px; margin-bottom: 8px; }
+        .sensitive-category h5 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+        .sensitive-category p { font-size: 12px; color: #8E8EA0; }
+        .timeline-context { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+        .timeline-item { background: #F7F7F8; border: 1px solid rgba(16,163,127,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; flex: 1; min-width: 200px; }
+        .timeline-item .t-date { font-weight: 700; color: #10A37F; font-size: 12px; }
+        .timeline-item .t-title { margin-top: 4px; color: #343541; }
+        @media (max-width: 600px) { .header { padding: 32px 24px; } .header h1 { font-size: 1.5rem; } .feature-grid { grid-template-columns: 1fr; } .comparison { grid-template-columns: 1fr; } .sensitive-categories { grid-template-columns: 1fr; } .timeline-context { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">SAFETY</span>
+            <h1>ChatGPT のセンシティブな会話におけるコンテキスト認識の強化</h1>
+            <div class="date">2026-05-14 | OpenAI News/Blog</div>
+        </div>
+
+        <!-- Overview -->
+        <div class="section">
+            <div class="section-title">概要</div>
+            <div class="overview">
+                <p>OpenAI は、ChatGPT がセンシティブな会話においてコンテキスト (文脈) をより適切に認識できるよう、安全性システムの大幅なアップデートを発表した。従来の安全性検出が個々のメッセージを独立して評価していたのに対し、新システムでは会話全体の流れを分析し、時間経過に伴うリスクの変化を検出する能力を備えている。</p>
+                <p>この更新は、OpenAI が 2026 年前半に推進してきた一連の安全性強化施策の一環である。</p>
+            </div>
+            <div class="timeline-context">
+                <div class="timeline-item">
+                    <div class="t-date">2026-03-24</div>
+                    <div class="t-title">Teen safety policies</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="t-date">2026-04-08</div>
+                    <div class="t-title">Introducing child safety blueprint</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="t-date">2026-04-28</div>
+                    <div class="t-title">Our commitment to community safety</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="t-date">2026-05-07</div>
+                    <div class="t-title">Introducing Trusted Contact in ChatGPT</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <div class="section-title">主要ポイント</div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F50D;</div>
+                <div class="key-point-content">
+                    <h4>コンテキスト認識型の安全性検出</h4>
+                    <p>会話履歴全体を分析し、文脈依存型の閾値調整と累積的なリスクシグナルの追跡を実施。個々のメッセージでは無害に見えても、会話全体でリスクが高まるケースを検出する。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x23F1;</div>
+                <div class="key-point-content">
+                    <h4>時間的リスク検出 (Temporal Risk Detection)</h4>
+                    <p>エスカレーションパターンの認識、会話ターンごとのリスクスコアリング、閾値超過アラートにより、時間経過に伴うリスクの変化を検出する。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F6E1;</div>
+                <div class="key-point-content">
+                    <h4>応答安全性の改善</h4>
+                    <p>リスクレベルに応じた段階的対応、共感的な応答、適切なサポートリソースへの誘導を実現。ユーザーの状況を否定せず、安全な方向へ導く。</p>
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F91D;</div>
+                <div class="key-point-content">
+                    <h4>Trusted Contact 機能との統合</h4>
+                    <p>5 月 7 日に発表された信頼できる連絡先への通知機能と統合し、深刻なケースでは外部サポートへの橋渡しを行う多層的な安全性ネットワークを構築。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After Comparison -->
+        <div class="section">
+            <div class="section-title">Before / After 比較</div>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before - 個別メッセージ単位のリスク評価</h4>
+                    <ul>
+                        <li>個々のメッセージを独立して評価</li>
+                        <li>会話の流れを考慮しない</li>
+                        <li>段階的なエスカレーションを検出困難</li>
+                        <li>単一の固定閾値によるリスク判定</li>
+                        <li>偽陽性が発生しやすい (学術的議論のブロック等)</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After - 会話全体のコンテキスト認識</h4>
+                    <ul>
+                        <li>会話開始時点からの文脈を考慮</li>
+                        <li>時系列でリスクシグナルを分析</li>
+                        <li>エスカレーションパターンを早期検出</li>
+                        <li>文脈依存型の動的閾値調整</li>
+                        <li>偽陽性を削減し正当な議論を許容</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <div class="section-title">主要機能</div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F9E0;</div>
+                    <h3>コンテキスト認識型検出</h3>
+                    <p>会話履歴全体の分析、文脈依存型の閾値調整、累積的なリスクシグナルの追跡を統合。会話の開始時点から全体的な文脈を考慮してリスク評価を行う。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4C8;</div>
+                    <h3>テンポラルリスクスコアリング</h3>
+                    <p>各会話ターンにおけるリスクレベルを記録し、上昇傾向を監視。エスカレーション速度を計測し、過去の類似パターンとの照合により早期警告を実現。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4AC;</div>
+                    <h3>段階的応答 (Graduated Response)</h3>
+                    <p>リスクレベルに応じて、やんわりとした方向転換から明確なリソース提示まで段階的に対応。共感的な応答でユーザーの状況を否定しない。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4F1;</div>
+                    <h3>Trusted Contact 統合</h3>
+                    <p>深刻なケースでは信頼できる連絡先への通知機能と連携し、外部サポートへの橋渡しを実施。多層的な安全性ネットワークを形成。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sensitive Conversation Categories -->
+        <div class="section">
+            <div class="section-title">センシティブな会話のカテゴリ</div>
+            <div class="sensitive-categories">
+                <div class="sensitive-category">
+                    <div class="cat-icon">&#x26A0;</div>
+                    <h5>自傷・自殺に関する話題</h5>
+                    <p>直接的な言及だけでなく、間接的な表現やほのめかしも検出対象</p>
+                </div>
+                <div class="sensitive-category">
+                    <div class="cat-icon">&#x1F6AB;</div>
+                    <h5>暴力的なコンテンツ</h5>
+                    <p>他者への危害を示唆する会話の流れ</p>
+                </div>
+                <div class="sensitive-category">
+                    <div class="cat-icon">&#x1F4A7;</div>
+                    <h5>精神的な危機状態</h5>
+                    <p>極度の孤立感、絶望感、無力感を示す会話パターン</p>
+                </div>
+                <div class="sensitive-category">
+                    <div class="cat-icon">&#x1F6B8;</div>
+                    <h5>未成年者の安全</h5>
+                    <p>子どもに対する潜在的なリスクを含む会話</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="section">
+            <div class="section-title">技術的な詳細 - 階層的アプローチ</div>
+            <div class="tech-layer">
+                <h4>Layer 1 - メッセージレベル分析</h4>
+                <p>従来通り、個々のメッセージに対するリスク評価を実施。明示的なポリシー違反を即座に検出する。</p>
+            </div>
+            <div class="tech-layer">
+                <h4>Layer 2 - セッションレベル分析</h4>
+                <p>会話セッション全体を通じたコンテキストウィンドウを維持し、以下の情報を追跡する。</p>
+                <ul>
+                    <li>トピックの遷移パターン</li>
+                    <li>感情的なトーンの変化</li>
+                    <li>リスク関連キーワードの出現頻度と密度</li>
+                    <li>ユーザーの応答パターン (回避的、エスカレーション的など)</li>
+                </ul>
+            </div>
+            <div class="tech-layer">
+                <h4>Layer 3 - テンポラル分析</h4>
+                <p>時系列データとしてリスクシグナルを分析し、以下を実行する。</p>
+                <ul>
+                    <li>リスクスコアの時系列トレンド分析</li>
+                    <li>エスカレーション速度の計測</li>
+                    <li>過去の類似パターンとの照合</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Safety Classifier Improvements -->
+        <div class="section">
+            <div class="section-title">安全性分類器の改善</div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>コンテキストウィンドウ拡張</h3>
+                    <p>分類器が参照できる会話履歴の範囲を拡大し、より長期的な文脈を考慮可能に</p>
+                </div>
+                <div class="feature-card">
+                    <h3>マルチシグナル統合</h3>
+                    <p>単一の指標ではなく、複数のリスクシグナルを統合的に評価するアンサンブル手法を採用</p>
+                </div>
+                <div class="feature-card">
+                    <h3>偽陽性の削減</h3>
+                    <p>コンテキストを考慮することで、学術的な議論や支援目的の会話を誤検出するケースを削減</p>
+                </div>
+                <div class="feature-card">
+                    <h3>リアルタイム推論</h3>
+                    <p>会話の各ターンでリアルタイムにリスク評価を更新し、遅延なく対応を実施</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <div class="section-title">アーキテクチャ</div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー会話"]
+        Turn1["会話ターン 1"]
+        Turn2["会話ターン 2"]
+        Turn3["会話ターン N"]
+    end
+
+    subgraph SafetyPipeline["安全性パイプライン"]
+        direction TB
+        MsgAnalyzer["メッセージレベル分析"]
+        ContextTracker["コンテキストトラッカー"]
+        TemporalAnalyzer["テンポラル分析エンジン"]
+        RiskScorer["リスクスコアリング"]
+    end
+
+    subgraph Classifiers["安全性分類器"]
+        SelfHarm["自傷リスク分類器"]
+        Violence["暴力リスク分類器"]
+        MinorSafety["未成年安全分類器"]
+        Escalation["エスカレーション検出器"]
+    end
+
+    subgraph Response["応答制御"]
+        SafeResponse["安全応答生成"]
+        ResourceLink["リソース提示"]
+        TrustedContact["Trusted Contact 通知"]
+    end
+
+    Turn1 --> MsgAnalyzer
+    Turn2 --> MsgAnalyzer
+    Turn3 --> MsgAnalyzer
+
+    MsgAnalyzer --> ContextTracker
+    ContextTracker --> TemporalAnalyzer
+    TemporalAnalyzer --> RiskScorer
+
+    RiskScorer --> SelfHarm
+    RiskScorer --> Violence
+    RiskScorer --> MinorSafety
+    RiskScorer --> Escalation
+
+    SelfHarm --> SafeResponse
+    Violence --> SafeResponse
+    MinorSafety --> SafeResponse
+    Escalation --> SafeResponse
+
+    SafeResponse --> ResourceLink
+    SafeResponse --> TrustedContact
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class MsgAnalyzer,ContextTracker,TemporalAnalyzer,RiskScorer openai
+    class SelfHarm,Violence,MinorSafety,Escalation dark
+    class SafeResponse,ResourceLink,TrustedContact light
+                </pre>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <div class="section-title">開発者への影響</div>
+            <div class="use-case">
+                <h4>API 経由の安全性動作の変化</h4>
+                <p>ChatGPT API を利用しているアプリケーションにおいて、マルチターン会話での安全性応答がより文脈依存的になる可能性がある。会話履歴を適切に管理し、システムプロンプトで安全性に関する指示を明確にすることが推奨される。</p>
+            </div>
+            <div class="use-case">
+                <h4>安全性フィルタリングの精度向上</h4>
+                <p>コンテキスト認識により偽陽性が削減されるため、正当な議論 (医療、心理学、安全教育など) がブロックされるケースが減少することが期待される。</p>
+            </div>
+            <div class="use-case">
+                <h4>Trusted Contact API との統合検討</h4>
+                <p>自社アプリケーションに ChatGPT を組み込んでいる場合、Trusted Contact 機能との連携を検討することで、ユーザー安全性をさらに向上できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>会話設計への影響</h4>
+                <p>チャットボットの会話フローを設計する際、安全性分類器がマルチターンのコンテキストを考慮する点を踏まえ、会話履歴の送信方法に注意が必要。</p>
+            </div>
+            <div class="use-case">
+                <h4>ヘルスケア・メンタルヘルス分野への応用</h4>
+                <p>この安全性向上により、メンタルヘルスサポート系のアプリケーションでの ChatGPT 利用がより安全になり、導入障壁が低下する可能性がある。</p>
+            </div>
+            <div class="use-case">
+                <h4>コンテンツポリシーへの影響なし</h4>
+                <p>本アップデートは検出精度の向上であり、コンテンツポリシー自体の変更ではない。既存のアプリケーションの動作に大きな破壊的変更は想定されない。</p>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <div class="section-title">まとめ</div>
+            <div class="overview">
+                <p>本アップデートは、ChatGPT の安全性システムにおけるパラダイムシフトを示すものである。従来の「個別メッセージ評価」から「会話全体のコンテキストを考慮した動的リスク評価」への進化により、段階的にリスクが高まるケースへの対応力が大幅に向上した。</p>
+                <p>特に重要なのは、時間経過に伴うリスクの変化 (temporal risk) を検出する能力の実装であり、これにより個別のメッセージでは検出困難だったエスカレーションパターンを早期に発見できるようになった。5 月 7 日に発表された Trusted Contact 機能との統合により、深刻なケースでは外部の信頼できる人物への通知も可能となり、多層的な安全性ネットワークが構築されている。</p>
+                <p>OpenAI は 2026 年を通じて安全性分野への投資を加速しており、本アップデートはその技術的な成熟を示す重要なマイルストーンである。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Source:</strong> <a href="https://openai.com/index/chatgpt-recognize-context-in-sensitive-conversations" target="_blank" rel="noopener">https://openai.com/index/chatgpt-recognize-context-in-sensitive-conversations</a></p>
+            <p style="margin-top: 8px;"><strong>Related:</strong>
+                <a href="https://openai.com/index/trusted-contact-in-chatgpt/" target="_blank" rel="noopener">Trusted Contact in ChatGPT</a> |
+                <a href="https://openai.com/index/our-commitment-to-community-safety/" target="_blank" rel="noopener">Community Safety</a> |
+                <a href="https://openai.com/index/child-safety-blueprint/" target="_blank" rel="noopener">Child Safety Blueprint</a> |
+                <a href="https://openai.com/index/teen-safety-policies/" target="_blank" rel="noopener">Teen Safety Policies</a> |
+                <a href="https://openai.com/safety" target="_blank" rel="noopener">OpenAI Safety</a>
+            </p>
+            <p style="margin-top: 12px; font-size: 12px; color: #8E8EA0;">Generated on 2026-05-15 | OpenAI News Infographic</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+</body>
+</html>

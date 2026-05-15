@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanStack npm サプライチェーン攻撃 "Mini Shai-Hulud" への対応 - OpenAI News</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Zen Maru Gothic', sans-serif; background: #F7F7F8; color: #343541; line-height: 1.7; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+        .header { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 48px 32px; border-radius: 24px; margin-bottom: 32px; position: relative; overflow: hidden; }
+        .header::before { content: ''; position: absolute; top: -50%; right: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%); border-radius: 50%; }
+        .header h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.4; position: relative; z-index: 1; }
+        .header .date { font-size: 14px; color: #a0a0b0; margin-top: 12px; position: relative; z-index: 1; }
+        .category-badge { display: inline-block; background: #DC2626; color: white; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; position: relative; z-index: 1; }
+        .alert-banner { background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 2px solid #F59E0B; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+        .alert-banner h3 { color: #92400E; font-size: 1.1rem; margin-bottom: 8px; }
+        .alert-banner p { color: #78350F; font-size: 14px; }
+        .alert-banner .deadline { font-size: 1.3rem; font-weight: 700; color: #DC2626; margin: 8px 0; }
+        .section { background: white; border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid rgba(16,163,127,0.1); }
+        .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .section-title::before { content: ''; width: 4px; height: 24px; background: #10A37F; border-radius: 2px; }
+        .key-point { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: #ECECF1; border-radius: 12px; margin-bottom: 16px; }
+        .key-point-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .key-point-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card { background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%); border: 2px solid rgba(16,163,127,0.2); border-radius: 16px; padding: 24px; }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; }
+        .feature-card .icon { font-size: 24px; }
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .comparison-card { padding: 24px; border-radius: 16px; }
+        .comparison-card.before { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); border: 2px solid #F87171; }
+        .comparison-card.after { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border: 2px solid #34D399; }
+        .comparison-card.before h4 { color: #DC2626; font-size: 14px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .comparison-card.after h4 { color: #059669; font-size: 14px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .comparison-card ul { list-style: none; padding: 0; }
+        .comparison-card ul li { font-size: 14px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .comparison-card ul li:last-child { border-bottom: none; }
+        .comparison-card.before ul li::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #F87171; margin-right: 10px; }
+        .comparison-card.after ul li::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #34D399; margin-right: 10px; }
+        .mermaid-container { background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid rgba(16,163,127,0.3); overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+        .code-block { background: #343541; border-radius: 12px; overflow: hidden; margin: 20px 0; }
+        .code-header { background: #444654; padding: 12px 20px; display: flex; justify-content: space-between; }
+        .code-lang { color: #10A37F; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+        .code-block pre { margin: 0; padding: 20px; overflow-x: auto; }
+        .code-block pre code { font-size: 13px; line-height: 1.6; }
+        .timeline { position: relative; padding-left: 32px; }
+        .timeline::before { content: ''; position: absolute; left: 12px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, #DC2626, #F59E0B, #10A37F); border-radius: 2px; }
+        .timeline-item { position: relative; margin-bottom: 24px; padding: 16px 20px; background: #ECECF1; border-radius: 12px; }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 20px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #10A37F; background: white; }
+        .timeline-item.danger::before { border-color: #DC2626; }
+        .timeline-item.warning::before { border-color: #F59E0B; }
+        .timeline-item .timeline-date { font-size: 12px; font-weight: 700; color: #10A37F; text-transform: uppercase; margin-bottom: 4px; }
+        .timeline-item.danger .timeline-date { color: #DC2626; }
+        .timeline-item.warning .timeline-date { color: #F59E0B; }
+        .timeline-item .timeline-content { font-size: 14px; color: #565869; }
+        .timeline-item .timeline-content strong { color: #343541; }
+        .action-required { background: linear-gradient(135deg, #FEE2E2 0%, #FFF7ED 100%); border: 3px solid #DC2626; border-radius: 20px; padding: 32px; margin-bottom: 24px; }
+        .action-required h3 { color: #DC2626; font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .action-required .deadline-box { background: #DC2626; color: white; padding: 16px 24px; border-radius: 12px; text-align: center; margin: 16px 0; }
+        .action-required .deadline-box .date { font-size: 1.5rem; font-weight: 700; }
+        .action-required .deadline-box .label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+        .action-required ul { list-style: none; padding: 0; margin-top: 16px; }
+        .action-required ul li { font-size: 14px; padding: 10px 16px; background: white; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #DC2626; }
+        .use-case { background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%); border-left: 4px solid #10A37F; padding: 20px 24px; border-radius: 0 12px 12px 0; margin-bottom: 16px; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+        .use-case p { font-size: 14px; color: #565869; }
+        .footer { margin-top: 40px; padding: 24px 32px; background: #ECECF1; border-radius: 16px; font-size: 13px; color: #8E8EA0; }
+        .footer a { color: #10A37F; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        @media (max-width: 600px) { .header { padding: 32px 24px; } .header h1 { font-size: 1.5rem; } .feature-grid { grid-template-columns: 1fr; } .comparison { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">SECURITY</span>
+            <h1>TanStack npm サプライチェーン攻撃 "Mini Shai-Hulud" への対応</h1>
+            <p class="date">2026-05-13 | OpenAI News/Blog</p>
+        </div>
+
+        <!-- URGENT Alert Banner -->
+        <div class="alert-banner">
+            <h3>URGENT: macOS アプリ強制アップデート期限</h3>
+            <p class="deadline">2026 年 6 月 12 日</p>
+            <p>すべての macOS ユーザーは、上記の期限までに ChatGPT for Mac およびその他の OpenAI macOS アプリケーションを最新バージョンに更新する必要があります。期限後は旧バージョンのアプリが起動不可になります。</p>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">Key Points</h2>
+
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F6A8;</div>
+                <div class="key-point-content">
+                    <h4>TanStack npm パッケージへのサプライチェーン攻撃</h4>
+                    <p>数百万の開発者が利用する TanStack エコシステム内の npm パッケージが侵害され、悪意のあるコードが正規バージョンとして公開された</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F41B;</div>
+                <div class="key-point-content">
+                    <h4>"Mini Shai-Hulud" マルウェア</h4>
+                    <p>CI/CD 環境でのみ動作する標的型マルウェア。ビルド環境の認証情報、署名キー、環境変数等の機密情報を外部に送信する</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F510;</div>
+                <div class="key-point-content">
+                    <h4>コード署名証明書への影響</h4>
+                    <p>OpenAI のビルドパイプラインが侵害され、コード署名証明書のセキュリティに影響。即時ローテーションと HSM ベースの署名に移行</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-icon">&#x23F0;</div>
+                <div class="key-point-content">
+                    <h4>macOS アプリ更新期限: 2026 年 6 月 12 日</h4>
+                    <p>期限後は旧証明書で署名されたアプリが macOS Gatekeeper により実行拒否される。自動更新の有効化を確認すること</p>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F6E1;</div>
+                <div class="key-point-content">
+                    <h4>多層防御の強化</h4>
+                    <p>依存関係の integrity hash 検証、ビルド環境の零信頼化、SBOM 自動生成、エアギャップ署名環境など包括的な防御策を導入</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="section">
+            <h2 class="section-title">攻撃と対応のタイムライン</h2>
+
+            <div class="timeline">
+                <div class="timeline-item danger">
+                    <div class="timeline-date">攻撃フェーズ 1</div>
+                    <div class="timeline-content">
+                        <strong>初期侵入:</strong> 攻撃者が TanStack パッケージのメンテナーアカウントまたはパブリッシュ権限を取得
+                    </div>
+                </div>
+
+                <div class="timeline-item danger">
+                    <div class="timeline-date">攻撃フェーズ 2</div>
+                    <div class="timeline-content">
+                        <strong>コード注入:</strong> postinstall スクリプトまたはランタイムコードに "Mini Shai-Hulud" マルウェアを挿入し、正規バージョンとして npm に公開
+                    </div>
+                </div>
+
+                <div class="timeline-item danger">
+                    <div class="timeline-date">攻撃フェーズ 3</div>
+                    <div class="timeline-content">
+                        <strong>自動拡散:</strong> npm install や CI/CD パイプラインの依存関係解決により、侵害バージョンが OpenAI ビルドパイプラインに取り込まれる
+                    </div>
+                </div>
+
+                <div class="timeline-item warning">
+                    <div class="timeline-date">検知と評価</div>
+                    <div class="timeline-content">
+                        <strong>影響範囲の特定:</strong> ビルド環境の露出、コード署名証明書への脅威、配布バイナリの完全性への懸念を確認。ユーザーデータへの直接アクセスは確認されず
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">即時対応</div>
+                    <div class="timeline-content">
+                        <strong>証明書ローテーション:</strong> 影響を受けた可能性のあるすべてのコード署名証明書を失効させ、新しい証明書を発行
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">インフラ強化</div>
+                    <div class="timeline-content">
+                        <strong>署名プロセスの隔離:</strong> HSM ベースの署名に移行、エアギャップ環境でコード署名を実施する新アーキテクチャを導入
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-05-13</div>
+                    <div class="timeline-content">
+                        <strong>公式発表:</strong> 対応の詳細を公開。macOS ユーザーに 2026 年 6 月 12 日までの更新を義務づけ
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-06-12 (期限)</div>
+                    <div class="timeline-content">
+                        <strong>強制アップデート発効:</strong> 旧バージョンの起動がブロックされ、旧証明書で署名されたバイナリは macOS Gatekeeper により実行拒否
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards: 攻撃の特徴 -->
+        <div class="section">
+            <h2 class="section-title">攻撃の特徴 (Mini Shai-Hulud)</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span class="icon">&#x1F576;</span> 潜伏性</h3>
+                    <p>正規のパッケージコードに紛れ込み、通常の静的解析では検出困難。開発者のローカル環境では無害に動作する</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3><span class="icon">&#x1F310;</span> 拡散範囲</h3>
+                    <p>依存関係チェーンを通じて間接的に多数のプロジェクトに波及。TanStack は数百万の週間ダウンロード数を誇る</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3><span class="icon">&#x1F3AF;</span> 標的型動作</h3>
+                    <p>特定の環境変数 (CI、CODE_SIGNING_KEY 等) やビルド環境を検出した場合にのみ悪意のある動作を実行する</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3><span class="icon">&#x1F4E4;</span> 情報窃取</h3>
+                    <p>ビルド環境の認証情報、署名キー、環境変数等の機密情報を外部サーバーに送信する</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before / After Comparison -->
+        <div class="section">
+            <h2 class="section-title">セキュリティ対策の比較</h2>
+
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>BEFORE - 従来のセキュリティ</h4>
+                    <ul>
+                        <li>ビルドサーバー上のキーチェーンに証明書保管</li>
+                        <li>ビルドパイプライン内でコード署名を実行</li>
+                        <li>CI/CD サービスアカウントによるアクセス制御</li>
+                        <li>ログベースの事後確認による監査</li>
+                        <li>手動による証明書失効対応</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card after">
+                    <h4>AFTER - 強化後の防御策</h4>
+                    <ul>
+                        <li>HSM (Hardware Security Module) に証明書保管</li>
+                        <li>エアギャップ環境で分離してコード署名</li>
+                        <li>多要素認証 + 承認ワークフロー</li>
+                        <li>リアルタイム監視 + アラート</li>
+                        <li>自動検知 + 即時ローテーション</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Supply Chain Defense Enhancements -->
+        <div class="section">
+            <h2 class="section-title">サプライチェーン防御の強化策</h2>
+
+            <div class="use-case">
+                <h4>依存関係のロックダウン</h4>
+                <p>すべての npm パッケージに対して完全な integrity hash の検証を導入し、想定外のパッケージ変更を検出</p>
+            </div>
+
+            <div class="use-case">
+                <h4>ビルド環境の零信頼化</h4>
+                <p>ビルドパイプラインのネットワークアクセスをデフォルト拒否に設定し、許可されたレジストリのみへの通信を許可</p>
+            </div>
+
+            <div class="use-case">
+                <h4>SBOM (Software Bill of Materials) の自動生成</h4>
+                <p>すべてのビルドアーティファクトに対して機械可読な SBOM を生成し、依存関係の透明性を確保</p>
+            </div>
+
+            <div class="use-case">
+                <h4>リアルタイム依存関係監視</h4>
+                <p>npm パッケージのバージョン変更をリアルタイムで監視し、異常なパブリッシュパターンを検出してアラートを生成</p>
+            </div>
+
+            <div class="use-case">
+                <h4>サンドボックスビルド環境</h4>
+                <p>Running Codex safely で解説されたサンドボックス技術をビルドパイプラインにも適用し、マルウェアの実行影響を封じ込め</p>
+            </div>
+
+            <div class="use-case">
+                <h4>署名プロセスのエアギャップ化</h4>
+                <p>コード署名を完全に隔離された環境で実施し、ビルドパイプラインの侵害が署名証明書に波及しないアーキテクチャを採用</p>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title">攻撃経路と防御アーキテクチャ</h2>
+
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Attack["攻撃経路 (Mini Shai-Hulud)"]
+        Attacker(["攻撃者"])
+        TanStack["TanStack npm パッケージ"]
+        MalCode["悪意のあるコード (Mini Shai-Hulud)"]
+        Attacker -->|パッケージ侵害| TanStack
+        TanStack -->|コード注入| MalCode
+    end
+
+    subgraph BuildPipeline["OpenAI ビルドパイプライン"]
+        NPMInstall["npm install (依存関係解決)"]
+        BuildProcess["ビルドプロセス"]
+        SigningOld["コード署名 (旧証明書)"]
+        MalCode -->|自動取得| NPMInstall
+        NPMInstall --> BuildProcess
+        BuildProcess --> SigningOld
+    end
+
+    subgraph Defense["防御レイヤー (強化後)"]
+        subgraph Detection["検知"]
+            IntegrityCheck["Integrity Hash 検証"]
+            DepMonitor["依存関係 リアルタイム監視"]
+            SBOMGen["SBOM 自動生成"]
+        end
+        subgraph Isolation["隔離"]
+            SandboxBuild["サンドボックス ビルド環境"]
+            AirGap["エアギャップ 署名環境"]
+            HSM["HSM 証明書 保管"]
+        end
+        subgraph Response["対応"]
+            CertRotate["証明書 ローテーション"]
+            AppResign["アプリ再署名"]
+            ForceUpdate["強制アップデート (期限: 6/12)"]
+        end
+    end
+
+    subgraph User["macOS ユーザー"]
+        MacApp(["ChatGPT for Mac"])
+        Gatekeeper["macOS Gatekeeper"]
+        AppResign --> MacApp
+        ForceUpdate --> Gatekeeper
+        Gatekeeper -->|署名検証| MacApp
+    end
+
+    BuildProcess -.->|検知| IntegrityCheck
+    BuildProcess -.->|監視| DepMonitor
+    SandboxBuild -.->|保護| BuildProcess
+    AirGap -.->|分離| HSM
+    HSM --> CertRotate
+    CertRotate --> AppResign
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+    classDef warning fill:#FFA500,stroke:#CC8400,stroke-width:2px,color:white
+
+    class IntegrityCheck,DepMonitor,SBOMGen,SandboxBuild,AirGap,HSM,CertRotate,AppResign openai
+    class ForceUpdate,Gatekeeper,MacApp dark
+    class NPMInstall,BuildProcess,SigningOld light
+    class Attacker,MalCode danger
+    class TanStack warning
+                </pre>
+            </div>
+        </div>
+
+        <!-- Code Samples -->
+        <div class="section">
+            <h2 class="section-title">攻撃コード例 (概念図)</h2>
+            <p style="font-size: 14px; color: #565869; margin-bottom: 16px;">CI/CD 環境でのみ動作する標的型コードの概念例。開発者のローカル環境では無害に見えるため検出が困難</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JavaScript</span>
+                    <span class="code-title">概念的な攻撃コード例 (実際のマルウェアではない)</span>
+                </div>
+                <pre><code class="language-javascript">// 環境変数の存在チェックにより CI/CD 環境でのみ動作
+if (process.env.CI && process.env.CODE_SIGNING_KEY) {
+  // ビルド環境でのみ悪意のある動作を実行
+  // 開発者のローカル環境では無害に見える
+  const payload = Buffer.from(process.env.CODE_SIGNING_KEY);
+  // 外部への送信処理...
+}</code></pre>
+            </div>
+
+            <p style="font-size: 14px; color: #565869; margin: 20px 0 16px;">以下は依存関係の integrity hash を検証するための防御的なコード例</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">npm audit とパッケージ検証</span>
+                </div>
+                <pre><code class="language-bash"># npm audit で既知の脆弱性を確認
+npm audit
+
+# package-lock.json の integrity hash を検証
+npm install --integrity-check
+
+# postinstall スクリプトを無効化して安全にインストール
+npm install --ignore-scripts
+
+# 依存関係のプロヴァナンスを確認
+npm audit signatures</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">.npmrc - postinstall スクリプト制限設定</span>
+                </div>
+                <pre><code class="language-json">{
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "overrides": {},
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tanstack/react-query",
+      "@tanstack/router"
+    ]
+  }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- macOS Security Requirements -->
+        <div class="section">
+            <h2 class="section-title">macOS アプリセキュリティ要件</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span class="icon">&#x1F6E1;</span> Gatekeeper 検証</h3>
+                    <p>macOS は起動時にアプリケーションの署名を Gatekeeper で検証し、失効した証明書で署名されたアプリの実行を拒否する</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3><span class="icon">&#x1F50D;</span> OCSP チェック</h3>
+                    <p>Online Certificate Status Protocol により、証明書の有効性がリアルタイムで確認される</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3><span class="icon">&#x2705;</span> Notarization 必須化</h3>
+                    <p>Apple のノータリゼーション (公証) を通過したアプリケーションのみが Gatekeeper を通過可能</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3><span class="icon">&#x1F504;</span> 自動更新メカニズム</h3>
+                    <p>OpenAI アプリの自動更新機能により、期限前に新バージョンへの移行を促進</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Action Required -->
+        <div class="action-required">
+            <h3>&#x26A0; ACTION REQUIRED: 開発者への必須対応</h3>
+
+            <div class="deadline-box">
+                <div class="label">強制アップデート期限</div>
+                <div class="date">2026 年 6 月 12 日</div>
+            </div>
+
+            <h4 style="font-size: 1rem; font-weight: 700; margin: 16px 0 8px;">macOS ユーザー</h4>
+            <ul>
+                <li>ChatGPT for Mac およびその他の OpenAI macOS アプリケーションを最新バージョンに更新する</li>
+                <li>macOS の「システム設定 > App Store > 自動アップデート」が有効であることを確認する</li>
+                <li>アプリケーションメニューの「ChatGPT について」から、2026 年 5 月以降にリリースされたバージョンであることを確認する</li>
+                <li>期限後は旧バージョンが起動不可になるため、事前に更新を完了すること</li>
+            </ul>
+
+            <h4 style="font-size: 1rem; font-weight: 700; margin: 16px 0 8px;">npm パッケージ利用者</h4>
+            <ul>
+                <li>プロジェクトで @tanstack/react-query、@tanstack/router 等を使用している場合、影響を受けたバージョンを確認する</li>
+                <li>package-lock.json 内の TanStack 関連パッケージの integrity hash が正規のものと一致するか検証する</li>
+                <li>npm audit コマンドで既知の脆弱性が報告されていないか確認する</li>
+                <li>CI/CD パイプラインで機密情報が環境変数として露出していないか確認し、シークレット管理ツールへの移行を検討する</li>
+            </ul>
+
+            <h4 style="font-size: 1rem; font-weight: 700; margin: 16px 0 8px;">セキュリティ対策の推奨事項</h4>
+            <ul>
+                <li>package-lock.json や npm shrinkwrap を活用し、依存関係のバージョンを完全に固定する</li>
+                <li>npm の provenance 機能を利用して、パッケージのビルド元を検証する</li>
+                <li>--ignore-scripts オプションの使用や、allow-scripts 設定による明示的な許可リスト管理を検討する</li>
+                <li>Socket.dev 等のサプライチェーン監視ツールの導入を推奨する</li>
+                <li>ビルドプロセス中の外部通信を許可リスト方式で制限し、情報漏洩リスクを低減する</li>
+            </ul>
+        </div>
+
+        <!-- Related Reports -->
+        <div class="section">
+            <h2 class="section-title">関連インシデント</h2>
+
+            <div class="use-case">
+                <h4>2026-04-10: Axios 開発者ツールのサプライチェーン攻撃</h4>
+                <p>OpenAI が直面した 1 件目の重大なサプライチェーンセキュリティインシデント。今回の TanStack インシデントは 2 件目の対応となる</p>
+            </div>
+
+            <div class="use-case">
+                <h4>2026-04-11: Mac ユーザーへのセキュリティ強制アップデート</h4>
+                <p>Axios インシデントを受けた即時の更新推奨。今回は具体的な期限 (6 月 12 日) を明示してユーザーの対応を確実にする措置</p>
+            </div>
+
+            <div class="use-case">
+                <h4>2026-05-08: Running Codex safely</h4>
+                <p>サンドボックス技術の解説。この技術がビルドパイプラインにも適用され、サプライチェーンリスク軽減に活用される</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Source:</strong> <a href="https://openai.com/index/our-response-to-the-tanstack-npm-supply-chain-attack" target="_blank">https://openai.com/index/our-response-to-the-tanstack-npm-supply-chain-attack</a></p>
+            <p style="margin-top: 8px;">OpenAI News Infographic | Generated 2026-05-13</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
