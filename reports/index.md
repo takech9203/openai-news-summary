@@ -5,11 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-16](2026/2026-05-16-brockman-chatgpt-codex-merger.md) - Greg Brockman が製品戦略を統括、ChatGPT と Codex の統合プラットフォーム化を計画
 - [2026-05-15](2026/2026-05-15-personal-finance-chatgpt.md) - ChatGPT に新しいパーソナルファイナンス機能が登場
 - [2026-05-15](2026/2026-05-15-openai-sdk-v2-37-v6-38.md) - OpenAI Python SDK v2.37.0 / Node SDK v6.38.0: Responses Compact メソッドに service_tier パラメータを追加
+- [2026-05-15](2026/2026-05-15-musk-openai-trial-concludes.md) - Musk 対 OpenAI 裁判結審: 最終弁論で「AI を任せられる人物は誰か」が問われる
 - [2026-05-15](2026/2026-05-15-databricks-gpt-5-5-enterprise.md) - Databricks が GPT-5.5 をエンタープライズエージェントワークフローに導入
 - [2026-05-14](2026/2026-05-14-sea-codex-agentic-development.md) - Sea Limited が Codex でアジアにおけるエージェント型ソフトウェア開発の未来を推進
 - [2026-05-14](2026/2026-05-14-openai-wrongful-death-lawsuits-chatgpt.md) - OpenAI に対する不法死亡訴訟 -- ChatGPT の薬物アドバイスが致命的過量摂取に関与との主張
+- [2026-05-14](2026/2026-05-14-openai-legal-action-apple.md) - OpenAI が Apple に対する法的措置を検討 -- ChatGPT 統合契約の不履行を巡り
 - [2026-05-14](2026/2026-05-14-openai-global-ai-governance-body.md) - OpenAI、米国主導のグローバル AI ガバナンス機関の創設を支持 — 中国の参加も含む
 - [2026-05-14](2026/2026-05-14-codex-mobile-anywhere.md) - Codex がモバイルに対応 — どこからでもコーディングタスクを監視・操作可能に
 - [2026-05-14](2026/2026-05-14-chatgpt-sensitive-context-safety.md) - ChatGPT のセンシティブな会話におけるコンテキスト認識の強化
