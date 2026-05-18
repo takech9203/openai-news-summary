@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>データサイエンスチームによる Codex 活用方法</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-light: #E6F7F2;
+            --openai-green-dark: #0D8A6A;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #2c2c38 100%);
+            border-radius: var(--radius);
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16,163,127,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            font-size: 1.6rem;
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .key-point-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--openai-green-light);
+            border-radius: 12px;
+        }
+
+        .key-point-content {
+            flex: 1;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .key-point-content p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: var(--radius-sm);
+            position: relative;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            border: 2px solid #ffcdd2;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #e6f7f2 0%, #d4f5e9 100%);
+            border: 2px solid #a8e6cf;
+        }
+
+        .comparison-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-card.before h3 {
+            color: #c62828;
+        }
+
+        .comparison-card.after h3 {
+            color: var(--openai-green-dark);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            padding: 6px 0;
+            font-size: 0.9rem;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2717';
+            position: absolute;
+            left: 0;
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green-dark);
+            font-weight: bold;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--openai-green);
+        }
+
+        .feature-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .feature-card .tag {
+            display: inline-block;
+            background: var(--openai-green-light);
+            color: var(--openai-green-dark);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .mermaid-container {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .code-block {
+            margin-top: 16px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #282c34;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .code-title {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .code-block pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .use-case {
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .use-case h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .use-case p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .use-case .use-case-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .use-case .use-case-meta span {
+            background: var(--openai-green-light);
+            color: var(--openai-green-dark);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .input-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+
+        .input-table th {
+            background: var(--openai-green);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .input-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .input-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .impact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .impact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+        }
+
+        .impact-item .bullet {
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 8px;
+        }
+
+        .impact-item p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .considerations {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .considerations h4 {
+            color: #f57c00;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .considerations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .considerations ul li {
+            padding: 6px 0;
+            font-size: 0.9rem;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .considerations ul li::before {
+            content: '\26A0';
+            position: absolute;
+            left: 0;
+        }
+
+        .footer {
+            background: var(--openai-dark);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            margin-top: 32px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .footer-brand {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .key-point {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">OPENAI ACADEMY</span>
+                <h1>データサイエンスチームによる Codex 活用方法</h1>
+                <p class="date">2026-05-15 | OpenAI Academy - Codex for Work</p>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x1F4CB;</span> 5 つのユースケース</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6A8;</div>
+                    <div class="key-point-content">
+                        <h3>障害分析ブリーフ (Root-Cause Briefs)</h3>
+                        <p>アラートログ、メトリクスの時系列データ、デプロイメント履歴から構造化された障害タイムライン、根本原因の仮説と検証結果、再発防止策を自動生成</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>影響読み取りレポート (Impact Readouts)</h3>
+                        <p>A/B テスト結果、前後比較のメトリクスから施策の効果サマリー、統計的有意性の評価、ビジネスインパクトの定量化を生成</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AF;</div>
+                    <div class="key-point-content">
+                        <h3>KPI メモ (KPI Memos)</h3>
+                        <p>ダッシュボードのメトリクスエクスポートから KPI の達成状況サマリー、トレンド分析、異常値の検出と解説を自動作成</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>スコープ分析 (Scoped Analyses)</h3>
+                        <p>SQL クエリ結果やデータフレームのエクスポートから分析フレームワークの設計、データの探索的分析結果、仮説の検証結論を生成</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4BB;</div>
+                    <div class="key-point-content">
+                        <h3>ダッシュボード仕様書 (Dashboard Specs)</h3>
+                        <p>ビジネス要件とデータソース一覧からダッシュボードレイアウト設計、データモデル定義、クエリ仕様、更新頻度の定義を生成</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x1F504;</span> Before / After 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h3>&#x274C; 従来の手動プロセス</h3>
+                    <ul>
+                        <li>データエクスポートの手動整形に数時間</li>
+                        <li>分析結果の文書化が属人的</li>
+                        <li>品質がメンバーのスキルレベルに依存</li>
+                        <li>対象読者ごとにレポートを再作成</li>
+                        <li>分析プロセスの再現性が低い</li>
+                        <li>ドキュメント作成に時間を取られ分析の深度が浅い</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h3>&#x2705; Codex 自動化後</h3>
+                    <ul>
+                        <li>構造化された入力から数分で成果物を生成</li>
+                        <li>一貫した品質のドキュメントを標準化</li>
+                        <li>ジュニアメンバーもシニアレベルの品質を実現</li>
+                        <li>対象読者に合わせた粒度を自動調整</li>
+                        <li>入力と出力の関係が明確で再現性向上</li>
+                        <li>データ分析そのものの質と深度に集中可能</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x2728;</span> ユースケース詳細</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="icon">&#x1F6A8;</span>
+                    <h3>障害分析ブリーフ</h3>
+                    <p>インシデント発生後のポストモーテム作成、ステークホルダーへの迅速な状況報告を自動化。ログデータとメトリクスの相関関係を分析し、時系列に沿った因果関係を明確化</p>
+                    <span class="tag">インシデント対応</span>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">&#x1F4CA;</span>
+                    <h3>影響読み取りレポート</h3>
+                    <p>統計的検定の結果を解釈し、技術的な詳細とビジネス的な意味合いの両方を含むバランスの取れたレポートを生成。効果量、信頼区間、サンプルサイズの妥当性も自動評価</p>
+                    <span class="tag">A/B テスト評価</span>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">&#x1F3AF;</span>
+                    <h3>KPI メモ</h3>
+                    <p>メトリクスデータを読み込み、目標に対する進捗状況を自動評価。トレンドの変化点や異常値を検出し、背景要因まで推察したメモを生成</p>
+                    <span class="tag">定期報告</span>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">&#x1F50D;</span>
+                    <h3>スコープ分析</h3>
+                    <p>データの構造と分析目的を理解し、適切な分析手法を選択。分析の前提条件、方法論、限界事項を明示し、結果の信頼性と再現性を担保</p>
+                    <span class="tag">仮説検証</span>
+                </div>
+                <div class="feature-card">
+                    <span class="icon">&#x1F4BB;</span>
+                    <h3>ダッシュボード仕様書</h3>
+                    <p>ビジネス要件とデータソースの情報から、実装可能な粒度の仕様書を生成。メトリクスの計算ロジック、パフォーマンス要件まで含めた包括的な定義</p>
+                    <span class="tag">設計ドキュメント</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x1F3D7;</span> アーキテクチャ</h2>
+            <p style="margin-bottom: 16px; font-size: 0.9rem; color: #666;">Codex によるデータ入力の処理フロー: 入力解析、コンテキスト理解、構造化分析、ドキュメント生成の 4 段階で進行</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["業務入力データ"]
+        CSV["CSV / TSV エクスポート"]
+        SQL["SQL クエリ結果"]
+        JSON["JSON メトリクス"]
+        Logs["ログファイル"]
+        Reqs["ビジネス要件"]
+    end
+
+    subgraph Codex["Codex 処理エンジン"]
+        Parser["入力解析"]
+        Context["コンテキスト理解"]
+        Analysis["構造化分析"]
+        Generator["ドキュメント生成"]
+    end
+
+    subgraph Output["プロフェッショナル成果物"]
+        RCB["障害分析ブリーフ"]
+        IR["影響読み取りレポート"]
+        KPI["KPI メモ"]
+        SA["スコープ分析"]
+        DS["ダッシュボード仕様書"]
+    end
+
+    CSV --> Parser
+    SQL --> Parser
+    JSON --> Parser
+    Logs --> Parser
+    Reqs --> Parser
+    Parser --> Context
+    Context --> Analysis
+    Analysis --> Generator
+    Generator --> RCB
+    Generator --> IR
+    Generator --> KPI
+    Generator --> SA
+    Generator --> DS
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Parser,Context,Analysis,Generator openai
+    class CSV,SQL,JSON,Logs,Reqs dark
+    class RCB,IR,KPI,SA,DS light
+                </pre>
+            </div>
+        </div>
+
+        <!-- Input Format Table -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x1F4C2;</span> 対応する入力形式</h2>
+            <table class="input-table">
+                <thead>
+                    <tr>
+                        <th>入力形式</th>
+                        <th>用途</th>
+                        <th>出力例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CSV / TSV エクスポート</td>
+                        <td>メトリクス集計、時系列データ</td>
+                        <td>KPI メモ、影響レポート</td>
+                    </tr>
+                    <tr>
+                        <td>SQL クエリ結果</td>
+                        <td>アドホック分析、データ探索</td>
+                        <td>スコープ分析</td>
+                    </tr>
+                    <tr>
+                        <td>JSON メトリクス</td>
+                        <td>API レスポンス、監視データ</td>
+                        <td>障害分析ブリーフ</td>
+                    </tr>
+                    <tr>
+                        <td>ログファイル</td>
+                        <td>インシデント調査</td>
+                        <td>障害分析ブリーフ</td>
+                    </tr>
+                    <tr>
+                        <td>ダッシュボード定義</td>
+                        <td>可視化要件</td>
+                        <td>ダッシュボード仕様書</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Code Sample -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x1F4DD;</span> プロンプト設計のベストプラクティス</h2>
+            <p style="margin-bottom: 16px; font-size: 0.9rem; color: #666;">効果的な Codex 活用のために推奨されるプロンプト設計パターン</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">PROMPT</span>
+                    <span class="code-title">Codex プロンプト構造の例</span>
+                </div>
+                <pre><code class="language-markdown"># プロンプト構造の例
+
+## コンテキスト
+- チーム: [データサイエンスチーム名]
+- 対象読者: [経営層 / エンジニアリング / プロダクト]
+- 目的: [分析の目的]
+
+## 入力データ
+[データエクスポート、クエリ結果、メトリクスを貼り付け]
+
+## 出力要件
+- 形式: [障害分析ブリーフ / 影響レポート / KPI メモ / スコープ分析 / ダッシュボード仕様書]
+- 詳細度: [エグゼクティブサマリー / 技術詳細]
+- 含めるべき要素: [統計的検定 / 可視化提案 / アクション項目]</code></pre>
+            </div>
+
+            <h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 1.1rem; font-weight: 700;">処理フロー</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">WORKFLOW</span>
+                    <span class="code-title">Codex 変換プロセス 4 段階</span>
+                </div>
+                <pre><code class="language-plaintext">1. 入力の解析
+   CSV エクスポート、SQL クエリ結果、JSON メトリクス、ログファイルなどの生データを解析
+
+2. コンテキストの理解
+   ビジネスコンテキスト、分析目的、対象オーディエンスを把握
+
+3. 構造化と分析
+   データのパターン、異常値、トレンドを識別し、適切な分析フレームワークを適用
+
+4. 成果物の生成
+   対象読者に合わせた適切な粒度と形式でドキュメントを生成</code></pre>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x1F4BC;</span> データサイエンスチームのシナリオ</h2>
+
+            <div class="use-case">
+                <h3>&#x1F6A8; インシデント対応シナリオ</h3>
+                <p>システム障害やパフォーマンス低下の根本原因を特定し、関係者に共有。アラートログ、メトリクスの時系列データ、デプロイメント履歴、エラーレート推移から構造化された障害タイムラインを生成し、人間のデータサイエンティストが数時間かけていた分析作業を数分で完了</p>
+                <div class="use-case-meta">
+                    <span>ポストモーテム</span>
+                    <span>状況報告</span>
+                    <span>再発防止策</span>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h3>&#x1F4CA; 施策影響評価シナリオ</h3>
+                <p>新機能リリース後のインパクト評価や経営層への報告資料作成。A/B テスト結果、前後比較のメトリクス、ユーザーセグメント別データから統計的有意性の評価、ビジネスインパクトの定量化、推奨アクションを生成</p>
+                <div class="use-case-meta">
+                    <span>A/B テスト</span>
+                    <span>効果量</span>
+                    <span>信頼区間</span>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h3>&#x1F3AF; 定期報告シナリオ</h3>
+                <p>週次/月次の経営報告、チーム間の進捗共有、四半期レビュー。ダッシュボードのメトリクスエクスポート、目標値と実績値から KPI の達成状況サマリー、トレンド分析、異常値の検出と解説を自動生成</p>
+                <div class="use-case-meta">
+                    <span>週次報告</span>
+                    <span>月次報告</span>
+                    <span>四半期レビュー</span>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h3>&#x1F50D; アドホック分析シナリオ</h3>
+                <p>特定の問題や仮説に焦点を当てた深掘り分析。SQL クエリ結果やデータフレームのエクスポートから分析フレームワークの設計、探索的分析結果、仮説の検証結論、限界事項と次のステップを文書化</p>
+                <div class="use-case-meta">
+                    <span>仮説検証</span>
+                    <span>再現性確保</span>
+                    <span>方法論明示</span>
+                </div>
+            </div>
+
+            <div class="use-case">
+                <h3>&#x1F4BB; ダッシュボード設計シナリオ</h3>
+                <p>新規ダッシュボード構築プロジェクト、既存ダッシュボードのリファクタリング。ビジネス要件、データソース一覧、既存クエリからレイアウト設計、データモデル定義、クエリ仕様、フィルター要件、更新頻度を定義</p>
+                <div class="use-case-meta">
+                    <span>新規構築</span>
+                    <span>リファクタリング</span>
+                    <span>引き渡し</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2 class="section-title"><span class="section-title-icon">&#x1F680;</span> 開発者への影響</h2>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">ワークフローの変革</h3>
+            <div class="impact-list">
+                <div class="impact-item">
+                    <div class="bullet"></div>
+                    <p><strong>ドキュメント作成時間の大幅削減:</strong> 分析結果の文書化に費やしていた時間を、分析そのものの質の向上に再配分</p>
+                </div>
+                <div class="impact-item">
+                    <div class="bullet"></div>
+                    <p><strong>成果物の品質標準化:</strong> チームメンバーのスキルレベルに依存しない、一貫した品質のドキュメントを生成</p>
+                </div>
+                <div class="impact-item">
+                    <div class="bullet"></div>
+                    <p><strong>分析の再現性向上:</strong> 入力データと出力の関係が明確に定義されるため、分析プロセスの再現性が向上</p>
+                </div>
+                <div class="impact-item">
+                    <div class="bullet"></div>
+                    <p><strong>ステークホルダーコミュニケーションの改善:</strong> 対象読者に合わせた適切な粒度のレポートを迅速に作成</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-top: 24px; margin-bottom: 12px;">チーム構成への影響</h3>
+            <div class="impact-list">
+                <div class="impact-item">
+                    <div class="bullet"></div>
+                    <p><strong>ジュニアデータサイエンティストの生産性向上:</strong> 経験が浅いメンバーでも、シニアレベルの品質を持つ分析レポートを作成可能</p>
+                </div>
+                <div class="impact-item">
+                    <div class="bullet"></div>
+                    <p><strong>シニアメンバーのレバレッジ拡大:</strong> ドキュメント作成の負担が軽減され、より高度な分析や戦略的な業務に時間を投入可能</p>
+                </div>
+                <div class="impact-item">
+                    <div class="bullet"></div>
+                    <p><strong>クロスファンクショナルな連携強化:</strong> エンジニアリング、プロダクト、経営層それぞれに最適化されたレポートを効率的に作成</p>
+                </div>
+            </div>
+
+            <div class="considerations">
+                <h4>&#x26A0;&#xFE0F; 導入時の考慮事項</h4>
+                <ul>
+                    <li>Codex が生成する分析結果は必ず人間のレビューを経てから共有すべき</li>
+                    <li>機密性の高いデータを入力する際は、組織のデータガバナンスポリシーに準拠する必要がある</li>
+                    <li>生成されたレポートの統計的結論については、ドメイン専門家による妥当性確認が推奨される</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-brand">OpenAI Academy - Codex for Work</p>
+            <p style="margin-top: 8px;">Source: <a href="https://openai.com/academy/codex-for-work/how-data-science-teams-use-codex" target="_blank" rel="noopener">https://openai.com/academy/codex-for-work/how-data-science-teams-use-codex</a></p>
+            <p style="margin-top: 12px; font-size: 0.8rem; opacity: 0.7;">Related: <a href="https://openai.com/academy/codex-for-work" target="_blank" rel="noopener">Codex for Work</a> | <a href="https://openai.com/academy" target="_blank" rel="noopener">OpenAI Academy</a> | <a href="https://openai.com/codex" target="_blank" rel="noopener">OpenAI Codex</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

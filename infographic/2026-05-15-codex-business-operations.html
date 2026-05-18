@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ビジネスオペレーションチームによる Codex 活用ガイド</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-light: #E6F7F2;
+            --openai-green-dark: #0D8A6A;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #2c2c38 100%);
+            border-radius: var(--radius);
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.9rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .header .date {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--openai-green-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .key-point-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            background: var(--openai-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .key-point-content {
+            flex: 1;
+        }
+
+        .key-point-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--openai-dark);
+        }
+
+        .key-point-content p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: var(--radius-sm);
+            position: relative;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border: 2px solid #FC8181;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, var(--openai-green-light) 0%, #C6F6D5 100%);
+            border: 2px solid var(--openai-green);
+        }
+
+        .comparison-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-card.before h4 {
+            color: #C53030;
+        }
+
+        .comparison-card.after h4 {
+            color: var(--openai-green-dark);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.85rem;
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2717';
+            position: absolute;
+            left: 0;
+            color: #E53E3E;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .feature-card:hover {
+            border-color: var(--openai-green);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .feature-card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--openai-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 14px;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.82rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 0.8rem;
+            color: #555;
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '\2022';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Code Block */
+        .code-block {
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .code-header {
+            background: #21252b;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .code-block pre code {
+            font-size: 0.78rem;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .use-case .use-case-tag {
+            display: inline-block;
+            background: var(--openai-green-light);
+            color: var(--openai-green-dark);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        /* Impact Section */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .impact-item {
+            text-align: center;
+            padding: 20px 16px;
+            background: var(--openai-green-light);
+            border-radius: var(--radius-sm);
+        }
+
+        .impact-item .impact-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .impact-item .impact-label {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* API Table */
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+
+        .api-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .api-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .api-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .api-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .api-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .api-table code {
+            background: var(--openai-gray);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.82rem;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .footer-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">OPENAI ACADEMY</span>
+                <h1>ビジネスオペレーションチームによる Codex 活用ガイド</h1>
+                <p class="date">2026-05-15 | OpenAI Academy - Codex for Work</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#9670;</span>
+                主要ポイント
+            </h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">1</div>
+                    <div class="key-point-content">
+                        <h4>イニシアチブブリーフの自動作成</h4>
+                        <p>キックオフ会議メモや過去のプロジェクトデータから、目的、スコープ、KPI、リスク評価を含む構造化された施策概要書を自動生成。従来 2-3 日かかっていた作業を数時間に短縮。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">2</div>
+                    <div class="key-point-content">
+                        <h4>戦略アップデートの生成</h4>
+                        <p>Jira、Asana、Salesforce、Google Sheets など複数ツールのデータを統合し、OKR 進捗、成果ハイライト、課題・リスクを含むナラティブな戦略レポートを自動構築。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">3</div>
+                    <div class="key-point-content">
+                        <h4>リーダーシップ意思決定パケット</h4>
+                        <p>複数の選択肢をデータに基づいて比較分析し、コスト・ベネフィット、リスクマトリクス、推奨案を含む意思決定資料を生成。経営層が 30 分以内に判断可能な形式を提供。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">4</div>
+                    <div class="key-point-content">
+                        <h4>進捗レポートの自動化</h4>
+                        <p>プロジェクト管理ツール、Slack メッセージ、スプリントデータから RAG ステータス、完了項目、ブロッカー、メトリクスを含む週次・月次レポートを数分で作成。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">5</div>
+                    <div class="key-point-content">
+                        <h4>Codex for Work シリーズ第 2 弾</h4>
+                        <p>5 月 12 日の財務チーム向けガイドに続く職種別実践シリーズ。Codex がコーディングツールからナレッジワーク全般を支援するエージェントへ進化していることを実証。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#8644;</span>
+                Before / After 比較
+            </h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>&#9888; 従来の手動作成プロセス</h4>
+                    <ul>
+                        <li>複数関係者への個別ヒアリングが必要</li>
+                        <li>散在する情報の手動収集・整理に数日</li>
+                        <li>イニシアチブブリーフ作成に 2-3 日</li>
+                        <li>週次進捗レポートに数時間</li>
+                        <li>チームメンバーの経験値で品質にばらつき</li>
+                        <li>戦略アップデートのデータ集約が煩雑</li>
+                        <li>意思決定資料の比較分析に多大な工数</li>
+                        <li>ドキュメント作成が本業を圧迫</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>&#10024; Codex 活用後の自動化</h4>
+                    <ul>
+                        <li>会議メモや Slack 会話を直接入力可能</li>
+                        <li>非構造化・構造化データを自動統合</li>
+                        <li>イニシアチブブリーフを数時間で生成</li>
+                        <li>週次進捗レポートを数分で完成</li>
+                        <li>テンプレートとプロンプトで品質を均質化</li>
+                        <li>複数ツールのデータを自動集約・分析</li>
+                        <li>コスト・ベネフィットの比較表を自動作成</li>
+                        <li>戦略立案やコミュニケーションに集中</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#9733;</span>
+                4 つの主要ユースケース
+            </h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#128203;</div>
+                    <h4>イニシアチブブリーフ</h4>
+                    <p>施策の目的、スコープ、期待成果をステークホルダーに伝える概要書を自動生成</p>
+                    <ul>
+                        <li>エグゼクティブサマリー</li>
+                        <li>戦略的背景と課題定義</li>
+                        <li>成功指標 (KPI) 設定</li>
+                        <li>リソース要件と概算</li>
+                        <li>リスクアセスメント</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#128200;</div>
+                    <h4>戦略アップデート</h4>
+                    <p>四半期・月次の戦略的進捗を経営層に伝えるレポートを自動構築</p>
+                    <ul>
+                        <li>複数ツールからデータ集約</li>
+                        <li>計画 vs 実績の差異分析</li>
+                        <li>戦略的ストーリーラインの構築</li>
+                        <li>OKR / KPI 進捗ダッシュボード</li>
+                        <li>次四半期のアクションアイテム</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#9878;</div>
+                    <h4>意思決定パケット</h4>
+                    <p>経営会議向けにデータに基づく選択肢の比較と推奨案を提示</p>
+                    <ul>
+                        <li>3-5 選択肢のメリット・デメリット</li>
+                        <li>財務・人員・スケジュール影響分析</li>
+                        <li>コスト・ベネフィット比較表</li>
+                        <li>推奨案と根拠の明示</li>
+                        <li>30-60-90 日実行計画</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#128202;</div>
+                    <h4>進捗レポート</h4>
+                    <p>週次・月次のプロジェクト健全性を可視化するレポートを自動作成</p>
+                    <ul>
+                        <li>RAG ステータス (信号灯) 評価</li>
+                        <li>完了・進行中タスクのリスト</li>
+                        <li>ブロッカーと必要な対応</li>
+                        <li>主要メトリクスの推移</li>
+                        <li>翌週の計画とフォーカス</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#9881;</span>
+                ワークフローアーキテクチャ
+            </h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    subgraph Input["業務入力 (Real Work Inputs)"]
+        Meeting["会議メモ\nミーティング議事録"]
+        PM["プロジェクト管理\n(Jira, Asana, Linear)"]
+        Data["KPI データ\nスプレッドシート"]
+        Comms["コミュニケーション\n(Slack, メール)"]
+        Docs["既存ドキュメント\n過去の成果物"]
+    end
+
+    subgraph Codex["Codex エージェント"]
+        Parse["入力解析\nコンテキスト理解"]
+        Analyze["データ分析\nパターン認識"]
+        Structure["構造化\nフレームワーク適用"]
+        Generate["成果物生成\n品質チェック"]
+    end
+
+    subgraph Output["プロフェッショナル成果物"]
+        Brief["イニシアチブ\nブリーフ"]
+        Strategy["戦略\nアップデート"]
+        Decision["意思決定\nパケット"]
+        Progress["進捗\nレポート"]
+    end
+
+    subgraph Stakeholders["ステークホルダー"]
+        Exec["経営層\nCxO"]
+        Leaders["部門リーダー\nVP / Director"]
+        Teams["チームメンバー\nIC / Manager"]
+    end
+
+    Meeting --> Parse
+    PM --> Parse
+    Data --> Parse
+    Comms --> Parse
+    Docs --> Parse
+
+    Parse --> Analyze
+    Analyze --> Structure
+    Structure --> Generate
+
+    Generate --> Brief
+    Generate --> Strategy
+    Generate --> Decision
+    Generate --> Progress
+
+    Brief --> Exec
+    Strategy --> Exec
+    Strategy --> Leaders
+    Decision --> Exec
+    Progress --> Leaders
+    Progress --> Teams
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Parse,Analyze,Structure,Generate openai
+    class Meeting,PM,Data,Comms,Docs dark
+    class Brief,Strategy,Decision,Progress accent
+    class Exec,Leaders,Teams light
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#128187;</span>
+                コードサンプル: Codex API による自動生成
+            </h2>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 16px;">Codex API (Responses API) を使用して、戦略アップデートと意思決定パケットを自動生成する Python コード例</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">戦略アップデート自動生成</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+from pathlib import Path
+
+client = OpenAI()
+
+
+def generate_strategy_update(
+    okr_data: str,
+    project_status: str,
+    meeting_notes: str,
+    quarter: str
+) -> str:
+    """Codex を使用して四半期戦略アップデートを自動生成する"""
+
+    response = client.responses.create(
+        model="codex",
+        instructions="""あなたは経験豊富なビジネスオペレーションマネージャーです。
+        提供されたデータから、経営陣向けの四半期戦略アップデートを作成してください。
+
+        レポートには以下を含めること:
+        - エグゼクティブサマリー (3 行以内)
+        - OKR 進捗ダッシュボード (達成率をパーセンテージで)
+        - 主要な成果とハイライト (Top 3)
+        - 課題とリスク (RAG ステータス付き)
+        - 次四半期の重点施策
+        - リソース要件の変更点
+
+        出力形式: Markdown
+        トーン: プロフェッショナルかつ簡潔""",
+        input=f"""対象四半期: {quarter}
+
+OKR データ:
+{okr_data}
+
+プロジェクトステータス:
+{project_status}
+
+直近の会議メモ:
+{meeting_notes}""",
+        tools=[
+            {
+                "type": "code_interpreter"
+            }
+        ]
+    )
+
+    return response.output_text
+
+
+def generate_decision_packet(
+    topic: str,
+    background_data: str,
+    options: list[str],
+    constraints: str
+) -> str:
+    """リーダーシップ意思決定パケットを自動生成する"""
+
+    options_text = "\n".join(
+        [f"- 選択肢 {i+1}: {opt}" for i, opt in enumerate(options)]
+    )
+
+    response = client.responses.create(
+        model="codex",
+        instructions="""あなたは戦略コンサルタントです。
+        経営チームが 30 分以内に意思決定できる形式で
+        Decision Packet を作成してください。
+
+        含めるべき要素:
+        1. 意思決定の背景と緊急性 (1 段落)
+        2. 各選択肢の詳細分析
+           - 予想コスト (概算)
+           - 予想ベネフィット
+           - 実行リスク (高/中/低)
+           - 実行期間
+        3. 比較マトリクス (表形式)
+        4. 推奨案と根拠
+        5. 意思決定後の実行計画 (30-60-90 日)
+
+        出力形式: Markdown""",
+        input=f"""決定事項: {topic}
+
+背景データ:
+{background_data}
+
+検討中の選択肢:
+{options_text}
+
+制約条件:
+{constraints}""",
+        tools=[
+            {
+                "type": "code_interpreter"
+            }
+        ]
+    )
+
+    return response.output_text
+
+
+# 使用例
+if __name__ == "__main__":
+    # 戦略アップデートの生成
+    update = generate_strategy_update(
+        okr_data="O1: 顧客満足度向上 - KR1: NPS +10pt (現在 +7pt, 70%達成)",
+        project_status="プロジェクト A: 順調 / プロジェクト B: 1 週間遅延",
+        meeting_notes="CTO から技術負債の解消を優先すべきとのフィードバックあり",
+        quarter="2026 Q2"
+    )
+    Path("output/strategy_update_2026q2.md").write_text(update)
+
+    # 意思決定パケットの生成
+    packet = generate_decision_packet(
+        topic="新規 CRM ツールの選定",
+        background_data="現行 CRM の契約が Q3 末に満了。更新料 20% 増の通知あり。",
+        options=["現行 CRM を更新", "Salesforce に移行", "HubSpot に移行"],
+        constraints="予算上限 500 万円/年、移行期間 3 ヶ月以内"
+    )
+    Path("output/decision_packet_crm.md").write_text(packet)</code></pre>
+            </div>
+
+            <!-- Prompt Example -->
+            <div class="code-block" style="margin-top: 24px;">
+                <div class="code-header">
+                    <span class="code-lang">Prompt</span>
+                    <span class="code-title">イニシアチブブリーフ作成プロンプト例</span>
+                </div>
+                <pre><code class="language-plaintext">以下のキックオフ会議メモと過去の類似プロジェクトデータから、
+経営陣向けのイニシアチブブリーフを作成してください。
+
+含めるべき要素:
+- エグゼクティブサマリー (3 行以内)
+- 戦略的背景と課題定義
+- 提案するソリューションの概要
+- 期待される ROI と成功指標
+- 主要マイルストーン (四半期ごと)
+- リスクアセスメント (高・中・低)
+- 必要リソースの概算
+
+[会議メモ、プロジェクトデータをここに貼り付け]</code></pre>
+            </div>
+
+            <!-- API Parameters Table -->
+            <h3 style="font-size: 1rem; font-weight: 700; margin-top: 28px; margin-bottom: 12px;">API パラメータ</h3>
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th>パラメータ</th>
+                        <th>説明</th>
+                        <th>推奨値</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>model</code></td>
+                        <td>使用するモデル</td>
+                        <td><code>codex</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>instructions</code></td>
+                        <td>ロールとタスクの詳細指示</td>
+                        <td>ビジネスオペレーション固有の指示を含める</td>
+                    </tr>
+                    <tr>
+                        <td><code>tools</code></td>
+                        <td>使用するツール</td>
+                        <td><code>code_interpreter</code> (データ分析時)</td>
+                    </tr>
+                    <tr>
+                        <td><code>input</code></td>
+                        <td>入力データ</td>
+                        <td>会議メモ、KPI データ、ステータスなど</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#128161;</span>
+                ビジネスオペレーション活用シナリオ
+            </h2>
+            <div class="use-case">
+                <h4>SaaS プロダクトへの Codex API 統合</h4>
+                <p>プロジェクト管理ツールや BizOps プラットフォームの開発者は、Codex API を統合することで「データを入れるだけで経営レポートが自動生成される」機能をエンドユーザーに提供可能。</p>
+                <span class="use-case-tag">プロダクト開発者向け</span>
+            </div>
+            <div class="use-case">
+                <h4>カスタムワークフローの構築</h4>
+                <p>各企業固有のレポーティングフォーマットや意思決定プロセスに合わせたカスタムスキル・プラグインの開発。組織のテンプレートに最適化された成果物を自動生成。</p>
+                <span class="use-case-tag">システム開発者向け</span>
+            </div>
+            <div class="use-case">
+                <h4>完全自動化パイプラインの設計</h4>
+                <p>Codex Automations と組み合わせることで、週次・月次レポートの完全自動化パイプラインを構築。定期的なデータ収集から成果物配信までをエンドツーエンドで自動化。</p>
+                <span class="use-case-tag">自動化エンジニア向け</span>
+            </div>
+            <div class="use-case">
+                <h4>品質の均質化とナレッジ蓄積</h4>
+                <p>テンプレートとプロンプトの標準化により、チームメンバーの経験値に依存しない一定品質のドキュメント生成を実現。組織のベストプラクティスをプロンプトに集約。</p>
+                <span class="use-case-tag">ビジネスオペレーションチーム向け</span>
+            </div>
+            <div class="use-case">
+                <h4>戦略的業務へのシフト</h4>
+                <p>ドキュメント作成という「手作業」から解放されることで、データの解釈、戦略立案、ステークホルダーとのコミュニケーションといった高付加価値業務に集中可能。</p>
+                <span class="use-case-tag">BizOps マネージャー向け</span>
+            </div>
+        </section>
+
+        <!-- Impact -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#128640;</span>
+                期待される効果
+            </h2>
+            <div class="impact-grid">
+                <div class="impact-item">
+                    <div class="impact-value">2-3 日 &rarr; 数時間</div>
+                    <div class="impact-label">イニシアチブブリーフ作成時間</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-value">数時間 &rarr; 数分</div>
+                    <div class="impact-label">週次進捗レポート作成時間</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-value">30 分以内</div>
+                    <div class="impact-label">意思決定パケットでの判断時間</div>
+                </div>
+            </div>
+            <div style="margin-top: 24px; padding: 20px; background: var(--openai-green-light); border-radius: var(--radius-sm); border-left: 4px solid var(--openai-green);">
+                <p style="font-size: 0.88rem; color: var(--openai-dark); line-height: 1.7;"><strong>戦略的意義:</strong> 本ガイドは「Codex for Work」シリーズ第 2 弾 (財務チーム向けに続く) であり、Codex がコーディングエージェントからナレッジワーク全般を支援する AI エージェントへと進化していることを示す。今後、人事、マーケティング、法務、カスタマーサクセスなど更なる職種別ガイドの拡充が見込まれる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-brand">OpenAI Academy - Codex for Work</p>
+            <p>ソース</p>
+            <a href="https://openai.com/academy/codex-for-work/how-business-operations-teams-use-codex" target="_blank" rel="noopener noreferrer">https://openai.com/academy/codex-for-work/how-business-operations-teams-use-codex</a>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

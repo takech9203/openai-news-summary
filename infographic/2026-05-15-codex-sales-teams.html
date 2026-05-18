@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>セールスチームによる Codex 活用ガイド - OpenAI Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-light: #E6F7F2;
+            --openai-green-dark: #0D8A6A;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+            --radius: 16px;
+            --radius-sm: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #444654 100%);
+            border-radius: var(--radius);
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            font-size: 1.5rem;
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .key-point-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--openai-green-light);
+            border-radius: 10px;
+        }
+
+        .key-point-content {
+            flex: 1;
+        }
+
+        .key-point-content strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--openai-dark);
+        }
+
+        .key-point-content p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: var(--radius-sm);
+            position: relative;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border: 2px solid #FC8181;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, var(--openai-green-light) 0%, #C6F6D5 100%);
+            border: 2px solid var(--openai-green);
+        }
+
+        .comparison-card h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-card.before h4 {
+            color: #C53030;
+        }
+
+        .comparison-card.after h4 {
+            color: var(--openai-green-dark);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-card ul li::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .comparison-card.before ul li::before {
+            background: #FC8181;
+        }
+
+        .comparison-card.after ul li::before {
+            background: var(--openai-green);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .feature-card:hover {
+            border-color: var(--openai-green);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--openai-green-light) 0%, white 100%);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--openai-green);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .mermaid-container {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 24px;
+            margin-top: 16px;
+            overflow-x: auto;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .code-block {
+            margin-top: 16px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .code-header {
+            background: #21252B;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .code-title {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .code-block pre code {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        .use-case {
+            background: var(--openai-light);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .use-case p {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .footer {
+            background: var(--openai-dark);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .prompt-example {
+            background: var(--openai-gray);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-top: 16px;
+            border-left: 4px solid var(--openai-green);
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            font-family: 'Zen Maru Gothic', sans-serif;
+        }
+
+        .prompt-label {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">OPENAI ACADEMY</span>
+                <h1>セールスチームによる Codex 活用ガイド: 営業ワークフロー変革の実践手法</h1>
+                <p class="date">2026-05-15 | OpenAI Academy - Codex for Work</p>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F4CB;</span>
+                5 つの主要ユースケース
+            </h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <strong>パイプラインブリーフ (Pipeline Briefs)</strong>
+                        <p>CRM の CSV データから VP of Sales 向けの週次パイプラインブリーフを自動生成。ステージ別分析、トップディール、リスク案件、パイプラインカバレッジを網羅</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F91D;</div>
+                    <div class="key-point-content">
+                        <strong>ミーティング準備パケット (Meeting Prep Packets)</strong>
+                        <p>CRM データ、通話トランスクリプト、メール履歴から顧客ミーティングの準備資料を自動作成。想定 Q&A、競合ポジショニング、トーキングポイントを含む</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4C8;</div>
+                    <div class="key-point-content">
+                        <strong>フォーキャスト・レビュー (Forecast Reviews)</strong>
+                        <p>パイプラインデータと過去の成約率から四半期売上予測を構築。リスク加重後の予測金額、ギャップ分析、補填プランを自動算出</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AF;</div>
+                    <div class="key-point-content">
+                        <strong>アカウントプラン (Account Plans)</strong>
+                        <p>大口顧客への包括的な戦略プランを CRM データ、取引履歴、サポートチケットから自動策定。ホワイトスペース分析、ステークホルダーマップを含む</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <strong>停滞案件診断 (Stalled-Deal Diagnoses)</strong>
+                        <p>30 日以上ステージが動かない案件を自動検出。パターン分析による原因分類、回復可能性スコアリング、再活性化アクションプランを提示</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x26A1;</span>
+                時間削減効果
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">1-2h</span>
+                    <span class="stat-label">従来のミーティング準備時間</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">数分</span>
+                    <span class="stat-label">Codex での準備時間</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">5 種</span>
+                    <span class="stat-label">自動生成される営業成果物</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">3x</span>
+                    <span class="stat-label">目標パイプラインカバレッジ率</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After Comparison -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F504;</span>
+                Before / After 比較
+            </h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>&#x274C; 従来の手動プロセス</h4>
+                    <ul>
+                        <li>Salesforce / HubSpot から手動でデータエクスポート</li>
+                        <li>スプレッドシートで集計・分析 (数時間)</li>
+                        <li>PowerPoint で資料作成</li>
+                        <li>個人の経験と勘に依存するフォーキャスト</li>
+                        <li>停滞案件の見落としリスク</li>
+                        <li>ミーティング準備に 1-2 時間</li>
+                        <li>トップ営業のノウハウが属人化</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>&#x2705; Codex 活用後</h4>
+                    <ul>
+                        <li>CRM データを入力するだけで成果物を自動生成</li>
+                        <li>数分でプロフェッショナルなレポート完成</li>
+                        <li>データドリブンな客観的フォーキャスト</li>
+                        <li>停滞案件の自動検出と対応策提案</li>
+                        <li>ミーティング準備が数分に短縮</li>
+                        <li>トップ営業のノウハウが形式知化・民主化</li>
+                        <li>チーム全体のパフォーマンスが均質化</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F4E6;</span>
+                5 つのユースケース詳細
+            </h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4CA;</div>
+                    <h4>パイプラインブリーフ</h4>
+                    <p>エグゼクティブサマリー、ステージ別分析、トップ 5 大型案件、リスクフラグ付き案件、新規追加案件を自動整理</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F91D;</div>
+                    <h4>ミーティング準備パケット</h4>
+                    <p>顧客プロファイル、商談履歴サマリー、想定 Q&A、競合ポジショニング、推奨クロージングアクションを生成</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4C8;</div>
+                    <h4>フォーキャスト・レビュー</h4>
+                    <p>Commit / Best Case / Pipeline 分類、リスク加重予測、前四半期比較、ギャップ分析と補填プランを作成</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F3AF;</div>
+                    <h4>アカウントプラン</h4>
+                    <p>ホワイトスペース分析、ステークホルダーマップ、収益拡大戦略、90/180/365 日マイルストーンを策定</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F50D;</div>
+                    <h4>停滞案件診断</h4>
+                    <p>停滞検出、パターン分析、原因分類 (予算・意思決定者・競合・技術・タイミング)、回復確率スコアリング</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F3D7;</span>
+                CRM データ処理アーキテクチャ
+            </h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 16px;">Codex がセールスデータを処理し、プロフェッショナルな営業成果物に変換するプロセス</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["営業データ入力 (Real Work Inputs)"]
+        CRM["CRM データ\n(Salesforce, HubSpot)"]
+        Calls["通話記録\nコールトランスクリプト"]
+        Pipeline["パイプライン CSV\n商談エクスポート"]
+        Email["メール履歴\n顧客コミュニケーション"]
+        Market["市場データ\n競合情報"]
+    end
+
+    subgraph Codex["Codex エージェント"]
+        Parse["データ解析\nCRM パース"]
+        Analyze["分析エンジン\nパターン認識・確度計算"]
+        Structure["構造化\nフレームワーク適用"]
+        Generate["成果物生成\n品質チェック"]
+    end
+
+    subgraph Output["プロフェッショナル成果物"]
+        PB["パイプライン\nブリーフ"]
+        MP["ミーティング\n準備パケット"]
+        FR["フォーキャスト\nレビュー"]
+        AP["アカウント\nプラン"]
+        SD["停滞案件\n診断"]
+    end
+
+    subgraph Users["セールスチーム"]
+        VP["VP of Sales\nCRO"]
+        Manager["セールスマネージャー\nフロントラインリーダー"]
+        AE["アカウントエグゼクティブ\nBDR / SDR"]
+    end
+
+    CRM --> Parse
+    Calls --> Parse
+    Pipeline --> Parse
+    Email --> Parse
+    Market --> Parse
+
+    Parse --> Analyze
+    Analyze --> Structure
+    Structure --> Generate
+
+    Generate --> PB
+    Generate --> MP
+    Generate --> FR
+    Generate --> AP
+    Generate --> SD
+
+    PB --> VP
+    FR --> VP
+    FR --> Manager
+    MP --> AE
+    AP --> Manager
+    AP --> AE
+    SD --> Manager
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Parse,Analyze,Structure,Generate openai
+    class CRM,Calls,Pipeline,Email,Market dark
+    class PB,MP,FR,AP,SD accent
+    class VP,Manager,AE light
+                </pre>
+            </div>
+        </div>
+
+        <!-- Code Sample -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F4BB;</span>
+                コードサンプル: Codex API 活用例
+            </h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 16px;">Codex API を使用したパイプラインブリーフの自動生成とプロンプト例</p>
+
+            <!-- Prompt Example -->
+            <div style="margin-bottom: 24px;">
+                <span class="prompt-label">PROMPT</span>
+                <div class="prompt-example">以下の Salesforce パイプラインエクスポート (CSV) から、
+VP of Sales 向けの週次パイプラインブリーフを作成してください。
+
+含めるべき要素:
+- エグゼクティブサマリー (3 行以内)
+- ステージ別のパイプライン内訳 (件数・金額)
+- パイプラインカバレッジ率 (クォータ対比)
+- トップ 5 大型案件の状況
+- 今週の主要な変動 (ステージ移行、失注、新規追加)
+- リスクフラグ付き案件のリスト
+
+[Salesforce CSV データをここに貼り付け]</div>
+            </div>
+
+            <!-- Code Block -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">パイプラインブリーフ自動生成</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+from pathlib import Path
+import pandas as pd
+
+client = OpenAI()
+
+
+def generate_pipeline_brief(
+    pipeline_csv: str,
+    quota: float,
+    period: str
+) -> str:
+    """Codex を使用して週次パイプラインブリーフを自動生成する"""
+
+    # パイプラインデータの読み込み
+    df = pd.read_csv(pipeline_csv)
+
+    response = client.responses.create(
+        model="codex",
+        instructions="""あなたは経験豊富なセールスオペレーションマネージャーです。
+        提供されたパイプラインデータから、VP of Sales 向けの
+        週次パイプラインブリーフを作成してください。
+
+        レポートには以下を含めること:
+        - エグゼクティブサマリー (3 行以内)
+        - ステージ別パイプライン内訳 (件数・金額・平均案件サイズ)
+        - パイプラインカバレッジ率 (クォータ対比、3x が目安)
+        - トップ 5 大型案件の進捗状況
+        - 今週のステージ移行 (前進・後退)
+        - リスクフラグ: 30 日以上停滞案件
+        - 新規追加案件のハイライト
+        - 推奨アクション
+
+        出力形式: Markdown
+        トーン: データドリブンかつ簡潔""",
+        input=f"""対象期間: {period}
+クォータ: {quota:,.0f} 円
+
+パイプラインデータ:
+{df.to_string()}""",
+        tools=[
+            {
+                "type": "code_interpreter"
+            }
+        ]
+    )
+
+    return response.output_text
+
+
+# 使用例
+if __name__ == "__main__":
+    brief = generate_pipeline_brief(
+        pipeline_csv="salesforce_pipeline_export.csv",
+        quota=500_000_000,
+        period="2026 年 Q2 Week 7"
+    )
+    Path("output/pipeline_brief_w7.md").write_text(brief)</code></pre>
+            </div>
+
+            <!-- Second Code Block -->
+            <div class="code-block" style="margin-top: 24px;">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">停滞案件診断</span>
+                </div>
+                <pre><code class="language-python">def diagnose_stalled_deals(
+    pipeline_csv: str,
+    stall_threshold_days: int = 30
+) -> str:
+    """停滞案件の診断と再活性化策を生成する"""
+
+    df = pd.read_csv(pipeline_csv)
+
+    response = client.responses.create(
+        model="codex",
+        instructions=f"""あなたはセールスコンサルタントです。
+        パイプラインデータから {stall_threshold_days} 日以上
+        ステージが動いていない案件を特定し、診断レポートを作成してください。
+
+        含めるべき要素:
+        1. 停滞案件一覧 (案件名、金額、停滞日数、現ステージ)
+        2. 停滞原因の推定 (パターン分析に基づく)
+        3. 回復可能性スコア (高/中/低)
+        4. 案件ごとの再活性化アクション
+        5. パイプラインクレンジング推奨
+        6. 全体傾向と構造的課題の指摘
+
+        出力形式: Markdown""",
+        input=f"パイプラインデータ:\n{df.to_string()}",
+        tools=[
+            {
+                "type": "code_interpreter"
+            }
+        ]
+    )
+
+    return response.output_text</code></pre>
+            </div>
+
+            <!-- Third Code Block -->
+            <div class="code-block" style="margin-top: 24px;">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">ミーティング準備パケット生成</span>
+                </div>
+                <pre><code class="language-python">def generate_meeting_prep(
+    account_data: str,
+    call_transcripts: str,
+    meeting_objective: str
+) -> str:
+    """顧客ミーティング準備パケットを自動生成する"""
+
+    response = client.responses.create(
+        model="codex",
+        instructions="""あなたはエンタープライズ営業のストラテジストです。
+        顧客データと過去の通話記録から、次回ミーティングの
+        準備パケットを作成してください。
+
+        含めるべき要素:
+        - 顧客プロファイル (企業概要、組織構造、キーパーソン)
+        - 商談経緯のタイムライン
+        - 前回ミーティングの要点と合意事項
+        - 顧客の主要な懸念事項と購買シグナル
+        - 想定 Q&A (5 問)
+        - 競合ポジショニングメモ
+        - トーキングポイント (3-5 点)
+        - 推奨クロージングアクション
+
+        出力形式: Markdown""",
+        input=f"""ミーティング目的: {meeting_objective}
+
+アカウントデータ:
+{account_data}
+
+過去の通話トランスクリプト:
+{call_transcripts}""",
+        tools=[
+            {
+                "type": "code_interpreter"
+            }
+        ]
+    )
+
+    return response.output_text
+
+
+# 使用例
+prep = generate_meeting_prep(
+    account_data="企業名: ABC Corp, 従業員: 5000名, 業界: 製造業...",
+    call_transcripts="2026-04-15: 予算は Q3 に確保予定と言及...",
+    meeting_objective="技術 POC の承認を獲得する"
+)
+Path("output/meeting_prep_abc_corp.md").write_text(prep)</code></pre>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F465;</span>
+                セールスチームのユースケース
+            </h2>
+            <div class="use-case">
+                <h4>&#x1F451; VP of Sales / CRO</h4>
+                <p>経営層向けのパイプライン可視化とフォーキャスト精度向上</p>
+                <ul>
+                    <li>週次パイプラインブリーフの自動受信 - 経営会議への即座の展開が可能</li>
+                    <li>リスク加重フォーキャストにより、個人の「感覚」に依存しない予測を実現</li>
+                    <li>パイプラインカバレッジ率 (目標 3x) のリアルタイムモニタリング</li>
+                    <li>クォータ達成のためのギャップ分析と補填プランの自動提案</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4CB; セールスマネージャー / フロントラインリーダー</h4>
+                <p>チーム管理の効率化とコーチング品質の向上</p>
+                <ul>
+                    <li>停滞案件の早期検出と対応策の自動提案でパイプラインの健全性を維持</li>
+                    <li>アカウントプランのテンプレート化でチーム全体の戦略品質を標準化</li>
+                    <li>フォーキャスト・レビュー資料を経営会議前に自動準備</li>
+                    <li>データに基づくコーチングポイントの自動抽出</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4BC; アカウントエグゼクティブ / BDR / SDR</h4>
+                <p>顧客対応の質の向上と準備時間の大幅削減</p>
+                <ul>
+                    <li>ミーティング準備パケットで顧客情報を瞬時に把握 - 準備時間 1-2 時間から数分へ</li>
+                    <li>顧客からの想定質問と回答案で万全の準備体制</li>
+                    <li>競合ポジショニングメモによる差別化トークの強化</li>
+                    <li>アカウントプランによるクロスセル・アップセル機会の特定</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Codex for Work Series Context -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F4DA;</span>
+                「Codex for Work」シリーズの全体像
+            </h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 16px;">Codex がエンジニア向けコーディングツールから全社的なナレッジワーク支援プラットフォームへ進化</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4B0;</div>
+                    <h4>ファイナンス</h4>
+                    <p>MBR、差異分析、財務モデルチェック (5/12 公開)</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x2699;</div>
+                    <h4>ビジネスオペレーション</h4>
+                    <p>イニシアチブブリーフ、戦略アップデート (5/15 公開)</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4CA;</div>
+                    <h4>データサイエンス</h4>
+                    <p>障害分析ブリーフ、KPI メモ (5/15 公開)</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F4BC;</div>
+                    <h4>セールス (本ガイド)</h4>
+                    <p>パイプラインブリーフ、フォーキャスト・レビュー (5/15 公開)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#x1F680;</span>
+                開発者への影響とビジネス機会
+            </h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50C;</div>
+                    <div class="key-point-content">
+                        <strong>CRM プラグイン開発</strong>
+                        <p>Salesforce や HubSpot のプラグインとして Codex API を統合し、CRM 内からワンクリックでレポート生成する機能を提供可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3A4;</div>
+                    <div class="key-point-content">
+                        <strong>セールスイネーブルメントツール</strong>
+                        <p>Gong、Chorus、Outreach 等の既存プラットフォームにミーティング準備パケット自動生成を組み込み可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4A1;</div>
+                    <div class="key-point-content">
+                        <strong>レベニューインテリジェンス</strong>
+                        <p>Clari、Aviso 等のツールに停滞案件診断やフォーキャスト精度向上機能を統合可能</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>OpenAI Academy - Codex for Work シリーズ</p>
+            <p><a href="https://openai.com/academy/codex-for-work/how-sales-teams-use-codex">https://openai.com/academy/codex-for-work/how-sales-teams-use-codex</a></p>
+            <p style="margin-top: 12px; font-size: 0.75rem; opacity: 0.6;">2026-05-15 | OpenAI News Summary</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
