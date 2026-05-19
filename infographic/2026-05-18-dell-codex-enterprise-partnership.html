@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI × Dell: Codex をハイブリッド / オンプレミス環境へ</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+:root {
+    --openai-green: #10A37F;
+    --openai-dark: #343541;
+    --openai-light: #F7F7F8;
+    --openai-gray: #ECECF1;
+    --text-primary: #343541;
+    --text-secondary: #565869;
+    --text-muted: #8E8EA0;
+    --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+    --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background: var(--openai-light);
+    color: var(--text-primary);
+    line-height: 1.7;
+}
+
+.container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+.header {
+    background: var(--gradient-header);
+    color: white;
+    padding: 48px 32px;
+    border-radius: 24px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.header-content { position: relative; z-index: 1; }
+.category-badge {
+    display: inline-block;
+    background: var(--openai-green);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+.header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+.header .date { font-size: 14px; opacity: 0.8; }
+
+.section {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(16, 163, 127, 0.1);
+}
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: var(--openai-green);
+    border-radius: 2px;
+}
+
+.key-points { display: grid; gap: 16px; }
+.key-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background: var(--openai-gray);
+    border-radius: 12px;
+}
+.key-point-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+.key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+.key-point-content p { font-size: 14px; color: var(--text-secondary); }
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+.feature-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+    border: 2px solid rgba(16, 163, 127, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+}
+.feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.comparison-card { padding: 24px; border-radius: 16px; }
+.comparison-card.before { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); border: 2px solid #F87171; }
+.comparison-card.after { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border: 2px solid #34D399; }
+.comparison-card h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.comparison-card.before h4 { color: #DC2626; }
+.comparison-card.after h4 { color: #059669; }
+
+.timeline { position: relative; padding-left: 30px; }
+.timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 3px; background: var(--openai-green); border-radius: 2px; }
+.timeline-item { position: relative; margin-bottom: 20px; padding: 16px; background: var(--openai-gray); border-radius: 12px; }
+.timeline-item::before { content: ''; position: absolute; left: -25px; top: 20px; width: 12px; height: 12px; background: var(--openai-green); border-radius: 50%; border: 3px solid white; }
+.timeline-item .date { font-size: 12px; color: var(--openai-green); font-weight: 700; margin-bottom: 4px; }
+.timeline-item .content { font-size: 14px; color: var(--text-secondary); }
+
+.use-case {
+    background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+    border-left: 4px solid var(--openai-green);
+    padding: 20px 24px;
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 16px;
+}
+.use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--openai-dark); }
+.use-case p { font-size: 14px; color: var(--text-secondary); }
+
+.mermaid-container {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    border: 2px solid rgba(16, 163, 127, 0.2);
+    overflow-x: auto;
+}
+.mermaid { display: flex; justify-content: center; }
+
+.footer {
+    margin-top: 40px;
+    padding: 24px 32px;
+    background: var(--openai-gray);
+    border-radius: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+.footer a { color: var(--openai-green); text-decoration: none; word-break: break-all; }
+.footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+    .header { padding: 32px 24px; }
+    .header h1 { font-size: 1.5rem; }
+    .section { padding: 24px; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .comparison { grid-template-columns: 1fr; }
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">PARTNERSHIP</span>
+                <h1>OpenAI × Dell: Codex をハイブリッド / オンプレミス環境へ</h1>
+                <div class="date">2026-05-18</div>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3E2;</div>
+                    <div class="key-point-content">
+                        <h3>データ主権の確保</h3>
+                        <p>機密性の高いコードやデータを社外に出すことなく、Codex の AI コーディング支援を活用可能に。企業のデータガバナンスポリシーに完全準拠します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>セキュアなデプロイメント</h3>
+                        <p>Dell PowerEdge サーバー上で Codex エージェントをローカル実行。ネットワーク境界内での安全なデプロイメントを実現します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>ワークフロー統合</h3>
+                        <p>既存の CI/CD パイプラインや開発ツールチェーンとシームレスに統合。ハイブリッド接続により、必要に応じてクラウドの最新モデルも活用できます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4C8;</div>
+                    <div class="key-point-content">
+                        <h3>採用範囲の拡大</h3>
+                        <p>クラウド利用が困難だった規制産業 (金融、医療、政府機関) でも Codex の導入が可能に。エンタープライズ AI コーディングの市場を大幅に拡大します。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: クラウドのみ</h4>
+                    <p>Codex はクラウド環境でのみ利用可能、機密データの送信が必要</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: ハイブリッド対応</h4>
+                    <p>オンプレミスでも Codex が利用可能、データは社内に留まる</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">Dell インフラストラクチャ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F5A5;&#xFE0F; Dell PowerEdge サーバー</h3>
+                    <p>GPU 搭載の高性能サーバーで Codex エージェントをローカル実行。低レイテンシーでのコード生成と解析を実現します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2601;&#xFE0F; Dell APEX ハイブリッドクラウド</h3>
+                    <p>オンプレミスとクラウドを柔軟に接続するハイブリッドインフラ。ワークロードに応じて最適な実行環境を自動選択します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1;&#xFE0F; Dell Data Protection</h3>
+                    <p>エンタープライズグレードのデータ保護機能を統合。暗号化、アクセス制御、監査ログによりコンプライアンスを確保します。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2 class="section-title">Codex エンタープライズの進化</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="date">2026-04</div>
+                    <div class="content">Codex エンタープライズプラン正式リリース。クラウドベースでの大規模組織向け展開を開始。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2026-04 中旬</div>
+                    <div class="content">Codex エンタープライズ無料枠の提供開始。中小企業にも AI コーディング支援を拡大。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2026-05 初旬</div>
+                    <div class="content">Codex モバイル対応とリモート接続機能の追加。どこからでもエージェントにアクセス可能に。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2026-05-18</div>
+                    <div class="content">Dell との提携発表。ハイブリッド / オンプレミス環境への Codex 展開が可能に。</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Enterprise["企業環境"]
+        subgraph OnPrem["オンプレミス (Dell Infrastructure)"]
+            CodexLocal["Codex Agent (ローカル)"]
+            Code["社内コードベース"]
+            Data["機密データ"]
+        end
+        subgraph Hybrid["ハイブリッド接続"]
+            Gateway["API Gateway"]
+        end
+    end
+    subgraph Cloud["OpenAI Cloud"]
+        CodexCloud["Codex Models"]
+        API["OpenAI API"]
+    end
+    Code --> CodexLocal
+    CodexLocal --> Gateway
+    Gateway --> API
+    API --> CodexCloud
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dell fill:#0076CE,stroke:#005DA6,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    class CodexCloud,API openai
+    class CodexLocal,Code,Data dell
+    class Gateway dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>&#x1F3E6; 金融業界</h4>
+                <p>コンプライアンス要件を満たしながら AI コーディング支援</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3E5; 医療 / ヘルスケア</h4>
+                <p>患者データに触れることなくシステム開発を加速</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3DB;&#xFE0F; 政府機関</h4>
+                <p>国家安全保障レベルのセキュリティで AI 開発を活用</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">Developer Impact</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>開発速度の向上</h3>
+                        <p>オンプレミス環境でも Codex のコード生成・レビュー機能を活用でき、開発サイクルを大幅に短縮します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F510;</div>
+                    <div class="key-point-content">
+                        <h3>セキュリティ制約の解消</h3>
+                        <p>これまでセキュリティポリシーにより AI ツールを使えなかった開発者も、安全にコーディング支援を受けられるようになります。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F527;</div>
+                    <div class="key-point-content">
+                        <h3>既存ツールとの統合</h3>
+                        <p>社内の Git リポジトリ、CI/CD、コードレビューツールと直接連携。ワークフローを変えずに AI を導入できます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F30D;</div>
+                    <div class="key-point-content">
+                        <h3>グローバル展開の促進</h3>
+                        <p>各国のデータ規制に対応したローカルデプロイメントにより、グローバル企業での全社展開が容易になります。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Source: <a href="https://openai.com/index/dell-codex-enterprise-partnership" target="_blank" rel="noopener noreferrer">https://openai.com/index/dell-codex-enterprise-partnership</a></p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

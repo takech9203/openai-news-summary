@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-19](2026/2026-05-19-openai-agents-sdk-v0-17-3.md) - OpenAI Agents SDK v0.17.3: サンドボックスセキュリティと安定性の向上
+- [2026-05-18](2026/2026-05-18-dell-codex-enterprise-partnership.md) - OpenAI と Dell が Codex のハイブリッド / オンプレミス企業環境展開で提携
 - [2026-05-16](2026/2026-05-16-malta-chatgpt-plus-partnership.md) - OpenAI とマルタ政府が提携、全国民に ChatGPT Plus を提供へ
 - [2026-05-16](2026/2026-05-16-brockman-chatgpt-codex-merger.md) - Greg Brockman が製品戦略を統括、ChatGPT と Codex の統合プラットフォーム化を計画
 - [2026-05-15](2026/2026-05-15-personal-finance-chatgpt.md) - ChatGPT に新しいパーソナルファイナンス機能が登場
