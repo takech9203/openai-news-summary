@@ -5,7 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-20](2026/2026-05-20-openai-singapore-applied-ai-lab.md) - OpenAI がシンガポールに初の海外応用 AI ラボを設立、3 億シンガポールドル超を投資
+- [2026-05-19](2026/2026-05-19-openai-stateful-runtime-agents-bedrock.md) - OpenAI が Amazon Bedrock 向けステートフルランタイム環境を発表
+- [2026-05-19](2026/2026-05-19-openai-guaranteed-capacity.md) - OpenAI が「Guaranteed Capacity」を発表 - エンタープライズ向け専用コンピュートキャパシティ確保プログラム
 - [2026-05-19](2026/2026-05-19-openai-agents-sdk-v0-17-3.md) - OpenAI Agents SDK v0.17.3: サンドボックスセキュリティと安定性の向上
+- [2026-05-19](2026/2026-05-19-advancing-content-provenance.md) - AI コンテンツの来歴証明を推進: より安全で透明性の高い AI エコシステムに向けて
 - [2026-05-18](2026/2026-05-18-dell-codex-enterprise-partnership.md) - OpenAI と Dell が Codex のハイブリッド / オンプレミス企業環境展開で提携
 - [2026-05-16](2026/2026-05-16-malta-chatgpt-plus-partnership.md) - OpenAI とマルタ政府が提携、全国民に ChatGPT Plus を提供へ
 - [2026-05-16](2026/2026-05-16-brockman-chatgpt-codex-merger.md) - Greg Brockman が製品戦略を統括、ChatGPT と Codex の統合プラットフォーム化を計画

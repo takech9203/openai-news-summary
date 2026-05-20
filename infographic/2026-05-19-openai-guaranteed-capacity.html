@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Guaranteed Capacity - エンタープライズ向け専用コンピュートキャパシティ確保プログラム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2717';
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2713';
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Enterprise / Pricing</span>
+                <h1>OpenAI が「Guaranteed Capacity」を発表 - エンタープライズ向け専用コンピュートキャパシティ確保プログラム</h1>
+                <p class="date">2026-05-19</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F5A5;</div>
+                    <div class="key-point-content">
+                        <h3>専用コンピュートキャパシティ</h3>
+                        <p>エンタープライズ顧客向けに専用のコンピュートリソースを確保。他の顧客のトラフィックに影響されない安定した処理能力を提供します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4B0;</div>
+                    <div class="key-point-content">
+                        <h3>長期コミットメント割引</h3>
+                        <p>複数年契約により、トークン単価の大幅な割引を実現。予算計画の予測可能性も向上します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>保証されたスループット (TPM)</h3>
+                        <p>他の顧客の使用状況に影響されない、専用の Tokens Per Minute (TPM) を保証。ピーク時でも安定したパフォーマンスを維持します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-content">
+                        <h3>全主要モデルに対応</h3>
+                        <p>GPT-4o、GPT-4.1、Codex、o3 など、OpenAI の主要モデル全てで Guaranteed Capacity を利用可能です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3E2;</div>
+                    <div class="key-point-content">
+                        <h3>包括的エンタープライズ戦略の一環</h3>
+                        <p>FedRAMP 認証、AWS 連携、Dell パートナーシップなど、より広範なエンタープライズ戦略の重要な構成要素として位置づけられています。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 共有キャパシティ</h4>
+                    <ul>
+                        <li>他の顧客とリソースを共有</li>
+                        <li>ピーク時にレート制限発生</li>
+                        <li>429 エラー (Too Many Requests) が頻発</li>
+                        <li>スループットの予測が困難</li>
+                        <li>SLA 保証なし</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: Guaranteed Capacity</h4>
+                    <ul>
+                        <li>専用のコンピュートプールを確保</li>
+                        <li>安定した TPM を保証</li>
+                        <li>429 エラーの排除</li>
+                        <li>予測可能なパフォーマンス</li>
+                        <li>エンタープライズ SLA 付き</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats: Commitment Tiers -->
+        <section class="section">
+            <h2 class="section-title">コミットメントティア</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1 年</div>
+                    <div class="stat-label">スタンダード</div>
+                    <div class="stat-desc">予測可能なアクセス、基本割引</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">複数年</div>
+                    <div class="stat-label">プレミアム</div>
+                    <div class="stat-desc">大幅なトークン割引、優先サポート</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Custom</div>
+                    <div class="stat-label">カスタム</div>
+                    <div class="stat-desc">テーラーメイドのキャパシティ設計</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F3AF; 専用 TPM 保証</h3>
+                    <p>契約に基づく Tokens Per Minute の専用枠を確保。他の顧客の影響を受けず、安定した処理速度を実現します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4C8; バーストキャパシティ</h3>
+                    <p>一時的なトラフィック急増にも対応可能なバースト機能を搭載。予期しないピーク負荷も柔軟に処理します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; エンタープライズ SLA</h3>
+                    <p>稼働率やレスポンスタイムに関する明確な SLA を提供。ビジネスクリティカルなワークロードに安心を。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F504; コード変更不要</h3>
+                    <p>既存の API エンドポイントをそのまま使用可能。アプリケーション側の変更なしに Guaranteed Capacity を有効化できます。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CB; Codex レートカード</h3>
+                    <p>Codex モデル専用のレートカードを提供。開発ワークフローにおける予測可能なコスト管理を支援します。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Enterprise["エンタープライズ顧客"]
+        App["業務アプリケーション"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph OpenAI["OpenAI Platform"]
+        subgraph Capacity["Guaranteed Capacity Layer"]
+            Dedicated["専用キャパシティプール"]
+            RateControl["レート制御"]
+            SLA["SLA モニタリング"]
+        end
+        subgraph Models["Models"]
+            GPT4o["GPT-4o"]
+            GPT41["GPT-4.1"]
+            Codex["Codex"]
+            O3["o3"]
+        end
+    end
+
+    subgraph Contract["契約管理"]
+        Commit["長期コミットメント"]
+        Billing["割引トークン課金"]
+    end
+
+    App --> SDK
+    SDK --> Dedicated
+    Dedicated --> RateControl
+    RateControl --> GPT4o
+    RateControl --> GPT41
+    RateControl --> Codex
+    RateControl --> O3
+    Commit --> Dedicated
+    Billing --> Commit
+    SLA --> Dedicated
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT4o,GPT41,Codex,O3 openai
+    class Dedicated,RateControl,SLA dark
+    class App,SDK,Commit,Billing light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>&#x1F3E5; ミッションクリティカルなヘルスケアアプリケーション</h4>
+                <p>医療機関向け AI アシスタントなど、ダウンタイムが許容されないシステムにおいて、安定したレスポンスを保証。患者対応の品質と信頼性を維持します。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4CA; 大規模データ分析パイプライン</h4>
+                <p>数百万件のドキュメント処理や大規模バッチ処理において、一貫したスループットを確保。処理完了時間の予測精度を高め、SLA の遵守を支援します。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F469;&#x200D;&#x1F4BB; エンタープライズ開発チーム (Codex)</h4>
+                <p>大規模開発チームが Codex を活用する際に、全エンジニアが安定したコード生成・レビュー機能にアクセス。開発生産性の一貫した向上を実現します。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F310; グローバルカスタマーサポート</h4>
+                <p>世界中の顧客からのリクエストに 24 時間 365 日対応する AI チャットボットにおいて、ピーク時でもレスポンス品質を維持。顧客満足度の安定化に貢献します。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/business/guaranteed-capacity/" target="_blank" rel="noopener noreferrer">https://openai.com/business/guaranteed-capacity/</a></p>
+            <p style="margin-top: 8px;">関連: FedRAMP 認証、AWS Marketplace 連携、Dell エンタープライズパートナーシップ</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
