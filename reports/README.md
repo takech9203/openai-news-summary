@@ -5,7 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-20](2026/2026-05-20-ramp-codex-code-review.md) - Ramp のエンジニアが Codex でコードレビューを加速させる方法
 - [2026-05-20](2026/2026-05-20-openai-singapore-applied-ai-lab.md) - OpenAI がシンガポールに初の海外応用 AI ラボを設立、3 億シンガポールドル超を投資
+- [2026-05-20](2026/2026-05-20-openai-model-disproves-geometry-conjecture.md) - OpenAI モデルが離散幾何学の中心的予想を反証 -- 80 年来の単位距離問題に決着
+- [2026-05-20](2026/2026-05-20-education-for-countries-next-phase.md) - OpenAI「Education for Countries」プログラムが次のフェーズへ: 新パートナーシップと教師研修で世界の教育変革を加速
 - [2026-05-19](2026/2026-05-19-openai-stateful-runtime-agents-bedrock.md) - OpenAI が Amazon Bedrock 向けステートフルランタイム環境を発表
 - [2026-05-19](2026/2026-05-19-openai-guaranteed-capacity.md) - OpenAI が「Guaranteed Capacity」を発表 - エンタープライズ向け専用コンピュートキャパシティ確保プログラム
 - [2026-05-19](2026/2026-05-19-openai-agents-sdk-v0-17-3.md) - OpenAI Agents SDK v0.17.3: サンドボックスセキュリティと安定性の向上
