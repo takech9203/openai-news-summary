@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-21](2026/2026-05-21-openai-sdk-v2-38-v6-39.md) - OpenAI Python SDK v2.38.0 / Node SDK v6.39.0: Admin API の大幅拡張とガバナンス機能の追加
+- [2026-05-21](2026/2026-05-21-adventhealth-chatgpt-healthcare.md) - AdventHealth が OpenAI と連携し、ホールパーソンケアを推進
 - [2026-05-20](2026/2026-05-20-ramp-codex-code-review.md) - Ramp のエンジニアが Codex でコードレビューを加速させる方法
 - [2026-05-20](2026/2026-05-20-openai-singapore-applied-ai-lab.md) - OpenAI がシンガポールに初の海外応用 AI ラボを設立、3 億シンガポールドル超を投資
 - [2026-05-20](2026/2026-05-20-openai-model-disproves-geometry-conjecture.md) - OpenAI モデルが離散幾何学の中心的予想を反証 -- 80 年来の単位距離問題に決着
