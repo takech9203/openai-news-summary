@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-22](2026/2026-05-22-virgin-atlantic-codex.md) - Virgin Atlantic が Codex を活用してモバイルアプリの高速リリースを実現
+- [2026-05-22](2026/2026-05-22-openai-gartner-coding-leader.md) - OpenAI が Gartner 2026 年エンタープライズ AI コーディングエージェント分野でリーダーに選出
 - [2026-05-21](2026/2026-05-21-openai-sdk-v2-38-v6-39.md) - OpenAI Python SDK v2.38.0 / Node SDK v6.39.0: Admin API の大幅拡張とガバナンス機能の追加
 - [2026-05-21](2026/2026-05-21-adventhealth-chatgpt-healthcare.md) - AdventHealth が OpenAI と連携し、ホールパーソンケアを推進
 - [2026-05-20](2026/2026-05-20-ramp-codex-code-review.md) - Ramp のエンジニアが Codex でコードレビューを加速させる方法
