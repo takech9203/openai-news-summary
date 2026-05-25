@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI が First Proof 数学チャレンジへの証明提出を公開 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .result-card {
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .result-card.success {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .result-card.partial {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #FBBF24;
+        }
+
+        .result-card.failure {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .result-card.limits {
+            background: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+            border: 2px solid #818CF8;
+        }
+
+        .result-card .result-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .result-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .result-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* What is First Proof table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .info-table th,
+        .info-table td {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .info-table th {
+            background: var(--openai-dark);
+            color: white;
+            font-weight: 700;
+            width: 120px;
+        }
+
+        .info-table tr:first-child th {
+            border-radius: 8px 0 0 0;
+        }
+
+        .info-table tr:last-child th {
+            border-radius: 0 0 0 8px;
+        }
+
+        .info-table td {
+            background: var(--openai-gray);
+        }
+
+        .info-table tr:first-child td {
+            border-radius: 0 8px 0 0;
+        }
+
+        .info-table tr:last-child td {
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Capability table */
+        .capability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .capability-card {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .capability-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .capability-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Developer Impact */
+        .impact-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .impact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--openai-gray);
+            border-radius: 10px;
+        }
+
+        .impact-item .impact-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--openai-dark);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .impact-item .impact-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .impact-item .impact-text strong {
+            color: var(--text-primary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .capability-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">研究成果 / AI 数学</span>
+                <h1>OpenAI が First Proof 数学チャレンジへの証明提出を公開</h1>
+                <p class="subtitle">研究レベル推論の透明性ある評価</p>
+                <p class="date">2026-05-24</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 / キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📐</div>
+                    <div class="key-point-content">
+                        <h3>First Proof チャレンジへの証明試行結果を公開</h3>
+                        <p>OpenAI が AI モデルによる数学的証明の試行を、成功・失敗を含めて透明性をもって公開</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-content">
+                        <h3>競技数学を超えた専門家レベルの問題に挑戦</h3>
+                        <p>プロの数学者レベルの問題に取り組み、研究レベルの推論能力 (research-grade reasoning) を評価</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>成功だけでなく失敗した試行も含めて公開</h3>
+                        <p>モデルの限界を正直に示すことで、AI 能力評価の透明性を確保</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏆</div>
+                    <div class="key-point-content">
+                        <h3>5 月 20 日の離散幾何学予想の反証に続く成果</h3>
+                        <p>連続的な研究成果の一環として位置づけ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What is First Proof -->
+        <section class="section">
+            <h2 class="section-title">First Proof チャレンジとは</h2>
+            <table class="info-table">
+                <tr>
+                    <th>難易度</th>
+                    <td>プロの数学者レベルの問題</td>
+                </tr>
+                <tr>
+                    <th>形式</th>
+                    <td>形式的証明 (formal proof) の構築を要求</td>
+                </tr>
+                <tr>
+                    <th>目的</th>
+                    <td>研究レベルの推論能力のベンチマーク</td>
+                </tr>
+                <tr>
+                    <th>対象</th>
+                    <td>定理証明、予想の検証、反例構成など</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- OpenAI's Approach - Reasoning Steps -->
+        <section class="section">
+            <h2 class="section-title">OpenAI の推論アプローチ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span class="step-number">1</span> 研究レベル推論の適用</h3>
+                    <p>新規の数学的洞察を要する問題に対して、研究レベルの推論能力を適用</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="step-number">2</span> 形式的証明の生成</h3>
+                    <p>検証可能な形式的証明を出力し、論理的整合性を担保</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="step-number">3</span> 反復的改善</h3>
+                    <p>各ステップを検証し、誤りがあれば修正を繰り返す</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="step-number">4</span> 複数戦略の探索</h3>
+                    <p>並行して複数のアプローチを試行し、最適な証明戦略を模索</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reasoning Process Steps -->
+        <section class="section">
+            <h2 class="section-title">推論プロセスの詳細ステップ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><span class="step-number">1</span> 問題の形式化</h3>
+                    <p>自然言語から形式的数学言語への変換</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="step-number">2</span> 証明戦略の選択</h3>
+                    <p>トップダウン + ボトムアップの両方向から戦略を立案</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="step-number">3</span> 補題の発見</h3>
+                    <p>必要な中間的命題の特定と証明</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="step-number">4</span> タクティクの適用</h3>
+                    <p>証明ステップの具体的な実行</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span class="step-number">5</span> バックトラッキング</h3>
+                    <p>行き詰まり時の戦略切替と別ルートの探索</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section class="section">
+            <h2 class="section-title">公開された結果の分類</h2>
+            <div class="results-grid">
+                <div class="result-card success">
+                    <div class="result-icon">&#x2705;</div>
+                    <h4>成功事例</h4>
+                    <p>正しく形式的証明を構築できたケース</p>
+                </div>
+                <div class="result-card partial">
+                    <div class="result-icon">&#x26A0;&#xFE0F;</div>
+                    <h4>部分的成功</h4>
+                    <p>方向性は正しいが不完全な証明</p>
+                </div>
+                <div class="result-card failure">
+                    <div class="result-icon">&#x274C;</div>
+                    <h4>失敗事例</h4>
+                    <p>誤ったアプローチや行き詰まり</p>
+                </div>
+                <div class="result-card limits">
+                    <div class="result-icon">&#x1F6A7;</div>
+                    <h4>モデルの限界</h4>
+                    <p>対処できない問題の種類を特定</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Capabilities -->
+        <section class="section">
+            <h2 class="section-title">必要とされる技術的能力</h2>
+            <div class="capability-grid">
+                <div class="capability-card">
+                    <h4>論理的推論</h4>
+                    <p>公理と推論規則の正確な適用</p>
+                </div>
+                <div class="capability-card">
+                    <h4>戦略的思考</h4>
+                    <p>証明の全体構造の設計</p>
+                </div>
+                <div class="capability-card">
+                    <h4>知識活用</h4>
+                    <p>既知の定理や補題の適切な引用</p>
+                </div>
+                <div class="capability-card">
+                    <h4>検証統合</h4>
+                    <p>各ステップの正当性の自己チェック</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">証明パイプライン アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["問題入力"]
+        Problem["First Proof\nチャレンジ問題"]
+        Axioms["公理系・\n既知の定理"]
+    end
+
+    subgraph Reasoning["OpenAI モデル (推論エンジン)"]
+        Understanding["問題の理解と\n形式化"]
+        Strategy["証明戦略の\n立案"]
+        Construction["証明ステップの\n構築"]
+        SelfCheck["自己検証と\n修正"]
+    end
+
+    subgraph Verification["検証パイプライン"]
+        FormalCheck["形式的証明\nチェッカー"]
+        Validator["論理的整合性\n検証"]
+    end
+
+    subgraph Output["出力"]
+        Success["完成した証明\n(提出)"]
+        Partial["部分的証明\n(公開)"]
+        Failed["失敗した試行\n(公開)"]
+    end
+
+    Problem --> Understanding
+    Axioms --> Understanding
+
+    Understanding --> Strategy
+    Strategy --> Construction
+    Construction --> SelfCheck
+    SelfCheck -->|修正が必要| Strategy
+    SelfCheck -->|ステップ完了| FormalCheck
+
+    FormalCheck -->|検証成功| Validator
+    FormalCheck -->|検証失敗| Construction
+    Validator -->|証明完成| Success
+    Validator -->|不完全| Partial
+    Strategy -->|戦略なし| Failed
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Understanding,Strategy,Construction,SelfCheck openai
+    class FormalCheck,Validator dark
+    class Problem,Axioms,Success,Partial,Failed light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-list">
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F50C;</div>
+                    <div class="impact-text"><strong>形式検証ツールとの統合:</strong> ソフトウェア検証、スマートコントラクト安全性証明への応用</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F4C8;</div>
+                    <div class="impact-text"><strong>推論能力の進化指標:</strong> API 経由の推論タスク品質予測に活用可能</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F4DA;</div>
+                    <div class="impact-text"><strong>数学ライブラリの自動証明:</strong> コード内アルゴリズムの正当性証明の自動化</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F50D;</div>
+                    <div class="impact-text"><strong>透明性のモデル:</strong> 失敗含めた AI 能力評価手法の確立</div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F517;</div>
+                    <div class="impact-text"><strong>長い推論チェーンの信頼性:</strong> 能力と限界の理解に基づく適切な活用</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>ソフトウェア形式検証</h4>
+                <p>コードの正当性の数学的証明。アルゴリズムが仕様通りに動作することを形式的に保証する</p>
+            </div>
+            <div class="use-case">
+                <h4>スマートコントラクト安全性</h4>
+                <p>脆弱性がないことの形式的証明。金融取引を扱うコントラクトの安全性を数学的に検証する</p>
+            </div>
+            <div class="use-case">
+                <h4>研究支援</h4>
+                <p>数学者との協働による未解決問題への挑戦。AI が証明の方向性を提案し、人間が検証・修正する</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/first-proof-submissions/" target="_blank" rel="noopener noreferrer">https://openai.com/index/first-proof-submissions/</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - 2026-05-24</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

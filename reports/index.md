@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-24](2026/2026-05-24-introducing-evmbench.md) - OpenAI と Paradigm がスマートコントラクト脆弱性検出 AI ベンチマーク「EVMbench」を発表
+- [2026-05-24](2026/2026-05-24-gpt-5-protein-synthesis-cost.md) - GPT-5 が無細胞タンパク質合成のコストを 40% 削減 -- 自律実験ラボによる閉ループ最適化
+- [2026-05-24](2026/2026-05-24-gpt-5-2-theoretical-physics-result.md) - GPT-5.2 がグルーオン振幅の新公式を導出 -- AI による理論物理学の独創的成果
+- [2026-05-24](2026/2026-05-24-first-proof-submissions.md) - OpenAI が First Proof 数学チャレンジへの証明提出を公開 -- 研究レベル推論の透明性ある評価
 - [2026-05-22](2026/2026-05-22-virgin-atlantic-codex.md) - Virgin Atlantic が Codex を活用してモバイルアプリの高速リリースを実現
 - [2026-05-22](2026/2026-05-22-openai-gartner-coding-leader.md) - OpenAI が Gartner 2026 年エンタープライズ AI コーディングエージェント分野でリーダーに選出
 - [2026-05-21](2026/2026-05-21-openai-sdk-v2-38-v6-39.md) - OpenAI Python SDK v2.38.0 / Node SDK v6.39.0: Admin API の大幅拡張とガバナンス機能の追加
