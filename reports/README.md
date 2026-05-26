@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-25](2026/2026-05-25-grupo-folha-grupo-uol-partnership.md) - OpenAI、Grupo Folha および Grupo UOL と戦略的コンテンツパートナーシップを締結
 - [2026-05-24](2026/2026-05-24-introducing-evmbench.md) - OpenAI と Paradigm がスマートコントラクト脆弱性検出 AI ベンチマーク「EVMbench」を発表
 - [2026-05-24](2026/2026-05-24-gpt-5-protein-synthesis-cost.md) - GPT-5 が無細胞タンパク質合成のコストを 40% 削減 -- 自律実験ラボによる閉ループ最適化
 - [2026-05-24](2026/2026-05-24-gpt-5-2-theoretical-physics-result.md) - GPT-5.2 がグルーオン振幅の新公式を導出 -- AI による理論物理学の独創的成果
