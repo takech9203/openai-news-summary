@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-26](2026/2026-05-26-openai-agents-sdk-v0-17-4.md) - OpenAI Agents SDK v0.17.4: Realtime カスタムボイス対応とトレーシング・MCP 安定性の向上
+- [2026-05-26](2026/2026-05-26-codex-cli-v0-134-0.md) - Codex CLI v0.134.0: ローカル会話履歴検索とプロファイル管理の刷新
 - [2026-05-25](2026/2026-05-25-grupo-folha-grupo-uol-partnership.md) - OpenAI、Grupo Folha および Grupo UOL と戦略的コンテンツパートナーシップを締結
 - [2026-05-24](2026/2026-05-24-introducing-evmbench.md) - OpenAI と Paradigm がスマートコントラクト脆弱性検出 AI ベンチマーク「EVMbench」を発表
 - [2026-05-24](2026/2026-05-24-gpt-5-protein-synthesis-cost.md) - GPT-5 が無細胞タンパク質合成のコストを 40% 削減 -- 自律実験ラボによる閉ループ最適化
