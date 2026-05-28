@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex CLI v0.135.0-alpha - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .badge-alpha {
+            background: var(--warning);
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 16px;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            padding: 6px 0;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .bug-fixes {
+            display: grid;
+            gap: 10px;
+        }
+
+        .bug-fix-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .bug-fix-item::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .infra-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .infra-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .infra-item .infra-icon {
+            font-size: 16px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">SDK UPDATE</span>
+                <span class="category-badge badge-alpha">ALPHA</span>
+                <h1>Codex CLI v0.135.0-alpha: Python SDK Beta、メモリシステム刷新、Vim テキストオブジェクト対応</h1>
+                <p class="date">2026-05-27 | 95 commits from v0.134.0</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🐍</div>
+                    <div class="key-point-content">
+                        <h3>Python SDK Beta</h3>
+                        <p>Codex CLI の Python SDK が独立ベータリリースとして公開。Rust ツールチェインなしで Python プロジェクトに統合可能に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>メモリシステムの全面刷新</h3>
+                        <p>メモリ状態を専用 SQLite DB に移行。アドホックメモリノート、エクステンション化されたプロンプトビルダー、メトリクス追跡を実装。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⌨️</div>
+                    <div class="key-point-content">
+                        <h3>Vim テキストオブジェクトバインディング</h3>
+                        <p>完全な Vim テキストオブジェクト操作を TUI に実装。word-end / line-end 動作、設定可能なターン中断キーバインド対応。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>Markdown テーブルレンダリング強化</h3>
+                        <p>アプリスタイルのテーブル描画と、狭小テーブルのキーバリューレコード変換に対応。OSC 8 ハイパーリンクも実装。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔌</div>
+                    <div class="key-point-content">
+                        <h3>エクステンションシステムの拡充</h3>
+                        <p>スタンドアロン Web 検索、スレッドアイドルライフサイクルフック、Goal 使用量制限、Bedrock Namespace Tools を追加。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">リリース統計</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">95</div>
+                    <div class="stat-label">コミット数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">アルファリリース</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">10+</div>
+                    <div class="stat-label">主要新機能</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1.95</div>
+                    <div class="stat-label">Rust ツールチェイン</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After - Memory System -->
+        <section class="section">
+            <h2 class="section-title">Before / After: メモリシステム</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (v0.134.0)</h4>
+                    <ul>
+                        <li>ファイルベースのメモリ管理</li>
+                        <li>MCP crate による分散ストレージ</li>
+                        <li>動的ツールストレージとの冗長性</li>
+                        <li>メトリクスなし</li>
+                        <li>アドホックなメモリ追加不可</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (v0.135.0-alpha)</h4>
+                    <ul>
+                        <li>専用 SQLite DB による一元管理</li>
+                        <li>エクステンションベースのプロンプトビルダー</li>
+                        <li>冗長ストレージの削除</li>
+                        <li>メトリクス追跡による可観測性</li>
+                        <li>アドホックメモリノートツール</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Major Features -->
+        <section class="section">
+            <h2 class="section-title">主要新機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🐍 Python SDK Beta</h3>
+                    <p>独立したベータリリースとして Python SDK を公開。</p>
+                    <ul>
+                        <li>独立パッケージメタデータ</li>
+                        <li>フレンドリーなサンドボックスプリセット</li>
+                        <li>CodexConfig リネーミング</li>
+                        <li>ドキュメント整備</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🧠 メモリシステム刷新</h3>
+                    <p>SQLite DB ベースの新メモリアーキテクチャ。</p>
+                    <ul>
+                        <li>専用 SQLite DB</li>
+                        <li>アドホックメモリノート</li>
+                        <li>プロンプトビルダーのエクステンション化</li>
+                        <li>メモリツールコールメトリクス</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>⌨️ Vim テキストオブジェクト</h3>
+                    <p>完全な Vim テキストオブジェクトバインディングを実装。</p>
+                    <ul>
+                        <li>iw, aw, i", a( など</li>
+                        <li>word-end / line-end 動作</li>
+                        <li>設定可能なターン中断キーバインド</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Markdown テーブル</h3>
+                    <p>ターミナル内でのテーブル表示を大幅改善。</p>
+                    <ul>
+                        <li>アプリスタイルのレンダリング</li>
+                        <li>狭小テーブルの KV レコード変換</li>
+                        <li>ハイパーリンク対応</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🔗 OSC 8 Web リンク</h3>
+                    <p>リッチコンテンツにクリック可能なハイパーリンクを追加。対応ターミナルで URL を直接クリックしてブラウザ表示。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Web 検索エクステンション</h3>
+                    <p>Web 検索機能をスタンドアロンエクステンションとして独立。有効/無効の柔軟な制御が可能に。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💤 スレッドアイドルフック</h3>
+                    <p>新ライフサイクルフック。アイドル状態時に自動保存やリソース解放を実行可能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 Goal Usage Limits</h3>
+                    <p>Goal エクステンションに使用量制限を実装。タスク実行コストの制御と予期せぬリソース消費を防止。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏥 環境診断 (codex doctor)</h3>
+                    <p>環境診断機能を追加。システム環境の問題を自動検出し、トラブルシューティングを支援。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>☁️ Bedrock Namespace Tools</h3>
+                    <p>AWS Bedrock 向けネームスペースツールを有効化。Bedrock 経由のツール統合を改善。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bug Fixes -->
+        <section class="section">
+            <h2 class="section-title">バグ修正</h2>
+            <div class="bug-fixes">
+                <div class="bug-fix-item">引数付きスラッシュコマンド補完時のドラフトテキスト保持</div>
+                <div class="bug-fix-item">Linux サンドボックス: 中断時のシェルクリーンアップ保持</div>
+                <div class="bug-fix-item">macOS: Composer の stderr 破損防止</div>
+                <div class="bug-fix-item">TUI: 不明な tmux フォーマットでの modifyOtherKeys 回避</div>
+                <div class="bug-fix-item">TUI: Zellij で raw 出力を Composer の上に維持</div>
+                <div class="bug-fix-item">スレッド再開後の Goal アカウンティング復元</div>
+                <div class="bug-fix-item">リモートコントロール: 再接続バックオフの上限設定、WebSocket タスクストール検知</div>
+                <div class="bug-fix-item">プロセスハードニング: macOS malloc 診断の保持</div>
+                <div class="bug-fix-item">スタンドアロンアップデートの非対話型実行</div>
+            </div>
+        </section>
+
+        <!-- Infrastructure -->
+        <section class="section">
+            <h2 class="section-title">インフラストラクチャ / クリーンアップ</h2>
+            <div class="infra-list">
+                <div class="infra-item"><span class="infra-icon">🦀</span> Rust ツールチェインを 1.95.0 にアップグレード</div>
+                <div class="infra-item"><span class="infra-icon">📦</span> SQLx を新バンドル SQLite 対応にバージョンアップ</div>
+                <div class="infra-item"><span class="infra-icon">🔐</span> リモート exec-server の API キー認証</div>
+                <div class="infra-item"><span class="infra-icon">🔄</span> Responses リトライポリシーの集中管理</div>
+                <div class="infra-item"><span class="infra-icon">🗑️</span> レガシー設定プロファイルの消費停止</div>
+                <div class="infra-item"><span class="infra-icon">📝</span> ターンヘッダーへのコンパクションメタデータ追加</div>
+                <div class="infra-item"><span class="infra-icon">🧹</span> 冗長な SQLite 動的ツールストレージの削除</div>
+                <div class="infra-item"><span class="infra-icon">🧹</span> orphaned codex memories MCP crate の削除</div>
+                <div class="infra-item"><span class="infra-icon">🧹</span> 予約済みネームスペース重複排除の削除</div>
+                <div class="infra-item"><span class="infra-icon">📄</span> 古い Composer narrative doc 参照の削除</div>
+            </div>
+        </section>
+
+        <!-- Other Notable Features -->
+        <section class="section">
+            <h2 class="section-title">その他の注目機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🏷️ Named Permission Profile Picker</h3>
+                    <p>名前付きパーミッションプロファイルの選択 UI を追加。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 TUI Config クリーンアップ</h3>
+                    <p>oss_provider、trusted projects、MCP inventory、plugin marketplace、plugin mentions の整理。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📦 Plugin Bundle Archive</h3>
+                    <p>プラグインバンドルアーカイブの処理を改善。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧪 実験的ターン追加コンテキスト</h3>
+                    <p>ターンに追加コンテキストを付与する実験的機能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔀 forked_from_thread_id</h3>
+                    <p>ターンメタデータにフォーク元スレッド情報を追加。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 セッション分析の強化</h3>
+                    <p>Grouped session id、Goal エクステンションテレメトリパリティ対応。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">Codex CLI v0.135.0-alpha 新機能の使用例</span>
+                </div>
+                <pre><code class="language-bash"># 環境診断の実行
+codex doctor
+
+# メモリノートの追加 (新機能)
+codex memory add "プロジェクト X の API エンドポイントは /v2/resources"
+
+# Goal 使用量制限の設定
+codex config set goal.usage_limit 1000
+
+# リモート接続ステータスの確認
+codex /status</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Python SDK Beta の使用例 (概念的)</span>
+                </div>
+                <pre><code class="language-python">from codex import CodexConfig, CodexClient
+
+# 設定の初期化 (CodexConfig にリネーム済み)
+config = CodexConfig(
+    sandbox_preset="friendly",  # フレンドリーなサンドボックスプリセット
+    memory_enabled=True,
+)
+
+# クライアントの作成
+client = CodexClient(config=config)
+
+# タスクの実行
+result = client.run("Refactor the authentication module")
+print(result.output)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture - Mermaid -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph UserInterface["ユーザーインターフェース"]
+        VimBindings["Vim テキスト&lt;br/&gt;オブジェクト"]
+        MDTable["Markdown テーブル&lt;br/&gt;レンダリング"]
+        OSC8["OSC 8&lt;br/&gt;ハイパーリンク"]
+        KVRender["Key-Value&lt;br/&gt;レコード表示"]
+    end
+
+    subgraph MemorySystem["メモリシステム (刷新)"]
+        SQLiteDB["SQLite DB"]
+        AdHocNote["アドホック&lt;br/&gt;メモリノート"]
+        PromptBuilder["プロンプト&lt;br/&gt;ビルダー"]
+        Metrics["メトリクス&lt;br/&gt;追跡"]
+
+        AdHocNote --> SQLiteDB
+        SQLiteDB --> PromptBuilder
+        SQLiteDB --> Metrics
+    end
+
+    subgraph Extensions["エクステンション"]
+        WebSearch["Web 検索&lt;br/&gt;(スタンドアロン)"]
+        GoalExt["Goal&lt;br/&gt;エクステンション"]
+        IdleHook["スレッドアイドル&lt;br/&gt;ライフサイクル"]
+        MemoryExt["メモリ&lt;br/&gt;エクステンション"]
+
+        GoalExt -->|"使用量制限"| UsageLimits["Usage Limits"]
+        MemoryExt --> PromptBuilder
+    end
+
+    subgraph PythonSDK["Python SDK Beta"]
+        PyConfig["CodexConfig"]
+        PyClient["CodexClient"]
+        PySandbox["Sandbox&lt;br/&gt;プリセット"]
+
+        PyConfig --> PyClient
+        PyClient --> PySandbox
+    end
+
+    subgraph Infrastructure["インフラストラクチャ"]
+        Rust195["Rust 1.95.0"]
+        SQLxNew["SQLx&lt;br/&gt;(新 SQLite)"]
+        Bedrock["Bedrock&lt;br/&gt;Namespace Tools"]
+        RemoteExec["リモート&lt;br/&gt;exec-server"]
+        Doctor["codex doctor&lt;br/&gt;環境診断"]
+
+        Rust195 --> SQLxNew
+        RemoteExec -->|"API キー認証"| APIKey["認証"]
+    end
+
+    UserInterface --> MemorySystem
+    MemorySystem --> Extensions
+    PythonSDK --> Extensions
+    Extensions --> Infrastructure
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class SQLiteDB,PromptBuilder,PyClient,WebSearch openai
+    class VimBindings,MDTable,OSC8,Rust195,RemoteExec dark
+    class AdHocNote,Metrics,PyConfig,PySandbox,Doctor light
+    class GoalExt,IdleHook,MemoryExt,Bedrock,KVRender,SQLxNew,APIKey,UsageLimits accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>Python 開発者への新たな選択肢</h4>
+                <p>Python SDK Beta により、Rust ツールチェインなしで Codex CLI の機能を Python プロジェクトに統合可能。フレンドリーなサンドボックスプリセットでセットアップも簡素化。</p>
+            </div>
+            <div class="use-case">
+                <h4>メモリ管理の再設計による影響</h4>
+                <p>SQLite への移行に伴い既存メモリデータのマイグレーションが必要な可能性あり。アドホックメモリノートで知識蓄積がより明示的に制御可能に。メトリクスでメモリ使用パターンの最適化が可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>Vim ユーザーの生産性向上</h4>
+                <p>フルテキストオブジェクトバインディングにより、Vim ユーザーが慣れた操作体系で TUI を利用可能。設定可能なキーバインドで個人の好みに合わせたカスタマイズが容易。</p>
+            </div>
+            <div class="use-case">
+                <h4>ターミナル表示の改善</h4>
+                <p>Markdown テーブルの美しいレンダリング、OSC 8 ハイパーリンクによるワンクリック URL 表示、狭いターミナルでのキーバリュー形式表示により視認性が向上。</p>
+            </div>
+            <div class="use-case">
+                <h4>アルファ版利用時の注意</h4>
+                <p>本リリースはアルファ版であり、API の破壊的変更が発生する可能性あり。本番環境での使用は推奨されない。フィードバックは GitHub Issues で受付中。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://github.com/openai/codex/releases/tag/rust-v0.135.0-alpha.2" target="_blank" rel="noopener noreferrer">https://github.com/openai/codex/releases/tag/rust-v0.135.0-alpha.2</a></p>
+            <p><strong>alpha.1:</strong> <a href="https://github.com/openai/codex/releases/tag/rust-v0.135.0-alpha.1" target="_blank" rel="noopener noreferrer">https://github.com/openai/codex/releases/tag/rust-v0.135.0-alpha.1</a></p>
+            <p><strong>変更履歴:</strong> <a href="https://github.com/openai/codex/compare/rust-v0.134.0...rust-v0.135.0-alpha.2" target="_blank" rel="noopener noreferrer">https://github.com/openai/codex/compare/rust-v0.134.0...rust-v0.135.0-alpha.2</a></p>
+            <p><strong>リポジトリ:</strong> <a href="https://github.com/openai/codex" target="_blank" rel="noopener noreferrer">https://github.com/openai/codex</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

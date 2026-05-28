@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-28](2026/2026-05-28-building-self-improving-tax-agents-with-codex.md) - Codex で自己改善型の税務エージェントを構築する
+- [2026-05-27](2026/2026-05-27-codex-cli-v0-135-0-alpha.md) - Codex CLI v0.135.0-alpha: Python SDK Beta、メモリシステム刷新、Vim テキストオブジェクト対応
+- [2026-05-26](2026/2026-05-26-unlocking-the-codex-harness.md) - Codex ハーネスの全貌を解き明かす: エージェント実行フレームワークの拡張と活用
 - [2026-05-26](2026/2026-05-26-openai-agents-sdk-v0-17-4.md) - OpenAI Agents SDK v0.17.4: Realtime カスタムボイス対応とトレーシング・MCP 安定性の向上
 - [2026-05-26](2026/2026-05-26-codex-cli-v0-134-0.md) - Codex CLI v0.134.0: ローカル会話履歴検索とプロファイル管理の刷新
 - [2026-05-25](2026/2026-05-25-grupo-folha-grupo-uol-partnership.md) - OpenAI、Grupo Folha および Grupo UOL と戦略的コンテンツパートナーシップを締結
