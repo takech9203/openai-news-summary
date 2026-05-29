@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endava が Codex でエージェンティック組織を構築する方法</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-dark-alt: #444654;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --endava-blue: #1A2B6B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, var(--openai-dark-alt) 100%);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(26, 43, 107, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            color: var(--openai-dark);
+        }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.15);
+        }
+
+        .key-point-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .key-point-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            color: var(--openai-green-dark);
+        }
+
+        .key-point-desc {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .feature-card-desc {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .comparison-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .comparison-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .timeline-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+
+        .timeline-table th {
+            background: var(--openai-green);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .timeline-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .timeline-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .highlight-cell {
+            color: var(--openai-green-dark);
+            font-weight: 700;
+        }
+
+        .code-block {
+            margin-top: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-header {
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            padding: 10px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-header::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--openai-green);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .code-block pre code {
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .use-case {
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            margin-top: 16px;
+            background: var(--openai-light);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .use-case-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .use-case-desc {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .strategy-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .strategy-list li {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            border-left: 3px solid var(--openai-green);
+            font-size: 0.9rem;
+        }
+
+        .strategy-list li strong {
+            color: var(--openai-green-dark);
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.05) 0%, rgba(26, 43, 107, 0.05) 100%);
+            border: 1px solid var(--openai-green);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .links-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .links-list li {
+            margin-bottom: 8px;
+        }
+
+        .links-list a {
+            color: var(--openai-green-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .links-list a:hover {
+            color: var(--openai-green);
+            text-decoration: underline;
+        }
+
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green-dark);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .note-box {
+            background: #FFF9E6;
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-top: 12px;
+            font-size: 0.82rem;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .key-points {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table,
+            .timeline-table {
+                font-size: 0.78rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td,
+            .timeline-table th,
+            .timeline-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">AI Adoption / Codex / Enterprise</span>
+            <p class="header-date">2026-05-28 | OpenAI News/Blog</p>
+            <h1>Endava が Codex でエージェンティック組織を構築する方法</h1>
+            <p class="header-subtitle">約 12,000 人のエンジニアを擁するグローバルテクノロジーサービス企業が、Codex で組織全体の変革を実現</p>
+        </div>
+
+        <!-- Note -->
+        <div class="section">
+            <div class="note-box">
+                本レポートは OpenAI ブログのサイトマップ情報とタイトルに基づいて作成しています。記事本文へのアクセスは Cloudflare の保護により制限されたため、タイトル、URL、および公開情報から内容を構成しています。
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 0.9rem; line-height: 1.8;">
+                グローバルテクノロジーサービス企業である Endava は、OpenAI の Codex を活用して「エージェンティック組織」(Agentic Organization) への変革を推進している。従来、数週間を要していた要件分析プロセスを数時間に短縮し、ソフトウェアデリバリー全体を大幅に加速させることに成功した。
+            </p>
+            <p style="font-size: 0.9rem; line-height: 1.8; margin-top: 12px;">
+                この事例は、AI エージェントが個々の開発者ツールにとどまらず、組織全体の業務プロセスを変革する「エージェンティック組織」という新しいエンタープライズ AI 導入パターンを示すものである。Endava は約 12,000 人のエンジニアを擁するグローバル企業であり、その規模での Codex 導入は、大規模テクノロジーサービス企業における AI 変革のモデルケースとなる。
+            </p>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3E2;</div>
+                    <div class="key-point-title">エージェンティック組織</div>
+                    <div class="key-point-desc">AI エージェントが組織ワークフロー全体に統合され、人間とエージェントが協調して業務を遂行する新しい組織形態</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x23F1;</div>
+                    <div class="key-point-title">要件分析の劇的短縮</div>
+                    <div class="key-point-desc">従来数週間を要していた要件分析プロセスを数時間に短縮することに成功</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-title">デリバリー加速</div>
+                    <div class="key-point-desc">設計、実装、テスト、デプロイ、保守の全フェーズで AI エージェントが並列実行</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F465;</div>
+                    <div class="key-point-title">12,000 人規模の展開</div>
+                    <div class="key-point-desc">大規模テクノロジーサービス企業でのエンタープライズ規模の AI 変革モデルケース</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-title">マルチエージェント協調</div>
+                    <div class="key-point-desc">要件分析、設計、実装、テスト、レビューの各フェーズに特化したエージェントが協調</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-title">ガバナンス確保</div>
+                    <div class="key-point-desc">Human-in-the-Loop と AI の自律性のバランスを保つガバナンスフレームワーク</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agentic Organization -->
+        <div class="section">
+            <h2 class="section-title">エージェンティック組織とは</h2>
+            <p style="font-size: 0.9rem; line-height: 1.8; margin-bottom: 16px;">
+                「エージェンティック組織」とは、AI エージェントが組織のワークフロー全体に組み込まれ、人間とエージェントが協調して業務を遂行する組織形態を指す。従来の「ツールとしての AI」とは異なり、AI エージェントが自律的にタスクを実行し、意思決定を支援し、プロセスを最適化する役割を担う。
+            </p>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>従来の AI 活用</th>
+                        <th>エージェンティック組織</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>個別ツールとしての補助</td>
+                        <td class="highlight-cell">組織ワークフローへの統合</td>
+                    </tr>
+                    <tr>
+                        <td>人間がすべてを指示</td>
+                        <td class="highlight-cell">エージェントが自律的に実行</td>
+                    </tr>
+                    <tr>
+                        <td>コード生成に限定</td>
+                        <td class="highlight-cell">要件分析からデリバリーまで包括</td>
+                    </tr>
+                    <tr>
+                        <td>開発者のみが利用</td>
+                        <td class="highlight-cell">組織全体が恩恵を受ける</td>
+                    </tr>
+                    <tr>
+                        <td>単発のタスク支援</td>
+                        <td class="highlight-cell">継続的なプロセス最適化</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Requirements Analysis -->
+        <div class="section">
+            <h2 class="section-title">要件分析の劇的な短縮: 数週間から数時間へ</h2>
+            <p style="font-size: 0.9rem; line-height: 1.8; margin-bottom: 16px;">
+                Endava の最も顕著な成果は、要件分析フェーズの大幅な短縮である。Codex がコードベースの自動解析、既存ドキュメントの理解、技術的な制約の抽出を自律的に実行することで、エンジニアは要件の検証と意思決定に集中できるようになった。
+            </p>
+            <table class="timeline-table">
+                <thead>
+                    <tr>
+                        <th>フェーズ</th>
+                        <th>従来の所要時間</th>
+                        <th>Codex 導入後</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ステークホルダーインタビュー</td>
+                        <td>1-2 週間</td>
+                        <td class="highlight-cell">数時間 (AI による文書解析と要約)</td>
+                    </tr>
+                    <tr>
+                        <td>既存システム分析</td>
+                        <td>1-2 週間</td>
+                        <td class="highlight-cell">数時間 (コードベース自動解析)</td>
+                    </tr>
+                    <tr>
+                        <td>要件文書作成</td>
+                        <td>1 週間</td>
+                        <td class="highlight-cell">数時間 (自動生成とレビュー)</td>
+                    </tr>
+                    <tr>
+                        <td>整合性チェック</td>
+                        <td>数日</td>
+                        <td class="highlight-cell">リアルタイム (自動検証)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>合計</strong></td>
+                        <td><strong>3-5 週間</strong></td>
+                        <td class="highlight-cell"><strong>数時間-1 日</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Software Delivery Acceleration -->
+        <div class="section">
+            <h2 class="section-title">ソフトウェアデリバリーの加速</h2>
+            <p style="font-size: 0.9rem; line-height: 1.8; margin-bottom: 16px;">
+                Endava は Codex を開発ライフサイクル全体に統合し、以下の領域でデリバリーを加速させている。
+            </p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-title">設計フェーズ</div>
+                    <div class="feature-card-desc">Codex がアーキテクチャ提案と技術選定の根拠を自動生成</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">実装フェーズ</div>
+                    <div class="feature-card-desc">コード生成、テスト作成、コードレビューを AI エージェントが並列実行</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">テストフェーズ</div>
+                    <div class="feature-card-desc">テストケースの自動生成と実行、カバレッジの自動最適化</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">デプロイフェーズ</div>
+                    <div class="feature-card-desc">CI/CD パイプラインの設定と最適化を支援</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">保守フェーズ</div>
+                    <div class="feature-card-desc">バグの自動検出、修正提案、ドキュメント更新</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enterprise AI Strategy -->
+        <div class="section">
+            <h2 class="section-title">エンタープライズ規模での AI 導入戦略</h2>
+            <p style="font-size: 0.9rem; line-height: 1.8; margin-bottom: 16px;">
+                Endava の導入アプローチには、大規模組織での AI 展開に必要な以下の要素が含まれると考えられる。
+            </p>
+            <ol class="strategy-list">
+                <li><strong>段階的ロールアウト:</strong> パイロットチームから全組織への段階的展開</li>
+                <li><strong>ガバナンスフレームワーク:</strong> AI エージェントの権限と責任の明確な定義</li>
+                <li><strong>品質保証体制:</strong> AI 生成物のレビュープロセスと品質基準の設定</li>
+                <li><strong>トレーニングプログラム:</strong> エンジニアへの Codex 活用トレーニング</li>
+                <li><strong>成果測定:</strong> KPI に基づく効果測定とフィードバックループ</li>
+            </ol>
+        </div>
+
+        <!-- Technical Details - Code Samples -->
+        <div class="section">
+            <h2 class="section-title">技術的な詳細: Codex のエンタープライズ統合パターン</h2>
+
+            <!-- Requirements Analysis Code -->
+            <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 8px; color: var(--openai-dark);">要件分析の自動化</h3>
+            <div class="code-block">
+                <div class="code-header">Python - Codex を活用した要件分析の自動化パターン (概念例)</div>
+                <pre><code class="language-python"># Codex を活用した要件分析の自動化パターン (概念例)
+from openai import OpenAI
+
+client = OpenAI()
+
+def analyze_requirements(project_context: str, stakeholder_docs: list[str]) -> dict:
+    """
+    Codex エージェントによる要件分析の自動化。
+    ステークホルダー文書とプロジェクトコンテキストから
+    構造化された要件を抽出する。
+    """
+    combined_docs = "\n---\n".join(stakeholder_docs)
+
+    response = client.responses.create(
+        model="codex-1",
+        instructions="""あなたは要件分析のエキスパートエージェントです。
+提供されたプロジェクトコンテキストとステークホルダー文書から、
+構造化された要件仕様を生成してください。
+
+出力形式:
+- 機能要件 (優先度付き)
+- 非機能要件 (パフォーマンス、セキュリティ、スケーラビリティ)
+- 技術的制約
+- 依存関係とリスク
+- 受け入れ基準""",
+        input=f"""プロジェクトコンテキスト:
+{project_context}
+
+ステークホルダー文書:
+{combined_docs}""",
+    )
+
+    return parse_requirements(response.output_text)</code></pre>
+            </div>
+
+            <!-- Agentic Code Review -->
+            <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 8px; color: var(--openai-dark);">エージェンティックなコードレビューパイプライン</h3>
+            <div class="code-block">
+                <div class="code-header">Python - エージェンティックなコードレビュー (概念例)</div>
+                <pre><code class="language-python"># Codex を活用したエージェンティックなコードレビュー (概念例)
+from openai import OpenAI
+
+client = OpenAI()
+
+def agentic_code_review(
+    pull_request_diff: str,
+    project_standards: str,
+    architecture_docs: str,
+) -> dict:
+    """
+    Codex エージェントが自律的にコードレビューを実行し、
+    改善提案を生成する。
+    """
+    response = client.responses.create(
+        model="codex-1",
+        instructions=f"""あなたはシニアコードレビューエージェントです。
+以下のプロジェクト基準とアーキテクチャに基づいて、
+提出されたコード差分をレビューしてください。
+
+プロジェクト基準:
+{project_standards}
+
+アーキテクチャドキュメント:
+{architecture_docs}
+
+レビュー観点:
+1. コード品質とベストプラクティス
+2. アーキテクチャ整合性
+3. セキュリティ脆弱性
+4. パフォーマンスへの影響
+5. テストカバレッジの十分性""",
+        input=f"Pull Request Diff:\n{pull_request_diff}",
+    )
+
+    return {
+        "review_comments": response.output_text,
+        "approval_status": determine_approval(response.output_text),
+    }</code></pre>
+            </div>
+
+            <!-- Multi-Agent Pipeline -->
+            <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 8px; color: var(--openai-dark);">マルチエージェント開発ワークフロー</h3>
+            <div class="code-block">
+                <div class="code-header">Python - マルチエージェント協調パイプライン (概念例)</div>
+                <pre><code class="language-python"># エージェンティック組織におけるマルチエージェント協調 (概念例)
+from openai import OpenAI
+
+client = OpenAI()
+
+class AgenticDevelopmentPipeline:
+    """
+    複数の Codex エージェントが協調して
+    開発ライフサイクルを自律的に推進するパイプライン。
+    """
+
+    def __init__(self):
+        self.client = OpenAI()
+
+    def run_pipeline(self, task_description: str, codebase_context: str):
+        """エージェンティックパイプラインを実行する。"""
+
+        # Phase 1: 要件エージェントによるタスク分解
+        requirements = self._analyze_task(task_description)
+
+        # Phase 2: アーキテクチャエージェントによる設計
+        design = self._design_solution(requirements, codebase_context)
+
+        # Phase 3: 実装エージェントによるコード生成
+        implementation = self._implement(design, codebase_context)
+
+        # Phase 4: テストエージェントによる検証
+        test_results = self._verify(implementation, requirements)
+
+        # Phase 5: レビューエージェントによる品質確認
+        review = self._review(implementation, design)
+
+        return {
+            "requirements": requirements,
+            "design": design,
+            "implementation": implementation,
+            "test_results": test_results,
+            "review": review,
+        }
+
+    def _analyze_task(self, task_description: str) -> dict:
+        """要件分析エージェント。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="タスクを分析し、実装に必要な要件を構造化して出力してください。",
+            input=task_description,
+        )
+        return {"analysis": response.output_text}
+
+    def _design_solution(self, requirements: dict, context: str) -> dict:
+        """設計エージェント。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="要件に基づいて技術設計を作成してください。",
+            input=f"要件: {requirements}\nコンテキスト: {context}",
+        )
+        return {"design": response.output_text}
+
+    def _implement(self, design: dict, context: str) -> dict:
+        """実装エージェント。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="設計に基づいてコードを実装してください。",
+            input=f"設計: {design}\nコンテキスト: {context}",
+        )
+        return {"code": response.output_text}
+
+    def _verify(self, implementation: dict, requirements: dict) -> dict:
+        """テストエージェント。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="実装が要件を満たしているか検証するテストを作成・実行してください。",
+            input=f"実装: {implementation}\n要件: {requirements}",
+        )
+        return {"tests": response.output_text}
+
+    def _review(self, implementation: dict, design: dict) -> dict:
+        """レビューエージェント。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="実装が設計に準拠しているかレビューしてください。",
+            input=f"実装: {implementation}\n設計: {design}",
+        )
+        return {"review": response.output_text}</code></pre>
+            </div>
+
+            <!-- Enterprise Config -->
+            <h3 style="font-size: 1rem; font-weight: 700; margin-top: 24px; margin-bottom: 8px; color: var(--openai-dark);">エンタープライズ環境での Codex 設定</h3>
+            <div class="code-block">
+                <div class="code-header">YAML - エンタープライズ向け Codex 環境設定 (概念例)</div>
+                <pre><code class="language-yaml"># エンタープライズ向け Codex 環境設定 (概念例)
+# codex-config.yaml
+
+organization:
+  name: "Endava"
+  plan: "enterprise"
+
+agents:
+  requirements_analyst:
+    model: "codex-1"
+    permissions:
+      - read_documentation
+      - analyze_codebase
+      - generate_reports
+    sandbox: true
+
+  code_generator:
+    model: "codex-1"
+    permissions:
+      - read_codebase
+      - write_code
+      - run_tests
+    sandbox: true
+    review_required: true
+
+  test_engineer:
+    model: "codex-1"
+    permissions:
+      - read_codebase
+      - write_tests
+      - execute_tests
+    sandbox: true
+
+  code_reviewer:
+    model: "codex-1"
+    permissions:
+      - read_codebase
+      - comment_on_pr
+      - approve_pr
+    sandbox: true
+
+governance:
+  human_approval_required:
+    - production_deployment
+    - architecture_changes
+    - security_sensitive_code
+  audit_logging: true
+  compliance_checks: true</code></pre>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Endava["Endava エージェンティック組織"]
+        subgraph Stakeholders["ステークホルダー"]
+            PM["プロジェクトマネージャー"]
+            BA["ビジネスアナリスト"]
+            Dev["エンジニアチーム"]
+        end
+
+        subgraph AgentLayer["Codex エージェント層"]
+            ReqAgent["要件分析エージェント"]
+            DesignAgent["設計エージェント"]
+            CodeAgent["コード生成エージェント"]
+            TestAgent["テストエージェント"]
+            ReviewAgent["レビューエージェント"]
+        end
+
+        subgraph Delivery["デリバリーパイプライン"]
+            CI["CI/CD"]
+            QA["品質ゲート"]
+            Deploy["デプロイ"]
+        end
+    end
+
+    subgraph OpenAIPlatform["OpenAI プラットフォーム"]
+        subgraph CodexEngine["Codex"]
+            Model["codex-1 モデル"]
+            Sandbox["サンドボックス環境"]
+            Tools["ツール連携"]
+        end
+        subgraph Enterprise["Enterprise 機能"]
+            Governance["ガバナンス"]
+            Audit["監査ログ"]
+            SSO["SSO / セキュリティ"]
+        end
+    end
+
+    subgraph ClientProjects["クライアントプロジェクト"]
+        WebApp["Web アプリケーション"]
+        API["API サービス"]
+        Mobile["モバイルアプリ"]
+    end
+
+    PM -->|要件文書| ReqAgent
+    BA -->|ビジネス要件| ReqAgent
+    ReqAgent -->|構造化要件| DesignAgent
+    DesignAgent -->|アーキテクチャ設計| CodeAgent
+    CodeAgent -->|生成コード| TestAgent
+    TestAgent -->|テスト結果| ReviewAgent
+    ReviewAgent -->|承認| CI
+    Dev -->|監督・判断| AgentLayer
+    CI --> QA
+    QA --> Deploy
+    Deploy --> ClientProjects
+
+    AgentLayer <-->|API| CodexEngine
+    Enterprise -->|ポリシー制御| AgentLayer
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef endava fill:#1A2B6B,stroke:#0F1A4A,stroke-width:2px,color:white
+
+    class Model,Sandbox,Tools,ReqAgent,DesignAgent,CodeAgent,TestAgent,ReviewAgent openai
+    class CI,QA,Deploy,Governance,Audit,SSO dark
+    class PM,BA,Dev light
+    class WebApp,API,Mobile endava
+                </pre>
+            </div>
+        </div>
+
+        <!-- Sequence Diagram -->
+        <div class="section">
+            <h2 class="section-title">エージェンティック開発フローの詳細</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+sequenceDiagram
+    participant PM as プロジェクトマネージャー
+    participant ReqAgent as 要件分析エージェント
+    participant DesignAgent as 設計エージェント
+    participant CodeAgent as コード生成エージェント
+    participant TestAgent as テストエージェント
+    participant ReviewAgent as レビューエージェント
+    participant Dev as エンジニア (監督)
+
+    PM->>ReqAgent: プロジェクト文書・要件を入力
+    ReqAgent->>ReqAgent: 文書解析・要件抽出
+    ReqAgent->>DesignAgent: 構造化された要件仕様
+
+    DesignAgent->>DesignAgent: アーキテクチャ設計
+    DesignAgent->>Dev: 設計レビュー依頼
+    Dev->>DesignAgent: 承認・修正指示
+
+    DesignAgent->>CodeAgent: 承認済み設計仕様
+    CodeAgent->>CodeAgent: コード実装
+    CodeAgent->>TestAgent: 生成コード
+
+    TestAgent->>TestAgent: テスト生成・実行
+    TestAgent->>ReviewAgent: テスト済みコード
+
+    ReviewAgent->>ReviewAgent: 品質レビュー
+    ReviewAgent->>Dev: 最終レビュー依頼
+    Dev->>ReviewAgent: 承認
+
+    Note over PM,Dev: 従来数週間 → 数時間で完了
+                </pre>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case" style="margin-top: 8px;">
+                <div class="use-case-title">エージェンティック開発の標準化</div>
+                <div class="use-case-desc">Endava の事例は、AI エージェントを開発ライフサイクル全体に統合する「エージェンティック組織」パターンを確立し、テクノロジーサービス業界全体に影響を与える可能性がある。個々のツール導入ではなく、組織設計レベルでの AI 統合が新しい標準となる</div>
+            </div>
+
+            <div class="use-case">
+                <div class="use-case-title">要件分析プロセスの革新</div>
+                <div class="use-case-desc">数週間から数時間への短縮は、プロジェクト初期フェーズにおける AI の価値を実証している。ウォーターフォール型プロジェクトでもアジャイル型でも、要件定義の速度が劇的に改善されることで、プロジェクト全体のリードタイムが短縮される</div>
+            </div>
+
+            <div class="use-case">
+                <div class="use-case-title">テクノロジーサービス企業のビジネスモデル変革</div>
+                <div class="use-case-desc">従来の「人月」ベースのビジネスモデルから、AI エージェントとの協調による「価値ベース」のデリバリーモデルへの移行が加速する。デリバリー速度の向上は、より多くのプロジェクトを並行して遂行する能力につながる</div>
+            </div>
+
+            <div class="use-case">
+                <div class="use-case-title">マルチエージェント協調パターンの実践</div>
+                <div class="use-case-desc">要件分析、設計、実装、テスト、レビューの各フェーズに特化したエージェントが協調するアーキテクチャは、複雑なエンタープライズ開発プロジェクトにおける新しい設計パターンとなる</div>
+            </div>
+
+            <div class="use-case">
+                <div class="use-case-title">ガバナンスとコンプライアンスの両立</div>
+                <div class="use-case-desc">エンタープライズ規模での AI エージェント導入において、品質管理、監査、セキュリティを担保するガバナンスフレームワークの重要性が明確になった。人間による監督 (Human-in-the-Loop) と AI の自律性のバランスが鍵となる</div>
+            </div>
+        </div>
+
+        <!-- Related Links -->
+        <div class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="links-list">
+                <li><a href="https://openai.com/index/endava">How Endava builds an agentic organization with Codex</a></li>
+                <li><a href="https://openai.com/codex">OpenAI Codex</a></li>
+                <li><a href="https://openai.com/enterprise">Codex for Enterprise</a></li>
+                <li><a href="https://openai.com/index/virgin-atlantic">How Virgin Atlantic ships faster with Codex</a></li>
+                <li><a href="https://openai.com/index/building-self-improving-tax-agents-with-codex/">Building Self-Improving Tax Agents with Codex</a></li>
+                <li><a href="https://www.endava.com/">Endava 公式サイト</a></li>
+                <li><a href="https://openai.com/news">OpenAI News</a></li>
+            </ul>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>Endava の事例は、Codex が単なるコード生成ツールを超え、組織全体のソフトウェアデリバリーを変革する「エージェンティック組織」の実現を可能にすることを示している。要件分析の劇的な短縮 (数週間から数時間) は、AI エージェントがソフトウェア開発の最も時間のかかるフェーズの一つを根本的に変革できることの証左である。</p>
+                <p style="margin-top: 12px;">約 12,000 人規模のグローバルテクノロジーサービス企業での成功は、エンタープライズ AI 導入の新しい段階を示している。個々の開発者がツールとして AI を使う段階から、組織全体が AI エージェントと協調する「エージェンティック組織」への進化は、テクノロジーサービス業界のビジネスモデルそのものを変革する可能性を持つ。人間の判断力と AI の実行速度を組み合わせたこのモデルは、今後のエンタープライズ開発の方向性を示す重要な指標となるだろう。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/endava">https://openai.com/index/endava</a></p>
+            <p>OpenAI News Summary - 2026-05-28</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize highlight.js
+            hljs.highlightAll();
+
+            // Initialize Mermaid
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'base',
+                themeVariables: {
+                    primaryColor: '#10A37F',
+                    primaryTextColor: '#fff',
+                    primaryBorderColor: '#0D8A6A',
+                    lineColor: '#343541',
+                    secondaryColor: '#F7F7F8',
+                    tertiaryColor: '#ECECF1',
+                    background: '#ffffff',
+                    mainBkg: '#10A37F',
+                    nodeBorder: '#0D8A6A'
+                },
+                flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true
+                },
+                sequence: {
+                    useMaxWidth: true,
+                    actorMargin: 50,
+                    messageMargin: 40
+                }
+            });
+        });
+    </script>
+</body>
+</html>

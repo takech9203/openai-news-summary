@@ -5,8 +5,15 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-28](2026/2026-05-28-openai-node-sdk-v6-39-1.md) - OpenAI Node SDK v6.39.1 パッチリリース: undici ディスパッチャー不整合ガイダンス改善とバイナリアップロード修正
+- [2026-05-28](2026/2026-05-28-openai-frontier-governance-framework.md) - OpenAI、フロンティアガバナンスフレームワークを公開 — EU AI Act および California 規制との整合性を明示
+- [2026-05-28](2026/2026-05-28-endava-codex-agentic-organization.md) - Endava が Codex でエージェンティック組織を構築する方法
+- [2026-05-28](2026/2026-05-28-codex-cli-v0-135-0.md) - Codex CLI v0.135.0 安定版リリース: 環境診断強化、Vim テキストオブジェクト、Python SDK Sandbox プリセット
 - [2026-05-28](2026/2026-05-28-building-self-improving-tax-agents-with-codex.md) - Codex で自己改善型の税務エージェントを構築する
+- [2026-05-27](2026/2026-05-27-warp-gpt-5-5-open-source.md) - Warp、GPT-5.5 を活用しオープンソース開発に大規模投資: コーディングエージェントの新たな挑戦
+- [2026-05-27](2026/2026-05-27-election-safeguards-2026.md) - 2026 年選挙における情報提供と安全対策
 - [2026-05-27](2026/2026-05-27-codex-cli-v0-135-0-alpha.md) - Codex CLI v0.135.0-alpha: Python SDK Beta、メモリシステム刷新、Vim テキストオブジェクト対応
+- [2026-05-27](2026/2026-05-27-cisco-openai-codex-enterprise.md) - Cisco と OpenAI が Codex でエンタープライズエンジニアリングを再定義
 - [2026-05-26](2026/2026-05-26-unlocking-the-codex-harness.md) - Codex ハーネスの全貌を解き明かす: エージェント実行フレームワークの拡張と活用
 - [2026-05-26](2026/2026-05-26-openai-agents-sdk-v0-17-4.md) - OpenAI Agents SDK v0.17.4: Realtime カスタムボイス対応とトレーシング・MCP 安定性の向上
 - [2026-05-26](2026/2026-05-26-codex-cli-v0-134-0.md) - Codex CLI v0.134.0: ローカル会話履歴検索とプロファイル管理の刷新

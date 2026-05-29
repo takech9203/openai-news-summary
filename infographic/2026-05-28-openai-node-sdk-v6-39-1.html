@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Node SDK v6.39.1 - Infographic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            border-radius: 24px;
+            padding: 48px 32px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .category-badge {
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .date-badge {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .header p {
+            margin-top: 16px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            line-height: 1.8;
+            position: relative;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 4px;
+            bottom: 4px;
+            width: 4px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .key-point-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .key-point-text {
+            font-size: 0.95rem;
+        }
+
+        .key-point-text strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--openai-dark);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .comparison-card.before {
+            background: #FFF5F5;
+            border: 2px solid #FF6B6B;
+        }
+
+        .comparison-card.after {
+            background: #F0FFF4;
+            border: 2px solid var(--openai-green);
+        }
+
+        .comparison-card h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-card.before h3 {
+            color: #CC5555;
+        }
+
+        .comparison-card.after h3 {
+            color: #0D8A6A;
+        }
+
+        .comparison-card p, .comparison-card code {
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        .comparison-card code {
+            display: block;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .code-block {
+            margin: 16px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #21252b;
+            color: #abb2bf;
+            padding: 10px 16px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-header .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .code-header .dot.red { background: #ff5f56; }
+        .code-header .dot.yellow { background: #ffbd2e; }
+        .code-header .dot.green { background: #27c93f; }
+
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            background: #282c34;
+            overflow-x: auto;
+        }
+
+        .code-block pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .use-case {
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background: var(--openai-light);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .version-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+
+        .version-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .version-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .version-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 1px solid rgba(16, 163, 127, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .summary-box p {
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 16px;
+            }
+            .header {
+                padding: 32px 20px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .section {
+                padding: 24px 20px;
+            }
+            .key-points {
+                grid-template-columns: 1fr;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-meta">
+                <span class="category-badge">SDK Update / Developer Tools</span>
+                <span class="date-badge">2026-05-28</span>
+            </div>
+            <h1>OpenAI Node SDK v6.39.1 パッチリリース: undici ディスパッチャー不整合ガイダンス改善とバイナリアップロード修正</h1>
+            <p>プロキシ環境での利用とファイルアップロードに関する 2 つの重要なバグ修正を含むパッチリリース。undici ディスパッチャーのバージョン不整合問題に対する明確な診断ガイダンスとエラーメッセージの改善。</p>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="key-point-icon">&#x1F527;</span>
+                    <div class="key-point-text">
+                        <strong>undici ディスパッチャー修正</strong>
+                        バージョン不整合時のエラーガイダンスを改善し、具体的な解決策をメッセージに含むように変更
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-icon">&#x1F4C1;</span>
+                    <div class="key-point-text">
+                        <strong>バイナリアップロード修正</strong>
+                        text/plain コンテンツタイプでバイナリ指定されたファイルが正しく raw バイナリとして転送されるよう修正
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-icon">&#x2705;</span>
+                    <div class="key-point-text">
+                        <strong>破壊的変更なし</strong>
+                        API 互換性は完全に維持。npm update openai で安全にアップグレード可能
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="key-point-icon">&#x1F3E2;</span>
+                    <div class="key-point-text">
+                        <strong>企業プロキシ環境に恩恵</strong>
+                        プロキシ経由で API を利用する開発者のデバッグ時間が大幅に短縮
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <h2 class="section-title">修正内容の詳細</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F310; undici ディスパッチャー不整合ガイダンス</h3>
+                    <p>Node.js 組み込み fetch と外部 undici@8 のバージョン不整合を検出し、APIConnectionError メッセージに onRequestStart エラーが原因チェーンに含まれる場合の具体的なガイダンスを追加。元の fetch エラーを cause プロパティとして保持。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4BE; text/plain バイナリフォーマット修正</h3>
+                    <p>text/plain コンテンツタイプのファイルが format: binary で指定された場合に、テキストではなく raw バイナリデータとして正しく処理されるように修正。CSV、TSV、ログファイルなどに影響。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2699;&#xFE0F; 内部コード生成の更新</h3>
+                    <p>自動コード生成 (codegen) に関連する内部的な更新。SDK の型定義やインターフェースの正確性を維持するための継続的なメンテナンス。エンドユーザーへの直接的影響なし。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9EA; 回帰テストの追加</h3>
+                    <p>undici ディスパッチャー不整合に対する回帰テストを追加し、将来的な品質保証を確立。同様のエッジケースが再発しないことを自動検証。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Version Compatibility Table -->
+        <div class="section">
+            <h2 class="section-title">undici バージョン互換性</h2>
+            <table class="version-table">
+                <thead>
+                    <tr>
+                        <th>環境</th>
+                        <th>undici バージョン</th>
+                        <th>ハンドラー API</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Node.js 20 組み込み</td>
+                        <td>~5.x 相当</td>
+                        <td>旧ライフサイクル</td>
+                    </tr>
+                    <tr>
+                        <td>Node.js 22 組み込み</td>
+                        <td>~6.x 相当</td>
+                        <td>旧ライフサイクル</td>
+                    </tr>
+                    <tr>
+                        <td>npm undici@8</td>
+                        <td>8.x</td>
+                        <td>新ライフサイクル (onRequestStart)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="summary-box">
+                <p>Node.js の組み込み globalThis.fetch は内部的に古いバージョンの undici を使用。外部からインストールした undici@8 の ProxyAgent は新しいディスパッチャーハンドラーライフサイクルを期待するため、バージョン不整合が発生する。</p>
+            </div>
+        </div>
+
+        <!-- Before/After Comparison -->
+        <div class="section">
+            <h2 class="section-title">修正前後のエラー比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h3>&#x274C; v6.39.0 (修正前)</h3>
+                    <p>プロキシ設定時に不明瞭なエラーが発生し、原因の特定が困難</p>
+                    <code>APIConnectionError: Connection error.
+// 原因の特定が困難
+// 何を修正すべきか不明</code>
+                </div>
+                <div class="comparison-card after">
+                    <h3>&#x2705; v6.39.1 (修正後)</h3>
+                    <p>具体的なガイダンスと原因チェーンを含むエラーメッセージ</p>
+                    <code>APIConnectionError: Connection error.
+It looks like you're using a undici
+dispatcher from a different version
+than the built-in fetch. Pass the
+matching `fetch` from `undici` to
+resolve this.
+Cause: TypeError: fetch failed
+  [cause]: UND_ERR_INVALID_ARG</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Samples -->
+        <div class="section">
+            <h2 class="section-title">正しいプロキシ設定パターン</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span>proxy-setup.js - 推奨構成</span>
+                </div>
+                <pre><code class="language-javascript">import OpenAI from 'openai';
+import { fetch, ProxyAgent } from 'undici';
+
+// undici の fetch と ProxyAgent を同じパッケージから使用する
+const client = new OpenAI({
+  fetch,  // undici@8 の fetch を明示的に渡す
+  fetchOptions: {
+    dispatcher: new ProxyAgent('http://proxy.example.com:8080'),
+  },
+});
+
+// これでバージョン不整合が解消される
+const response = await client.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [{ role: 'user', content: 'Hello!' }],
+});</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span>file-upload.js - バイナリアップロード修正</span>
+                </div>
+                <pre><code class="language-javascript">import OpenAI from 'openai';
+import fs from 'fs';
+
+const client = new OpenAI();
+
+// 修正前: text/plain + binary format の場合、
+// テキストとして処理されエンコーディング問題が発生
+
+// 修正後: format: binary が指定されていれば
+// content-type に関係なく raw バイナリとして転送
+const file = await client.files.create({
+  file: fs.createReadStream('data.csv'),
+  purpose: 'assistants',
+});</code></pre>
+            </div>
+        </div>
+
+        <!-- Mermaid Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title">アーキテクチャ: HTTP リクエストフロー</h2>
+            <p style="margin-bottom: 16px; font-size: 0.9rem; color: #666;">OpenAI Node SDK v6.39.1 における HTTP リクエストフローと、undici ディスパッチャーの関係を示す図</p>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    subgraph App["アプリケーション"]
+        UserCode["ユーザーコード"]
+        SDKClient["OpenAI SDK<br/>v6.39.1"]
+    end
+
+    subgraph FetchLayer["Fetch レイヤー"]
+        BuiltinFetch["Node.js 組み込み<br/>globalThis.fetch"]
+        UndiciFetch["undici@8<br/>fetch"]
+    end
+
+    subgraph Dispatcher["ディスパッチャー"]
+        BuiltinDispatcher["組み込み undici<br/>Dispatcher (旧 API)"]
+        ExternalDispatcher["undici@8<br/>ProxyAgent (新 API)"]
+    end
+
+    subgraph Network["ネットワーク"]
+        Proxy["プロキシサーバー"]
+        OpenAIAPI["OpenAI API<br/>api.openai.com"]
+    end
+
+    subgraph ErrorHandling["エラーハンドリング (v6.39.1 改善)"]
+        Detection["不整合検出"]
+        Guidance["ガイダンス付き<br/>エラーメッセージ"]
+    end
+
+    UserCode --> SDKClient
+
+    SDKClient -->|"推奨構成"| UndiciFetch
+    SDKClient -->|"デフォルト"| BuiltinFetch
+
+    UndiciFetch --> ExternalDispatcher
+    BuiltinFetch --> BuiltinDispatcher
+
+    BuiltinFetch -.->|"バージョン不整合"| ExternalDispatcher
+    ExternalDispatcher -.->|"onRequestStart<br/>エラー"| Detection
+    Detection --> Guidance
+
+    ExternalDispatcher --> Proxy
+    BuiltinDispatcher --> OpenAIAPI
+    Proxy --> OpenAIAPI
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef error fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class SDKClient,OpenAIAPI openai
+    class UserCode,UndiciFetch,ExternalDispatcher dark
+    class BuiltinFetch,BuiltinDispatcher,Proxy light
+    class Detection,Guidance error
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Impact / Use Cases -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>&#x1F3E2; プロキシ環境利用者</h4>
+                <p>undici ディスパッチャー不整合のデバッグが容易になり、エラーメッセージに具体的な解決策が示されるようになった。企業のプロキシ環境で OpenAI API を利用する開発者に直接的な恩恵がある。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4C2; ファイルアップロード利用者</h4>
+                <p>text/plain コンテンツタイプのファイルをバイナリモードでアップロードする際のエッジケースが解消され、Assistants API やファイル API でのデータアップロードの信頼性が向上した。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x26A1; アップグレード推奨度</h4>
+                <p>プロキシ環境で不明瞭な接続エラーを経験している開発者は即時アップグレードを推奨。それ以外の開発者も、通常のパッチ更新として適用を推奨する。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F517; 依存関係の確認</h4>
+                <p>プロキシを利用する場合は undici パッケージの fetch と ProxyAgent を同一パッケージからインポートすることが公式に推奨される設計方針として確立された。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F504; 破壊的変更なし</h4>
+                <p>パッチリリースのため API の互換性は完全に維持されている。npm update openai または yarn upgrade openai で安全にアップグレード可能。</p>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI Node SDK v6.39.1 は、プロキシ環境での利用とファイルアップロードに関する 2 つの重要なバグ修正を含むパッチリリースである。undici ディスパッチャーのバージョン不整合問題に対しては、互換性レイヤーの実装ではなく、明確な診断ガイダンスとエラーメッセージの改善というアプローチが採用された。これは「実装固有の fetch オプションを使用する場合は、対応する fetch 実装も提供する」という設計原則を明確化するものであり、SDK の fetch 抽象化レイヤーの設計思想を反映している。text/plain バイナリアップロードの修正と合わせ、エッジケースでの SDK の堅牢性が向上した。プロキシ環境で接続エラーを経験している開発者は速やかなアップグレードを推奨する。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>OpenAI Node SDK v6.39.1 | 2026-05-28</p>
+            <p><a href="https://github.com/openai/openai-node/releases/tag/v6.39.1" target="_blank">https://github.com/openai/openai-node/releases/tag/v6.39.1</a></p>
+            <p style="margin-top: 12px; font-size: 0.8rem; color: #999;">Generated by OpenAI News Summary</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
