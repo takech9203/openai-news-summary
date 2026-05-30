@@ -5,10 +5,16 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-29](2026/2026-05-29-trustworthy-third-party-evaluations.md) - 信頼性の高い第三者評価のための共有プレイブック: AI モデル評価の標準フレームワーク
+- [2026-05-29](2026/2026-05-29-rosalind-biodefense.md) - OpenAI、Rosalind Biodefense を発表 — GPT-Rosalind によるバイオディフェンスとパンデミック対策の強化
+- [2026-05-29](2026/2026-05-29-braintrust-codex.md) - Braintrust が Codex で顧客リクエストをコードに変換する方法
+- [2026-05-29](2026/2026-05-29-boston-childrens-hospital-ai.md) - Boston Children's Hospital が AI を活用し希少疾患の新たな診断を実現
 - [2026-05-28](2026/2026-05-28-openai-node-sdk-v6-39-1.md) - OpenAI Node SDK v6.39.1 パッチリリース: undici ディスパッチャー不整合ガイダンス改善とバイナリアップロード修正
 - [2026-05-28](2026/2026-05-28-openai-frontier-governance-framework.md) - OpenAI、フロンティアガバナンスフレームワークを公開 — EU AI Act および California 規制との整合性を明示
+- [2026-05-28](2026/2026-05-28-mufg-ai-native-openai.md) - MUFG が OpenAI と共に AI ネイティブ組織を目指す
 - [2026-05-28](2026/2026-05-28-endava-codex-agentic-organization.md) - Endava が Codex でエージェンティック組織を構築する方法
 - [2026-05-28](2026/2026-05-28-codex-cli-v0-135-0.md) - Codex CLI v0.135.0 安定版リリース: 環境診断強化、Vim テキストオブジェクト、Python SDK Sandbox プリセット
+- [2026-05-28](2026/2026-05-28-chat-latest-snapshot.md) - chat-latest スナップショットリリース
 - [2026-05-28](2026/2026-05-28-building-self-improving-tax-agents-with-codex.md) - Codex で自己改善型の税務エージェントを構築する
 - [2026-05-27](2026/2026-05-27-warp-gpt-5-5-open-source.md) - Warp、GPT-5.5 を活用しオープンソース開発に大規模投資: コーディングエージェントの新たな挑戦
 - [2026-05-27](2026/2026-05-27-election-safeguards-2026.md) - 2026 年選挙における情報提供と安全対策
