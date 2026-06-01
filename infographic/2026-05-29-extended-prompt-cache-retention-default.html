@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロンプトキャッシュ保持期間のデフォルト値が 24 時間に変更 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 16px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        /* Related Links */
+        .related-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .related-links li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .related-links li:last-child {
+            border-bottom: none;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <h1>プロンプトキャッシュ保持期間のデフォルト値が 24 時間に変更</h1>
+                <p class="date">2026-05-29</p>
+            </div>
+        </header>
+
+        <!-- Overview / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.8;">
+                OpenAI は <code>prompt_cache_retention</code> パラメータのデフォルト値を <code>in_memory</code> から <code>24h</code> に変更した。この変更により、ZDR (Zero Data Retention) を有効にしていない組織では、明示的なパラメータ設定なしでキャッシュされたプロンプトプレフィックスが最大 24 時間保持されるようになる。
+            </p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>デフォルト値の変更</h3>
+                        <p><code>prompt_cache_retention</code> のデフォルトが <code>in_memory</code> (揮発性) から <code>24h</code> (最大 24 時間保持) に変更</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4B0;</div>
+                    <div class="key-point-content">
+                        <h3>自動的なコスト削減</h3>
+                        <p>繰り返し使用するシステムプロンプトやプレフィックスの処理コストが、コード変更なしで自動的に削減される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>レイテンシ改善</h3>
+                        <p>キャッシュされたプレフィックスの再計算が不要となり、レスポンス時間が短縮される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>ZDR 組織は影響なし</h3>
+                        <p>ZDR (Zero Data Retention) を有効にしている組織はこの変更の影響を受けない。データは引き続きリクエスト処理後に即座に削除される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E0;</div>
+                    <div class="key-point-content">
+                        <h3>コード変更不要</h3>
+                        <p>既存のコードを変更せずにキャッシュの恩恵を受けられる (非 ZDR 組織)。2025 年 11 月に導入された拡張プロンプトキャッシュ機能の延長</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (in_memory)</h4>
+                    <ul>
+                        <li>デフォルト値: <code>in_memory</code></li>
+                        <li>キャッシュ保持: 揮発性 (メモリ上のみ)</li>
+                        <li><code>24h</code> を使うには明示的に設定が必要</li>
+                        <li>GPU メモリからの退避でキャッシュが失われる</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (24h)</h4>
+                    <ul>
+                        <li>デフォルト値: <code>24h</code></li>
+                        <li>キャッシュ保持: 最大 24 時間持続</li>
+                        <li>設定不要で自動適用</li>
+                        <li>GPU ローカルストレージへの自動オフロード</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">主な変更点</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F310; 対象 API エンドポイント</h3>
+                    <p><strong>v1/responses</strong> (Responses API)<br><strong>v1/chat/completions</strong> (Chat Completions API)<br><strong>v1/batch</strong> (Batch API)<br>上記 3 つのエンドポイントが今回の変更の対象</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; ZDR 組織の動作</h3>
+                    <p>ZDR (Zero Data Retention) を有効にしている組織はこの変更の影響を受けない。ZDR 組織では引き続きデータがリクエスト処理後に即座に削除される</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9E0; キャッシュメカニズム</h3>
+                    <p>GPU メモリにキャッシュ → メモリ満杯時に GPU ローカルストレージへオフロード → 最大 24 時間アクティブな状態を維持</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details: Cache Mechanism -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細: キャッシュ保持メカニズム</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">1</div>
+                    <div class="key-point-content">
+                        <h3>インメモリキャッシュ</h3>
+                        <p>リクエスト処理時にプロンプトプレフィックスの key/value テンソルを GPU メモリにキャッシュ</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">2</div>
+                    <div class="key-point-content">
+                        <h3>GPU ローカルストレージへのオフロード</h3>
+                        <p>メモリが満杯になると、テンソルを GPU ローカルストレージに退避</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">3</div>
+                    <div class="key-point-content">
+                        <h3>24 時間保持</h3>
+                        <p>オフロードされたキャッシュは最大 24 時間アクティブな状態を維持。従来の <code>in_memory</code> デフォルトでは、GPU メモリからの退避が発生するとキャッシュが失われていたが、<code>24h</code> デフォルトにより自動的にストレージへのオフロードが有効になる</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["Client Application"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph API["OpenAI API"]
+        direction TB
+        Endpoints["v1/responses\nv1/chat/completions\nv1/batch"]
+    end
+
+    subgraph CacheLayer["Prompt Cache Layer"]
+        direction TB
+        Memory["GPU Memory\n(in_memory)"]
+        Storage["GPU Local Storage\n(24h retention)"]
+    end
+
+    subgraph Flow["Cache Flow"]
+        direction LR
+        Hit["Cache Hit\n(低レイテンシ)"]
+        Miss["Cache Miss\n(フル処理)"]
+    end
+
+    SDK -->|"リクエスト送信"| Endpoints
+    Endpoints -->|"プレフィックス照合"| Memory
+    Memory -->|"メモリ満杯時\nオフロード"| Storage
+    Storage -->|"最大 24 時間保持"| Hit
+    Memory -->|"キャッシュ一致"| Hit
+    Endpoints -->|"キャッシュなし"| Miss
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef cache fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class SDK,Endpoints openai
+    class Memory,Storage dark
+    class Hit,Miss cache
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">prompt_cache_retention 使用例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 新しいデフォルト (24h) - 明示的な指定は不要
+# prompt_cache_retention パラメータを省略しても 24h が適用される
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "system",
+            "content": "あなたは金融アナリストです。常に最新の市場データに基づいて回答してください。"
+        },
+        {
+            "role": "user",
+            "content": "本日の市場動向を教えてください。"
+        }
+    ]
+)
+print(response.choices[0].message.content)
+
+# 明示的にキャッシュ保持期間を指定する場合
+response_explicit = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "system",
+            "content": "あなたは金融アナリストです。常に最新の市場データに基づいて回答してください。"
+        },
+        {
+            "role": "user",
+            "content": "ポートフォリオの最適化提案をお願いします。"
+        }
+    ],
+    prompt_cache_retention="24h"  # 明示的に指定 (新デフォルトと同じ)
+)
+print(response_explicit.choices[0].message.content)
+
+# ZDR 組織の場合や、キャッシュを無効にしたい場合
+response_no_cache = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "user",
+            "content": "機密情報を含むリクエスト"
+        }
+    ],
+    prompt_cache_retention="in_memory"  # 従来の揮発性キャッシュに戻す
+)
+print(response_no_cache.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>&#x1F4B0; コスト削減</h4>
+                <p>キャッシュヒット率の向上により、繰り返し使用するシステムプロンプトやプレフィックスの処理コストが自動的に削減される</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x26A1; レイテンシ改善</h4>
+                <p>キャッシュされたプレフィックスの再計算が不要となり、レスポンス時間が短縮される</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F6E0; コード変更不要</h4>
+                <p>既存のコードを変更せずにキャッシュの恩恵を受けられる (非 ZDR 組織)</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F512; セキュリティ考慮</h4>
+                <p>データ保持ポリシーに厳格な要件がある場合は、明示的に <code>in_memory</code> を指定する必要がある</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4E6; Batch API への恩恵</h4>
+                <p>大量のバッチリクエストで共通プレフィックスを使用する場合、特にコスト効果が高い</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-text">
+                今回の変更は、2025 年 11 月に導入された拡張プロンプトキャッシュ機能のデフォルト有効化という位置づけである。<code>prompt_cache_retention</code> のデフォルト値が <code>in_memory</code> から <code>24h</code> に変更されたことで、非 ZDR 組織の開発者は追加の設定なしにキャッシュの長期保持による恩恵を自動的に受けられるようになった。特に、同じシステムプロンプトを繰り返し使用するアプリケーションでは、コスト削減とレイテンシ改善の効果が顕著に現れると期待される。
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+                <li><a href="https://platform.openai.com/docs/guides/prompt-caching" target="_blank" rel="noopener noreferrer">OpenAI Prompt Caching ドキュメント</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference/chat" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス - Chat Completions</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference/batch" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス - Batch</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-05-29 | カテゴリ: API 更新 | ソース: OpenAI API Changelog</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

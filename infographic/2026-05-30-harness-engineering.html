@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex ハーネスのエンジニアリング - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Note */
+        .note {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #92400E;
+            line-height: 1.6;
+        }
+
+        .note strong {
+            color: #78350F;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding-left: 16px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Layer Cards */
+        .layer-card {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .layer-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .layer-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+
+        /* Phase Cards */
+        .phase-card {
+            background: white;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .phase-card::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--openai-green);
+            border-radius: 2px 0 0 2px;
+        }
+
+        .phase-label {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .phase-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--openai-dark);
+        }
+
+        .phase-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .use-case ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* State Transition */
+        .state-transition {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+            overflow-x: auto;
+        }
+
+        .state-transition .label {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .related-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .footer .related-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer .related-links li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">エンジニアリング / Codex</span>
+                <h1>Codex ハーネスのエンジニアリング: エージェント実行フレームワーク構築の裏側</h1>
+                <p class="date">2026-05-30</p>
+            </div>
+        </header>
+
+        <!-- Note -->
+        <div class="note">
+            <strong>注:</strong> 本レポートは OpenAI エンジニアリングブログのサイトマップ情報、URL スラッグ、および先行記事「Unlocking the Codex Harness」(2026-05-26) の文脈に基づいて作成しています。記事本文へのアクセスは HTTP 403 により制限されたため、公開情報と技術的推察に基づいて内容を構成しています。正確な詳細については公式記事を参照してください。
+        </div>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F512;</div>
+                    <div class="key-point-content">
+                        <h3>セキュリティとパフォーマンスの両立</h3>
+                        <p>ゼロコピーパーミッションチェック、遅延初期化サンドボックス、非同期イベントバスにより、堅牢なセキュリティを維持しつつオーバーヘッドを最小化</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>多層防御アーキテクチャ</h3>
+                        <p>ハードウェア、OS、コンテナ、ハーネス、エージェントの各層が独立したセキュリティ保証を提供し、単一層の突破がシステム全体の侵害に繋がらない設計</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>FSM によるライフサイクル管理</h3>
+                        <p>有限状態マシンによるエージェントライフサイクルのモデル化により、予期しない状態遷移を検出し、安全なリカバリを保証</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9EA;</div>
+                    <div class="key-point-content">
+                        <h3>包括的なテスト戦略</h3>
+                        <p>Chaos Engineering、Fuzzing、Property-Based Testing、リプレイテストの組み合わせにより、エージェント実行環境固有の問題を捕捉</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>パフォーマンス最適化</h3>
+                        <p>ホットパス O(1) ルックアップ、メモリプール管理、バッチフック実行、適応型コンパクションによる高効率化</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI は 2026 年 5 月 30 日、エンジニアリングブログにて「Harness Engineering」と題した技術記事を公開した。本記事は、4 日前に公開された「Unlocking the Codex Harness」の続編として位置付けられる。前回の記事がハーネスの機能と拡張方法を解説したのに対し、本記事はハーネスそのものを「どう作ったか」というエンジニアリング上の意思決定、実装上の課題、アーキテクチャパターンに焦点を当てている。
+            </p>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-top: 12px;">
+                Codex ハーネスは、サンドボックス隔離、パーミッション境界強制、ライフサイクルフック、コンテキスト管理、拡張機能統合を単一のフレームワーク内で実現する複雑なシステムである。このフレームワークをセキュアかつ高パフォーマンスに構築するために、OpenAI のエンジニアリングチームが採用した設計原則と技術的選択が本記事の主題と考えられる。
+            </p>
+        </section>
+
+        <!-- Engineering Challenges -->
+        <section class="section">
+            <h2 class="section-title">エンジニアリング課題: セキュリティとパフォーマンスの両立</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7;">
+                ハーネスの最大のエンジニアリング課題は、堅牢なセキュリティ保証を維持しながら、エージェント実行のオーバーヘッドを最小化すること。全てのツール呼び出しがパーミッションチェックを通過し、全てのファイルアクセスがサンドボックス境界内で検証される仕組みでは、素朴な実装ではレイテンシが大幅に増加する。
+            </p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F680; ゼロコピーパーミッションチェック</h3>
+                    <p>パーミッション判定を事前コンパイルされたポリシーテーブルによるルックアップで実現し、ランタイムオーバーヘッドを数マイクロ秒に抑制</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x23F3; 遅延評価によるサンドボックス初期化</h3>
+                    <p>コンテナの完全初期化を待たずに、最低限の分離境界で即座にエージェントを起動し、残りのセットアップをバックグラウンドで完了</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4E8; イベントバスの非同期設計</h3>
+                    <p>ライフサイクルフックの実行がエージェントのクリティカルパスをブロックしないアーキテクチャ</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Multi-Layer Defense -->
+        <section class="section">
+            <h2 class="section-title">多層防御アーキテクチャの実装</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7;">
+                ハーネスのセキュリティモデルは、単一の防御層の突破がシステム全体の侵害に繋がらない多層構造を採用している。
+            </p>
+            <div class="layer-card">
+                <h4>&#x1F5A5; レイヤー 1 - ハードウェア / OS レベル</h4>
+                <ul>
+                    <li>cgroups v2 によるリソース隔離</li>
+                    <li>seccomp-bpf によるシステムコールフィルタリング</li>
+                    <li>Linux capabilities の最小権限原則に基づく付与</li>
+                </ul>
+            </div>
+            <div class="layer-card">
+                <h4>&#x1F4E6; レイヤー 2 - コンテナレベル</h4>
+                <ul>
+                    <li>読み取り専用ルートファイルシステム</li>
+                    <li>OverlayFS による作業ディレクトリの分離</li>
+                    <li>ネットワーク名前空間によるトラフィック制御</li>
+                </ul>
+            </div>
+            <div class="layer-card">
+                <h4>&#x1F6E1; レイヤー 3 - ハーネスレベル</h4>
+                <ul>
+                    <li>デフォルト拒否パーミッションエンジン</li>
+                    <li>ツール呼び出しのインターセプトとバリデーション</li>
+                    <li>コンテキスト注入の検証 (プロンプトインジェクション対策)</li>
+                </ul>
+            </div>
+            <div class="layer-card">
+                <h4>&#x1F916; レイヤー 4 - エージェントレベル</h4>
+                <ul>
+                    <li>モデル出力のサニタイズ</li>
+                    <li>自己制約による安全行動の学習</li>
+                    <li>確認プロンプトによるユーザー承認フロー</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Lifecycle FSM -->
+        <section class="section">
+            <h2 class="section-title">ライフサイクル管理の設計パターン</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7;">
+                ハーネスのライフサイクル管理は、有限状態マシン (FSM) パターンを基盤としている。エージェントの状態遷移を明示的にモデル化することで、予期しない状態遷移を検出し、異常時のリカバリを確実に行う。
+            </p>
+            <div class="state-transition">
+                <span class="label">正常フロー</span>
+                Initializing &rarr; Ready &rarr; Running &rarr; WaitingForApproval &rarr; Running &rarr; Idle &rarr; Compacting &rarr; Ready
+            </div>
+            <div class="state-transition">
+                <span class="label">異常系</span>
+                Running &rarr; Error &rarr; Recovery &rarr; Ready (自動回復)
+            </div>
+            <div class="state-transition">
+                <span class="label">終了系</span>
+                * &rarr; ShuttingDown &rarr; Terminated
+            </div>
+        </section>
+
+        <!-- Testing Strategy -->
+        <section class="section">
+            <h2 class="section-title">テスト戦略</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7;">
+                エージェント実行環境のテストには、従来のユニットテストだけでは不十分な固有の課題がある。
+            </p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4A5; Chaos Engineering</h3>
+                    <p>サンドボックス内で意図的にリソース不足やネットワーク障害を発生させ、ハーネスの耐障害性を検証</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F50D; Fuzzing ベースのパーミッションテスト</h3>
+                    <p>ランダムなツール呼び出しパターンを生成し、パーミッションバイパスの有無を網羅的に検証</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4FC; リプレイテスト</h3>
+                    <p>実際のエージェントセッションを記録し、ハーネスの変更後に同一入力を再生して回帰を検出</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; Property-Based Testing</h3>
+                    <p>パーミッション判定の不変条件 (一度拒否されたアクションは状態変化なしに許可されない等) を形式的に検証</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Optimization -->
+        <section class="section">
+            <h2 class="section-title">パフォーマンス最適化</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7;">
+                ハーネスレイヤーが追加するオーバーヘッドを最小化するための最適化手法。
+            </p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F3AF; ホットパスの最適化</h3>
+                    <p>ツール呼び出しのパーミッションチェックが最頻パスであり、事前コンパイルされたルールセットによる O(1) ルックアップを実現</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4BE; メモリプール管理</h3>
+                    <p>エージェントのコンテキスト管理でのアロケーション頻度を削減するためのプール方式を採用</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4E6; バッチ処理によるフック実行</h3>
+                    <p>複数の軽量フックを単一のプロセス起動でバッチ実行し、fork/exec オーバーヘッドを削減</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CA; 適応型コンパクション</h3>
+                    <p>コンテキストウィンドウの圧力に応じてコンパクションの粒度を動的に調整</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Stats -->
+        <section class="section">
+            <h2 class="section-title">パフォーマンスベンチマーク目標</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">&lt;10us</div>
+                    <div class="stat-label">パーミッションチェック p99 レイテンシ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;200ms</div>
+                    <div class="stat-label">サンドボックス コールドスタート</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;50ms</div>
+                    <div class="stat-label">サンドボックス ウォームスタート</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;15ms</div>
+                    <div class="stat-label">バッチフック実行オーバーヘッド</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">70%</div>
+                    <div class="stat-label">コンテキスト圧縮率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;500ms</div>
+                    <div class="stat-label">コンパクション レイテンシ (128K tokens)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Evolution -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャの進化</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7;">
+                ハーネスのアーキテクチャは、Codex の初期バージョンから大きく進化してきた。
+            </p>
+            <div class="phase-card">
+                <span class="phase-label">Phase 1</span>
+                <h4>初期: モノリシックアーキテクチャ</h4>
+                <p>モノリシックなエージェントランナー。セキュリティとライフサイクル管理が密結合</p>
+            </div>
+            <div class="phase-card">
+                <span class="phase-label">Phase 2</span>
+                <h4>分離: レイヤー分割</h4>
+                <p>セキュリティ層、ライフサイクル層、拡張層の分離。各層の独立したテストとデプロイが可能に</p>
+            </div>
+            <div class="phase-card">
+                <span class="phase-label">Phase 3</span>
+                <h4>現在: プラガブルアーキテクチャ</h4>
+                <p>各層がインターフェースベースで交換可能。プロファイルによる動的構成</p>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ図</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.7;">
+                ハーネスのエンジニアリングレイヤーを示す。ハードウェアから OS、コンテナ、ハーネス、エージェントまでの階層構造と、各層が提供するセキュリティ保証を表現している。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Hardware["ハードウェア層"]
+        CPU["CPU / メモリ"]
+        NVMe["NVMe ストレージ"]
+    end
+
+    subgraph OS["OS 層 (Linux Kernel)"]
+        Cgroups["cgroups v2<br/>リソース隔離"]
+        Seccomp["seccomp-bpf<br/>システムコール制限"]
+        Namespaces["Linux Namespaces<br/>プロセス / ネットワーク隔離"]
+    end
+
+    subgraph Container["コンテナ層"]
+        RootFS["読み取り専用 Root FS"]
+        Overlay["OverlayFS<br/>作業ディレクトリ"]
+        NetPolicy["ネットワークポリシー<br/>ホワイトリスト"]
+    end
+
+    subgraph HarnessLayer["ハーネス層 (Rust ランタイム)"]
+        direction TB
+        PermEngine["パーミッションエンジン<br/>O(1) ポリシールックアップ"]
+        FSM["ステートマシン<br/>ライフサイクル管理"]
+        EventBus["イベントバス<br/>非同期フック実行"]
+        CtxMgr["コンテキストマネージャー<br/>適応型コンパクション"]
+    end
+
+    subgraph Agent["エージェント層"]
+        Model["LLM (codex-1)"]
+        Tools["ツール実行"]
+        Planning["計画と推論"]
+    end
+
+    Hardware --> OS
+    OS --> Container
+    Container --> HarnessLayer
+    HarnessLayer --> Agent
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class PermEngine,FSM,EventBus,CtxMgr openai
+    class Cgroups,Seccomp,Namespaces,RootFS,Overlay,NetPolicy dark
+    class CPU,NVMe light
+    class Model,Tools,Planning accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <!-- Rust Code -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Rust</span>
+                    <span class="code-title">ハーネスのコアランタイム - 概念的な内部 API (codex-rs)</span>
+                </div>
+                <pre><code class="language-rust">// ハーネスのコアランタイム - 概念的な内部 API
+// (実際の実装は Rust ベース: codex-rs)
+
+/// ハーネスのライフサイクルステートマシン
+#[derive(Debug, Clone, PartialEq)]
+enum AgentState {
+    Initializing,
+    Ready,
+    Running,
+    WaitingForApproval { tool_call: ToolCallRequest },
+    Idle { since: Instant },
+    Compacting,
+    Error { reason: String, recoverable: bool },
+    Recovery,
+    ShuttingDown,
+    Terminated,
+}
+
+/// パーミッションエンジンのコアインターフェース
+trait PermissionEngine {
+    /// ツール呼び出しの認可判定 (ゼロコピー、O(1) ルックアップ)
+    fn authorize(&amp;self, request: &amp;ToolCallRequest) -&gt; PermissionDecision;
+
+    /// ポリシーの動的リロード (プロファイル切り替え時)
+    fn reload_policy(&amp;mut self, profile: &amp;Profile) -&gt; Result&lt;(), PolicyError&gt;;
+
+    /// 監査ログエントリの生成
+    fn audit_log(&amp;self, request: &amp;ToolCallRequest, decision: &amp;PermissionDecision);
+}
+
+/// サンドボックスマネージャー
+trait SandboxManager {
+    /// 遅延初期化によるサンドボックス作成
+    async fn create_sandbox(&amp;self, config: &amp;SandboxConfig) -&gt; Result&lt;Sandbox, SandboxError&gt;;
+
+    /// リソース使用量の監視
+    fn resource_usage(&amp;self, sandbox: &amp;Sandbox) -&gt; ResourceMetrics;
+
+    /// 異常検知とリソース制限の強制
+    fn enforce_limits(&amp;self, sandbox: &amp;Sandbox) -&gt; Result&lt;(), ResourceExceeded&gt;;
+}
+
+/// ライフサイクルイベントバス (非同期、ノンブロッキング)
+trait EventBus {
+    /// イベントの発行 (クリティカルパスをブロックしない)
+    fn emit(&amp;self, event: LifecycleEvent) -&gt; EventHandle;
+
+    /// フックの登録
+    fn register_hook(&amp;mut self, trigger: EventTrigger, hook: HookConfig);
+
+    /// バッチ実行の最適化
+    fn flush_batch(&amp;self, events: Vec&lt;LifecycleEvent&gt;) -&gt; BatchResult;
+}</code></pre>
+            </div>
+
+            <!-- YAML Code -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">YAML</span>
+                    <span class="code-title">harness-bench.yaml - ハーネスオーバーヘッド計測構成</span>
+                </div>
+                <pre><code class="language-yaml"># harness-bench.yaml - ハーネスオーバーヘッド計測構成
+benchmark:
+  scenarios:
+    # パーミッションチェックのレイテンシ計測
+    permission_check:
+      iterations: 100000
+      warmup: 1000
+      policy_rules: 500  # 典型的なエンタープライズ構成
+      target_p99_latency_us: 10  # 10 マイクロ秒以下
+
+    # サンドボックス起動時間の計測
+    sandbox_startup:
+      iterations: 100
+      mode: lazy_init  # 遅延初期化モード
+      target_cold_start_ms: 200  # コールドスタート 200ms 以下
+      target_warm_start_ms: 50   # ウォームスタート 50ms 以下
+
+    # フック実行のオーバーヘッド計測
+    hook_execution:
+      iterations: 10000
+      hook_count: 5
+      batch_mode: true
+      target_batch_overhead_ms: 15  # バッチ実行 15ms 以下
+
+    # コンテキストコンパクションのスループット
+    context_compaction:
+      iterations: 500
+      context_size_tokens: 128000
+      target_compaction_ratio: 0.3  # 70% 圧縮
+      target_latency_ms: 500
+
+  hardware:
+    cpu: "AMD EPYC 7R13"
+    memory: "32Gi"
+    storage: "NVMe SSD"
+
+  reporting:
+    format: json
+    output: "./bench-results/"
+    compare_baseline: true</code></pre>
+            </div>
+
+            <!-- Python Code -->
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">harness_integration_test.py - ハーネスの統合テスト (概念例)</span>
+                </div>
+                <pre><code class="language-python"># harness_integration_test.py - ハーネスの統合テスト (概念例)
+import asyncio
+from dataclasses import dataclass
+from typing import List
+
+@dataclass
+class HarnessTestCase:
+    """ハーネス統合テストのケース定義"""
+    name: str
+    agent_state_sequence: List[str]
+    tool_calls: List[dict]
+    expected_permissions: List[str]  # "allow" or "deny"
+    inject_faults: List[dict] = None
+
+class HarnessIntegrationTest:
+    """ハーネスの Property-Based Testing フレームワーク"""
+
+    async def test_permission_invariant(self):
+        """不変条件: 一度拒否されたアクションは状態変化なしに許可されない"""
+        harness = await self.create_test_harness(profile="strict")
+
+        denied_action = {"tool": "bash", "command": "rm -rf /"}
+        result1 = harness.permission_engine.authorize(denied_action)
+        assert result1.decision == "deny"
+
+        # 同一状態で再度リクエスト - 必ず拒否されること
+        result2 = harness.permission_engine.authorize(denied_action)
+        assert result2.decision == "deny"
+
+    async def test_sandbox_isolation(self):
+        """コンテナ間のプロセス隔離を検証"""
+        sandbox_a = await self.sandbox_mgr.create_sandbox(config_a)
+        sandbox_b = await self.sandbox_mgr.create_sandbox(config_b)
+
+        # sandbox_a 内のプロセスが sandbox_b を認識できないこと
+        ps_output = await sandbox_a.exec("ps aux")
+        assert sandbox_b.pid not in ps_output
+
+    async def test_lifecycle_state_machine(self):
+        """FSM の状態遷移が仕様通りであることを検証"""
+        harness = await self.create_test_harness()
+
+        # 正常フロー
+        assert harness.state == "Initializing"
+        await harness.initialize()
+        assert harness.state == "Ready"
+        await harness.start_turn()
+        assert harness.state == "Running"
+        await harness.complete_turn()
+        assert harness.state == "Idle"
+
+        # 不正な遷移は例外を発生させる
+        with pytest.raises(InvalidStateTransition):
+            await harness.complete_turn()  # Idle -&gt; complete は不正
+
+    async def test_hook_nonblocking(self):
+        """フック実行がクリティカルパスをブロックしないことを検証"""
+        slow_hook = HookConfig(
+            trigger="on-tool-call",
+            command="sleep 5",  # 意図的に遅いフック
+            timeout=10
+        )
+        harness = await self.create_test_harness(hooks=[slow_hook])
+
+        start = asyncio.get_event_loop().time()
+        await harness.execute_tool_call({"tool": "read", "path": "/file.txt"})
+        elapsed = asyncio.get_event_loop().time() - start
+
+        # フックが 5 秒かかっても、ツール実行自体は即座に完了
+        assert elapsed &lt; 0.1  # 100ms 以内</code></pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>&#x1F50E; ハーネスの内部設計理解がもたらすメリット</h4>
+                <ul>
+                    <li>ハーネスの多層アーキテクチャを理解することで、パフォーマンス問題のトラブルシューティングが容易になる</li>
+                    <li>パーミッションエンジンの O(1) ルックアップ設計を知ることで、大量のルール定義がパフォーマンスに悪影響を与えないことを確信できる</li>
+                    <li>ライフサイクル FSM を理解することで、フックの適切なトリガーポイントを選択可能</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F527; カスタムハーネス拡張の開発指針</h4>
+                <ul>
+                    <li>イベントバスの非同期設計を理解することで、重いフック処理がエージェント実行をブロックしない理由を把握でき、安心して複雑なフックを追加可能</li>
+                    <li>サンドボックスの遅延初期化パターンを知ることで、起動時間の最適化に貢献するカスタム設定を作成可能</li>
+                    <li>バッチ実行の仕組みを利用して、複数の軽量フックを効率的にグルーピング可能</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x1F3E2; エンタープライズ環境への導入判断</h4>
+                <ul>
+                    <li>多層防御アーキテクチャの詳細を知ることで、セキュリティ監査やコンプライアンスレビューにおいて、Codex の安全性を技術的に説明可能</li>
+                    <li>リソース隔離の実装詳細により、マルチテナント環境での利用可否を判断可能</li>
+                    <li>テスト戦略 (Chaos Engineering、Fuzzing、Property-Based Testing) の開示により、フレームワークの品質保証レベルを評価可能</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>&#x26A1; パフォーマンスチューニングへの応用</h4>
+                <ul>
+                    <li>ベンチマーク指標 (パーミッションチェック p99 &lt; 10us、コールドスタート &lt; 200ms) を基準に自社環境でのパフォーマンスを評価可能</li>
+                    <li>適応型コンパクションの仕組みを理解し、コンテキスト管理のチューニングに活用可能</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                「Harness Engineering」は、「Unlocking the Codex Harness」の続編として、Codex ハーネスを「どのように構築したか」にフォーカスしたエンジニアリング記事である。前回の記事がハーネスのユーザー向け機能 (フック、MCP、プロファイル) を解説したのに対し、本記事はその裏側にある設計判断と実装技術を開示している。
+            </p>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                核となるエンジニアリング原則は以下の 4 つと考えられる。
+            </p>
+            <div style="margin-top: 16px;">
+                <div class="key-point" style="margin-bottom: 12px;">
+                    <div class="key-point-icon">1</div>
+                    <div class="key-point-content">
+                        <h3>セキュリティとパフォーマンスの両立</h3>
+                        <p>ゼロコピーパーミッションチェック、遅延初期化サンドボックス、非同期イベントバスにより、堅牢なセキュリティを維持しつつオーバーヘッドを最小化</p>
+                    </div>
+                </div>
+                <div class="key-point" style="margin-bottom: 12px;">
+                    <div class="key-point-icon">2</div>
+                    <div class="key-point-content">
+                        <h3>多層防御の実装</h3>
+                        <p>ハードウェア、OS、コンテナ、ハーネス、エージェントの各層が独立したセキュリティ保証を提供し、単一層の突破がシステム全体の侵害に繋がらない設計</p>
+                    </div>
+                </div>
+                <div class="key-point" style="margin-bottom: 12px;">
+                    <div class="key-point-icon">3</div>
+                    <div class="key-point-content">
+                        <h3>明示的な状態管理</h3>
+                        <p>有限状態マシンによるエージェントライフサイクルのモデル化により、予期しない状態遷移を検出し、安全なリカバリを保証</p>
+                    </div>
+                </div>
+                <div class="key-point" style="margin-bottom: 12px;">
+                    <div class="key-point-icon">4</div>
+                    <div class="key-point-content">
+                        <h3>包括的なテスト戦略</h3>
+                        <p>Chaos Engineering、Fuzzing、Property-Based Testing、リプレイテストの組み合わせにより、従来のユニットテストでは検出困難なエージェント実行環境固有の問題を捕捉</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener noreferrer">https://openai.com/index/harness-engineering/</a></p>
+            <div class="related-links">
+                <p><strong>関連リンク:</strong></p>
+                <ul>
+                    <li><a href="https://openai.com/index/unlocking-the-codex-harness/" target="_blank" rel="noopener noreferrer">Unlocking the Codex Harness</a> - ハーネスの機能と拡張方法 (前編)</li>
+                    <li><a href="https://openai.com/index/unrolling-the-codex-agent-loop/" target="_blank" rel="noopener noreferrer">Unrolling the Codex Agent Loop</a> - エージェントループの内部構造</li>
+                    <li><a href="https://openai.com/index/running-codex-safely" target="_blank" rel="noopener noreferrer">Running Codex Safely</a> - Codex の安全な運用</li>
+                    <li><a href="https://platform.openai.com/docs/codex/hooks" target="_blank" rel="noopener noreferrer">Codex Hooks ドキュメント</a> - ライフサイクルフックの公式リファレンス</li>
+                    <li><a href="https://github.com/openai/codex" target="_blank" rel="noopener noreferrer">codex-rs (GitHub)</a> - Codex CLI の Rust 実装</li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/rust.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

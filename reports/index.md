@@ -5,8 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-05-30](2026/2026-05-30-harness-engineering.md) - Codex ハーネスのエンジニアリング: エージェント実行フレームワーク構築の裏側
 - [2026-05-29](2026/2026-05-29-trustworthy-third-party-evaluations.md) - 信頼性の高い第三者評価のための共有プレイブック: AI モデル評価の標準フレームワーク
 - [2026-05-29](2026/2026-05-29-rosalind-biodefense.md) - OpenAI、Rosalind Biodefense を発表 — GPT-Rosalind によるバイオディフェンスとパンデミック対策の強化
+- [2026-05-29](2026/2026-05-29-extended-prompt-cache-retention-default.md) - プロンプトキャッシュ保持期間のデフォルト値が 24 時間に変更
 - [2026-05-29](2026/2026-05-29-braintrust-codex.md) - Braintrust が Codex で顧客リクエストをコードに変換する方法
 - [2026-05-29](2026/2026-05-29-boston-childrens-hospital-ai.md) - Boston Children's Hospital が AI を活用し希少疾患の新たな診断を実現
 - [2026-05-28](2026/2026-05-28-openai-node-sdk-v6-39-1.md) - OpenAI Node SDK v6.39.1 パッチリリース: undici ディスパッチャー不整合ガイダンス改善とバイナリアップロード修正
