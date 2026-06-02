@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-02](2026/2026-06-02-stargate-michigan-data-center.md) - OpenAI、Stargate プロジェクトにミシガン州データセンターを追加 -- 米国 AI インフラ網を更に拡充
+- [2026-06-01](2026/2026-06-01-what-parameter-golf-taught-us.md) - Parameter Golf が教えてくれたこと
+- [2026-06-01](2026/2026-06-01-sharing-the-latest-model-spec.md) - 最新 Model Spec の公開: AI モデルの行動規範フレームワークを更新
+- [2026-06-01](2026/2026-06-01-openai-models-amazon-bedrock.md) - OpenAI フロンティアモデルと Codex が Amazon Bedrock で利用可能に
+- [2026-06-01](2026/2026-06-01-introducing-prism.md) - Introducing Prism: OpenAI の新プロダクト発表
+- [2026-06-01](2026/2026-06-01-extending-single-minus-amplitudes-gravitons.md) - Single-Minus 振幅の重力子への拡張 -- AI による量子重力散乱振幅研究の正式公開
 - [2026-05-30](2026/2026-05-30-harness-engineering.md) - Codex ハーネスのエンジニアリング: エージェント実行フレームワーク構築の裏側
 - [2026-05-29](2026/2026-05-29-trustworthy-third-party-evaluations.md) - 信頼性の高い第三者評価のための共有プレイブック: AI モデル評価の標準フレームワーク
 - [2026-05-29](2026/2026-05-29-rosalind-biodefense.md) - OpenAI、Rosalind Biodefense を発表 — GPT-Rosalind によるバイオディフェンスとパンデミック対策の強化

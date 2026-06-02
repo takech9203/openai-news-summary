@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI フロンティアモデルと Codex が Amazon Bedrock で利用可能に - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --aws-orange: #FF9900;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 153, 0, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .category-badge.aws {
+            background: var(--aws-orange);
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-icon.aws-icon {
+            background: linear-gradient(135deg, #FF9900 0%, #FFB84D 100%);
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Before/After */
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .before-card, .after-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .before-card {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+            border: 2px solid #FECACA;
+        }
+
+        .after-card {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border: 2px solid #A7F3D0;
+        }
+
+        .before-card h4, .after-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .before-card h4 { color: #DC2626; }
+        .after-card h4 { color: #059669; }
+
+        .before-card ul, .after-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .before-card li, .after-card li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 6px 0 6px 20px;
+            position: relative;
+        }
+
+        .before-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+        }
+
+        .after-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+        }
+
+        .arrow-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card .feature-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .comparison-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .comparison-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .comparison-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .comparison-table tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        .comparison-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .comparison-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .badge-supported {
+            display: inline-block;
+            background: #ECFDF5;
+            color: #059669;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-unsupported {
+            display: inline-block;
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            padding: 4px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .before-after {
+                grid-template-columns: 1fr;
+            }
+
+            .arrow-divider {
+                transform: rotate(90deg);
+                padding: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <span class="category-badge aws">Amazon Bedrock</span>
+                <h1>OpenAI フロンティアモデルと Codex が Amazon Bedrock で利用可能に</h1>
+                <p class="date">2026-06-01 | OpenAI API Changelog / OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.5 と Codex が Amazon Bedrock で利用可能</h3>
+                        <p>OpenAI のフラッグシップモデル GPT-5.5 および Codex が、Amazon Bedrock プラットフォーム上で正式に提供開始。AWS ネイティブ環境から最先端の AI モデルにアクセス可能に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F511;</div>
+                    <div class="key-point-content">
+                        <h3>BedrockOpenAI クライアントで簡単に接続</h3>
+                        <p>既存の OpenAI SDK インターフェースを維持しつつ、クライアント初期化部分のみの変更で Bedrock 経由に切り替え可能。ビジネスロジックの変更は不要。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon aws-icon">&#x1F310;</div>
+                    <div class="key-point-content">
+                        <h3>us-east-2 リージョンで初期展開</h3>
+                        <p>初期リリースは us-east-2 リージョンで提供。専用エンドポイント bedrock-mantle.us-east-2.api.aws を通じて Responses API にアクセス。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon aws-icon">&#x1F4B0;</div>
+                    <div class="key-point-content">
+                        <h3>AWS 一括課金でガバナンスを統合</h3>
+                        <p>OpenAI モデルの利用料金が AWS の既存請求体系に統合。経理処理の簡素化と、IAM によるチーム/サービス単位のアクセス制御を実現。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before / After -->
+        <section class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="before-after">
+                <div class="before-card">
+                    <h4>Before</h4>
+                    <ul>
+                        <li>OpenAI API キーでの直接接続</li>
+                        <li>別個の課金管理 (OpenAI 請求)</li>
+                        <li>OpenAI 独自のアクセス制御</li>
+                        <li>データ処理地域の選択肢が限定的</li>
+                    </ul>
+                </div>
+                <div class="arrow-divider">&#x27A1;</div>
+                <div class="after-card">
+                    <h4>After</h4>
+                    <ul>
+                        <li>AWS IAM 認証でセキュアに接続</li>
+                        <li>AWS 一括課金でガバナンス統合</li>
+                        <li>IAM ポリシーによる細粒度アクセス制御</li>
+                        <li>リージョンコンプライアンスに対応</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">サポートされる機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4DD;</div>
+                    <h3>テキスト生成 & ストリーミング</h3>
+                    <p>Responses API を通じたテキスト生成とリアルタイムストリーミングに対応</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F5BC;</div>
+                    <h3>画像入力 & ファイル入力</h3>
+                    <p>マルチモーダル入力として画像やファイルを処理可能</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4CB;</div>
+                    <h3>構造化出力 (Structured Outputs)</h3>
+                    <p>JSON Schema に準拠した確定的な出力フォーマットを指定可能</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F527;</div>
+                    <h3>関数呼び出し (Function Calling)</h3>
+                    <p>外部ツールやシステムとの連携を可能にする関数呼び出し機能</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F9E0;</div>
+                    <h3>推論努力度の指定</h3>
+                    <p>Reasoning Effort パラメータでモデルの思考深度を制御</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x26A1;</div>
+                    <h3>プロンプトキャッシング</h3>
+                    <p>繰り返しプロンプトのキャッシュによるレイテンシ削減とコスト最適化</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">BedrockOpenAI 基本的な使用方法</span>
+                </div>
+                <pre><code class="language-python">from openai import BedrockOpenAI
+
+client = BedrockOpenAI(aws_region="us-east-2")
+
+response = client.responses.create(
+    model="openai.gpt-5.5",
+    input="Write a haiku about cloud infrastructure.",
+)
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">トークンプロバイダー方式 (IAM 認証)</span>
+                </div>
+                <pre><code class="language-python">from aws_bedrock_token_generator import provide_token
+from openai import BedrockOpenAI
+
+client = BedrockOpenAI(
+    aws_region="us-east-2",
+    bedrock_token_provider=provide_token,
+)
+
+response = client.responses.create(
+    model="openai.gpt-5.5",
+    input="Explain the benefits of serverless architecture.",
+)
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JavaScript</span>
+                    <span class="code-title">BedrockOpenAI (Node.js / TypeScript)</span>
+                </div>
+                <pre><code class="language-javascript">import { BedrockOpenAI } from "openai";
+
+const client = new BedrockOpenAI({ awsRegion: "us-east-2" });
+
+const response = await client.responses.create({
+    model: "openai.gpt-5.5",
+    input: "Write a haiku about cloud infrastructure.",
+});
+
+console.log(response.output_text);</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph App["開発者アプリケーション"]
+        SDK["OpenAI SDK<br/>(BedrockOpenAI クライアント)"]
+        Auth["認証"]
+    end
+
+    subgraph AuthMethods["認証方式"]
+        StaticKey["静的 API キー<br/>AWS_BEARER_TOKEN_BEDROCK"]
+        TokenProvider["トークンプロバイダー<br/>aws-bedrock-token-generator"]
+    end
+
+    subgraph AWS["Amazon Web Services"]
+        subgraph Bedrock["Amazon Bedrock (us-east-2)"]
+            Endpoint["Responses API<br/>bedrock-mantle.us-east-2.api.aws"]
+            subgraph Models["OpenAI モデル"]
+                GPT55["openai.gpt-5.5"]
+                Codex["Codex"]
+            end
+        end
+        IAM["AWS IAM"]
+        Billing["AWS Billing"]
+    end
+
+    SDK --> Auth
+    Auth --> StaticKey
+    Auth --> TokenProvider
+    StaticKey --> Endpoint
+    TokenProvider --> IAM
+    IAM --> Endpoint
+    Endpoint --> GPT55
+    Endpoint --> Codex
+    Billing --> Bedrock
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef aws fill:#FF9900,stroke:#CC7A00,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT55,Codex openai
+    class SDK,Auth dark
+    class Endpoint,IAM,Billing,Bedrock aws
+    class StaticKey,TokenProvider light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Comparison Table -->
+        <section class="section">
+            <h2 class="section-title">サポート機能 vs 未サポート機能</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>サポート対象</th>
+                        <th>未サポート (初期リリース時点)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> テキスト生成</td>
+                        <td><span class="badge-unsupported">未対応</span> 音声入力</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> 画像入力</td>
+                        <td><span class="badge-unsupported">未対応</span> WebSocket 接続</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> ファイル入力</td>
+                        <td><span class="badge-unsupported">未対応</span> ホスト型 Web 検索</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> 構造化出力</td>
+                        <td><span class="badge-unsupported">未対応</span> ホスト型ファイル検索</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> 関数呼び出し</td>
+                        <td><span class="badge-unsupported">未対応</span> Computer Use</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> ストリーミング</td>
+                        <td><span class="badge-unsupported">未対応</span> Shell ツール</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> 推論努力度の指定</td>
+                        <td><span class="badge-unsupported">未対応</span> 画像生成ツール</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> プロンプトキャッシング</td>
+                        <td><span class="badge-unsupported">未対応</span> リモート MCP サーバー</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-supported">対応</span> カスタムツール</td>
+                        <td><span class="badge-unsupported">未対応</span> サービスティア (オンデマンドのみ)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">想定ユースケース</h2>
+            <div class="use-case">
+                <h4>AWS ネイティブ企業での OpenAI モデル活用</h4>
+                <p>AWS を主要クラウドとして利用する企業が、既存の AWS インフラストラクチャとガバナンスフレームワーク内で OpenAI の最先端モデルを活用可能。経理処理の簡素化と運用の統一を実現する。</p>
+            </div>
+            <div class="use-case">
+                <h4>IAM による細粒度アクセス制御</h4>
+                <p>AWS IAM ポリシーを使用して、チームやサービスごとにモデルへのアクセス権限を細かく制御。既存の AWS セキュリティ体制との統合により、エンタープライズレベルのアクセス管理を実現する。</p>
+            </div>
+            <div class="use-case">
+                <h4>データレジデンシー要件への対応</h4>
+                <p>データが特定の AWS リージョン内で処理されるため、規制要件やデータ主権に関するコンプライアンス要件を満たしやすくなる。特に金融、医療、公共セクターでの活用が期待される。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <strong>出典</strong>
+            <ul>
+                <li><a href="https://openai.com/index/openai-frontier-models-and-codex-are-now-available-on-aws/">https://openai.com/index/openai-frontier-models-and-codex-are-now-available-on-aws/</a></li>
+                <li><a href="https://developers.openai.com/api/docs/guides/amazon-bedrock">https://developers.openai.com/api/docs/guides/amazon-bedrock</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#565869',
+                secondaryColor: '#F7F7F8',
+                tertiaryColor: '#ECECF1',
+                fontSize: '14px'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/javascript.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

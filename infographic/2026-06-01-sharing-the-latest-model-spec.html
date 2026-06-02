@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最新 Model Spec の公開 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Core Principles */
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .principle-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 28px 20px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .principle-card::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background: rgba(16, 163, 127, 0.2);
+            border-radius: 50%;
+        }
+
+        .principle-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .principle-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .principle-card p {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Chain of Command */
+        .chain-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            margin: 20px 0;
+        }
+
+        .chain-level {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px 28px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chain-level.level-1 {
+            background: var(--gradient-header);
+            color: white;
+            border: 3px solid var(--openai-green);
+        }
+
+        .chain-level.level-2 {
+            background: linear-gradient(135deg, #444654 0%, #565869 100%);
+            color: white;
+            width: 85%;
+        }
+
+        .chain-level.level-3 {
+            background: var(--openai-gray);
+            color: var(--text-primary);
+            width: 70%;
+        }
+
+        .chain-level h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .chain-level p {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        .chain-arrow {
+            font-size: 24px;
+            color: var(--openai-green);
+            margin: 8px 0;
+        }
+
+        /* Table */
+        .framework-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+        }
+
+        .framework-table thead {
+            background: var(--gradient-header);
+            color: white;
+        }
+
+        .framework-table th {
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .framework-table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .framework-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .framework-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .framework-table tbody tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .disclaimer-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .principles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chain-level.level-2,
+            .chain-level.level-3 {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">安全性</span>
+                <h1>最新 Model Spec の公開: AI モデルの行動規範フレームワークを更新</h1>
+                <p class="date">2026-06-01</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📋</div>
+                    <div class="key-point-content">
+                        <h3>Model Spec 最新版を公開</h3>
+                        <p>AI モデルの行動規範「Model Spec」の最新版を公開。モデルがどのように振る舞うべきかを定義する包括的なフレームワーク</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>エージェント型 AI システムへの対応</h3>
+                        <p>Codex、Computer Use などの自律型 AI エージェントに対応した安全性ガイダンスを新たに追加</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌐</div>
+                    <div class="key-point-content">
+                        <h3>国際規制への適合</h3>
+                        <p>EU AI Act をはじめとする国際的な AI 規制フレームワークへの対応を明記</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔗</div>
+                    <div class="key-point-content">
+                        <h3>3 つの安全性フレームワークによる包括的ガバナンス</h3>
+                        <p>Frontier Governance Framework、第三者評価、Model Spec の 3 層構造で包括的な安全性を確保</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Principles -->
+        <section class="section">
+            <h2 class="section-title">中核原則 (3 つの柱)</h2>
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <div class="principle-icon">💡</div>
+                    <h3>有用性</h3>
+                    <p>Helpfulness</p>
+                </div>
+                <div class="principle-card">
+                    <div class="principle-icon">🛡️</div>
+                    <h3>無害性</h3>
+                    <p>Harmlessness</p>
+                </div>
+                <div class="principle-card">
+                    <div class="principle-icon">🎯</div>
+                    <h3>誠実性</h3>
+                    <p>Honesty</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">更新の主要内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🤖 エージェント型 AI</h3>
+                    <p>自律行動の安全性確保。Codex や Computer Use など、自律的にタスクを遂行するエージェントの行動規範</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧠 GPT-5.x 対応</h3>
+                    <p>高度な能力に対応した安全性境界。より高い知能を持つモデルに求められる制約と許容範囲</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👥 権限フレームワーク</h3>
+                    <p>開発者・ユーザー権限の明確化。誰がどのレベルでモデルの振る舞いを制御できるか</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎨 マルチモーダル</h3>
+                    <p>画像・音声・動画の行動規範。テキスト以外のモダリティに対する安全性ポリシー</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 ツール使用</h3>
+                    <p>Function Calling の安全ガイダンス。外部ツール呼び出し時の安全性確保と制約</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌍 国際規制</h3>
+                    <p>EU AI Act 等への対応。各国・地域の法規制に準拠するための具体的ガイドライン</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chain of Command -->
+        <section class="section">
+            <h2 class="section-title">権限の階層構造 (Chain of Command)</h2>
+            <div class="chain-container">
+                <div class="chain-level level-1">
+                    <h4>Level 1: OpenAI ポリシー</h4>
+                    <p>最上位 - 絶対的な制約。全てに優先する</p>
+                </div>
+                <div class="chain-arrow">▼</div>
+                <div class="chain-level level-2">
+                    <h4>Level 2: 開発者の指示</h4>
+                    <p>システムプロンプトによるカスタマイズ</p>
+                </div>
+                <div class="chain-arrow">▼</div>
+                <div class="chain-level level-3">
+                    <h4>Level 3: ユーザーの要求</h4>
+                    <p>エンドユーザーからのリクエスト</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ図</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph ModelSpec["Model Spec フレームワーク (2026 年 6 月更新版)"]
+        direction TB
+        Core["中核原則"]
+        Helpful["有用性\n(Helpfulness)"]
+        Harmless["無害性\n(Harmlessness)"]
+        Honest["誠実性\n(Honesty)"]
+        Core --> Helpful
+        Core --> Harmless
+        Core --> Honest
+    end
+
+    subgraph Hierarchy["権限の階層構造 (Chain of Command)"]
+        direction TB
+        L1["OpenAI ポリシー\n(最上位 - 絶対的)"]
+        L2["開発者の指示\n(システムプロンプト)"]
+        L3["ユーザーの要求\n(エンドユーザー)"]
+        L1 --> L2
+        L2 --> L3
+    end
+
+    subgraph Boundaries["安全性境界"]
+        direction TB
+        Hard["ハードリミット\n(絶対的制限)"]
+        Soft["ソフトリミット\n(調整可能)"]
+        Refusal["拒否基準"]
+        Hard --> Refusal
+        Soft --> Refusal
+    end
+
+    subgraph NewScope["2026 年更新の対応範囲"]
+        direction TB
+        Agent["エージェント型 AI\n(Codex, Computer Use)"]
+        Multi["マルチモーダル\n(画像・音声・動画)"]
+        Tools["ツール使用\n(Function Calling)"]
+        Regulation["国際規制対応\n(EU AI Act 等)"]
+    end
+
+    Core --> Boundaries
+    Core --> Hierarchy
+    NewScope --> Boundaries
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Core,Helpful,Harmless,Honest openai
+    class L1,L2,L3 dark
+    class Hard,Soft,Refusal accent
+    class Agent,Multi,Tools,Regulation light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Related Frameworks Table -->
+        <section class="section">
+            <h2 class="section-title">関連する安全性フレームワーク (3 層構造)</h2>
+            <table class="framework-table">
+                <thead>
+                    <tr>
+                        <th>フレームワーク</th>
+                        <th>公開日</th>
+                        <th>対象レベル</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Frontier Governance Framework</strong></td>
+                        <td>2026-05-28</td>
+                        <td>組織レベルのガバナンス</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Trustworthy Third-Party Evaluations</strong></td>
+                        <td>2026-05-29</td>
+                        <td>外部検証の仕組み</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model Spec 最新版</strong></td>
+                        <td>2026-06-01</td>
+                        <td>モデルレベルの行動基準</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>エージェント型アプリ設計の指針</h4>
+                <p>Codex や Computer Use を活用したアプリケーション開発時に、安全性境界の設計方針として Model Spec を参照可能に</p>
+            </div>
+            <div class="use-case">
+                <h4>マルチモーダル機能活用範囲の明確化</h4>
+                <p>画像・音声・動画を扱う際の行動規範が明確になり、許容範囲内での機能実装がしやすく</p>
+            </div>
+            <div class="use-case">
+                <h4>コンプライアンス対応の強化</h4>
+                <p>EU AI Act 等の国際規制に対応したアプリケーション設計のベースラインとして活用可能</p>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <section class="section">
+            <div class="disclaimer">
+                <span class="disclaimer-icon">⚠️</span>
+                <p>本インフォグラフィックは公開情報に基づいて作成されています。元記事の本文コンテンツにはアクセスできなかったため、公開されたタイトル・概要情報および関連ドキュメントから内容を構成しています。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/sharing-the-latest-model-spec/" target="_blank" rel="noopener noreferrer">https://openai.com/index/sharing-the-latest-model-spec/</a></p>
+            <p style="margin-top: 8px;">作成日: 2026-06-02</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
