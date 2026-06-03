@@ -5,7 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-03](2026/2026-06-03-codex-for-every-role-tool-workflow.md) - Codex があらゆる職種・ツール・ワークフローに対応: ユニバーサル AI ワークプラットフォームとしての完成形
 - [2026-06-02](2026/2026-06-02-stargate-michigan-data-center.md) - OpenAI、Stargate プロジェクトにミシガン州データセンターを追加 -- 米国 AI インフラ網を更に拡充
+- [2026-06-02](2026/2026-06-02-container-session-billing-update.md) - コンテナセッション課金モデルの更新 - 分単位課金と 5 分最低課金の導入
 - [2026-06-01](2026/2026-06-01-what-parameter-golf-taught-us.md) - Parameter Golf が教えてくれたこと
 - [2026-06-01](2026/2026-06-01-sharing-the-latest-model-spec.md) - 最新 Model Spec の公開: AI モデルの行動規範フレームワークを更新
 - [2026-06-01](2026/2026-06-01-openai-models-amazon-bedrock.md) - OpenAI フロンティアモデルと Codex が Amazon Bedrock で利用可能に

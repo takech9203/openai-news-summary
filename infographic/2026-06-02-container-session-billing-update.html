@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コンテナセッション課金モデルの更新 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .pricing-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .pricing-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .pricing-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .pricing-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .pricing-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .pricing-table .savings {
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新 / 料金</span>
+                <h1>コンテナセッション課金モデルの更新 - 分単位課金と 5 分最低課金の導入</h1>
+                <p class="date">2026-06-02</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>分単位課金への移行</h3>
+                        <p>従来の 20 分固定課金から、実際の使用時間に応じた分単位課金に変更。最低課金時間は 5 分。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📉</div>
+                    <div class="key-point-content">
+                        <h3>最大 75% のコスト削減</h3>
+                        <p>5 分間のセッションでは従来比 75% の料金削減。短時間タスクほど大きな恩恵を受ける。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>単価は据え置き</h3>
+                        <p>分あたりの料金 (1 GB: $0.03、4 GB: $0.12、16 GB: $0.48、64 GB: $1.92) は変更なし。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🐳</div>
+                    <div class="key-point-content">
+                        <h3>対象: Shell、Code Interpreter、Skills</h3>
+                        <p>ホストされたコンテナセッション全般に適用。サンドボックス環境での AI エージェント実行が対象。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <ul>
+                        <li>&#x274C; 20 分固定課金</li>
+                        <li>&#x274C; 5 分の使用でも 20 分分請求</li>
+                        <li>&#x274C; 短いタスクが割高</li>
+                        <li>&#x274C; コスト予測が粗い</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <ul>
+                        <li>&#x2705; 分単位で従量課金</li>
+                        <li>&#x2705; 最低課金 5 分</li>
+                        <li>&#x2705; 短いタスクが経済的に</li>
+                        <li>&#x2705; 正確なコスト管理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るコスト削減</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">75%</div>
+                    <div class="stat-label">5 分セッションの削減率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">60%</div>
+                    <div class="stat-label">8 分セッションの削減率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">40%</div>
+                    <div class="stat-label">12 分セッションの削減率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5 分</div>
+                    <div class="stat-label">最低課金時間</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Table -->
+        <section class="section">
+            <h2 class="section-title">料金体系とコスト比較</h2>
+            <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--text-secondary);">メモリティア別料金 (分あたり)</h3>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>メモリ</th>
+                        <th>分あたり料金</th>
+                        <th>5 分最低料金</th>
+                        <th>旧 20 分固定料金</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1 GB</td>
+                        <td>$0.03</td>
+                        <td>$0.15</td>
+                        <td>$0.60</td>
+                    </tr>
+                    <tr>
+                        <td>4 GB</td>
+                        <td>$0.12</td>
+                        <td>$0.60</td>
+                        <td>$2.40</td>
+                    </tr>
+                    <tr>
+                        <td>16 GB</td>
+                        <td>$0.48</td>
+                        <td>$2.40</td>
+                        <td>$9.60</td>
+                    </tr>
+                    <tr>
+                        <td>64 GB</td>
+                        <td>$1.92</td>
+                        <td>$9.60</td>
+                        <td>$38.40</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 1rem; margin: 24px 0 12px; color: var(--text-secondary);">セッション時間別コスト比較 (4 GB ティア: $0.12/分)</h3>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>セッション時間</th>
+                        <th>変更前</th>
+                        <th>変更後</th>
+                        <th>削減額</th>
+                        <th>削減率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>5 分</td>
+                        <td>$2.40</td>
+                        <td>$0.60</td>
+                        <td class="savings">-$1.80</td>
+                        <td class="savings">75%</td>
+                    </tr>
+                    <tr>
+                        <td>8 分</td>
+                        <td>$2.40</td>
+                        <td>$0.96</td>
+                        <td class="savings">-$1.44</td>
+                        <td class="savings">60%</td>
+                    </tr>
+                    <tr>
+                        <td>12 分</td>
+                        <td>$2.40</td>
+                        <td>$1.44</td>
+                        <td class="savings">-$0.96</td>
+                        <td class="savings">40%</td>
+                    </tr>
+                    <tr>
+                        <td>15 分</td>
+                        <td>$2.40</td>
+                        <td>$1.80</td>
+                        <td class="savings">-$0.60</td>
+                        <td class="savings">25%</td>
+                    </tr>
+                    <tr>
+                        <td>20 分</td>
+                        <td>$2.40</td>
+                        <td>$2.40</td>
+                        <td>$0.00</td>
+                        <td>0%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">対象サービス</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🖥️ Shell ツール</h3>
+                    <p>ホストされたコンテナ内でシェルコマンドを実行。パッケージインストール、テスト実行、デプロイ作業に最適。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🐍 Code Interpreter</h3>
+                    <p>Python コード実行環境。データ分析、可視化、ファイル処理をサンドボックス内で安全に実行。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 Skills</h3>
+                    <p>バージョン管理されたスキルバンドルをアップロードし、ホストされたシェル環境で再利用可能。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Shell ツールを使用したコンテナセッション</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Shell ツールを使用した Responses API 呼び出し
+response = client.responses.create(
+    model="gpt-4.1",
+    tools=[
+        {
+            "type": "container",
+            "container": {
+                "environment": "shell",
+                "memory_gb": 4,  # 4 GB メモリティア ($0.12/分)
+            }
+        }
+    ],
+    input="プロジェクトの依存関係をインストールしてテストを実行してください"
+)
+
+print(response.output_text)
+
+# セッションは使用した分数のみ課金される (最低 5 分)
+# 例: 7 分で完了 → $0.12 × 7 = $0.84
+# 変更前: $0.12 × 20 = $2.40</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Code Interpreter でデータ分析</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Code Interpreter でデータ分析を実行
+response = client.responses.create(
+    model="gpt-4.1",
+    tools=[
+        {
+            "type": "container",
+            "container": {
+                "environment": "code_interpreter",
+                "memory_gb": 1,  # 1 GB メモリティア ($0.03/分)
+            }
+        }
+    ],
+    input="添付した CSV ファイルの売上データを分析してグラフを作成してください"
+)
+
+# 5 分で完了した場合: $0.03 × 5 = $0.15 (変更前: $0.03 × 20 = $0.60)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアントアプリケーション"]
+        SDK["OpenAI SDK"]
+        Request["API リクエスト"]
+    end
+
+    subgraph API["OpenAI API"]
+        Responses["Responses API"]
+        ToolRouter["ツールルーター"]
+    end
+
+    subgraph Container["コンテナセッション"]
+        Shell["Shell ツール"]
+        CodeInterp["Code Interpreter"]
+        Skills["Skills"]
+    end
+
+    subgraph Billing["課金システム"]
+        Timer["セッション時間計測"]
+        MinCheck{"5 分以上?"}
+        BillMin["実使用時間で課金"]
+        BillFloor["5 分最低料金で課金"]
+    end
+
+    SDK --> Request
+    Request --> Responses
+    Responses --> ToolRouter
+    ToolRouter --> Shell
+    ToolRouter --> CodeInterp
+    ToolRouter --> Skills
+
+    Shell --> Timer
+    CodeInterp --> Timer
+    Skills --> Timer
+
+    Timer --> MinCheck
+    MinCheck -->|はい| BillMin
+    MinCheck -->|いいえ| BillFloor
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef billing fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Shell,CodeInterp,Skills openai
+    class Responses,ToolRouter dark
+    class Timer,MinCheck,BillMin,BillFloor billing
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>短時間シェルコマンド実行 (削減率: 65-75%)</h4>
+                <p>AI エージェントが単純なコマンドを実行するケース。パッケージインストール、ファイル操作、環境確認など 5-7 分で完了するタスクで最大の恩恵。</p>
+            </div>
+            <div class="use-case">
+                <h4>コードレビュー・テスト実行 (削減率: 40-60%)</h4>
+                <p>テストスイートの実行やコード品質チェックなど、8-12 分程度のセッション。CI/CD パイプラインの一部として利用する場合に効果的。</p>
+            </div>
+            <div class="use-case">
+                <h4>データ分析・可視化 (削減率: 25-50%)</h4>
+                <p>Code Interpreter でのデータ処理やグラフ作成。10-15 分程度のセッションでも一定のコスト削減が得られる。</p>
+            </div>
+        </section>
+
+        <!-- Design Considerations -->
+        <section class="section">
+            <h2 class="section-title">設計上の考慮事項</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⏱️ 5 分最低課金</h3>
+                    <p>5 分未満で終了しても 5 分分の料金が発生。極端に短いタスクはセッション再利用を検討。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 セッション設計の見直し</h3>
+                    <p>20 分固定前提でまとめていたタスクを、論理的な単位で分割することが経済的に合理的に。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 トークン課金は別途</h3>
+                    <p>コンテナ内のツール使用に伴うトークンは選択したモデルの単価で別途課金。変更なし。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 8px;"><strong>関連:</strong> <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener noreferrer">OpenAI API Pricing</a> | <a href="https://platform.openai.com/docs/guides/tools/shell" target="_blank" rel="noopener noreferrer">Shell Tool Documentation</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
