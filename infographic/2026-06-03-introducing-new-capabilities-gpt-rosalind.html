@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-Rosalind に新機能を導入 - OpenAI News Infographic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-light: #E6F7F2;
+            --openai-green-dark: #0D8A6A;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            border-radius: 20px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header-date {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .header-subtitle {
+            font-size: 1.05rem;
+            opacity: 0.9;
+            margin-top: 12px;
+            line-height: 1.7;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--openai-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 14px;
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .key-point-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--openai-green-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--openai-dark);
+        }
+
+        .key-point-content p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 28px 24px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--openai-green);
+        }
+
+        .feature-card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--openai-green), var(--openai-green-dark));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 16px;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .feature-card .feature-list {
+            text-align: left;
+            margin-top: 12px;
+            font-size: 0.82rem;
+            color: #555;
+        }
+
+        .feature-card .feature-list li {
+            margin-bottom: 4px;
+            padding-left: 4px;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .comparison-card {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 28px 24px;
+            border: 2px solid var(--openai-gray);
+        }
+
+        .comparison-card.v2 {
+            border-color: var(--openai-green);
+            background: var(--openai-green-light);
+        }
+
+        .comparison-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--openai-dark);
+        }
+
+        .comparison-card .version-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 14px;
+        }
+
+        .comparison-card.v2 .version-label {
+            color: var(--openai-green-dark);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.85rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: #555;
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-arrow {
+            font-size: 2rem;
+            color: var(--openai-green);
+            font-weight: 900;
+        }
+
+        /* Stat Cards */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--openai-green);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Code Block */
+        .code-block {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 24px;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .code-label {
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .use-case {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 28px 24px;
+            border-top: 4px solid var(--openai-green);
+            transition: transform 0.2s ease;
+        }
+
+        .use-case:hover {
+            transform: translateY(-2px);
+        }
+
+        .use-case-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .use-case h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.9;
+        }
+
+        .summary-highlight {
+            background: var(--openai-green-light);
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            color: var(--openai-dark);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 20px;
+            padding: 32px 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .footer-note {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-arrow {
+                transform: rotate(90deg);
+                text-align: center;
+            }
+
+            .key-points {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .use-cases {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">新機能</span>
+                <h1>GPT-Rosalind に新機能を導入</h1>
+                <div class="header-date">2026-06-03 | OpenAI News/Blog</div>
+                <p class="header-subtitle">生物学的推論、創薬化学、ゲノミクス解析の大幅強化 ー 初期リリースから約 7 週間で実現された大規模アップデート</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#9733;</span>
+                主要ポイント
+            </h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#129504;</div>
+                    <div class="key-point-content">
+                        <h3>生物学的推論の強化</h3>
+                        <p>マルチスケール生物学的推論により、分子レベルから個体レベルまでの因果関係を統合的に推論。メカニズムベースの仮説生成も可能に</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128138;</div>
+                    <div class="key-point-content">
+                        <h3>創薬化学の専門知識</h3>
+                        <p>SAR 解析、ADMET 予測、リード最適化戦略、合成経路設計、特許回避設計などの実践的な創薬プロセス支援機能を追加</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#129516;</div>
+                    <div class="key-point-content">
+                        <h3>ゲノミクス解析の向上</h3>
+                        <p>バリアント分類、マルチオミクス統合、薬理ゲノミクス、がんゲノミクスなど臨床的解析能力が大幅に強化</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128300;</div>
+                    <div class="key-point-content">
+                        <h3>実験ワークフロー機能</h3>
+                        <p>プロトコル自動生成、実験デザイン最適化、データ品質管理、再現性チェックリスト生成による研究プロセス全体の支援</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#128640;</div>
+                    <div class="key-point-content">
+                        <h3>研究パートナーへの進化</h3>
+                        <p>単なる解析ツールから、実験の計画・実行・評価までを支援するエンドツーエンドの研究アシスタントへと進化</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#9881;</span>
+                新機能の詳細
+            </h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#129504;</div>
+                    <h3>生物学的推論エンジン</h3>
+                    <p>複雑な生物学的メカニズムの理解と推論を実現</p>
+                    <ul class="feature-list">
+                        <li>マルチスケール因果推論</li>
+                        <li>メカニズムベース仮説生成</li>
+                        <li>時系列プロセス理解</li>
+                        <li>エピスタティック相互作用予測</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#9879;</div>
+                    <h3>創薬化学モジュール</h3>
+                    <p>リード化合物の最適化から候補化合物選定までをカバー</p>
+                    <ul class="feature-list">
+                        <li>SAR 解析 (構造活性相関)</li>
+                        <li>ADMET プロファイル予測</li>
+                        <li>合成経路設計</li>
+                        <li>特許回避スキャフォールドホッピング</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#129516;</div>
+                    <h3>ゲノミクス解析エンジン</h3>
+                    <p>大規模ゲノムデータの解釈と臨床的意義の評価</p>
+                    <ul class="feature-list">
+                        <li>ACMG/AMP 準拠バリアント分類</li>
+                        <li>マルチオミクス統合解析</li>
+                        <li>薬理ゲノミクス支援</li>
+                        <li>がんゲノミクス (TMB/ドライバー変異)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#128221;</div>
+                    <h3>実験ワークフローエンジン</h3>
+                    <p>研究プロセス全体をエンドツーエンドで支援</p>
+                    <ul class="feature-list">
+                        <li>プロトコル自動生成</li>
+                        <li>統計的検出力に基づく実験設計</li>
+                        <li>データ品質管理・外れ値検出</li>
+                        <li>ARRIVE/MIAME 基準準拠</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#8644;</span>
+                初期リリースからの進化
+            </h2>
+            <div class="comparison">
+                <div class="comparison-card">
+                    <h3>V1: 初期リリース</h3>
+                    <div class="version-label">2026-04-16</div>
+                    <ul>
+                        <li>化学分野の深い理解</li>
+                        <li>タンパク質工学の推論</li>
+                        <li>基本的なゲノミクス解析</li>
+                        <li>50+ ツール連携</li>
+                        <li>信頼アクセスプログラム限定</li>
+                    </ul>
+                </div>
+                <div class="comparison-arrow">&#10132;</div>
+                <div class="comparison-card v2">
+                    <h3>V2: 新機能追加</h3>
+                    <div class="version-label">2026-06-03 (約 7 週間後)</div>
+                    <ul>
+                        <li>マルチスケール生物学的推論</li>
+                        <li>創薬化学専門知識 (SAR/ADMET)</li>
+                        <li>マルチオミクス統合解析</li>
+                        <li>実験ワークフロー (プロトコル生成)</li>
+                        <li>アクセス拡大の兆候</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <div class="stat-value">~7 週間</div>
+                    <div class="stat-label">初期リリースからの期間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4 領域</div>
+                    <div class="stat-label">主要な機能拡張</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6+</div>
+                    <div class="stat-label">創薬化学の新能力</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5 種類</div>
+                    <div class="stat-label">ワークフロー機能</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#128736;</span>
+                アーキテクチャ
+            </h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 16px;">GPT-Rosalind の強化されたシステム構成。研究者からの入力が API を通じて各専門モジュールに処理され、科学データソースと連携して結果を返す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Users["研究者"]
+        BioResearcher(["生物学研究者"])
+        MedChem(["創薬化学者"])
+        Genomicist(["ゲノミクス研究者"])
+    end
+
+    subgraph API["OpenAI API"]
+        ChatCompletions["Chat Completions\nEndpoint"]
+        ToolOrchestrator["Tool Use\nOrchestrator"]
+    end
+
+    subgraph Rosalind["GPT-Rosalind (Enhanced)"]
+        BioReasoning["生物学的推論\nエンジン (強化版)"]
+        MedChemModule["創薬化学\n専門モジュール"]
+        GenomicsEngine["ゲノミクス解析\nエンジン (強化版)"]
+        WorkflowEngine["実験ワークフロー\nエンジン (新規)"]
+    end
+
+    subgraph Workflow["実験ワークフロー機能"]
+        ProtocolGen["プロトコル\n自動生成"]
+        ExpDesign["実験デザイン\n最適化"]
+        QualityCtrl["データ品質\n管理"]
+        ResultInterp["結果解釈・\n次ステップ提案"]
+    end
+
+    subgraph DataSources["科学データソース"]
+        PubMed["PubMed"]
+        AlphaFold["AlphaFold"]
+        ChEMBL["ChEMBL"]
+        gnomAD["gnomAD"]
+        ClinVar["ClinVar"]
+        DepMap["DepMap"]
+    end
+
+    BioResearcher --> ChatCompletions
+    MedChem --> ChatCompletions
+    Genomicist --> ChatCompletions
+
+    ChatCompletions --> BioReasoning
+    ChatCompletions --> MedChemModule
+    ChatCompletions --> GenomicsEngine
+    ChatCompletions --> WorkflowEngine
+
+    WorkflowEngine --> ProtocolGen
+    WorkflowEngine --> ExpDesign
+    WorkflowEngine --> QualityCtrl
+    WorkflowEngine --> ResultInterp
+
+    BioReasoning --> ToolOrchestrator
+    MedChemModule --> ToolOrchestrator
+    GenomicsEngine --> ToolOrchestrator
+    WorkflowEngine --> ToolOrchestrator
+
+    ToolOrchestrator --> PubMed
+    ToolOrchestrator --> AlphaFold
+    ToolOrchestrator --> ChEMBL
+    ToolOrchestrator --> gnomAD
+    ToolOrchestrator --> ClinVar
+    ToolOrchestrator --> DepMap
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+    classDef newFeature fill:#1A73E8,stroke:#1557B0,stroke-width:2px,color:white
+
+    class BioReasoning,MedChemModule,GenomicsEngine,WorkflowEngine openai
+    class ChatCompletions,ToolOrchestrator dark
+    class PubMed,AlphaFold,ChEMBL,gnomAD,ClinVar,DepMap light
+    class BioResearcher,MedChem,Genomicist gray
+    class ProtocolGen,ExpDesign,QualityCtrl,ResultInterp newFeature
+                </pre>
+            </div>
+
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: var(--openai-dark);">新機能の位置付け: 初期リリースからの進化</h3>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph V1["初期リリース (2026-04-16)"]
+        V1Chem["化学理解"]
+        V1Protein["タンパク質推論"]
+        V1Genomics["ゲノミクス解析"]
+        V1Tools["ツール使用\n(50+ 連携)"]
+    end
+
+    subgraph V2["新機能 (2026-06-03)"]
+        V2BioReason["生物学的推論\n(マルチスケール)"]
+        V2MedChem["創薬化学専門知識\n(SAR/ADMET)"]
+        V2Genomics["ゲノミクス解析\n(マルチオミクス)"]
+        V2Workflow["実験ワークフロー\n(プロトコル生成)"]
+    end
+
+    V1Chem -->|"拡張"| V2MedChem
+    V1Protein -->|"深化"| V2BioReason
+    V1Genomics -->|"統合"| V2Genomics
+    V1Tools -->|"新規追加"| V2Workflow
+
+    classDef v1 fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef v2 fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+
+    class V1Chem,V1Protein,V1Genomics,V1Tools v1
+    class V2BioReason,V2MedChem,V2Genomics,V2Workflow v2
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#128187;</span>
+                コードサンプル: 生物学的推論の活用
+            </h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 16px;">マルチスケール生物学的推論を活用したシグナル伝達パスウェイ解析の例。GPT-Rosalind API を通じて分子メカニズムから臨床応用までの統合的な推論が可能。</p>
+            <div class="code-block">
+                <div class="code-label">Python - Biological Reasoning API</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# マルチスケール生物学的推論: シグナル伝達パスウェイの解析
+response = client.chat.completions.create(
+    model="gpt-rosalind",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an expert in systems biology and signal transduction. "
+                "Perform multi-scale biological reasoning, connecting molecular "
+                "events to cellular phenotypes and therapeutic implications."
+            )
+        },
+        {
+            "role": "user",
+            "content": """Analyze the following observation and provide multi-scale reasoning:
+
+Observation: In a CRISPR screen of NSCLC cell lines, knockout of KEAP1
+showed synthetic lethality with glutaminase inhibition (CB-839).
+
+Please provide:
+1. Molecular mechanism: How does KEAP1 loss affect NRF2 signaling?
+2. Metabolic consequences: How does NRF2 activation alter glutamine dependency?
+3. Cellular phenotype: Why does this create a therapeutic vulnerability?
+4. Clinical translation: What patient population would benefit from this combination?
+5. Testable hypotheses for validation experiments"""
+        }
+    ],
+    max_tokens=8192
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#127919;</span>
+                ユースケース
+            </h2>
+            <div class="use-cases">
+                <div class="use-case">
+                    <div class="use-case-icon">&#128138;</div>
+                    <h3>創薬プロセスの加速</h3>
+                    <p>SAR 解析と ADMET 予測の自動化により、リード最適化サイクルを高速化。従来 10-15 年かかる創薬タイムラインの短縮に貢献。Amgen、Novo Nordisk 等の製薬大手との協業により実践的なフィードバックを反映。</p>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-icon">&#129516;</div>
+                    <h3>ゲノミクス解析の民主化</h3>
+                    <p>マルチオミクス統合解析を単一の API 呼び出しで実行可能。バイオインフォマティクス専門チームを持たない研究グループでも、精密医療レベルの解析が実現。がんゲノミクスにおける治療戦略の意思決定を支援。</p>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-icon">&#128300;</div>
+                    <h3>実験デザインの標準化</h3>
+                    <p>CRISPR スクリーニング等の複雑なプロトコルを自動生成。ARRIVE ガイドライン・MIAME 基準への自動準拠により研究の再現性を向上。ウェットラボとドライラボのシームレスな橋渡しを実現。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-title-icon">&#128640;</span>
+                開発者への影響
+            </h2>
+            <div class="summary-text">
+                <div class="summary-highlight">
+                    GPT-Rosalind が単なる「知識を持つ AI」から「研究プロセス全体を支援するパートナー」へと進化。ウェットラボの実験設計から計算解析、結果の解釈までをシームレスに統合する能力は、ライフサイエンス研究の効率化に大きく貢献する。
+                </div>
+                <p style="margin-top: 16px;"><strong>API アクセス:</strong> 既存の <code>model="gpt-rosalind"</code> パラメータでアップデートされた機能にアクセス可能。ChatGPT 内での研究プレビューとしても利用可能。</p>
+                <p style="margin-top: 12px;"><strong>競争環境:</strong> Google DeepMind AlphaFold 3 との差別化を拡大。構造予測に留まらず、創薬化学の実践的な最適化やゲノミクスの臨床解釈まで包括的にカバー。AI 創薬スタートアップとの競合にも影響。</p>
+                <p style="margin-top: 12px;"><strong>今後の展望:</strong> 信頼アクセスプログラムの対象拡大と、さらなる専門機能の追加が期待される。製薬大手との協業を通じたフィードバックループが迅速な機能拡張を支えている。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>OpenAI News Infographic</p>
+            <a href="https://openai.com/index/introducing-new-capabilities-to-gpt-rosalind" target="_blank" rel="noopener noreferrer">
+                https://openai.com/index/introducing-new-capabilities-to-gpt-rosalind
+            </a>
+            <p class="footer-note">本インフォグラフィックは RSS フィードの説明文および関連公開情報に基づいて作成されています。</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#343541',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Initialize highlight.js
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+        });
+    </script>
+</body>
+</html>

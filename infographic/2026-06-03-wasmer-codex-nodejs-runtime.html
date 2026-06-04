@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wasmer が Codex でエッジ向け Node.js ランタイムを構築</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-light: #E6F7F2;
+            --openai-green-dark: #0D8A6A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 40px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .header-date {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 18px;
+            background: var(--openai-green-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .key-point-text {
+            font-size: 0.92rem;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .key-point-text strong {
+            display: block;
+            font-size: 1rem;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 24px 16px;
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #444654 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .stat-detail {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 6px;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-card {
+            padding: 24px;
+            border-radius: 12px;
+            border: 2px solid var(--openai-gray);
+            transition: border-color 0.3s, transform 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--openai-green);
+            transform: translateY(-2px);
+        }
+
+        .feature-card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--openai-green-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            font-size: 1.2rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 28px;
+            border-radius: 12px;
+        }
+
+        .comparison-card.before {
+            background: #FFF5F5;
+            border: 2px solid #FEC8C8;
+        }
+
+        .comparison-card.after {
+            background: var(--openai-green-light);
+            border: 2px solid var(--openai-green);
+        }
+
+        .comparison-card h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .comparison-card.before h4 {
+            color: #C53030;
+        }
+
+        .comparison-card.after h4 {
+            color: var(--openai-green-dark);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card li {
+            font-size: 0.88rem;
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .comparison-card.before li::before {
+            content: '×';
+            position: absolute;
+            left: 0;
+            color: #C53030;
+            font-weight: 700;
+        }
+
+        .comparison-card.after li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 2px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Code Block */
+        .code-block {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--openai-gray);
+        }
+
+        .code-block-header {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-block-header::before {
+            content: '';
+            display: inline-flex;
+            gap: 6px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 0.82rem;
+            line-height: 1.7;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .use-case {
+            padding: 24px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-top: 4px solid var(--openai-green);
+        }
+
+        .use-case h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 0.82rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .use-case li {
+            font-size: 0.82rem;
+            color: #555;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .use-case li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            background: var(--openai-dark);
+            border-radius: 16px;
+            color: white;
+            margin-top: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-source {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .key-points,
+            .feature-grid,
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .use-cases {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">事例紹介</span>
+                <h1>Wasmer が Codex でエッジ向け Node.js ランタイムを構築</h1>
+                <p class="header-date">2026-06-03 | OpenAI News/Blog</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-text">
+                        <strong>10 - 20 倍の開発速度</strong>
+                        従来 6 - 12 ヶ月を要する開発を数週間で完了。スタートアップの市場投入戦略を根本的に変革
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📅</div>
+                    <div class="key-point-text">
+                        <strong>数週間で完成</strong>
+                        月単位のプロジェクトを週単位に短縮。Codex と GPT-5.5 の組み合わせで劇的な Time-to-Market 改善
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔧</div>
+                    <div class="key-point-text">
+                        <strong>システムレベルのコーディング</strong>
+                        低レイヤーのランタイム開発にも Codex が有効。Rust / C / C++ の高度なシステムプログラミングを支援
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌐</div>
+                    <div class="key-point-text">
+                        <strong>エッジランタイムの実現</strong>
+                        WebAssembly ベースの軽量 Node.js ランタイムをエッジ環境で実行可能に。コールドスタート 50ms 以下を目標
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">開発効率の改善指標</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">10-20x</div>
+                    <div class="stat-label">全体開発期間</div>
+                    <div class="stat-detail">6-12 ヶ月 → 数週間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~12x</div>
+                    <div class="stat-label">API 互換レイヤー</div>
+                    <div class="stat-detail">3-4 ヶ月 → 1-2 週間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~15x</div>
+                    <div class="stat-label">テストスイート構築</div>
+                    <div class="stat-detail">1-2 ヶ月 → 数日</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~8x</div>
+                    <div class="stat-label">バグ修正サイクル</div>
+                    <div class="stat-detail">数日/件 → 数時間/件</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">Codex 活用パターン</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🧩</div>
+                    <h4>API 互換レイヤーの自動生成</h4>
+                    <p>Node.js 標準 API (fs、net、http、crypto 等) の WebAssembly 互換実装を Codex が生成。仕様書とテストケースをコンテキストとして活用</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🧪</div>
+                    <h4>テスト駆動開発の加速</h4>
+                    <p>Node.js 公式テストスイートを入力として、Wasm 環境向けのテストハーネスと互換性テストを自動生成</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔍</div>
+                    <h4>バグの診断と修正</h4>
+                    <p>互換性テストの失敗パターンから原因を特定し、修正パッチを自動生成。修正サイクルを数日から数時間に短縮</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🚀</div>
+                    <h4>パフォーマンス最適化</h4>
+                    <p>ベンチマーク結果とプロファイリングデータからボトルネックを特定し、最適化を実装。エッジ環境での高速動作を実現</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>従来の開発アプローチ</h4>
+                    <ul>
+                        <li>大規模チーム (10+ 名) が必要</li>
+                        <li>全体開発期間 6 - 12 ヶ月</li>
+                        <li>API 互換レイヤーに 3 - 4 ヶ月</li>
+                        <li>テストスイート構築に 1 - 2 ヶ月</li>
+                        <li>スコープ縮小を余儀なくされる</li>
+                        <li>バグ修正に数日/件を消費</li>
+                        <li>npm 完全互換は断念</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>Codex 活用開発</h4>
+                    <ul>
+                        <li>少人数コアチームで実現</li>
+                        <li>全体開発期間を数週間に短縮</li>
+                        <li>API レイヤーを 1 - 2 週間で実装</li>
+                        <li>テストスイートを数日で構築</li>
+                        <li>完全な npm 互換性を実装</li>
+                        <li>バグ修正を数時間/件に加速</li>
+                        <li>アーキテクチャ設計に集中可能</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details / Mermaid -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    subgraph Development["開発環境"]
+        Engineer["エンジニア"]
+        Spec["Node.js API 仕様"]
+        Tests["テストスイート"]
+    end
+
+    subgraph CodexPlatform["Codex (GPT-5.5)"]
+        direction TB
+        CodeGen["コード生成\nAPI 互換レイヤー"]
+        TestGen["テスト生成\n互換性検証"]
+        BugFix["バグ診断・修正"]
+        Optimize["パフォーマンス最適化"]
+    end
+
+    subgraph WasmerRuntime["Wasmer Edge Runtime"]
+        direction TB
+        subgraph Core["コアランタイム"]
+            WasmRT["Wasmer (Wasm Runtime)"]
+            JSEngine["JS エンジン (Wasm)"]
+            EventLoop["イベントループ"]
+        end
+        subgraph NodeCompat["Node.js 互換レイヤー"]
+            FS["fs モジュール"]
+            Net["net / http モジュール"]
+            Crypto["crypto モジュール"]
+            NPM["npm 互換"]
+        end
+    end
+
+    subgraph Edge["エッジデプロイメント"]
+        CDN["グローバル CDN"]
+        EdgeNode1["エッジノード 1"]
+        EdgeNode2["エッジノード 2"]
+        EdgeNode3["エッジノード N"]
+    end
+
+    Engineer --> CodexPlatform
+    Spec --> CodexPlatform
+    Tests --> CodexPlatform
+
+    CodeGen --> WasmerRuntime
+    TestGen --> WasmerRuntime
+    BugFix --> WasmerRuntime
+    Optimize --> WasmerRuntime
+
+    WasmerRuntime --> Edge
+    CDN --> EdgeNode1
+    CDN --> EdgeNode2
+    CDN --> EdgeNode3
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D9D9E3,stroke-width:2px,color:#343541
+
+    class CodeGen,TestGen,BugFix,Optimize openai
+    class WasmRT,JSEngine,EventLoop dark
+    class FS,Net,Crypto,NPM light
+    class CDN,EdgeNode1,EdgeNode2,EdgeNode3 gray
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">エッジデプロイメント コード例</h2>
+            <div class="code-block">
+                <div class="code-block-header">JavaScript - Wasmer Edge Node.js アプリケーション</div>
+                <pre><code class="language-javascript">// Wasmer Edge での Node.js アプリケーションデプロイ (概念例)
+import { WasmerEdge } from '@wasmer/edge';
+
+const app = new WasmerEdge({
+  runtime: 'node-compat',  // Node.js 互換ランタイム
+  region: 'auto',          // 最寄りエッジノードに自動配置
+  memory: '128MB',         // 軽量メモリフットプリント
+  coldStart: '&lt;50ms',      // コールドスタート目標
+});
+
+// 標準的な Node.js API がそのまま利用可能
+app.handle(async (req, res) =&gt; {
+  const { readFile } = await import('fs/promises');
+  const config = await readFile('./config.json', 'utf-8');
+  res.json({ status: 'ok', config: JSON.parse(config) });
+});
+
+app.deploy();</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-cases">
+                <div class="use-case">
+                    <h4>エッジコンピューティング開発者</h4>
+                    <p>既存の Node.js アプリをエッジにデプロイする新たな選択肢</p>
+                    <ul>
+                        <li>Node.js エコシステムのエッジ展開</li>
+                        <li>Wasm ベースの軽量実行環境</li>
+                        <li>コールドスタートの大幅改善</li>
+                    </ul>
+                </div>
+                <div class="use-case">
+                    <h4>AI 駆動開発スタートアップ</h4>
+                    <p>少人数チームで大規模システムソフトウェアを構築</p>
+                    <ul>
+                        <li>低レイヤー開発の民主化</li>
+                        <li>開発期間見積もりの再考</li>
+                        <li>人材採用戦略の変化</li>
+                    </ul>
+                </div>
+                <div class="use-case">
+                    <h4>Codex ユーザー全般</h4>
+                    <p>システムプログラミングへの適用可能性を実証</p>
+                    <ul>
+                        <li>適用範囲の拡大が確認</li>
+                        <li>GPT-5.5 の能力実証</li>
+                        <li>大規模コードベース理解</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Source: <a href="https://openai.com/index/wasmer" target="_blank" rel="noopener noreferrer">How Wasmer used Codex to build a Node.js runtime for the edge</a></p>
+            <p class="footer-source">OpenAI News/Blog | 2026-06-03</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#444654',
+                secondaryColor: '#F7F7F8',
+                tertiaryColor: '#ECECF1',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                nodeBorder: '#444654'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Initialize highlight.js
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

@@ -5,10 +5,19 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-03](2026/2026-06-03-wasmer-codex-nodejs-runtime.md) - Wasmer が Codex を活用しエッジ向け Node.js ランタイムを構築: 開発速度 10 - 20 倍を実現
+- [2026-06-03](2026/2026-06-03-openai-public-policy-agenda.md) - OpenAI、包括的な公共政策アジェンダを発表 -- AI の安全性、青少年保護、労働力移行、国際基準の 4 本柱を提示
+- [2026-06-03](2026/2026-06-03-introducing-new-capabilities-gpt-rosalind.md) - GPT-Rosalind に新機能を導入: 生物学的推論、創薬化学、ゲノミクス解析の大幅強化
+- [2026-06-03](2026/2026-06-03-frontier-safety-blueprint.md) - OpenAI、フロンティア AI の民主的ガバナンスに関するブループリントを発表 — 米国連邦レベルの安全性・レジリエンス・国家安全保障フレームワークを提案
+- [2026-06-03](2026/2026-06-03-deprecation-prompts-evals-agent-builder.md) - Reusable Prompts、Evals プラットフォーム、Agent Builder の廃止発表
 - [2026-06-03](2026/2026-06-03-codex-for-every-role-tool-workflow.md) - Codex があらゆる職種・ツール・ワークフローに対応: ユニバーサル AI ワークプラットフォームとしての完成形
+- [2026-06-02](2026/2026-06-02-travelers-ai-claims-openai.md) - Travelers が OpenAI を活用した AI 保険金請求アシスタントを全米展開
 - [2026-06-02](2026/2026-06-02-stargate-michigan-data-center.md) - OpenAI、Stargate プロジェクトにミシガン州データセンターを追加 -- 米国 AI インフラ網を更に拡充
 - [2026-06-02](2026/2026-06-02-container-session-billing-update.md) - コンテナセッション課金モデルの更新 - 分単位課金と 5 分最低課金の導入
+- [2026-06-02](2026/2026-06-02-codex-for-knowledge-work.md) - Codex for Knowledge Work: ナレッジワークの次の時代を定義する包括レポート
+- [2026-06-02](2026/2026-06-02-advancing-youth-safety-global-leadership.md) - OpenAI、青少年 AI 安全のための国際機関設立を提案: グローバルリーダーシップによる若者の保護と機会創出
 - [2026-06-01](2026/2026-06-01-what-parameter-golf-taught-us.md) - Parameter Golf が教えてくれたこと
+- [2026-06-01](2026/2026-06-01-views-ai-policy-political-advocacy.md) - OpenAI、AI 政策と政治的アドボカシーに関する見解を公開 -- 外部の政治団体からの独立性と透明性を明確化
 - [2026-06-01](2026/2026-06-01-sharing-the-latest-model-spec.md) - 最新 Model Spec の公開: AI モデルの行動規範フレームワークを更新
 - [2026-06-01](2026/2026-06-01-openai-models-amazon-bedrock.md) - OpenAI フロンティアモデルと Codex が Amazon Bedrock で利用可能に
 - [2026-06-01](2026/2026-06-01-introducing-prism.md) - Introducing Prism: OpenAI の新プロダクト発表
