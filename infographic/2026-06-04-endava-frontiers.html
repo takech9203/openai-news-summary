@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endava が AI エージェントでソフトウェアデリバリーを再設計</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<style>
+  :root {
+    --openai-green: #10A37F;
+    --openai-green-dark: #0D8A6A;
+    --openai-dark: #343541;
+    --openai-light: #F7F7F8;
+    --openai-gray: #ECECF1;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background-color: var(--openai-light);
+    color: var(--openai-dark);
+    line-height: 1.8;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 100%);
+    color: white;
+    padding: 48px 40px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(16,163,127,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--openai-green);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header h1 {
+    font-size: 1.9rem;
+    font-weight: 900;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header .date {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Section common */
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid var(--openai-gray);
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--openai-green);
+    display: inline-block;
+  }
+
+  .section p {
+    margin-bottom: 14px;
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  /* Key Points */
+  .key-points-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--openai-light);
+    padding: 18px 20px;
+    border-radius: 10px;
+    border-left: 4px solid var(--openai-green);
+  }
+
+  .key-point-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--openai-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .key-point-text {
+    font-size: 0.93rem;
+    color: #444;
+    line-height: 1.7;
+  }
+
+  .key-point-text strong {
+    color: var(--openai-dark);
+  }
+
+  /* Pipeline Table */
+  .pipeline-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 0.88rem;
+  }
+
+  .pipeline-table th {
+    background: var(--openai-dark);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+  }
+
+  .pipeline-table th:first-child {
+    border-radius: 8px 0 0 0;
+  }
+
+  .pipeline-table th:last-child {
+    border-radius: 0 8px 0 0;
+  }
+
+  .pipeline-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--openai-gray);
+    color: #444;
+  }
+
+  .pipeline-table tr:nth-child(even) td {
+    background: var(--openai-light);
+  }
+
+  .pipeline-table tr:last-child td:first-child {
+    border-radius: 0 0 0 8px;
+  }
+
+  .pipeline-table tr:last-child td:last-child {
+    border-radius: 0 0 8px 0;
+  }
+
+  /* Feature Cards */
+  .feature-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .feature-card {
+    background: var(--openai-light);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--openai-gray);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+
+  .feature-card-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--openai-green), var(--openai-green-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    font-size: 1.3rem;
+  }
+
+  .feature-card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 8px;
+  }
+
+  .feature-card p {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  .feature-card ul {
+    list-style: none;
+    margin-top: 8px;
+  }
+
+  .feature-card ul li {
+    font-size: 0.82rem;
+    color: #555;
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .feature-card ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 6px;
+    height: 6px;
+    background: var(--openai-green);
+    border-radius: 50%;
+  }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 24px 16px;
+    background: linear-gradient(135deg, var(--openai-dark) 0%, #2b2b3d 100%);
+    border-radius: 12px;
+    color: white;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--openai-green);
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+  }
+
+  .stat-desc {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.4;
+  }
+
+  /* Autonomy Levels */
+  .autonomy-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .autonomy-card {
+    background: var(--openai-dark);
+    color: white;
+    border-radius: 12px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .autonomy-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(16,163,127,0.3) 0%, transparent 70%);
+  }
+
+  .autonomy-level-badge {
+    display: inline-block;
+    background: var(--openai-green);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  .autonomy-card h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--openai-green);
+    margin-bottom: 8px;
+  }
+
+  .autonomy-card p {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .autonomy-card .phases {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    font-style: italic;
+  }
+
+  /* Mermaid */
+  .mermaid-section {
+    margin-top: 16px;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    overflow-x: auto;
+  }
+
+  .mermaid-section h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 16px;
+    text-align: left;
+  }
+
+  /* Code block */
+  .code-section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .code-section h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--openai-dark);
+    margin-bottom: 10px;
+  }
+
+  .code-section pre {
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .code-section pre code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  /* Impact cards */
+  .impact-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .impact-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 20px;
+    background: var(--openai-light);
+    border-radius: 10px;
+    border: 1px solid var(--openai-gray);
+  }
+
+  .impact-card-marker {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--openai-green);
+    border-radius: 50%;
+    margin-top: 8px;
+  }
+
+  .impact-card strong {
+    color: var(--openai-dark);
+  }
+
+  .impact-card p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0;
+  }
+
+  /* Culture table */
+  .culture-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 0.88rem;
+  }
+
+  .culture-table th {
+    background: var(--openai-green);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+  }
+
+  .culture-table th:first-child {
+    border-radius: 8px 0 0 0;
+  }
+
+  .culture-table th:last-child {
+    border-radius: 0 8px 0 0;
+  }
+
+  .culture-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--openai-gray);
+    color: #444;
+  }
+
+  .culture-table tr:nth-child(even) td {
+    background: var(--openai-light);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: #888;
+    font-size: 0.82rem;
+  }
+
+  .footer a {
+    color: var(--openai-green);
+    text-decoration: none;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+  }
+
+  .footer .source-label {
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .container {
+      padding: 12px;
+    }
+    .header {
+      padding: 32px 24px;
+    }
+    .header h1 {
+      font-size: 1.4rem;
+    }
+    .section {
+      padding: 24px;
+    }
+    .feature-cards,
+    .autonomy-grid,
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    .pipeline-table {
+      font-size: 0.8rem;
+    }
+    .pipeline-table th,
+    .pipeline-table td {
+      padding: 8px 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">Enterprise / Codex</div>
+    <h1>Endava が AI エージェントでソフトウェアデリバリーを再設計</h1>
+    <div class="date">2026-06-04</div>
+  </div>
+
+  <!-- Key Points -->
+  <div class="section">
+    <h2 class="section-title">Key Points</h2>
+    <p>グローバル IT サービス企業 Endava は、AI エージェント、ChatGPT Enterprise、および Codex を活用して、ソフトウェアデリバリーの全工程を根本から再設計している。「Frontiers」は単なるツール活用を超えた「AI ネイティブ文化」の構築とデリバリーパイプライン全体にわたるエージェント統合の深化を報告している。</p>
+    <div class="key-points-grid">
+      <div class="key-point">
+        <div class="key-point-icon">1</div>
+        <div class="key-point-text"><strong>デリバリーライフサイクル全体の AI 化:</strong> 要件定義から設計、開発、テスト、デプロイメントまで、すべてのフェーズに AI エージェントが中核的役割を担う成熟したデリバリーモデルへの進化</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">2</div>
+        <div class="key-point-text"><strong>マルチツール戦略:</strong> ChatGPT Enterprise (ナレッジワーク・コミュニケーション) と Codex (開発タスク) の併用により、開発者だけでなくデリバリーチーム全体が AI の恩恵を受ける</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">3</div>
+        <div class="key-point-text"><strong>AI ネイティブ文化の構築:</strong> テクノロジー導入と並行して組織文化の変革を推進。実験奨励、知識共有、スキル進化、計測文化、心理的安全性を柱とする</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">4</div>
+        <div class="key-point-text"><strong>段階的自律性の拡大:</strong> リスクと信頼度に応じてエージェントの自律性レベルを 4 段階で設計。エンタープライズ環境での安全な AI 導入パターンを確立</div>
+      </div>
+      <div class="key-point">
+        <div class="key-point-icon">5</div>
+        <div class="key-point-text"><strong>ビジネスモデル変革:</strong> 約 12,000 人規模の Endava がデリバリー全体を AI エージェントで再設計し、「人月」ベースから「価値ベース」への変革が具体的に進行</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delivery Pipeline Table -->
+  <div class="section">
+    <h2 class="section-title">Delivery Pipeline - AI エージェント統合</h2>
+    <p>Endava の「Frontiers」アプローチでは、ソフトウェアデリバリーの各ステージに専用の AI エージェントが配置され、人間のエンジニアと協調して業務を遂行する。</p>
+    <table class="pipeline-table">
+      <thead>
+        <tr>
+          <th>デリバリーステージ</th>
+          <th>AI エージェントの役割</th>
+          <th>期待される効果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>要件定義</td>
+          <td>ステークホルダー文書の解析、要件構造化</td>
+          <td>リードタイム 90% 以上削減</td>
+        </tr>
+        <tr>
+          <td>アーキテクチャ設計</td>
+          <td>設計パターン提案、技術選定根拠の自動生成</td>
+          <td>設計品質の均一化</td>
+        </tr>
+        <tr>
+          <td>実装</td>
+          <td>Codex によるコード生成、並列開発</td>
+          <td>開発速度の大幅向上</td>
+        </tr>
+        <tr>
+          <td>テスト</td>
+          <td>テストケース自動生成、カバレッジ最適化</td>
+          <td>テスト網羅性の向上</td>
+        </tr>
+        <tr>
+          <td>コードレビュー</td>
+          <td>品質基準に基づく自動レビュー</td>
+          <td>レビュー待ち時間の解消</td>
+        </tr>
+        <tr>
+          <td>デプロイメント</td>
+          <td>CI/CD パイプラインの自動最適化</td>
+          <td>デプロイ頻度の増加</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="section">
+    <h2 class="section-title">主要機能と活用</h2>
+    <div class="feature-cards">
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+        </div>
+        <h3>ChatGPT Enterprise</h3>
+        <p>組織横断的な AI 活用を実現</p>
+        <ul>
+          <li>PM: スプリント計画の最適化</li>
+          <li>BA: 市場調査・競合分析</li>
+          <li>QA: テスト戦略策定支援</li>
+          <li>デザイナー: UX リサーチ分析</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+        </div>
+        <h3>Codex</h3>
+        <p>開発ワークフローの高度化</p>
+        <ul>
+          <li>マルチリポジトリ対応</li>
+          <li>コンテキスト認識型コード生成</li>
+          <li>自律的な技術負債解消</li>
+          <li>インシデント対応の高速化</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card-icon">
+          <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+        <h3>AI ネイティブ文化</h3>
+        <p>組織変革が成功の鍵</p>
+        <ul>
+          <li>実験奨励と知識共有</li>
+          <li>スキル進化の体系的育成</li>
+          <li>効果の定量計測</li>
+          <li>心理的安全性の醸成</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="section">
+    <h2 class="section-title">主要メトリクス</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">90%+</div>
+        <div class="stat-label">Lead Time Reduction</div>
+        <div class="stat-desc">要件定義のリードタイムを 90% 以上削減</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">10-20x</div>
+        <div class="stat-label">Development Acceleration</div>
+        <div class="stat-desc">開発速度の大幅な加速を実現</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">12,000+</div>
+        <div class="stat-label">Global Employees</div>
+        <div class="stat-desc">エンタープライズ規模での組織的 AI 導入</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Autonomy Levels -->
+  <div class="section">
+    <h2 class="section-title">エージェント自律性の 4 段階モデル</h2>
+    <p>リスクと信頼度に応じてエージェントの自律性レベルを段階的に設計するアプローチ。</p>
+    <div class="autonomy-grid">
+      <div class="autonomy-card">
+        <div class="autonomy-level-badge">Level 1</div>
+        <h4>完全監視モード</h4>
+        <p>すべてのアクションに人間の承認が必要</p>
+        <div class="phases">対象: 本番デプロイ、セキュリティ重要変更、アーキテクチャ修正</div>
+      </div>
+      <div class="autonomy-card">
+        <div class="autonomy-level-badge">Level 2</div>
+        <h4>ガイド付きモード</h4>
+        <p>主要な決定に承認が必要</p>
+        <div class="phases">対象: 設計決定、外部 API 統合、DB スキーマ変更</div>
+      </div>
+      <div class="autonomy-card">
+        <div class="autonomy-level-badge">Level 3</div>
+        <h4>自律モード</h4>
+        <p>事後レビューで品質を担保</p>
+        <div class="phases">対象: コード生成、テスト作成、コードレビュー、ドキュメント更新</div>
+      </div>
+      <div class="autonomy-card">
+        <div class="autonomy-level-badge">Level 4</div>
+        <h4>完全自律モード</h4>
+        <p>定型タスクの自動実行</p>
+        <div class="phases">対象: Lint 修正、依存関係更新、フォーマット、変更履歴生成</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Native Culture -->
+  <div class="section">
+    <h2 class="section-title">AI ネイティブ文化の要素</h2>
+    <table class="culture-table">
+      <thead>
+        <tr>
+          <th>文化的要素</th>
+          <th>具体的な施策</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>実験奨励</td>
+          <td>AI エージェントの新しい活用パターンを各チームが自律的に探索</td>
+        </tr>
+        <tr>
+          <td>知識共有</td>
+          <td>成功事例と失敗事例をナレッジベースとして組織横断で共有</td>
+        </tr>
+        <tr>
+          <td>スキル進化</td>
+          <td>プロンプトエンジニアリング、エージェント設計の体系的育成</td>
+        </tr>
+        <tr>
+          <td>計測文化</td>
+          <td>AI 導入効果を定量的に計測し、継続的改善につなげる</td>
+        </tr>
+        <tr>
+          <td>心理的安全性</td>
+          <td>AI が仕事を奪うのではなく拡張するものというマインドセット醸成</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Architecture Diagrams -->
+  <div class="section">
+    <h2 class="section-title">Architecture</h2>
+    <div class="mermaid-section">
+      <h4>AI ネイティブデリバリー組織の全体構成</h4>
+      <pre class="mermaid">
+flowchart TD
+    subgraph Endava["Endava Frontiers - AI ネイティブデリバリー組織"]
+        subgraph Teams["デリバリーチーム"]
+            PM["プロジェクトマネージャー"]
+            BA["ビジネスアナリスト"]
+            Dev["開発エンジニア"]
+            QA["QA エンジニア"]
+            DevOps["DevOps エンジニア"]
+        end
+
+        subgraph AgentOrchestration["AI エージェントオーケストレーション層"]
+            Orchestrator["ワークフローオーケストレーター"]
+            ReqAgent["要件分析エージェント"]
+            DesignAgent["設計エージェント"]
+            CodeAgent["実装エージェント"]
+            TestAgent["テストエージェント"]
+            ReviewAgent["レビューエージェント"]
+            DeployAgent["デプロイエージェント"]
+        end
+
+        subgraph Culture["AI ネイティブ文化基盤"]
+            Knowledge["ナレッジベース"]
+            Metrics["効果計測ダッシュボード"]
+            Training["スキル育成プログラム"]
+        end
+    end
+
+    subgraph OpenAI["OpenAI プラットフォーム"]
+        subgraph Products["製品スイート"]
+            ChatGPTEnt["ChatGPT Enterprise"]
+            CodexEngine["Codex"]
+            APIPlat["API Platform"]
+        end
+        subgraph Infra["インフラストラクチャ"]
+            Models["GPT-4o / codex-1"]
+            Sandbox["サンドボックス"]
+            Governance["ガバナンス制御"]
+        end
+    end
+
+    subgraph Delivery["デリバリーパイプライン"]
+        CI["CI/CD"]
+        QualityGate["品質ゲート"]
+        Staging["ステージング"]
+        Production["本番環境"]
+    end
+
+    PM --> Orchestrator
+    BA --> ReqAgent
+    Dev --> CodeAgent
+    QA --> TestAgent
+    DevOps --> DeployAgent
+
+    Orchestrator --> ReqAgent
+    ReqAgent --> DesignAgent
+    DesignAgent --> CodeAgent
+    CodeAgent --> TestAgent
+    TestAgent --> ReviewAgent
+    ReviewAgent --> DeployAgent
+
+    Teams <-->|日常業務| ChatGPTEnt
+    AgentOrchestration <-->|開発タスク| CodexEngine
+    AgentOrchestration <-->|API 連携| APIPlat
+    Products --> Models
+    Models --> Sandbox
+    Governance -->|ポリシー適用| AgentOrchestration
+
+    DeployAgent --> CI
+    CI --> QualityGate
+    QualityGate --> Staging
+    Staging --> Production
+
+    AgentOrchestration -->|学習データ| Knowledge
+    Knowledge -->|改善| AgentOrchestration
+    Metrics -->|可視化| Teams
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef pipeline fill:#1A2B6B,stroke:#0F1A4A,stroke-width:2px,color:white
+
+    class ChatGPTEnt,CodexEngine,APIPlat,Models,Sandbox openai
+    class Orchestrator,ReqAgent,DesignAgent,CodeAgent,TestAgent,ReviewAgent,DeployAgent openai
+    class CI,QualityGate,Staging,Production,Governance dark
+    class PM,BA,Dev,QA,DevOps light
+    class Knowledge,Metrics,Training pipeline
+      </pre>
+    </div>
+
+    <div class="mermaid-section" style="margin-top: 24px;">
+      <h4>デリバリーライフサイクルのエージェント協調シーケンス</h4>
+      <pre class="mermaid">
+sequenceDiagram
+    participant Client as クライアント
+    participant PM as PM + ChatGPT Enterprise
+    participant Orch as オーケストレーター
+    participant Req as 要件エージェント
+    participant Design as 設計エージェント
+    participant Code as 実装エージェント (Codex)
+    participant Test as テストエージェント
+    participant Review as レビューエージェント
+    participant Deploy as デプロイエージェント
+    participant Human as エンジニア (監督)
+
+    Client->>PM: フィーチャーリクエスト
+    PM->>PM: ChatGPT Enterprise で分析・構造化
+    PM->>Orch: 構造化されたリクエスト
+
+    Orch->>Req: 要件分析を開始
+    Req->>Req: 文書解析・影響分析・依存関係特定
+    Req->>Human: 要件レビュー依頼
+    Human->>Req: 承認
+
+    Orch->>Design: 設計フェーズを開始
+    Design->>Design: アーキテクチャ設計・技術選定
+    Design->>Human: 設計レビュー依頼
+    Human->>Design: 承認 (必要に応じて修正指示)
+
+    Orch->>Code: 実装フェーズを開始
+    Code->>Code: マルチサービス対応コード生成
+    Code->>Test: 実装完了通知
+
+    Orch->>Test: テストフェーズを開始
+    Test->>Test: テスト自動生成・実行
+    Test->>Review: テスト結果付きコード
+
+    Orch->>Review: レビューフェーズを開始
+    Review->>Review: 品質基準に基づく自動レビュー
+    Review->>Human: 最終レビュー依頼
+    Human->>Review: 承認
+
+    Orch->>Deploy: デプロイフェーズを開始
+    Deploy->>Deploy: カナリアリリース計画策定
+    Deploy->>Human: デプロイ承認依頼
+    Human->>Deploy: 承認
+
+    Note over Client,Human: 従来のウォーターフォール: 数ヶ月 → Frontiers モデル: 数日〜数週間
+      </pre>
+    </div>
+  </div>
+
+  <!-- Code Samples -->
+  <div class="section">
+    <h2 class="section-title">Code Samples</h2>
+
+    <div class="code-section">
+      <h4>FrontiersDeliveryPipeline - エンドツーエンドデリバリーサイクル</h4>
+      <pre><code class="language-python"># Endava Frontiers: デリバリーライフサイクル全体のエージェント統合 (概念例)
+from openai import OpenAI
+
+client = OpenAI()
+
+
+class FrontiersDeliveryPipeline:
+    """
+    Endava Frontiers モデル: AI エージェントがデリバリーの
+    全ステージを統合的に管理するパイプライン。
+    """
+
+    def __init__(self, project_config: dict):
+        self.client = OpenAI()
+        self.project_config = project_config
+
+    def execute_delivery_cycle(self, feature_request: str) -> dict:
+        """
+        フィーチャーリクエストから本番デプロイまでの
+        エンドツーエンドデリバリーサイクルを実行する。
+        """
+        # Stage 1: 要件の構造化と影響分析
+        requirements = self._analyze_and_structure(feature_request)
+
+        # Stage 2: アーキテクチャ設計と技術選定
+        design = self._design_architecture(requirements)
+
+        # Stage 3: マルチリポジトリ対応の実装
+        implementation = self._implement_across_services(design)
+
+        # Stage 4: 包括的テスト戦略の実行
+        test_results = self._execute_test_strategy(implementation, requirements)
+
+        # Stage 5: デプロイメント準備と実行
+        deployment = self._prepare_deployment(implementation, test_results)
+
+        return {
+            "requirements": requirements,
+            "design": design,
+            "implementation": implementation,
+            "test_results": test_results,
+            "deployment": deployment,
+        }
+
+    def _analyze_and_structure(self, feature_request: str) -> dict:
+        """要件分析エージェント: 影響範囲と依存関係を自動特定。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="""あなたはシニア要件アナリストエージェントです。
+フィーチャーリクエストを分析し、以下を特定してください:
+1. 機能要件と非機能要件
+2. 影響を受けるマイクロサービス
+3. 依存関係とリスク
+4. 受け入れ基準
+5. 推定工数と優先度""",
+            input=f"フィーチャーリクエスト: {feature_request}\n"
+            f"プロジェクト構成: {self.project_config}",
+        )
+        return {"structured_requirements": response.output_text}
+
+    def _design_architecture(self, requirements: dict) -> dict:
+        """設計エージェント: プロジェクト規約に準拠した設計を自動生成。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="""あなたはアーキテクチャ設計エージェントです。
+要件に基づき、プロジェクトの既存アーキテクチャと整合する
+技術設計を作成してください。設計決定の根拠も明記すること。""",
+            input=f"要件: {requirements}\n"
+            f"アーキテクチャ規約: {self.project_config.get('architecture_standards')}",
+        )
+        return {"architecture_design": response.output_text}
+
+    def _implement_across_services(self, design: dict) -> dict:
+        """実装エージェント: 複数サービスにまたがる変更を統合管理。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="""あなたは実装エージェントです。
+設計に基づき、影響を受ける全マイクロサービスの変更を
+一貫性を保ちながら実装してください。
+各サービスのコーディング規約に従うこと。""",
+            input=f"設計: {design}\n"
+            f"コーディング標準: {self.project_config.get('coding_standards')}",
+        )
+        return {"implementation": response.output_text}
+
+    def _execute_test_strategy(self, implementation: dict, requirements: dict) -> dict:
+        """テストエージェント: 包括的テスト戦略を策定し実行。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="""あなたはテスト戦略エージェントです。
+以下のテストレベルすべてをカバーしてください:
+1. ユニットテスト
+2. インテグレーションテスト
+3. E2E テスト
+4. パフォーマンステスト
+5. セキュリティテスト""",
+            input=f"実装: {implementation}\n要件: {requirements}",
+        )
+        return {"test_results": response.output_text}
+
+    def _prepare_deployment(self, implementation: dict, test_results: dict) -> dict:
+        """デプロイメントエージェント: 安全なリリース計画を策定。"""
+        response = self.client.responses.create(
+            model="codex-1",
+            instructions="""あなたはデプロイメントエージェントです。
+テスト結果を検証し、安全なデプロイメント計画を策定してください。
+カナリアリリース、ロールバック計画を含めること。""",
+            input=f"実装: {implementation}\nテスト結果: {test_results}",
+        )
+        return {"deployment_plan": response.output_text}</code></pre>
+    </div>
+
+    <div class="code-section">
+      <h4>マルチツール統合 - ChatGPT Enterprise + Codex</h4>
+      <pre><code class="language-python"># マルチツール統合: ChatGPT Enterprise + Codex の組み合わせ (概念例)
+from openai import OpenAI
+
+client = OpenAI()
+
+
+def multi_tool_delivery_workflow(project_brief: str) -> dict:
+    """
+    ChatGPT Enterprise (ナレッジワーク) と Codex (開発タスク) を
+    組み合わせた統合デリバリーワークフロー。
+    """
+    # ChatGPT Enterprise: ビジネス分析と戦略策定
+    business_analysis = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": "あなたはビジネスアナリストです。"
+                "プロジェクトブリーフから技術要件を抽出してください。",
+            },
+            {"role": "user", "content": project_brief},
+        ],
+    )
+
+    # Codex: 技術的な実装とコード生成
+    technical_implementation = client.responses.create(
+        model="codex-1",
+        instructions="ビジネス要件を技術実装に変換してください。",
+        input=business_analysis.choices[0].message.content,
+    )
+
+    return {
+        "business_requirements": business_analysis.choices[0].message.content,
+        "technical_implementation": technical_implementation.output_text,
+    }</code></pre>
+    </div>
+
+    <div class="code-section">
+      <h4>エージェント自律性レベル設定</h4>
+      <pre><code class="language-yaml"># Endava Frontiers: エージェント自律性レベル設定 (概念例)
+# agent-autonomy-config.yaml
+
+autonomy_levels:
+  level_1_supervised:
+    description: "完全監視モード - すべてのアクションに人間の承認が必要"
+    applicable_phases:
+      - production_deployment
+      - security_critical_changes
+      - architecture_modifications
+    human_approval: required_before_execution
+
+  level_2_guided:
+    description: "ガイド付きモード - 主要な決定に承認が必要"
+    applicable_phases:
+      - design_decisions
+      - external_api_integrations
+      - database_schema_changes
+    human_approval: required_for_major_decisions
+
+  level_3_autonomous:
+    description: "自律モード - 事後レビューで品質を担保"
+    applicable_phases:
+      - code_generation
+      - test_creation
+      - code_review
+      - documentation_updates
+    human_approval: post_execution_review
+
+  level_4_fully_autonomous:
+    description: "完全自律モード - 定型タスクの自動実行"
+    applicable_phases:
+      - lint_fixes
+      - dependency_updates
+      - formatting
+      - changelog_generation
+    human_approval: none
+
+escalation_rules:
+  - condition: "confidence_score < 0.7"
+    action: "escalate_to_human"
+  - condition: "security_impact == high"
+    action: "require_senior_review"
+  - condition: "blast_radius > 3_services"
+    action: "require_architecture_review"</code></pre>
+    </div>
+  </div>
+
+  <!-- Developer Impact -->
+  <div class="section">
+    <h2 class="section-title">Developer Impact</h2>
+    <div class="impact-cards">
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <p><strong>デリバリーライフサイクル全体の AI 化:</strong> AI エージェントが開発の一部分ではなくデリバリーの全ステージを統合的にカバーするモデル。要件定義からデプロイメントまで、人間とエージェントが各フェーズで協調する新しい働き方が標準になりつつある</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <p><strong>マルチツール戦略の重要性:</strong> ChatGPT Enterprise と Codex の併用により、開発者だけでなくデリバリーチーム全体が AI の恩恵を受けられる。単一ツールへの依存ではなく、用途に応じたツール選択が求められる</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <p><strong>AI ネイティブ文化が競争優位に:</strong> テクノロジーの導入だけでなく、組織文化の変革が成功の鍵。実験を奨励し、失敗から学び、AI と協調するスキルを継続的に育成する組織が優位に立つ</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <p><strong>エージェント自律性の段階的設計:</strong> すべてのタスクを完全自律にするのではなく、リスクと信頼度に応じて自律性レベルを段階的に設計するアプローチが、エンタープライズ環境での安全な AI 導入パターンとして確立されつつある</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <p><strong>IT サービス業界のビジネスモデル変革の加速:</strong> 約 12,000 人規模の Endava がデリバリー全体を AI エージェントで再設計したことは、「人月」ベースから「価値ベース」へのビジネスモデル変革が具体的に進行していることを示す</p>
+      </div>
+      <div class="impact-card">
+        <div class="impact-card-marker"></div>
+        <p><strong>新しいエンジニアリングロールの出現:</strong> エージェントオーケストレーション設計、プロンプトエンジニアリング、AI ガバナンス設計といった新しい専門領域が、従来のソフトウェアエンジニアリングスキルと並んで重要性を増している</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="source-label">Source</div>
+    <a href="https://openai.com/index/endava-frontiers" target="_blank" rel="noopener noreferrer">https://openai.com/index/endava-frontiers</a>
+    <p style="margin-top: 12px;">Generated from OpenAI News Report | 2026-06-04</p>
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#10A37F',
+      primaryTextColor: '#fff',
+      primaryBorderColor: '#0D8A6A',
+      lineColor: '#343541',
+      secondaryColor: '#343541',
+      tertiaryColor: '#F7F7F8',
+      fontFamily: 'Zen Maru Gothic, sans-serif',
+      fontSize: '12px'
+    },
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: 'basis'
+    },
+    sequence: {
+      useMaxWidth: true,
+      actorMargin: 50,
+      messageMargin: 40
+    }
+  });
+  hljs.highlightAll();
+</script>
+
+</body>
+</html>

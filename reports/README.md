@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-04](2026/2026-06-04-moderation-scores-responses-chat-completions.md) - Responses API と Chat Completions API にインラインモデレーションスコアが追加
+- [2026-06-04](2026/2026-06-04-endava-frontiers.md) - Endava が AI エージェントを中心にソフトウェアデリバリーを再設計する方法
+- [2026-06-04](2026/2026-06-04-confessions-keep-language-models-honest.md) - Confessions: 言語モデルの誠実性を維持する新しいアプローチ
+- [2026-06-04](2026/2026-06-04-chatgpt-memory-dreaming.md) - Dreaming: ChatGPT の新しいメモリシステムによるパーソナライズの進化
+- [2026-06-04](2026/2026-06-04-biodefense-intelligence-age.md) - Intelligence Age におけるバイオディフェンス: AI を活用した生物学的レジリエンスのアクションプラン
 - [2026-06-03](2026/2026-06-03-wasmer-codex-nodejs-runtime.md) - Wasmer が Codex を活用しエッジ向け Node.js ランタイムを構築: 開発速度 10 - 20 倍を実現
 - [2026-06-03](2026/2026-06-03-openai-public-policy-agenda.md) - OpenAI、包括的な公共政策アジェンダを発表 -- AI の安全性、青少年保護、労働力移行、国際基準の 4 本柱を提示
 - [2026-06-03](2026/2026-06-03-introducing-new-capabilities-gpt-rosalind.md) - GPT-Rosalind に新機能を導入: 生物学的推論、創薬化学、ゲノミクス解析の大幅強化

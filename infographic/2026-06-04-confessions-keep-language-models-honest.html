@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confessions: 言語モデルの誠実性を維持する新しいアプローチ - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Problem Cards */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .problem-card {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border: 2px solid rgba(220, 38, 38, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .problem-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #991B1B;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .problem-card p {
+            font-size: 14px;
+            color: #7F1D1D;
+            line-height: 1.6;
+        }
+
+        /* Workflow Steps */
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            background: #21252B;
+            color: #ABB2BF;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .code-block pre code {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Table */
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .metrics-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .metrics-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .metrics-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .metrics-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .metrics-table tbody tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        .metrics-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .metrics-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Comparison */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .comparison-card {
+            background: var(--openai-gray);
+            border-radius: 16px;
+            padding: 24px;
+            border-top: 4px solid var(--openai-green);
+        }
+
+        .comparison-card.highlight {
+            border-top-color: var(--openai-green);
+            background: linear-gradient(135deg, #E6F9F3 0%, #FFFFFF 100%);
+        }
+
+        .comparison-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary Text */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links ul li a {
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid,
+            .problem-grid,
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-table {
+                font-size: 12px;
+            }
+
+            .metrics-table thead th,
+            .metrics-table tbody td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">研究成果 / AI Safety</span>
+                <h1>Confessions: 言語モデルの誠実性を維持する新しいアプローチ</h1>
+                <p class="date">2026-06-04</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4AC;</div>
+                    <div class="key-point-content">
+                        <h3>Confessions メカニズムの導入</h3>
+                        <p>言語モデルが自身の不確実性や情報の欠如を積極的に「告白」するメカニズムを導入し、ハルシネーションの影響を軽減する新しいアプローチを提案</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AF;</div>
+                    <div class="key-point-content">
+                        <h3>Honesty Reward による強化学習</h3>
+                        <p>正直な不確実性表明に対して報酬を与える「Honesty Reward」を RLHF の拡張として導入し、モデルの誠実性を訓練レベルで改善</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>Uncertainty Probe による内部状態分析</h3>
+                        <p>Transformer の隠れ層活性化パターンから不確実性を検出するプローブを訓練し、モデルの内部的な確信度を定量化</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>キャリブレーション精度の向上</h3>
+                        <p>告白メカニズムを導入したモデルは事実性ベンチマークにおいて信頼性が向上し、ユーザー信頼度も改善されることが示唆</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F91D;</div>
+                    <div class="key-point-content">
+                        <h3>人間と AI の協働を強化</h3>
+                        <p>モデルが「何を知らないか」を明確にすることで、ユーザーは適切な期待値を持って AI と対話でき、意思決定の質が向上</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem Statement -->
+        <section class="section">
+            <h2 class="section-title">問題設定: 言語モデルの誠実性に関する 3 つの課題</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3>&#x26A0; 過信バイアス</h3>
+                    <p>学習データに含まれない情報や曖昧な質問に対しても、あたかも確信があるかのように回答を生成。ユーザーが誤った情報を正しいものとして受け取るリスクが存在する。</p>
+                </div>
+                <div class="problem-card">
+                    <h3>&#x26A0; キャリブレーションの欠如</h3>
+                    <p>モデルの内部的な確信度と出力の表現が一致しない。確率的に 50% 程度の確信しかない回答でも、断定的な表現で出力されることがある。</p>
+                </div>
+                <div class="problem-card">
+                    <h3>&#x26A0; 検出の困難さ</h3>
+                    <p>モデルがいつ信頼できる情報を提供し、いつ不確実な情報を生成しているかを外部から判断することが極めて困難である。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features: 4 Types of Confessions -->
+        <section class="section">
+            <h2 class="section-title">告白の 4 つのタイプ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4D6; 知識の欠如の告白</h3>
+                    <p>「この質問に対する正確な情報を持っていません」</p>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">学習データに該当する情報が乏しいと推定される場合にトリガーされる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2753; 不確実性の告白</h3>
+                    <p>「この回答には確信がなく、複数の解釈が可能です」</p>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">モデルの内部表現における不確実性が閾値を超えた場合にトリガーされる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4C5; 情報源の限界の告白</h3>
+                    <p>「この情報は学習データに基づいており、最新の状況を反映していない可能性があります」</p>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">事実と意見の区別が曖昧な回答を生成しようとしている場合にトリガーされる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9E9; 推論の弱さの告白</h3>
+                    <p>「この結論は推測に基づいており、確実な根拠がありません」</p>
+                    <p style="margin-top: 8px; font-size: 13px; color: var(--text-muted);">論理的推論の連鎖が弱いと内部的に評価された場合にトリガーされる</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Research Methodology -->
+        <section class="section">
+            <h2 class="section-title">研究方法論: 3 つのステージ</h2>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Uncertainty Probing (不確実性信号の学習)</h4>
+                        <p>モデルの内部状態から不確実性を検出するためのプロービング手法を適用。隠れ層の活性化パターンから、モデルが確信を持っている場合と持っていない場合の差異を特定するクラシファイアを訓練する。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Honesty RL (告白行動の強化学習)</h4>
+                        <p>RLHF の拡張として、正直な不確実性表明に対して報酬を与える「Honesty Reward」を導入。モデルが不確実な情報を断定的に述べた場合にペナルティを課し、適切に不確実性を表明した場合に報酬を与える。</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Calibration Evaluation (キャリブレーション評価)</h4>
+                        <p>告白メカニズムを導入したモデルと導入していないモデルを、事実性ベンチマーク (TruthfulQA 等) で比較評価。告白の頻度と実際の正確性の相関を定量的に測定する。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">技術実装: コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span>&#x1F4BB;</span> Honesty Reward の概念的な実装
+                </div>
+                <pre><code class="language-python"># Confessions Honesty Reward の概念的な実装
+def compute_honesty_reward(
+    model_output: str,
+    internal_uncertainty: float,
+    ground_truth_available: bool,
+    ground_truth: str | None = None
+) -> float:
+    """
+    モデルの出力に対する誠実性報酬を計算する。
+
+    Args:
+        model_output: モデルの生成テキスト
+        internal_uncertainty: モデル内部の不確実性スコア (0-1)
+        ground_truth_available: 正解データが利用可能か
+        ground_truth: 正解データ (利用可能な場合)
+    """
+    contains_confession = detect_confession(model_output)
+    confidence_expressed = estimate_expressed_confidence(model_output)
+
+    # キャリブレーション報酬: 内部不確実性と表現された確信度の一致度
+    calibration_reward = -abs(
+        (1.0 - internal_uncertainty) - confidence_expressed
+    )
+
+    # 告白の適切性報酬
+    if internal_uncertainty > CONFESSION_THRESHOLD:
+        if contains_confession:
+            # 不確実な時に告白した: 正の報酬
+            confession_reward = 1.0
+        else:
+            # 不確実な時に告白しなかった: 負の報酬
+            confession_reward = -1.0
+    else:
+        if contains_confession:
+            # 確実な時に不要な告白: 軽微な負の報酬
+            confession_reward = -0.3
+        else:
+            # 確実な時に自信を持って回答: 正の報酬
+            confession_reward = 0.5
+
+    # 事実性報酬 (正解データがある場合)
+    factuality_reward = 0.0
+    if ground_truth_available and ground_truth:
+        factuality_reward = compute_factuality_score(
+            model_output, ground_truth
+        )
+
+    return (
+        0.4 * calibration_reward
+        + 0.4 * confession_reward
+        + 0.2 * factuality_reward
+    )</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-header">
+                    <span>&#x1F9E0;</span> Uncertainty Probe アーキテクチャ
+                </div>
+                <pre><code class="language-python">import torch
+import torch.nn as nn
+
+
+class UncertaintyProbe(nn.Module):
+    """
+    Transformer の隠れ層活性化から不確実性を推定するプローブ。
+    最終層および中間層の表現を入力として、
+    トークンレベルの不確実性スコアを出力する。
+    """
+
+    def __init__(self, hidden_dim: int, num_layers_to_probe: int = 4):
+        super().__init__()
+        self.attention_pooling = nn.MultiheadAttention(
+            embed_dim=hidden_dim, num_heads=8, batch_first=True
+        )
+        self.layers = nn.Sequential(
+            nn.Linear(hidden_dim * num_layers_to_probe, hidden_dim),
+            nn.GELU(),
+            nn.Dropout(0.1),
+            nn.Linear(hidden_dim, hidden_dim // 2),
+            nn.GELU(),
+            nn.Linear(hidden_dim // 2, 1),
+            nn.Sigmoid(),
+        )
+
+    def forward(
+        self, hidden_states: list[torch.Tensor]
+    ) -> torch.Tensor:
+        """
+        Args:
+            hidden_states: 各層の隠れ状態のリスト
+                          [batch_size, seq_len, hidden_dim] x num_layers
+
+        Returns:
+            uncertainty_scores: [batch_size, 1] 不確実性スコア
+        """
+        # 複数層の表現を結合
+        concatenated = torch.cat(hidden_states, dim=-1)
+
+        # シーケンス全体のプーリング
+        pooled = concatenated.mean(dim=1)
+
+        # 不確実性スコアの予測
+        uncertainty = self.layers(pooled)
+        return uncertainty</code></pre>
+            </div>
+        </section>
+
+        <!-- Evaluation Metrics -->
+        <section class="section">
+            <h2 class="section-title">評価メトリクス</h2>
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>メトリクス</th>
+                        <th>定義</th>
+                        <th>目標</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Confession Calibration Error (CCE)</strong></td>
+                        <td>告白閾値と実際の誤答率の乖離</td>
+                        <td>最小化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Selective Accuracy</strong></td>
+                        <td>告白しなかった回答の正確性</td>
+                        <td>最大化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Confession Rate</strong></td>
+                        <td>全回答に対する告白の割合</td>
+                        <td>適正範囲内</td>
+                    </tr>
+                    <tr>
+                        <td><strong>User Trust Score</strong></td>
+                        <td>ユーザー評価による信頼度</td>
+                        <td>最大化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Helpfulness-Honesty Tradeoff</strong></td>
+                        <td>有用性と誠実性のバランス</td>
+                        <td>パレート最適</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Architecture Diagram 1 -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ: Confessions システム全体像</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["入力処理"]
+        Query(["ユーザークエリ"])
+        Context["コンテキスト\n(会話履歴)"]
+    end
+
+    subgraph Model["言語モデル (Transformer)"]
+        Encoder["エンコーダ層"]
+        HiddenStates["隠れ状態\n(多層表現)"]
+        Decoder["デコーダ層"]
+        Output["出力生成"]
+    end
+
+    subgraph ConfessionModule["Confession モジュール"]
+        Probe["Uncertainty Probe\n(不確実性検出)"]
+        Threshold["閾値判定"]
+        ConfGen["告白文生成"]
+    end
+
+    subgraph Training["訓練ループ"]
+        HonestyReward["Honesty Reward\n(誠実性報酬)"]
+        CalibReward["Calibration Reward\n(キャリブレーション報酬)"]
+        FactReward["Factuality Reward\n(事実性報酬)"]
+        RLUpdate["RL パラメータ更新"]
+    end
+
+    subgraph OutputLayer["出力"]
+        ConfidentResp(["確信のある回答"])
+        ConfessionResp(["告白付き回答"])
+    end
+
+    Query --> Encoder
+    Context --> Encoder
+    Encoder --> HiddenStates
+    HiddenStates --> Decoder
+    HiddenStates --> Probe
+    Decoder --> Output
+
+    Probe --> Threshold
+    Threshold -->|"不確実性 > 閾値"| ConfGen
+    Threshold -->|"不確実性 <= 閾値"| ConfidentResp
+    ConfGen --> ConfessionResp
+    Output --> ConfGen
+    Output --> ConfidentResp
+
+    ConfidentResp --> HonestyReward
+    ConfessionResp --> HonestyReward
+    HonestyReward --> RLUpdate
+    CalibReward --> RLUpdate
+    FactReward --> RLUpdate
+    RLUpdate -->|"モデル更新"| Model
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class Probe,Threshold,ConfGen openai
+    class Encoder,HiddenStates,Decoder,Output dark
+    class HonestyReward,CalibReward,FactReward,RLUpdate light
+    class Query,Context,ConfidentResp,ConfessionResp gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram 2 -->
+        <section class="section">
+            <h2 class="section-title">告白メカニズムの判定フロー</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Detection["不確実性検出"]
+        Input(["モデル内部状態"]) --> ProbeLayer["Uncertainty\nProbe"]
+        ProbeLayer --> Score["不確実性\nスコア"]
+    end
+
+    subgraph Decision["判定ロジック"]
+        Score --> High{"高不確実性?\n(> 閾値)"}
+        High -->|"Yes"| ConfType["告白タイプ\n分類"]
+        High -->|"No"| Normal["通常回答\n生成"]
+    end
+
+    subgraph ConfessionTypes["告白タイプ"]
+        ConfType --> Knowledge["知識欠如\nの告白"]
+        ConfType --> Uncertain["不確実性\nの告白"]
+        ConfType --> Source["情報源限界\nの告白"]
+        ConfType --> Reasoning["推論弱さ\nの告白"]
+    end
+
+    subgraph Output["出力統合"]
+        Knowledge --> Merge["告白 +\n回答統合"]
+        Uncertain --> Merge
+        Source --> Merge
+        Reasoning --> Merge
+        Normal --> Final(["最終出力"])
+        Merge --> Final
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class ProbeLayer,ConfType,Knowledge,Uncertain,Source,Reasoning openai
+    class High,Score,Merge,Normal dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Comparison -->
+        <section class="section">
+            <h2 class="section-title">他の誠実性手法との比較</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h3>Chain-of-Thought</h3>
+                    <p>推論過程を可視化するが、最終的な確信度は明示しない。推論のステップを見せることで透明性を確保するが、ユーザーは結論の信頼度を自分で判断する必要がある。</p>
+                </div>
+                <div class="comparison-card">
+                    <h3>Self-reflection</h3>
+                    <p>回答後に修正を試みるが、不確実性の定量化が困難。事後的な自己チェックであり、不確実性を事前に捉えるメカニズムではない。</p>
+                </div>
+                <div class="comparison-card highlight">
+                    <h3>Confessions</h3>
+                    <p>不確実性を出力レベルで直接表明するため、ユーザーにとって最も解釈しやすい。内部状態の定量的な分析に基づき、適切なタイミングで告白を挿入する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>AI アプリケーション開発における信頼性設計</h4>
+                <ul>
+                    <li>Confessions メカニズムが API レベルで公開されれば、開発者はモデルの確信度に基づいて UI を動的に変更できる</li>
+                    <li>高リスク領域 (医療、法律、金融) では告白閾値を低く設定し、誤情報の提供リスクを大幅に低減</li>
+                    <li>「モデルが何を知らないか」が明確になるため、ユーザーの全体的な満足度が向上</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>AI Safety エコシステムへの貢献</h4>
+                <ul>
+                    <li>Confessions が広く採用されれば、AI の誠実性に関する業界標準として機能する可能性</li>
+                    <li>EU AI Act などの規制が AI の透明性を要求する中、規制要件を技術的に満たすアプローチ</li>
+                    <li>告白のログを記録することで、モデルの動作を事後的に監査し、安全性の継続的な改善に活用</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>研究コミュニティへの影響</h4>
+                <ul>
+                    <li>CCE などの新メトリクスがモデル評価の標準的な指標として採用される可能性</li>
+                    <li>Honesty Reward の設計パターンは、他の望ましい振る舞い (公平性、安全性) の強化学習にも応用可能</li>
+                    <li>テキスト以外のモダリティ (画像、音声) における不確実性告白メカニズムへの発展が期待</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="summary-text">
+                Confessions は、言語モデルの誠実性 (honesty) を技術的に保証するための新しいアプローチであり、OpenAI の AI Safety 研究における重要な成果である。モデルが自身の不確実性を積極的に「告白」することで、ハルシネーションの影響を軽減し、ユーザーとの信頼関係を構築する。技術的には、Uncertainty Probe と Honesty Reward の組み合わせにより実現され、Chain-of-Thought や Self-reflection と相補的に機能する。特に高リスク領域での AI 活用において重要な基盤技術となり、開発者にとってはアプリケーションにおける信頼性設計の新しいパラダイムを提示するものである。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Source: <a href="https://openai.com/index/how-confessions-can-keep-language-models-honest" target="_blank" rel="noopener noreferrer">https://openai.com/index/how-confessions-can-keep-language-models-honest</a></p>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="https://openai.com/research" target="_blank" rel="noopener noreferrer">OpenAI Research</a></li>
+                    <li><a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety</a></li>
+                    <li><a href="https://openai.com/index/frontier-safety-blueprint" target="_blank" rel="noopener noreferrer">Frontier Safety Blueprint</a></li>
+                    <li><a href="https://openai.com/index/sharing-the-latest-model-spec" target="_blank" rel="noopener noreferrer">Model Spec</a></li>
+                    <li><a href="https://github.com/sylinrl/TruthfulQA" target="_blank" rel="noopener noreferrer">TruthfulQA</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#FFFFFF',
+                primaryBorderColor: '#0D8A6A',
+                secondaryColor: '#343541',
+                tertiaryColor: '#F7F7F8',
+                lineColor: '#565869',
+                fontSize: '14px'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+
+    <!-- Highlight.js -->
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses API と Chat Completions API にインラインモデレーションスコアが追加 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --danger: #DC3545;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-icon.info {
+            background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+        }
+
+        .key-point-icon.warning {
+            background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Comparison */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+            border: 2px solid;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border-color: #DC3545;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+            border-color: var(--openai-green);
+        }
+
+        .comparison-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-card.before h3 {
+            color: #DC3545;
+        }
+
+        .comparison-card.after h3 {
+            color: var(--openai-green);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .comparison-card.before ul li::before {
+            content: '\2717';
+            position: absolute;
+            left: 0;
+            color: #DC3545;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Block */
+        .code-block {
+            margin-top: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            background: #21252B;
+            padding: 10px 16px;
+            font-size: 12px;
+            color: #ABB2BF;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-block code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            margin-top: 16px;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        /* Table */
+        .category-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .category-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .category-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .category-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .category-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .category-table tr:nth-child(even) td {
+            background: var(--openai-gray);
+        }
+
+        .category-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .category-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .category-table code {
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--openai-green);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        /* Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .impact-card {
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .impact-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Parameters Table */
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .params-table th {
+            background: var(--openai-green);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .params-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .params-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .params-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .params-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .params-table code {
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--openai-green);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        /* Notes */
+        .note-box {
+            background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+            border: 1px solid #F59E0B;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .note-box h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #D97706;
+            margin-bottom: 8px;
+        }
+
+        .note-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .note-box ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .note-box ul li::before {
+            content: '!';
+            position: absolute;
+            left: 0;
+            color: #D97706;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            background: var(--openai-dark);
+            border-radius: 20px;
+            color: white;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <h1>Responses API と Chat Completions API にインラインモデレーションスコアが追加</h1>
+                <div class="date">2026-06-04 | OpenAI API Changelog</div>
+            </div>
+        </header>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                OpenAI は Responses API および Chat Completions API にインラインモデレーションスコア機能を追加した。これにより、開発者はモデルの入力と生成出力の両方に対するモデレーション結果を、同一の API レスポンス内で受け取ることが可能になった。従来は生成 API とモデレーション API を別々に呼び出す必要があったが、リクエストパラメータに <code>moderation</code> オブジェクトを追加するだけで、1 回の API コールで生成とモデレーションの両方を完了できる。
+            </p>
+        </section>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>入力・出力の両方を評価</h3>
+                        <p>ユーザー入力とモデル出力の双方について、有害性スコアを返却する。13 カテゴリにわたる詳細な分類で評価</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon info">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>自動ブロックではなくシグナル提供</h3>
+                        <p>モデルは通常通り生成を行い、モデレーション結果は開発者がポリシー判断に使用するシグナルである。過度なフィルタリングを避けつつ適切な管理が可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>ストリーミング対応</h3>
+                        <p>ストリーミング時は、完全な出力が生成された後にモデレーションスコアが到着する設計</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon warning">&#x1F527;</div>
+                    <div class="key-point-content">
+                        <h3>ツール呼び出し対応</h3>
+                        <p>ツールの引数と出力はカバーするが、ツール名・説明・スキーマは対象外</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4B0;</div>
+                    <div class="key-point-content">
+                        <h3>モデレーションエンドポイントは無料</h3>
+                        <p>引き続きモデレーション API は無料で利用可能。追加コストなしでコンテンツ安全性を確保できる</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card before">
+                    <h3>&#x274C; Before (従来: 2 API コール)</h3>
+                    <ul>
+                        <li>生成 API とモデレーション API を別々に呼び出し</li>
+                        <li>2 回のネットワークラウンドトリップ</li>
+                        <li>2 つの API レスポンスを管理</li>
+                        <li>生成前に入力モデレーションを別途呼び出し</li>
+                        <li>生成後に出力モデレーションを別途呼び出し</li>
+                        <li>2 つの API のエラーを個別管理</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h3>&#x2705; After (新機能: 1 API コール)</h3>
+                    <ul>
+                        <li>生成 + インラインモデレーションが 1 回で完了</li>
+                        <li>1 回のラウンドトリップ</li>
+                        <li>単一レスポンスで完結</li>
+                        <li>入力モデレーションをリクエストに含めるだけ</li>
+                        <li>出力モデレーションがレスポンスに自動的に含まれる</li>
+                        <li>統合されたエラー処理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">機能詳細</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4E6; moderation パラメータ</h3>
+                    <p>トップレベルの <code>moderation</code> オブジェクトをリクエストに追加するだけで有効化。<code>model</code> フィールドにモデレーションモデルを指定する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F916; omni-moderation-latest</h3>
+                    <p>テキストと画像の両方をサポートするマルチモーダルモデレーションモデル。13 カテゴリにわたる包括的な有害性評価</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CA; category_scores</h3>
+                    <p>各カテゴリの信頼度スコア (0-1) を返却。開発者は閾値を自社のコンテンツポリシーに合わせて設定可能</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F504; レスポンス統合</h3>
+                    <p><code>.moderation.input</code> と <code>.moderation.output</code> に結果が格納。flagged フラグとカテゴリ別スコアを含む</p>
+                </div>
+            </div>
+
+            <!-- Response Format Table -->
+            <div style="margin-top: 24px;">
+                <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px;">レスポンス形式</h3>
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>フィールド</th>
+                            <th>型</th>
+                            <th>説明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>flagged</code></td>
+                            <td>boolean</td>
+                            <td>コンテンツが有害である可能性がある場合 true</td>
+                        </tr>
+                        <tr>
+                            <td><code>categories</code></td>
+                            <td>object</td>
+                            <td>カテゴリごとの違反フラグ (boolean)</td>
+                        </tr>
+                        <tr>
+                            <td><code>category_scores</code></td>
+                            <td>object</td>
+                            <td>カテゴリごとの信頼度スコア (0-1)</td>
+                        </tr>
+                        <tr>
+                            <td><code>category_applied_input_types</code></td>
+                            <td>object</td>
+                            <td>各カテゴリが適用される入力タイプ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-block-header">&#x1F4DD; Responses API - Python</div>
+                <pre><code class="language-python">from openai import OpenAI
+client = OpenAI()
+
+response = client.responses.create(
+    model="gpt-5.5",
+    input=[
+        {
+            "role": "user",
+            "content": (
+                "A user asks for instructions to make a harmful weapon. "
+                "Draft a brief refusal and offer a safer alternative."
+            ),
+        }
+    ],
+    moderation={"model": "omni-moderation-latest"},
+)
+
+input_moderation = response.moderation.input
+output_moderation = response.moderation.output
+
+print(input_moderation.flagged)
+print(output_moderation.flagged)</code></pre>
+            </div>
+
+            <div class="code-block" style="margin-top: 24px;">
+                <div class="code-block-header">&#x1F4DD; Chat Completions API - Python</div>
+                <pre><code class="language-python">from openai import OpenAI
+client = OpenAI()
+
+completion = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {
+            "role": "user",
+            "content": (
+                "A user asks for instructions to make a harmful weapon. "
+                "Draft a brief refusal and offer a safer alternative."
+            ),
+        }
+    ],
+    moderation={"model": "omni-moderation-latest"},
+)
+
+input_moderation = completion.moderation.input.results[0]
+output_moderation = completion.moderation.output.results[0]
+
+print(input_moderation.flagged)
+print(output_moderation.flagged)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagrams -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+
+            <div class="mermaid-container">
+                <h3>従来のモデレーションフロー (2 API コール)</h3>
+                <div class="mermaid">
+flowchart TD
+    subgraph Before["従来のフロー (2 API コール)"]
+        B_Input(["ユーザー入力"]) --> B_Mod1["Moderation API\n(入力チェック)"]
+        B_Mod1 --> B_Check1{"安全?"}
+        B_Check1 -->|Yes| B_Gen["Chat Completions API\n(生成)"]
+        B_Check1 -->|No| B_Block1(["ブロック"])
+        B_Gen --> B_Output["生成結果"]
+        B_Output --> B_Mod2["Moderation API\n(出力チェック)"]
+        B_Mod2 --> B_Check2{"安全?"}
+        B_Check2 -->|Yes| B_Show(["ユーザーに表示"])
+        B_Check2 -->|No| B_Block2(["ブロック"])
+    end
+
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class B_Mod1,B_Mod2,B_Gen dark
+    class B_Input,B_Output,B_Block1,B_Block2,B_Show gray
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h3>新しいインラインモデレーションフロー (1 API コール)</h3>
+                <div class="mermaid">
+flowchart TD
+    subgraph After["新しいフロー (1 API コール)"]
+        A_Input(["ユーザー入力"]) --> A_API["Chat Completions API\n+ moderation パラメータ"]
+        A_API --> A_Result["統合レスポンス"]
+        A_Result --> A_InputMod["moderation.input\n(入力スコア)"]
+        A_Result --> A_OutputMod["moderation.output\n(出力スコア)"]
+        A_Result --> A_Content["生成テキスト"]
+        A_InputMod --> A_Policy{"ポリシー判断"}
+        A_OutputMod --> A_Policy
+        A_Content --> A_Policy
+        A_Policy -->|安全| A_Show(["ユーザーに表示"])
+        A_Policy -->|不適切| A_Block(["ブロック"])
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class A_API openai
+    class A_InputMod,A_OutputMod,A_Content dark
+    class A_Input,A_Result,A_Show,A_Block gray
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h3>API 内部処理の概念図</h3>
+                <div class="mermaid">
+flowchart LR
+    subgraph Request["リクエスト"]
+        Params["model: gpt-5.5\nmessages: [...]\nmoderation: {model: omni-moderation-latest}"]
+    end
+
+    subgraph OpenAI["OpenAI API 内部処理"]
+        ModIn["入力モデレーション\n(omni-moderation-latest)"]
+        Gen["テキスト生成\n(gpt-5.5)"]
+        ModOut["出力モデレーション\n(omni-moderation-latest)"]
+    end
+
+    subgraph Response["レスポンス"]
+        Choices["choices / output_text"]
+        ModResult["moderation.input\nmoderation.output"]
+    end
+
+    Params --> ModIn
+    Params --> Gen
+    Gen --> ModOut
+    ModIn --> ModResult
+    ModOut --> ModResult
+    Gen --> Choices
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class ModIn,ModOut openai
+    class Gen dark
+    class Params,Choices,ModResult light
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Table -->
+        <section class="section">
+            <h2 class="section-title">サポートされる 13 カテゴリ</h2>
+            <table class="category-table">
+                <thead>
+                    <tr>
+                        <th>カテゴリ</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>harassment</code></td>
+                        <td>ハラスメント</td>
+                    </tr>
+                    <tr>
+                        <td><code>harassment/threatening</code></td>
+                        <td>脅迫的なハラスメント</td>
+                    </tr>
+                    <tr>
+                        <td><code>hate</code></td>
+                        <td>ヘイトスピーチ</td>
+                    </tr>
+                    <tr>
+                        <td><code>hate/threatening</code></td>
+                        <td>脅迫的なヘイトスピーチ</td>
+                    </tr>
+                    <tr>
+                        <td><code>illicit</code></td>
+                        <td>違法行為</td>
+                    </tr>
+                    <tr>
+                        <td><code>illicit/violent</code></td>
+                        <td>暴力的な違法行為</td>
+                    </tr>
+                    <tr>
+                        <td><code>self-harm</code></td>
+                        <td>自傷行為</td>
+                    </tr>
+                    <tr>
+                        <td><code>self-harm/intent</code></td>
+                        <td>自傷の意図</td>
+                    </tr>
+                    <tr>
+                        <td><code>self-harm/instructions</code></td>
+                        <td>自傷の指示</td>
+                    </tr>
+                    <tr>
+                        <td><code>sexual</code></td>
+                        <td>性的コンテンツ</td>
+                    </tr>
+                    <tr>
+                        <td><code>sexual/minors</code></td>
+                        <td>未成年に関する性的コンテンツ</td>
+                    </tr>
+                    <tr>
+                        <td><code>violence</code></td>
+                        <td>暴力</td>
+                    </tr>
+                    <tr>
+                        <td><code>violence/graphic</code></td>
+                        <td>生々しい暴力描写</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h3>実装の簡素化</h3>
+                    <ul>
+                        <li>モデレーション処理のための別途 API コールが不要</li>
+                        <li>2 つの API コールのエラー処理を管理する必要がなくなる</li>
+                        <li>生成結果とモデレーション結果を紐付ける処理が不要</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>パフォーマンスの改善</h3>
+                    <ul>
+                        <li>ネットワークラウンドトリップが 1 回で済む</li>
+                        <li>エンドユーザーへの応答が高速化</li>
+                        <li>API コール数が半減しレート制限に達しにくい</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>アーキテクチャへの影響</h3>
+                    <ul>
+                        <li>生成とモデレーションの別々のレイヤー管理が統合可能</li>
+                        <li>既存実装から段階的にインライン方式へ移行可能</li>
+                        <li>従来のモデレーションエンドポイントも引き続き利用可能</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>ベストプラクティス</h3>
+                    <ul>
+                        <li>category_scores の閾値を自社ポリシーに合わせて設定</li>
+                        <li>モデレーション結果のエラーチェックを実装</li>
+                        <li>ストリーミング時のスコア到着タイミングを考慮した UI 設計</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="note-box">
+                <h4>重要な注意事項</h4>
+                <ul>
+                    <li>モデレーション結果にはスコアではなくエラーが含まれる場合がある。結果のタイプを確認する必要がある</li>
+                    <li>ツールの引数と出力はモデレーション対象だが、ツール名、説明、スキーマは対象外</li>
+                    <li>ストリーミングモードでは、完全な出力が生成された後にモデレーションスコアが配信される</li>
+                    <li>omni-moderation-latest モデルはテキストと画像の両方をサポートするマルチモーダルモデル</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8;">
+                Responses API と Chat Completions API へのインラインモデレーションスコア追加は、コンテンツ安全性を担保するアプリケーション開発を大幅に効率化する実践的なアップデートである。従来の 2 段階の API コール (生成 + モデレーション) が 1 回のリクエストに統合されたことで、実装の複雑さ、レイテンシ、エラーハンドリングの負担がすべて軽減される。
+            </p>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-top: 12px;">
+                特に重要なのは、この機能が「自動ブロック」ではなく「シグナル提供」という設計思想に基づいている点である。開発者は <code>category_scores</code> の各カテゴリスコアを自社のコンテンツポリシーに照らし合わせ、独自の判断ロジックを構築できる。
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <a href="https://developers.openai.com/api/docs/guides/moderation#moderate-generated-content" target="_blank" rel="noopener noreferrer">
+                https://developers.openai.com/api/docs/guides/moderation#moderate-generated-content
+            </a>
+            <p>OpenAI News Summary | 2026-06-04</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        hljs.highlightAll();
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#FFFFFF',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#343541',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            }
+        });
+    </script>
+</body>
+</html>
