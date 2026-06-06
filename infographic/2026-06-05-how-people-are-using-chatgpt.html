@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT の利用実態: ユーザーはどのように ChatGPT を使っているのか</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-dark: #0D8A6A;
+            --openai-green-light: #1AC99A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #2c2c38 50%, var(--openai-green-dark) 100%);
+            border-radius: 16px;
+            padding: 40px 32px;
+            color: white;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.4;
+        }
+
+        .header .date {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--openai-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .icon {
+            font-size: 1.4rem;
+        }
+
+        .section h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            color: var(--openai-dark);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point .emoji {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .key-point .text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .key-point .text strong {
+            color: var(--openai-green-dark);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 0.85rem;
+            padding: 3px 0;
+            color: #555;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .segment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.85rem;
+        }
+
+        .segment-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .segment-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .segment-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+            margin-top: 16px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--openai-green), var(--openai-dark));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--openai-green);
+        }
+
+        .timeline-item .period {
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            font-size: 0.9rem;
+        }
+
+        .timeline-item .description {
+            font-size: 0.85rem;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .mermaid-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 16px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .code-block {
+            background: var(--openai-dark);
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 16px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .code-block .comment {
+            color: #6b7280;
+        }
+
+        .code-block .keyword {
+            color: #10A37F;
+        }
+
+        .code-block .string {
+            color: #fbbf24;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .impact-card {
+            background: linear-gradient(135deg, var(--openai-light) 0%, white 100%);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+            border-top: 3px solid var(--openai-green);
+        }
+
+        .impact-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 10px;
+        }
+
+        .impact-card p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .topic-ranking {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topic-rank {
+            width: 28px;
+            height: 28px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .topic-bar {
+            flex: 1;
+            height: 28px;
+            background: var(--openai-gray);
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--openai-green), var(--openai-green-light));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+        }
+
+        .topic-bar-fill span {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tech-tag {
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .overview-text {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 28px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .stat-value {
+                font-size: 1.6rem;
+            }
+
+            .segment-table {
+                font-size: 0.75rem;
+            }
+
+            .segment-table th,
+            .segment-table td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">Research / プロダクト分析</span>
+            <h1>ChatGPT の利用実態:<br>ユーザーはどのように ChatGPT を使っているのか</h1>
+            <p class="date">2026-06-05 | OpenAI Research</p>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="section">
+            <h2><span class="icon">📊</span> 主要指標</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">400M+</div>
+                    <div class="stat-label">週間アクティブユーザー (WAU)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2022.11</div>
+                    <div class="stat-label">サービスローンチ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5+</div>
+                    <div class="stat-label">主要利用カテゴリ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3.5 年</div>
+                    <div class="stat-label">成長期間</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="section">
+            <h2><span class="icon">📋</span> 概要</h2>
+            <p class="overview-text">
+                OpenAI は 2026 年 6 月 5 日、ChatGPT のユーザー利用実態に関する研究レポート「How People Are Using ChatGPT」を公開した。2026 年初頭時点で週間アクティブユーザー数が 4 億人を超える ChatGPT について、利用パターン、人気のユースケース、ユーザーセグメント別の利用傾向、そして利用動向の変遷を分析した包括的なレポートである。
+            </p>
+            <p class="overview-text">
+                本レポートは、OpenAI がプロダクトの成長と進化を理解し、今後の開発方針に反映させるための重要なデータ分析であり、AI アシスタントがどのように人々の日常的なワークフローに組み込まれているかを示す貴重な知見を提供するものと位置付けられる。
+            </p>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2><span class="icon">💡</span> キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="emoji">🚀</span>
+                    <div class="text"><strong>急成長の持続:</strong> 2025 年 2 月に WAU 4 億人を突破し、2026 年に至るまで継続的な成長を維持。AI ツールとして最大規模のユーザーベースを形成</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">💻</span>
+                    <div class="text"><strong>プログラミングが最大利用:</strong> コード生成、デバッグ、コードレビュー、アーキテクチャ設計相談がソフトウェアエンジニアを中心に高頻度で利用されている</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">📝</span>
+                    <div class="text"><strong>文章作成の普及:</strong> ビジネス文書からクリエイティブライティングまで、文章関連タスクが第 2 の主要カテゴリとして定着</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">🎓</span>
+                    <div class="text"><strong>教育分野の浸透:</strong> 語学学習、試験準備、学術研究サポートなど、教育・学習ツールとしての利用が拡大</div>
+                </div>
+                <div class="key-point">
+                    <span class="emoji">🔄</span>
+                    <div class="text"><strong>利用パターンの進化:</strong> 初期の試行的利用から成熟期のワークフロー統合へ。メモリ、Canvas、Codex 等により AI が業務パートナーとして定着</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Categories -->
+        <div class="section">
+            <h2><span class="icon">🏷️</span> 主要な利用カテゴリ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>💻 プログラミング・技術支援</h4>
+                    <ul>
+                        <li>コード生成、デバッグ、コードレビュー</li>
+                        <li>技術的な質問への回答、ドキュメント生成</li>
+                        <li>アーキテクチャ設計の相談、技術選定</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>✍️ 文章作成・クリエイティブ</h4>
+                    <ul>
+                        <li>ビジネス文書の起草・推敲</li>
+                        <li>クリエイティブライティング (物語、詩、脚本)</li>
+                        <li>メール作成、SNS 投稿の文案</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🎓 教育・学習</h4>
+                    <ul>
+                        <li>概念の説明、チュートリアル</li>
+                        <li>語学学習、翻訳支援</li>
+                        <li>試験準備、学術研究のサポート</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>📈 ビジネス分析・意思決定</h4>
+                    <ul>
+                        <li>データ分析の補助、レポート作成</li>
+                        <li>市場調査、競合分析</li>
+                        <li>戦略立案のブレインストーミング</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🏠 日常タスク・情報検索</h4>
+                    <ul>
+                        <li>レシピ提案、旅行計画</li>
+                        <li>製品比較、購入アドバイス</li>
+                        <li>健康・フィットネスに関する情報</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic Ranking -->
+        <div class="section">
+            <h2><span class="icon">🏆</span> 会話トピック ランキング</h2>
+            <div class="topic-ranking">
+                <div class="topic-item">
+                    <span class="topic-rank">1</span>
+                    <div class="topic-bar">
+                        <div class="topic-bar-fill" style="width: 95%;">
+                            <span>プログラミング・ソフトウェア開発</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="topic-item">
+                    <span class="topic-rank">2</span>
+                    <div class="topic-bar">
+                        <div class="topic-bar-fill" style="width: 82%;">
+                            <span>文章の作成・編集</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="topic-item">
+                    <span class="topic-rank">3</span>
+                    <div class="topic-bar">
+                        <div class="topic-bar-fill" style="width: 70%;">
+                            <span>学習・教育</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="topic-item">
+                    <span class="topic-rank">4</span>
+                    <div class="topic-bar">
+                        <div class="topic-bar-fill" style="width: 60%;">
+                            <span>ブレインストーミング・アイデア生成</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="topic-item">
+                    <span class="topic-rank">5</span>
+                    <div class="topic-bar">
+                        <div class="topic-bar-fill" style="width: 50%;">
+                            <span>データ分析・数学</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Segments -->
+        <div class="section">
+            <h2><span class="icon">👥</span> ユーザーセグメント別の利用傾向</h2>
+            <table class="segment-table">
+                <thead>
+                    <tr>
+                        <th>ユーザーセグメント</th>
+                        <th>主な利用目的</th>
+                        <th>利用頻度の傾向</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ソフトウェアエンジニア</td>
+                        <td>コーディング支援、デバッグ</td>
+                        <td>高頻度・長時間</td>
+                    </tr>
+                    <tr>
+                        <td>ビジネスプロフェッショナル</td>
+                        <td>文書作成、分析</td>
+                        <td>中〜高頻度</td>
+                    </tr>
+                    <tr>
+                        <td>学生・研究者</td>
+                        <td>学習、論文執筆支援</td>
+                        <td>中頻度</td>
+                    </tr>
+                    <tr>
+                        <td>クリエイター</td>
+                        <td>コンテンツ制作、アイデア出し</td>
+                        <td>中頻度</td>
+                    </tr>
+                    <tr>
+                        <td>一般ユーザー</td>
+                        <td>情報検索、日常タスク</td>
+                        <td>低〜中頻度</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Timeline -->
+        <div class="section">
+            <h2><span class="icon">📅</span> 利用動向の変遷</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="period">初期 (2022-2023 年)</span>
+                    <p class="description">好奇心主導の試行的な利用が主流。短い質問への回答、文章の校正といった比較的シンプルなタスクが中心であった。</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="period">成長期 (2024 年)</span>
+                    <p class="description">GPT-4o の登場やマルチモーダル対応により、画像を含む複雑なタスクや、より専門的な利用が拡大。ワークフローへの組み込みが進展した。</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="period">成熟期 (2025-2026 年)</span>
+                    <p class="description">メモリ機能、Canvas、カスタム GPT、Codex 等の機能拡充により、長期的なプロジェクト管理やチーム単位での利用が一般化。AI が日常業務の不可欠なパートナーとして定着した。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="section">
+            <h2><span class="icon">🔬</span> 技術的な詳細</h2>
+
+            <h3>利用分析の手法</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🏷️ 会話の分類 (Topic Classification)</h4>
+                    <ul>
+                        <li>LLM ベースの自動トピック分類</li>
+                        <li>クラスタリングによるパターン発見</li>
+                        <li>時系列分析による利用トレンド追跡</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🔒 プライバシー保護分析</h4>
+                    <ul>
+                        <li>集約化・匿名化データに基づく分析</li>
+                        <li>差分プライバシー手法の適用</li>
+                        <li>個人特定情報の除去</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>データスケールの技術的課題</h3>
+            <div class="tech-list">
+                <span class="tech-tag">スケーラビリティ</span>
+                <span class="tech-tag">リアルタイム検出</span>
+                <span class="tech-tag">サンプリング手法</span>
+                <span class="tech-tag">バッチ処理</span>
+                <span class="tech-tag">差分プライバシー</span>
+                <span class="tech-tag">LLM 分類</span>
+                <span class="tech-tag">クラスタリング</span>
+                <span class="tech-tag">時系列分析</span>
+            </div>
+
+            <h3>分析パイプラインの概念的な実装例</h3>
+            <div class="code-block">
+                <span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI<br><br>
+                client = OpenAI()<br><br>
+                <span class="comment"># 会話トピック分類の概念的な例</span><br>
+                response = client.chat.completions.create(<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;model=<span class="string">"gpt-4o"</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;messages=[<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="string">"role"</span>: <span class="string">"system"</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"content"</span>: <span class="string">"Classify the following conversation..."</span>},<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="string">"role"</span>: <span class="string">"user"</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"content"</span>: <span class="string">"{anonymized_conversation_summary}"</span>}<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;response_format={<span class="string">"type"</span>: <span class="string">"json_object"</span>}<br>
+                )<br><br>
+                <span class="comment"># 大規模利用分析ではバッチ処理が想定される</span><br>
+                batch_response = client.batches.create(<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;input_file_id=<span class="string">"file-abc123"</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;endpoint=<span class="string">"/v1/chat/completions"</span>,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;completion_window=<span class="string">"24h"</span><br>
+                )
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2><span class="icon">🏗️</span> アーキテクチャ: 利用分析パイプライン</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Users["ChatGPT ユーザー (4 億人+)"]
+        Free["Free ユーザー"]
+        Plus["Plus ユーザー"]
+        Team["Team ユーザー"]
+        Enterprise["Enterprise ユーザー"]
+    end
+
+    subgraph Collection["データ収集・匿名化"]
+        Anonymize["匿名化処理"]
+        Aggregate["集約処理"]
+        Sample["サンプリング"]
+    end
+
+    subgraph Analysis["利用分析パイプライン"]
+        TopicClass["トピック分類\n(LLM ベース)"]
+        PatternDetect["パターン検出\n(クラスタリング)"]
+        TrendAnalysis["トレンド分析\n(時系列)"]
+        SegmentAnalysis["セグメント分析\n(ユーザー層別)"]
+    end
+
+    subgraph Insights["インサイト生成"]
+        UsageReport["利用レポート"]
+        ProductDecision["プロダクト意思決定"]
+        SafetyMonitor["安全性モニタリング"]
+    end
+
+    Free --> Anonymize
+    Plus --> Anonymize
+    Team --> Anonymize
+    Enterprise --> Anonymize
+
+    Anonymize --> Aggregate
+    Aggregate --> Sample
+
+    Sample --> TopicClass
+    Sample --> PatternDetect
+    Sample --> TrendAnalysis
+    Sample --> SegmentAnalysis
+
+    TopicClass --> UsageReport
+    PatternDetect --> UsageReport
+    TrendAnalysis --> ProductDecision
+    SegmentAnalysis --> ProductDecision
+    TopicClass --> SafetyMonitor
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class TopicClass,PatternDetect,TrendAnalysis,SegmentAnalysis openai
+    class Anonymize,Aggregate,Sample dark
+    class UsageReport,ProductDecision,SafetyMonitor light
+    class Free,Plus,Team,Enterprise gray
+                </pre>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2><span class="icon">🛠️</span> 開発者への影響</h2>
+
+            <h3>プロダクト開発への示唆</h3>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>📌 ユースケースの優先順位付け</h4>
+                    <p>利用実態データに基づき、最も利用頻度の高いユースケースに対して機能改善のリソースを優先配分。開発者向け API の改善方針にも影響する</p>
+                </div>
+                <div class="impact-card">
+                    <h4>🎯 モデル最適化の方向性</h4>
+                    <p>特定のタスク (コーディング、文章作成等) への利用集中が確認されれば、それらに特化したモデルチューニングやベンチマーク強化が期待できる</p>
+                </div>
+                <div class="impact-card">
+                    <h4>🔧 API 機能の拡充方針</h4>
+                    <p>ユーザーの利用パターンから新たな API 機能のニーズを特定し、Assistants API や Chat Completions API の機能拡張に反映される</p>
+                </div>
+            </div>
+
+            <h3>AI アプリケーション開発者への知見</h3>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>🔍 競合分析の基盤</h4>
+                    <p>ChatGPT の利用実態を理解することで、AI アプリケーション開発者は自社プロダクトの差別化ポイントを特定しやすくなる</p>
+                </div>
+                <div class="impact-card">
+                    <h4>📐 ユーザー期待値の把握</h4>
+                    <p>ChatGPT で 4 億人が体験している UX が、AI ツール全般に対するユーザー期待値のベースラインを形成している</p>
+                </div>
+                <div class="impact-card">
+                    <h4>💎 未充足ニーズの発見</h4>
+                    <p>利用データから、ChatGPT では十分に対応できていない領域を特定し、ニッチな AI ソリューションの開発機会を見出せる</p>
+                </div>
+            </div>
+
+            <h3>安全性・ポリシーへの影響</h3>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>📜 Content Policy の調整</h4>
+                    <p>実際の利用パターンに基づき、コンテンツポリシーの適用範囲と精度を最適化できる</p>
+                </div>
+                <div class="impact-card">
+                    <h4>🛡️ Abuse Detection の改善</h4>
+                    <p>通常の利用パターンとの乖離を検出することで、不正利用の検知精度を向上させる</p>
+                </div>
+                <div class="impact-card">
+                    <h4>🌐 透明性レポートとしての価値</h4>
+                    <p>利用実態の公開は、AI の社会的影響を評価するための重要な透明性施策である</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><span class="icon">📝</span> まとめ</h2>
+            <p class="overview-text">
+                「How People Are Using ChatGPT」は、4 億人以上の週間アクティブユーザーを持つ ChatGPT の利用実態を包括的に分析した OpenAI Research のレポートである。プログラミング支援、文章作成、教育、ビジネス分析、日常タスクなど多様なユースケースにわたる利用パターンを明らかにし、ユーザーセグメント別の傾向や利用動向の時系列的な変遷を示している。
+            </p>
+            <p class="overview-text">
+                このレポートは、OpenAI のプロダクト開発方針を示すと同時に、AI アシスタントが人々の知的活動にどの程度浸透しているかを示す重要なエビデンスとなっている。開発者にとっては、API 機能の今後の方向性を推察する手がかりとなり、AI アプリケーション市場における機会とユーザー期待値を理解するための基礎資料としての価値がある。
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/how-people-are-using-chatgpt/" target="_blank">How People Are Using ChatGPT - OpenAI Research</a></p>
+            <p style="margin-top: 8px;">関連リンク:
+                <a href="https://openai.com/research" target="_blank">OpenAI Research</a> |
+                <a href="https://chatgpt.com" target="_blank">ChatGPT</a> |
+                <a href="https://openai.com/policies/usage-policies" target="_blank">Usage Policies</a> |
+                <a href="https://platform.openai.com/docs" target="_blank">API Platform</a>
+            </p>
+            <p style="margin-top: 12px; opacity: 0.6;">Generated: 2026-06-06 | OpenAI News Infographic</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                background: '#ffffff',
+                primaryColor: '#10A37F',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#0D8A6A',
+                secondaryColor: '#343541',
+                tertiaryColor: '#F7F7F8',
+                lineColor: '#343541',
+                fontFamily: 'Zen Maru Gothic, sans-serif'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>

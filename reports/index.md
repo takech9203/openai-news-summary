@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-06](2026/2026-06-06-approach-to-age-prediction.md) - OpenAI の年齢推定アプローチ: AI プロダクトにおける未成年者保護のための技術基盤
+- [2026-06-05](2026/2026-06-05-swe-bench-verified-retirement.md) - SWE-bench Verified の評価を終了する理由
+- [2026-06-05](2026/2026-06-05-how-people-are-using-chatgpt.md) - ChatGPT の利用実態: ユーザーはどのように ChatGPT を使っているのか
 - [2026-06-04](2026/2026-06-04-moderation-scores-responses-chat-completions.md) - Responses API と Chat Completions API にインラインモデレーションスコアが追加
 - [2026-06-04](2026/2026-06-04-endava-frontiers.md) - Endava が AI エージェントを中心にソフトウェアデリバリーを再設計する方法
 - [2026-06-04](2026/2026-06-04-confessions-keep-language-models-honest.md) - Confessions: 言語モデルの誠実性を維持する新しいアプローチ
