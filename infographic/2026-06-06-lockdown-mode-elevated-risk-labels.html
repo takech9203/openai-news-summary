@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Lockdown Mode と Elevated Risk Labels - プロンプトインジェクション対策 - OpenAI News</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #444654 100%);
+            border-radius: var(--radius);
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: var(--danger);
+            opacity: 0.1;
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 150px;
+            height: 150px;
+            background: var(--openai-green);
+            opacity: 0.07;
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--danger);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .header-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-meta .dot {
+            width: 4px;
+            height: 4px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        /* Key Points */
+        .key-points {
+            background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%);
+            border: 1px solid rgba(220,38,38,0.2);
+        }
+
+        .key-point {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(220,38,38,0.1);
+        }
+
+        .key-point:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            background: var(--openai-dark);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .key-point-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .key-point-text strong {
+            color: var(--openai-dark);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--openai-dark);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-card-icon.disabled {
+            background: var(--danger);
+        }
+
+        .feature-card-icon.enabled {
+            background: var(--openai-green);
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .feature-card .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 12px;
+        }
+
+        .status-disabled {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .status-limited {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            border-radius: var(--radius);
+            padding: 28px 24px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 1px solid #fca5a5;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #86efac;
+        }
+
+        .comparison-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comparison-card.before h3 {
+            color: #dc2626;
+        }
+
+        .comparison-card.after h3 {
+            color: #16a34a;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 0.88rem;
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '!';
+            position: absolute;
+            left: 0;
+            color: #dc2626;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            color: #16a34a;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 20px;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Risk Table */
+        .risk-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.88rem;
+        }
+
+        .risk-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .risk-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .risk-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .risk-table .status-cell {
+            font-weight: 700;
+        }
+
+        .risk-table .blocked {
+            color: var(--danger);
+        }
+
+        .risk-table .available {
+            color: var(--openai-green);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .use-case p {
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .use-case ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .use-case ul li {
+            font-size: 0.85rem;
+            color: #555;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .use-case ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #92400e;
+        }
+
+        .warning-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Residual Risk */
+        .residual-risk {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 1px solid rgba(217,119,6,0.3);
+        }
+
+        .risk-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(217,119,6,0.15);
+        }
+
+        .risk-item:last-child {
+            border-bottom: none;
+        }
+
+        .risk-item-marker {
+            flex-shrink: 0;
+            width: 8px;
+            height: 8px;
+            background: var(--warning);
+            border-radius: 50%;
+            margin-top: 8px;
+        }
+
+        .risk-item-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #78350f;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            color: #888;
+            font-size: 0.82rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-table {
+                font-size: 0.78rem;
+            }
+
+            .risk-table th,
+            .risk-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="category-badge">Security / Safety</span>
+            <h1>ChatGPT Lockdown Mode と Elevated Risk Labels: プロンプトインジェクション対策の新セキュリティレイヤー</h1>
+            <div class="header-meta">
+                <span>2026-06-06</span>
+                <span class="dot"></span>
+                <span>OpenAI News (Safety)</span>
+                <span class="dot"></span>
+                <span>Lockdown Mode</span>
+            </div>
+        </header>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size:0.93rem; line-height:1.8;">
+                OpenAI は 2026 年 6 月 6 日、ChatGPT に「Lockdown Mode」と「Elevated Risk Labels」という 2 つの新しいセキュリティ機能を導入した。Lockdown Mode は、機密データを扱うユーザーや組織を対象に、プロンプトインジェクション攻撃によるデータ流出リスクを軽減するための厳格な保護機能である。
+            </p>
+            <p style="font-size:0.93rem; line-height:1.8; margin-top:12px;">
+                外部コンテンツとの接触を最小限に抑えることで攻撃面を縮小するアプローチを採用し、すべてのユーザー向けではなく、セキュリティを最優先する環境でのオプトイン利用を想定している。ChatGPT Business のセルフサーブアカウントおよび対象個人アカウントへ順次展開される。
+            </p>
+        </section>
+
+        <!-- Key Points -->
+        <section class="section key-points">
+            <h2 class="section-title">キーポイント</h2>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F6E1;</div>
+                <div class="key-point-text">
+                    <strong>攻撃面の縮小:</strong> Web ブラウジング、画像取得、Deep Research、Agent モードを無効化し、外部からの悪意ある指示の注入経路を物理的に遮断
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F512;</div>
+                <div class="key-point-text">
+                    <strong>データ流出防止:</strong> 機密データを扱う組織向けに設計された、プロンプトインジェクションによる情報漏洩リスクの大幅低減
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x26A0;</div>
+                <div class="key-point-text">
+                    <strong>Elevated Risk Labels:</strong> コンテンツ内の潜在的なセキュリティリスクを検出し、ユーザーに警告を表示するコンパニオン機能
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x1F3E2;</div>
+                <div class="key-point-text">
+                    <strong>対象限定のオプトイン:</strong> 全ユーザー一律ではなく、ChatGPT Business セルフサーブアカウントと対象個人アカウントに段階的展開
+                </div>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">&#x26A1;</div>
+                <div class="key-point-text">
+                    <strong>透明な限界開示:</strong> キャッシュコンテンツやアップロードファイル経由の攻撃は依然として残存リスクであることを OpenAI が明確に認識
+                </div>
+            </div>
+        </section>
+
+        <!-- Disabled Features -->
+        <section class="section">
+            <h2 class="section-title">Lockdown Mode で無効化される機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon disabled">&#x1F310;</div>
+                    <h3>Web ブラウジング</h3>
+                    <p>ライブ Web ブラウジングを完全に無効化。キャッシュされたコンテンツのみアクセス可能。</p>
+                    <span class="status-badge status-disabled">無効化</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon disabled">&#x1F5BC;</div>
+                    <h3>Web 画像取得</h3>
+                    <p>Web からの画像取得・表示を遮断。ただし DALL-E による画像生成は引き続き利用可能。</p>
+                    <span class="status-badge status-disabled">無効化</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon disabled">&#x1F50D;</div>
+                    <h3>Deep Research</h3>
+                    <p>広範な Web リサーチ機能を無効化し、外部コンテンツからの攻撃経路を遮断。</p>
+                    <span class="status-badge status-disabled">無効化</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon disabled">&#x1F916;</div>
+                    <h3>Agent モード</h3>
+                    <p>自律的にタスクを実行する Agent モードを無効化し、意図しない外部アクセスを防止。</p>
+                    <span class="status-badge status-disabled">無効化</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Status Table -->
+        <section class="section">
+            <h2 class="section-title">機能ステータス比較</h2>
+            <table class="risk-table">
+                <thead>
+                    <tr>
+                        <th>機能</th>
+                        <th>通常モード</th>
+                        <th>Lockdown Mode</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ライブ Web ブラウジング</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell blocked">無効</td>
+                    </tr>
+                    <tr>
+                        <td>キャッシュコンテンツ参照</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell available">有効</td>
+                    </tr>
+                    <tr>
+                        <td>Web 画像取得・表示</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell blocked">無効</td>
+                    </tr>
+                    <tr>
+                        <td>DALL-E 画像生成</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell available">有効</td>
+                    </tr>
+                    <tr>
+                        <td>Deep Research</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell blocked">無効</td>
+                    </tr>
+                    <tr>
+                        <td>Agent モード</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell blocked">無効</td>
+                    </tr>
+                    <tr>
+                        <td>ファイルアップロード</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell available">有効</td>
+                    </tr>
+                    <tr>
+                        <td>通常の会話</td>
+                        <td class="status-cell available">有効</td>
+                        <td class="status-cell available">有効</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h3>Lockdown Mode なし (従来)</h3>
+                    <ul>
+                        <li>Web ページ内の隠し指示がモデルに到達</li>
+                        <li>画像内に埋め込まれた悪意あるテキストの読み取り</li>
+                        <li>Deep Research 中の汚染コンテンツ取得</li>
+                        <li>Agent が悪意あるサイトにアクセス</li>
+                        <li>データ流出のリスクが広範に存在</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h3>Lockdown Mode 有効</h3>
+                    <ul>
+                        <li>外部 Web アクセス経路を物理的に遮断</li>
+                        <li>Web 画像経由の攻撃を根本的にブロック</li>
+                        <li>深層リサーチによるリスク排除</li>
+                        <li>Agent の意図しない外部アクセスを防止</li>
+                        <li>攻撃面を大幅に縮小</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Residual Risks -->
+        <section class="section residual-risk">
+            <h2 class="section-title">残存リスク (OpenAI が開示)</h2>
+            <div class="risk-item">
+                <div class="risk-item-marker"></div>
+                <div class="risk-item-text">
+                    <strong>キャッシュされた Web コンテンツ:</strong> ライブブラウジングは無効でも、事前にキャッシュされたコンテンツに悪意ある指示が含まれている可能性がある
+                </div>
+            </div>
+            <div class="risk-item">
+                <div class="risk-item-marker"></div>
+                <div class="risk-item-text">
+                    <strong>アップロードされたファイル:</strong> ユーザーがアップロードするドキュメントや画像に悪意あるプロンプトが埋め込まれている場合は防御対象外
+                </div>
+            </div>
+            <div class="risk-item">
+                <div class="risk-item-marker"></div>
+                <div class="risk-item-text">
+                    <strong>会話内の注入:</strong> ユーザーが意図せずコピー&ペーストした悪意あるテキストなど、直接入力経由の攻撃は残存
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>重要: Lockdown Mode は多層防御の一要素</strong>
+                OpenAI は、本機能がすべてのプロンプトインジェクションリスクを排除するものではないことを明確に認めている。完全な防御を保証するものではなく、攻撃面の大幅な縮小を目的とした追加的なセキュリティレイヤーとして位置づけられる。
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ: Lockdown Mode の動作フロー</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    subgraph User["ユーザー入力"]
+        Input(["ユーザー"]) --> Message["メッセージ送信"]
+        Input --> Upload["ファイルアップロード"]
+    end
+
+    subgraph LockdownCheck["Lockdown Mode 判定"]
+        Message --> ModeCheck{"Lockdown Mode 有効?"}
+        Upload --> ModeCheck
+    end
+
+    subgraph Disabled["無効化される経路"]
+        ModeCheck -->|有効| BlockBrowse["Web ブラウジング 遮断"]
+        ModeCheck -->|有効| BlockImage["Web 画像取得 遮断"]
+        ModeCheck -->|有効| BlockResearch["Deep Research 遮断"]
+        ModeCheck -->|有効| BlockAgent["Agent モード 遮断"]
+    end
+
+    subgraph Normal["通常処理経路"]
+        ModeCheck -->|無効| Browse["Web ブラウジング"]
+        ModeCheck -->|無効| ImageFetch["Web 画像取得"]
+        ModeCheck -->|無効| Research["Deep Research"]
+        ModeCheck -->|無効| Agent["Agent モード"]
+    end
+
+    subgraph RiskLabel["Elevated Risk Labels"]
+        Upload --> Scanner["コンテンツスキャナー"]
+        Scanner --> RiskEval{"リスク評価"}
+        RiskEval -->|リスク検出| Warning["警告ラベル表示"]
+        RiskEval -->|安全| Pass["通常処理"]
+    end
+
+    subgraph Processing["応答生成"]
+        BlockBrowse --> SafeProcess["制限付き処理"]
+        BlockImage --> SafeProcess
+        BlockResearch --> SafeProcess
+        BlockAgent --> SafeProcess
+        Warning --> SafeProcess
+        Pass --> SafeProcess
+        Browse --> FullProcess["フル機能処理"]
+        ImageFetch --> FullProcess
+        Research --> FullProcess
+        Agent --> FullProcess
+        SafeProcess --> Response(["安全な応答"])
+        FullProcess --> Response
+    end
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef danger fill:#FF6B6B,stroke:#EE5A5A,stroke-width:2px,color:white
+
+    class SafeProcess,Scanner,RiskEval openai
+    class ModeCheck,FullProcess dark
+    class Input,Message,Upload,Response,Pass light
+    class BlockBrowse,BlockImage,BlockResearch,BlockAgent,Warning danger
+                </div>
+            </div>
+        </section>
+
+        <!-- Multi-layer Defense -->
+        <section class="section">
+            <h2 class="section-title">多層防御のセキュリティレイヤー</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart LR
+    subgraph External["外部コンテンツ"]
+        Web["Web ページ"]
+        Images["Web 画像"]
+        Files["アップロードファイル"]
+    end
+
+    subgraph Defense["多層防御"]
+        subgraph Layer1["第 1 層: Lockdown Mode"]
+            LM["外部接続遮断"]
+        end
+        subgraph Layer2["第 2 層: Elevated Risk Labels"]
+            RL["リスク検出 + 警告"]
+        end
+        subgraph Layer3["第 3 層: モデルレベル防御"]
+            IH["Instruction Hierarchy"]
+            Mod["omni-moderation"]
+        end
+    end
+
+    subgraph Core["ChatGPT コア"]
+        Model["GPT モデル"]
+    end
+
+    Web -->|遮断| LM
+    Images -->|遮断| LM
+    Files --> RL
+    RL --> IH
+    LM -.->|キャッシュのみ| IH
+    IH --> Mod
+    Mod --> Model
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class LM,RL openai
+    class IH,Mod,Model dark
+    class Web,Images,Files light
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">想定ユースケース</h2>
+            <div class="use-case">
+                <h3>&#x1F3E6; 金融機関の機密データ分析</h3>
+                <p>顧客の財務情報や取引データを ChatGPT で分析する際、外部への情報漏洩を防止</p>
+                <ul>
+                    <li>Web ブラウジング経由での情報流出リスクを排除</li>
+                    <li>Agent モードによる意図しない外部通信を防止</li>
+                    <li>規制遵守 (GDPR、金融規制) のための追加保護レイヤー</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h3>&#x2696; 法律事務所の契約書レビュー</h3>
+                <p>クライアントの機密契約書を ChatGPT でレビューする際のセキュリティ強化</p>
+                <ul>
+                    <li>弁護士 - クライアント秘匿特権の保護</li>
+                    <li>契約書内容の外部漏洩リスクを最小化</li>
+                    <li>アップロードファイルへの Elevated Risk Labels による追加警告</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h3>&#x1F3E5; 医療機関の患者データ処理</h3>
+                <p>HIPAA 対象の患者データを含む分析業務でのセキュリティ確保</p>
+                <ul>
+                    <li>患者の個人健康情報 (PHI) の外部流出防止</li>
+                    <li>医療記録の分析時における厳格なデータ保護</li>
+                    <li>コンプライアンス要件への適合を支援</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者・組織への影響</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon enabled">&#x1F527;</div>
+                    <h3>API 設計への示唆</h3>
+                    <p>外部アクセス制限をセキュリティ対策として公式に位置づけ。API レベルでの同様の機能提供が今後期待される。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon enabled">&#x1F4CB;</div>
+                    <h3>セキュリティポリシー策定</h3>
+                    <p>ChatGPT Business 管理者は、組織全体 vs ユーザー単位での Lockdown Mode 適用方針の決定が必要。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon enabled">&#x2696;</div>
+                    <h3>コンプライアンス対応</h3>
+                    <p>規制対象データを扱う業務での追加保護として、監査・レポーティングに活用可能。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                Source: <a href="https://openai.com/index/introducing-lockdown-mode-and-elevated-risk-labels-in-chatgpt/" target="_blank">Introducing Lockdown Mode and Elevated Risk Labels in ChatGPT - OpenAI</a>
+            </p>
+            <p style="margin-top: 8px;">2026-06-06 | OpenAI News (Safety)</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>
