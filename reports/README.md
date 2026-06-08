@@ -7,12 +7,14 @@ OpenAI の最新ニュースレポート一覧
 
 - [2026-06-06](2026/2026-06-06-trump-administration-equity-stake-openai.md) - トランプ政権が OpenAI の株式取得を検討: 政府による AI 企業への出資構想
 - [2026-06-06](2026/2026-06-06-lockdown-mode-elevated-risk-labels.md) - ChatGPT に Lockdown Mode と Elevated Risk Labels を導入: プロンプトインジェクション対策の新たなセキュリティレイヤー
+- [2026-06-06](2026/2026-06-06-introducing-evmbench.md) - EVMBench: Ethereum スマートコントラクトセキュリティ評価ベンチマークの導入
 - [2026-06-06](2026/2026-06-06-introducing-aardvark.md) - Introducing Aardvark: OpenAI Research の新たな AI システム
 - [2026-06-06](2026/2026-06-06-how-countries-can-end-capability-overhang.md) - 各国が「能力オーバーハング」を解消するための方策 -- OpenAI が AI 展開ギャップの克服に向けた政策提言を公開
 - [2026-06-06](2026/2026-06-06-horizon-1000.md) - OpenAI、「Horizon 1000」グローバルアフェアーズ・イニシアチブを発表
 - [2026-06-06](2026/2026-06-06-approach-to-age-prediction.md) - OpenAI の年齢推定アプローチ: AI プロダクトにおける未成年者保護のための技術基盤
 - [2026-06-05](2026/2026-06-05-swe-bench-verified-retirement.md) - SWE-bench Verified の評価を終了する理由
 - [2026-06-05](2026/2026-06-05-scaling-social-science-research.md) - AI による社会科学研究のスケーリング
+- [2026-06-05](2026/2026-06-05-reasoning-models-chain-of-thought-controllability.md) - 推論モデルの思考連鎖制御可能性: 2026 年 6 月アップデート
 - [2026-06-05](2026/2026-06-05-how-people-are-using-chatgpt.md) - ChatGPT の利用実態: ユーザーはどのように ChatGPT を使っているのか
 - [2026-06-04](2026/2026-06-04-moderation-scores-responses-chat-completions.md) - Responses API と Chat Completions API にインラインモデレーションスコアが追加
 - [2026-06-04](2026/2026-06-04-endava-frontiers.md) - Endava が AI エージェントを中心にソフトウェアデリバリーを再設計する方法

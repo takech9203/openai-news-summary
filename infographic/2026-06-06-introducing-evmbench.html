@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVMBench - Ethereum Smart Contract Security Benchmark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/solidity.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.9rem;
+            opacity: 0.85;
+            flex-wrap: wrap;
+        }
+
+        .header-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.5rem;
+        }
+
+        /* Key Points Grid */
+        .key-points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .key-point-card {
+            background: linear-gradient(135deg, var(--openai-light) 0%, var(--openai-gray) 100%);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point-card .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .key-point-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .key-point-card p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Vulnerability Cards */
+        .vuln-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .vuln-card {
+            background: white;
+            border: 2px solid var(--openai-gray);
+            border-radius: 12px;
+            padding: 20px;
+            transition: border-color 0.3s, transform 0.2s;
+        }
+
+        .vuln-card:hover {
+            border-color: var(--openai-green);
+            transform: translateY(-2px);
+        }
+
+        .vuln-card .vuln-icon {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .vuln-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .vuln-card .vuln-example {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .vuln-card p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Comparison Table */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-box {
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .comparison-box.before {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border: 2px solid #ccc;
+        }
+
+        .comparison-box.after {
+            background: linear-gradient(135deg, #e8f7f2 0%, #d4f2ea 100%);
+            border: 2px solid var(--openai-green);
+        }
+
+        .comparison-box .label {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .comparison-box.before .label {
+            background: #999;
+            color: white;
+        }
+
+        .comparison-box.after .label {
+            background: var(--openai-green);
+            color: white;
+        }
+
+        .comparison-box h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--openai-dark);
+        }
+
+        .comparison-box ul {
+            padding-left: 18px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .comparison-box li {
+            margin-bottom: 6px;
+        }
+
+        /* Code Block */
+        .code-section {
+            margin-top: 16px;
+        }
+
+        .code-section pre {
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .code-section code {
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .code-label {
+            display: inline-block;
+            background: var(--openai-dark);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px 6px 0 0;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* Metrics Table */
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+
+        .metrics-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .metrics-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .metrics-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .metrics-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .metrics-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Impact Grid */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .impact-card {
+            background: linear-gradient(135deg, var(--openai-green) 0%, #0D8A6A 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .impact-card .impact-icon {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .impact-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .impact-card p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Use Case List */
+        .usecase-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .usecase-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 0.9rem;
+        }
+
+        .usecase-list li:last-child {
+            border-bottom: none;
+        }
+
+        .usecase-icon {
+            background: var(--openai-green);
+            color: white;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .usecase-list li strong {
+            color: var(--openai-dark);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            color: white;
+            padding: 24px 30px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            opacity: 0.8;
+        }
+
+        .footer .source-label {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-bottom: 6px;
+        }
+
+        /* Arrow between comparison */
+        .comparison-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--openai-green);
+            margin: 16px 0;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: linear-gradient(135deg, var(--openai-light) 0%, #ffffff 100%);
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .feature-card ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .feature-card li {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        /* Evaluation Steps */
+        .eval-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+            align-items: center;
+        }
+
+        .eval-step {
+            background: var(--openai-dark);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .eval-step-arrow {
+            color: var(--openai-green);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">RESEARCH / BENCHMARK</span>
+                <h1>EVMBench: Ethereum スマートコントラクト セキュリティ評価ベンチマーク</h1>
+                <div class="header-meta">
+                    <span>&#x1F4C5; 2026-06-06</span>
+                    <span>&#x1F3E2; OpenAI Research</span>
+                    <span>&#x1F50D; セキュリティ / AI 評価</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x1F4CB;</span> 概要</h2>
+            <div class="key-points-grid">
+                <div class="key-point-card">
+                    <div class="card-icon">&#x1F6E1;&#xFE0F;</div>
+                    <h4>EVM セキュリティ特化</h4>
+                    <p>Ethereum スマートコントラクトの脆弱性を AI が検出・分析・分類する能力を体系的に評価するフレームワーク</p>
+                </div>
+                <div class="key-point-card">
+                    <div class="card-icon">&#x1F4CA;</div>
+                    <h4>多段階評価</h4>
+                    <p>検出、分類、攻撃パス推論、修正提案の 4 段階で AI モデルの能力を定量化</p>
+                </div>
+                <div class="key-point-card">
+                    <div class="card-icon">&#x1F504;</div>
+                    <h4>SWE-bench の後継</h4>
+                    <p>汎用ベンチマークからドメイン特化型の精密な評価フレームワークへの戦略転換を象徴</p>
+                </div>
+                <div class="key-point-card">
+                    <div class="card-icon">&#x1F4B0;</div>
+                    <h4>経済的インパクト</h4>
+                    <p>数十億ドル規模のブロックチェーンセキュリティ分野に OpenAI が本格参入</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vulnerability Categories -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x26A0;&#xFE0F;</span> 主な脆弱性カテゴリ</h2>
+            <p style="margin-bottom: 16px; font-size: 0.9rem; color: #555;">EVMBench が評価対象とするスマートコントラクトの主要な脆弱性パターン</p>
+            <div class="vuln-grid">
+                <div class="vuln-card">
+                    <div class="vuln-icon">&#x1F503;</div>
+                    <h4>リエントランシー</h4>
+                    <div class="vuln-example">Cross-function / Read-only reentrancy</div>
+                    <p>再帰呼び出しパターンの検出と CEI パターン違反の特定</p>
+                </div>
+                <div class="vuln-card">
+                    <div class="vuln-icon">&#x1F512;</div>
+                    <h4>アクセス制御</h4>
+                    <div class="vuln-example">Missing owner check / Unprotected selfdestruct</div>
+                    <p>権限管理の不備と認可バイパスの特定</p>
+                </div>
+                <div class="vuln-card">
+                    <div class="vuln-icon">&#x1F522;</div>
+                    <h4>算術エラー</h4>
+                    <div class="vuln-example">Integer overflow / Precision loss</div>
+                    <p>数値計算の安全性と境界条件の評価</p>
+                </div>
+                <div class="vuln-card">
+                    <div class="vuln-icon">&#x26A1;</div>
+                    <h4>フラッシュローン</h4>
+                    <div class="vuln-example">Price manipulation / Oracle manipulation</div>
+                    <p>DeFi 特有の攻撃ベクトル分析</p>
+                </div>
+                <div class="vuln-card">
+                    <div class="vuln-icon">&#x1F9E9;</div>
+                    <h4>ロジックエラー</h4>
+                    <div class="vuln-example">Business logic flaws / State inconsistency</div>
+                    <p>意図と実装の乖離、状態不整合の検出</p>
+                </div>
+                <div class="vuln-card">
+                    <div class="vuln-icon">&#x26FD;</div>
+                    <h4>ガス最適化</h4>
+                    <div class="vuln-example">DoS via gas / Unbounded loops</div>
+                    <p>リソース消費の脆弱性と DoS 攻撃可能性の評価</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After Comparison -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x1F4C8;</span> SWE-bench vs EVMBench</h2>
+            <p style="margin-bottom: 16px; font-size: 0.9rem; color: #555;">汎用ベンチマークからドメイン特化型への進化</p>
+            <div class="comparison-container">
+                <div class="comparison-box before">
+                    <span class="label">BEFORE</span>
+                    <h4>SWE-bench Verified (引退)</h4>
+                    <ul>
+                        <li>汎用的なバグ修正タスクに偏重</li>
+                        <li>テストスイートの通過のみで評価</li>
+                        <li>セキュリティ品質は未考慮</li>
+                        <li>ベンチマーク飽和 (~90% 以上を達成)</li>
+                        <li>単一段階の評価</li>
+                    </ul>
+                </div>
+                <div class="comparison-box after">
+                    <span class="label">AFTER</span>
+                    <h4>EVMBench (新規)</h4>
+                    <ul>
+                        <li>スマートコントラクトセキュリティに特化</li>
+                        <li>多段階評価 (検出→分類→推論→修正)</li>
+                        <li>実際のインシデントに基づく評価データ</li>
+                        <li>経済的影響度を考慮した重み付け</li>
+                        <li>Codex Security との連携評価</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Evaluation Pipeline Steps -->
+            <div style="margin-top: 24px;">
+                <p style="font-size: 0.9rem; font-weight: 700; color: var(--openai-dark); margin-bottom: 12px;">評価パイプライン</p>
+                <div class="eval-steps">
+                    <span class="eval-step">&#x1F4C4; コントラクト入力</span>
+                    <span class="eval-step-arrow">&#x2192;</span>
+                    <span class="eval-step">&#x1F50D; 脆弱性スキャン</span>
+                    <span class="eval-step-arrow">&#x2192;</span>
+                    <span class="eval-step">&#x1F3F7;&#xFE0F; 分類・深刻度評価</span>
+                    <span class="eval-step-arrow">&#x2192;</span>
+                    <span class="eval-step">&#x1F9E0; 攻撃パス推論</span>
+                    <span class="eval-step-arrow">&#x2192;</span>
+                    <span class="eval-step">&#x1F527; 修正提案</span>
+                    <span class="eval-step-arrow">&#x2192;</span>
+                    <span class="eval-step">&#x1F3AF; スコア算出</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details: Code Sample -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x1F4BB;</span> 技術詳細: 脆弱性コード例</h2>
+            <p style="margin-bottom: 16px; font-size: 0.9rem; color: #555;">EVMBench が評価対象とするリエントランシー脆弱性の典型例</p>
+            <div class="code-section">
+                <span class="code-label">Solidity - VulnerableVault.sol</span>
+                <pre><code class="language-solidity">// 脆弱なコントラクト例 (リエントランシー)
+contract VulnerableVault {
+    mapping(address => uint256) public balances;
+
+    function withdraw(uint256 amount) external {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        // 脆弱性: 状態更新前の外部呼び出し
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed");
+        balances[msg.sender] -= amount; // CEI パターン違反
+    }
+}</code></pre>
+            </div>
+
+            <div class="feature-card" style="margin-top: 20px;">
+                <h3>&#x1F916; AI モデルに期待される出力</h3>
+                <ul>
+                    <li><strong>脆弱性の特定:</strong> リエントランシー (SWC-107) / 行番号の指定</li>
+                    <li><strong>分類:</strong> CWE/SWC 分類に基づく正確なカテゴリ付け</li>
+                    <li><strong>攻撃シナリオ:</strong> 悪意のあるコントラクトによる再帰呼び出し攻撃の記述</li>
+                    <li><strong>修正提案:</strong> Checks-Effects-Interactions パターンの適用</li>
+                </ul>
+            </div>
+
+            <!-- Metrics Table -->
+            <h3 style="margin-top: 24px; font-size: 1rem; font-weight: 700; color: var(--openai-dark);">&#x1F4CF; 評価指標</h3>
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>指標</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Detection Precision</strong></td>
+                        <td>報告された脆弱性のうち、実際に脆弱性であった割合</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Detection Recall</strong></td>
+                        <td>実際の脆弱性のうち、検出された割合</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Classification Accuracy</strong></td>
+                        <td>脆弱性の種類を正しく分類した割合</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Severity Correlation</strong></td>
+                        <td>深刻度評価と実際の影響度の相関</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fix Validity</strong></td>
+                        <td>提案された修正が脆弱性を解消し機能を維持する割合</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Attack Path Score</strong></td>
+                        <td>攻撃シナリオの推論の正確性と完全性</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Architecture Diagram 1 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x1F3D7;&#xFE0F;</span> アーキテクチャ: 評価パイプライン</h2>
+            <div class="mermaid-container">
+                <div class="mermaid-label">EVMBench 評価パイプライン</div>
+                <div class="mermaid">
+flowchart TD
+    subgraph Input["入力データセット"]
+        Source["Solidity / Vyper\nソースコード"]
+        Bytecode["EVM バイトコード"]
+        Metadata["脆弱性メタデータ\n(グラウンドトゥルース)"]
+    end
+
+    subgraph Model["AI モデル評価"]
+        Analysis["コード分析\nエンジン"]
+        Detection["脆弱性検出"]
+        Classification["分類 &\n深刻度評価"]
+        Reasoning["攻撃パス\n推論"]
+        Fix["修正提案\n生成"]
+    end
+
+    subgraph Scoring["評価スコアリング"]
+        Precision["Precision /\nRecall"]
+        Accuracy["Classification\nAccuracy"]
+        Validity["Fix\nValidity"]
+        Final["総合スコア"]
+    end
+
+    Source --> Analysis
+    Bytecode --> Analysis
+    Analysis --> Detection
+    Detection --> Classification
+    Classification --> Reasoning
+    Reasoning --> Fix
+
+    Detection --> Precision
+    Classification --> Accuracy
+    Fix --> Validity
+    Metadata --> Precision
+    Metadata --> Accuracy
+    Metadata --> Validity
+    Precision --> Final
+    Accuracy --> Final
+    Validity --> Final
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Analysis,Detection,Classification,Reasoning,Fix openai
+    class Precision,Accuracy,Validity,Final dark
+    class Source,Bytecode,Metadata light
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram 2 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x1F310;</span> エコシステムにおける位置付け</h2>
+            <div class="mermaid-container">
+                <div class="mermaid-label">OpenAI セキュリティ評価エコシステム</div>
+                <div class="mermaid">
+flowchart LR
+    subgraph Benchmarks["評価フレームワーク"]
+        SWE["SWE-bench Verified\n(引退: 2026-06-05)"]
+        EVM["EVMBench\n(新規: 2026-06-06)"]
+        Future["次世代ベンチマーク\n(計画中)"]
+    end
+
+    subgraph Products["プロダクト"]
+        CodexSec["Codex Security\n(2026-03)"]
+        Codex["Codex\nエージェント"]
+        GPT55["GPT-5.5"]
+    end
+
+    subgraph Research["研究基盤"]
+        Aardvark["Aardvark\n(2026-06-06)"]
+        Safety["Frontier Safety\nBlueprint"]
+        Confessions["Confessions"]
+    end
+
+    EVM -->|"能力評価"| CodexSec
+    EVM -->|"モデル評価"| GPT55
+    CodexSec -->|"統合"| Codex
+    SWE -.->|"後継"| EVM
+    SWE -.->|"後継"| Future
+    Research -->|"研究成果反映"| Products
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef deprecated fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#999
+
+    class EVM,CodexSec openai
+    class Codex,GPT55,Aardvark,Safety,Confessions dark
+    class Future light
+    class SWE deprecated
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram 3 -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x1F50E;</span> 多層分析アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <div class="mermaid-label">脆弱性検出の多層分析アーキテクチャ</div>
+                <div class="mermaid">
+flowchart TD
+    subgraph Contract["スマートコントラクト"]
+        Sol["Solidity Source"]
+        ABI["ABI Definition"]
+        Deploy["Deployed Bytecode"]
+    end
+
+    subgraph StaticAnalysis["静的解析層"]
+        AST["AST 解析"]
+        CFG["制御フロー\nグラフ"]
+        DataFlow["データフロー\n解析"]
+    end
+
+    subgraph AIAnalysis["AI 解析層"]
+        LLM["LLM\n(GPT-5.5 / Codex)"]
+        Pattern["パターン\nマッチング"]
+        Semantic["意味論的\n推論"]
+    end
+
+    subgraph Output["検出結果"]
+        Vuln["脆弱性\nレポート"]
+        Score["リスク\nスコア"]
+        Patch["修正\nパッチ"]
+    end
+
+    Sol --> AST
+    Sol --> LLM
+    Deploy --> CFG
+    ABI --> DataFlow
+    AST --> Pattern
+    CFG --> Pattern
+    DataFlow --> Semantic
+    LLM --> Semantic
+    Pattern --> Vuln
+    Semantic --> Vuln
+    Vuln --> Score
+    Vuln --> Patch
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class LLM,Pattern,Semantic openai
+    class AST,CFG,DataFlow,Vuln,Score,Patch dark
+    class Sol,ABI,Deploy light
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Impact / Use Cases -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">&#x1F680;</span> 開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <div class="impact-icon">&#x1F4DC;</div>
+                    <h4>スマートコントラクト開発者</h4>
+                    <p>セキュリティ監査の自動化により、開発段階での脆弱性検出が容易に。監査コスト (数万~数十万ドル) の大幅削減が期待される</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">&#x1F9D1;&#x200D;&#x1F4BB;</div>
+                    <h4>AI / ML エンジニア</h4>
+                    <p>ドメイン特化評価の標準化テンプレート。スマートコントラクトセキュリティに特化した AI モデルの研究開発が加速</p>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">&#x1F50F;</div>
+                    <h4>セキュリティ研究者</h4>
+                    <p>AI 監査ツールの客観的評価が可能に。未知の脆弱性パターン検出による ゼロデイ脆弱性の早期発見に貢献</p>
+                </div>
+            </div>
+
+            <ul class="usecase-list" style="margin-top: 24px;">
+                <li>
+                    <span class="usecase-icon">1</span>
+                    <span><strong>IDE 統合:</strong> Codex Security と EVMBench の知見が IDE や CI/CD パイプラインに統合され、リアルタイムな脆弱性フィードバックを実現</span>
+                </li>
+                <li>
+                    <span class="usecase-icon">2</span>
+                    <span><strong>評価指標の応用:</strong> 多段階評価アプローチは他のセキュリティドメイン (Web, Mobile, Cloud) のベンチマーク設計にも応用可能</span>
+                </li>
+                <li>
+                    <span class="usecase-icon">3</span>
+                    <span><strong>Codex Security 連携:</strong> EVMBench をフィードバックループとして活用し、AI セキュリティツールの反復的な品質向上を実現</span>
+                </li>
+                <li>
+                    <span class="usecase-icon">4</span>
+                    <span><strong>既存ツールとの比較:</strong> Slither、Mythril 等の既存ツールと AI モデルの能力を EVMBench で定量比較可能に</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="source-label">SOURCE</div>
+            <a href="https://openai.com/index/introducing-evmbench/" target="_blank" rel="noopener noreferrer">
+                https://openai.com/index/introducing-evmbench/
+            </a>
+            <p style="margin-top: 12px; opacity: 0.5; font-size: 0.75rem;">Generated from OpenAI Research Report | 2026-06-06</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

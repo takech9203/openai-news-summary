@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推論モデルの思考連鎖制御可能性 - OpenAI Research Infographic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 100%);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(52, 53, 65, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+
+        /* Section styles */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title .icon {
+            font-size: 1.6rem;
+        }
+
+        /* Key Points Cards */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .key-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 163, 127, 0.15);
+        }
+
+        .key-card .card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .key-card p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Evaluation Table */
+        .eval-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .eval-table thead {
+            background: var(--openai-dark);
+            color: white;
+        }
+
+        .eval-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .eval-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 0.9rem;
+        }
+
+        .eval-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .eval-table tbody tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        /* Feature Cards */
+        .feature-cards {
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--openai-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--openai-green);
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            margin-top: 0.5rem;
+            padding-left: 1.2rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .feature-card ul li {
+            margin-bottom: 0.3rem;
+            line-height: 1.6;
+        }
+
+        /* Code Block */
+        .code-section {
+            background: #282c34;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-section pre {
+            margin: 0;
+        }
+
+        .code-section code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* Mermaid Diagrams */
+        .mermaid-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid-wrapper h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Developer Impact */
+        .impact-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .impact-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1rem;
+            background: var(--openai-light);
+            border-radius: 10px;
+        }
+
+        .impact-item .impact-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .impact-item .impact-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .impact-item .impact-content p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .key-points {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">RESEARCH / AI SAFETY</span>
+            <h1>推論モデルの思考連鎖制御可能性</h1>
+            <p class="date">2026-06-05 | OpenAI Research</p>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#x1F4A1;</span> 概要: 3 つの中核的発見</h2>
+            <div class="key-points">
+                <div class="key-card">
+                    <div class="card-icon">&#x1F50D;</div>
+                    <h3>忠実な推論の持続</h3>
+                    <p>モデルは指示に反しても、実際の推論過程を思考連鎖に反映する傾向が強い。推論過程の隠蔽は極めて困難</p>
+                </div>
+                <div class="key-card">
+                    <div class="card-icon">&#x1F6E1;</div>
+                    <h3>隠蔽の失敗</h3>
+                    <p>特定の情報や推論ステップを隠そうとしても、思考連鎖に痕跡が残る。完全な秘匿は実現不可能</p>
+                </div>
+                <div class="key-card">
+                    <div class="card-icon">&#x26A0;</div>
+                    <h3>偽装の困難さ</h3>
+                    <p>実際の推論とは異なる思考連鎖を生成しようとすると、一貫性が崩れ検出が容易になる</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CoT-Control Evaluation Framework -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#x1F4CA;</span> CoT-Control 評価フレームワーク</h2>
+            <table class="eval-table">
+                <thead>
+                    <tr>
+                        <th>評価軸</th>
+                        <th>内容</th>
+                        <th>測定指標</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>思考の隠蔽</strong></td>
+                        <td>特定の推論ステップを CoT から除外する能力</td>
+                        <td>隠蔽成功率、残留痕跡の有無</td>
+                    </tr>
+                    <tr>
+                        <td><strong>思考の偽装</strong></td>
+                        <td>実際とは異なる CoT を生成する能力</td>
+                        <td>偽装の一貫性、性能への影響</td>
+                    </tr>
+                    <tr>
+                        <td><strong>思考の抑制</strong></td>
+                        <td>特定トピックの推論を抑制する能力</td>
+                        <td>抑制の完全性、代替経路の出現</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Main Feature Cards -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#x1F680;</span> 主な研究内容</h2>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <h3>&#x1F9E0; GPT-5.5 シリーズにおける検証</h3>
+                    <p>2026 年 4 月 23 日発表の GPT-5.5 および 5 月 5 日の GPT-5.5 Instant に対する CoT-Control 評価を拡張。</p>
+                    <ul>
+                        <li>GPT-5.5 は「意図しない CoT 評価」(Accidental CoT Grading) の影響を受けていないことを確認</li>
+                        <li>新世代モデルにおける CoT 忠実性と制御困難性の評価結果</li>
+                        <li>モデルスケール拡大が CoT 制御可能性に与える影響の分析</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F916; 内部エージェント監視の実運用データ</h3>
+                    <p>2026 年 3 月 19 日の「内部コーディングエージェントのミスアライメント監視」研究から得られた実運用知見を統合。</p>
+                    <ul>
+                        <li>エージェントの長期タスク遂行時における CoT 忠実性の持続性</li>
+                        <li>複雑なツール呼び出しチェーンを含む推論における制御困難性の維持</li>
+                        <li>実際のミスアライメント検出事例から得られた有効性データ</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A1; Accidental CoT Grading の発見</h3>
+                    <p>RL 訓練中に CoT が意図せず評価される事例を発見。思考の隠蔽につながる 3 つの条件を特定。</p>
+                    <ul>
+                        <li>報酬の大きさ</li>
+                        <li>カバレッジ (評価範囲)</li>
+                        <li>条件付き発見可能性</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F512; モニタリング信頼性の更新された結論</h3>
+                    <p>初版の「CoT の制御困難性がモニタリングの有効性を保証する」という結論を精緻化。</p>
+                    <ul>
+                        <li><strong>条件付きの信頼性:</strong> 特定の訓練条件下では CoT の忠実性が影響を受ける可能性</li>
+                        <li><strong>多層防御の必要性:</strong> CoT モニタリングは唯一の安全策として依存すべきではない</li>
+                        <li><strong>継続的検証の重要性:</strong> モデル能力向上に伴い定期的に評価を更新する必要</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details with Code -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#x1F4BB;</span> 技術的詳細: CoT モニタリング実装例</h2>
+            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">推論モデルの CoT 生成とモニタリングの概念的な実装例 (Python)</p>
+            <div class="code-section">
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 推論モデルでの CoT 生成とモニタリング
+response = client.chat.completions.create(
+    model="o3",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Solve this complex problem step by step."}
+    ],
+    # reasoning_effort パラメータで推論の深さを制御
+    reasoning_effort="high"
+)
+
+# CoT の監視可能性を活用した安全性チェック
+# (内部 API - 概念的な例)
+reasoning_content = response.choices[0].message.reasoning_content
+
+# CoT 忠実性の評価 (研究で示された指標に基づく)
+# - 推論の一貫性チェック
+# - 隠蔽パターンの検出
+# - 最終回答との整合性検証</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagrams -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#x1F3D7;</span> アーキテクチャ図</h2>
+
+            <div class="mermaid-wrapper">
+                <h3>&#x1F4D0; CoT 制御可能性研究の全体像</h3>
+                <div class="mermaid">
+flowchart TD
+    subgraph Research["CoT Controllability 研究 (2026-03 → 2026-06 更新)"]
+        subgraph Evaluation["CoT-Control 評価フレームワーク"]
+            Hide["思考の隠蔽\n(Concealment)"]
+            Fake["思考の偽装\n(Fabrication)"]
+            Suppress["思考の抑制\n(Suppression)"]
+        end
+
+        subgraph Models["評価対象モデル"]
+            O3["o3"]
+            GPT54T["GPT-5.4\nThinking"]
+            GPT55["GPT-5.5"]
+        end
+
+        subgraph Findings["主要な発見"]
+            Robust["制御困難性の\n頑健性"]
+            Faithful["CoT 忠実性の\n維持"]
+            Monitor["モニタリングの\n有効性"]
+        end
+    end
+
+    subgraph Applications["応用・展開"]
+        AgentMon["エージェント\nCoT 監視"]
+        Safety["安全性\nセーフガード"]
+        Alignment["アライメント\n検証"]
+    end
+
+    Hide --> Models
+    Fake --> Models
+    Suppress --> Models
+    Models --> Robust
+    Models --> Faithful
+    Robust --> Monitor
+    Faithful --> Monitor
+    Monitor --> AgentMon
+    Monitor --> Safety
+    Monitor --> Alignment
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#343541,stroke-width:2px,color:#343541
+
+    class O3,GPT54T,GPT55 openai
+    class Hide,Fake,Suppress dark
+    class Robust,Faithful,Monitor accent
+    class AgentMon,Safety,Alignment light
+                </div>
+            </div>
+
+            <div class="mermaid-wrapper">
+                <h3>&#x1F6E1; CoT 制御可能性が支える安全性アーキテクチャ</h3>
+                <div class="mermaid">
+flowchart LR
+    subgraph Input["推論リクエスト"]
+        User(["ユーザー入力"])
+        System(["システムプロンプト"])
+    end
+
+    subgraph ReasoningModel["推論モデル"]
+        InternalCoT["内部 CoT 生成\n(制御困難)"]
+        Answer["最終回答生成"]
+    end
+
+    subgraph Monitoring["モニタリング層"]
+        CoTCapture["CoT キャプチャ"]
+        FaithCheck["忠実性検証"]
+        AnomalyDet["異常検知"]
+    end
+
+    subgraph SafetyActions["安全性アクション"]
+        Pass(["正常: 応答配信"])
+        Flag(["警告: レビュー要求"])
+        Block(["遮断: 応答停止"])
+    end
+
+    User --> InternalCoT
+    System --> InternalCoT
+    InternalCoT --> Answer
+    InternalCoT -->|"制御不能な\n忠実な痕跡"| CoTCapture
+    CoTCapture --> FaithCheck
+    CoTCapture --> AnomalyDet
+    FaithCheck --> Pass
+    AnomalyDet --> Flag
+    AnomalyDet --> Block
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef warning fill:#E74C3C,stroke:#C0392B,stroke-width:2px,color:white
+
+    class InternalCoT,Answer openai
+    class CoTCapture,FaithCheck,AnomalyDet dark
+    class User,System,Pass light
+    class Flag,Block warning
+                </div>
+            </div>
+
+            <div class="mermaid-wrapper">
+                <h3>&#x1F4C5; 研究タイムラインと関連成果</h3>
+                <div class="mermaid">
+flowchart TD
+    subgraph Timeline["CoT 安全性研究タイムライン (2026)"]
+        direction LR
+        Mar05["2026-03-05\nCoT Controllability\n初版公開"]
+        Mar10["2026-03-10\nInstruction Hierarchy\nChallenge"]
+        Mar19["2026-03-19\nAgent CoT\nMonitoring"]
+        May07["2026-05-07\nAccidental CoT\nGrading RL"]
+        Jun05["2026-06-05\nCoT Controllability\nアップデート"]
+    end
+
+    Mar05 -->|"基礎理論"| Mar19
+    Mar05 -->|"制御性と指示"| Mar10
+    Mar19 -->|"実運用知見"| Jun05
+    May07 -->|"リスク要因"| Jun05
+    Mar05 -->|"改訂・拡張"| Jun05
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:3px,color:white
+
+    class Mar05,Mar10,Mar19,May07 dark
+    class Jun05 highlight
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#x1F468;&#x200D;&#x1F4BB;</span> 開発者への影響・ユースケース</h2>
+            <div class="impact-grid">
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F4DD;</div>
+                    <div class="impact-content">
+                        <h4>CoT ログの活用</h4>
+                        <p>推論モデルの思考連鎖は信頼性の高い安全性シグナルとして利用可能。アプリケーションの安全性設計に積極的に組み込むべき</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x2699;</div>
+                    <div class="impact-content">
+                        <h4>reasoning_effort パラメータの最適化</h4>
+                        <p>CoT の深さを制御するパラメータは安全性モニタリングの粒度にも影響。セキュリティ要件に応じた適切な設定が推奨される</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F6E1;</div>
+                    <div class="impact-content">
+                        <h4>多層防御の実装</h4>
+                        <p>CoT モニタリングは有効だが、指示階層 (Instruction Hierarchy) や出力フィルタリングと組み合わせた多層防御が望ましい</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x1F916;</div>
+                    <div class="impact-content">
+                        <h4>エージェント開発への示唆</h4>
+                        <p>CoT の制御困難性により、エージェントが不正な推論を隠蔽してユーザーを欺くリスクが低減。長期タスクの CoT 継続監視でミスアライメントの早期検出が可能</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <div class="impact-icon">&#x2696;</div>
+                    <div class="impact-content">
+                        <h4>モデル選択と安全性のトレードオフ</h4>
+                        <p>安全性要件が高い用途では推論モデル (o3, GPT-5.4 Thinking) の CoT 監視可能性が優位性を持つ。GPT-5.5 は CoT 忠実性が確認済み</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="source-label">SOURCE</p>
+            <p><a href="https://openai.com/index/reasoning-models-chain-of-thought-controllability/" target="_blank" rel="noopener noreferrer">https://openai.com/index/reasoning-models-chain-of-thought-controllability/</a></p>
+            <p style="margin-top: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.4);">OpenAI Research | 2026-06-05</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
