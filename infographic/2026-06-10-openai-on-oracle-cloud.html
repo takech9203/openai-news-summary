@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI モデルと Codex が Oracle Cloud で利用可能に - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --oracle-red: #C74634;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(199, 70, 52, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: "\2713";
+            color: var(--openai-green);
+            font-weight: 700;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .stat-sublabel {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Code Block */
+        .code-container {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+        }
+
+        .code-container .code-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .code-container .code-header span {
+            font-size: 13px;
+            color: #8b949e;
+            font-family: 'Zen Maru Gothic', sans-serif;
+        }
+
+        .code-container .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .code-container .code-dot.red { background: #ff5f56; }
+        .code-container .code-dot.yellow { background: #ffbd2e; }
+        .code-container .code-dot.green { background: #27c93f; }
+
+        .code-container pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .code-container code {
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Timeline Table */
+        .timeline-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .timeline-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .timeline-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .timeline-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .timeline-table tbody tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .timeline-table .highlight-row {
+            background: rgba(16, 163, 127, 0.08) !important;
+            font-weight: 500;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            padding: 4px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-table {
+                font-size: 12px;
+            }
+
+            .timeline-table thead th,
+            .timeline-table tbody td {
+                padding: 10px 8px;
+            }
+
+            .code-container {
+                padding: 16px;
+            }
+
+            .code-container code {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">パートナーシップ</span>
+                <h1>OpenAI モデルと Codex が Oracle Cloud で利用可能に</h1>
+                <p class="date">2026-06-10 | OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x2601;</div>
+                    <div class="key-point-content">
+                        <h3>Oracle Cloud Infrastructure で OpenAI モデルが利用可能に</h3>
+                        <p>OCI を通じて GPT-5.5、GPT-5.4、Codex が直接利用可能。既存の Oracle Cloud 契約 (コミットメント) を活用して追加契約なしに AI 導入を加速できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4B0;</div>
+                    <div class="key-point-content">
+                        <h3>既存クラウド契約の活用による導入障壁の低減</h3>
+                        <p>Oracle Cloud の年間契約額 (未使用枠) を OpenAI モデル利用に充当可能。新規ベンダー登録や追加予算確保の手間を削減し、調達プロセスを簡素化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F510;</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズグレードのセキュリティとガバナンス</h3>
+                        <p>OCI のネイティブセキュリティ機能 (IAM、ネットワーク分離、暗号化)、データレジデンシー、SOC 2 / ISO 27001 / HIPAA コンプライアンス認証との統合。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F30D;</div>
+                    <div class="key-point-content">
+                        <h3>マルチクラウド戦略の完成</h3>
+                        <p>Azure (2023 年〜)、AWS (2026 年 6 月 1 日)、Oracle Cloud (2026 年 6 月 10 日) -- 主要 3 大クラウドプラットフォーム全てで OpenAI フロンティアモデルが利用可能に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>統合課金と一元管理</h3>
+                        <p>Oracle Cloud の請求体系に OpenAI モデル利用料が統合され、監査ログによる利用状況の一元管理が可能。ポリシーベースのアクセス制御で細粒度の権限設定を実現。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: Partnership Benefits -->
+        <section class="section">
+            <h2 class="section-title">パートナーシップの主な特徴</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4B3; 既存契約の活用</h3>
+                    <p>Oracle Cloud の既存コミットメントを OpenAI モデル利用に充当</p>
+                    <ul>
+                        <li>年間契約額の柔軟な運用</li>
+                        <li>追加予算確保不要</li>
+                        <li>新規ベンダー登録不要</li>
+                        <li>調達承認プロセスの簡素化</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; セキュリティ統合</h3>
+                    <p>OCI のエンタープライズセキュリティ基盤を活用した AI 運用</p>
+                    <ul>
+                        <li>OCI IAM によるアクセス制御</li>
+                        <li>ネットワーク分離・暗号化</li>
+                        <li>データレジデンシー対応</li>
+                        <li>SOC 2 / ISO 27001 / HIPAA</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F916; 利用可能なモデル</h3>
+                    <p>OpenAI のフロンティアモデルと開発支援エージェント</p>
+                    <ul>
+                        <li>GPT-5.5: 最新フラッグシップ</li>
+                        <li>GPT-5.4: コスト効率重視</li>
+                        <li>Codex: コード生成・レビュー</li>
+                        <li>OpenAI SDK 互換クライアント</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats: Multi-Cloud Availability -->
+        <section class="section">
+            <h2 class="section-title">マルチクラウド対応状況</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">Azure</div>
+                    <div class="stat-label">Azure OpenAI Service</div>
+                    <div class="stat-sublabel">2023 年〜</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">AWS</div>
+                    <div class="stat-label">Amazon Bedrock</div>
+                    <div class="stat-sublabel">2026 年 6 月 1 日</div>
+                </div>
+                <div class="stat-card" style="border: 2px solid var(--openai-green);">
+                    <div class="stat-value">Oracle</div>
+                    <div class="stat-label">OCI AI Services</div>
+                    <div class="stat-sublabel">2026 年 6 月 10 日 (NEW)</div>
+                </div>
+            </div>
+            <table class="timeline-table" style="margin-top: 24px;">
+                <thead>
+                    <tr>
+                        <th>クラウドプロバイダー</th>
+                        <th>対応開始日</th>
+                        <th>主な統合方式</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Microsoft Azure</td>
+                        <td>2023 年〜</td>
+                        <td>Azure OpenAI Service</td>
+                    </tr>
+                    <tr>
+                        <td>Amazon Web Services</td>
+                        <td>2026-06-01</td>
+                        <td>Amazon Bedrock</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Oracle Cloud</td>
+                        <td>2026-06-10</td>
+                        <td>OCI AI Services</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Mermaid Diagram -->
+        <section class="section">
+            <h2 class="section-title">統合アーキテクチャ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Oracle Cloud Infrastructure を通じた OpenAI モデルへのアクセスアーキテクチャ。OCI のマネージドサービスとして提供され、既存の認証・課金・監査基盤と統合される。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Enterprise["エンタープライズ環境"]
+        App["アプリケーション"]
+        SDK["OpenAI SDK / OCI SDK"]
+    end
+
+    subgraph OCI["Oracle Cloud Infrastructure"]
+        subgraph AIServices["AI Services"]
+            Gateway["API ゲートウェイ"]
+            subgraph Models["OpenAI モデル"]
+                GPT55["GPT-5.5"]
+                GPT54["GPT-5.4"]
+                Codex["Codex"]
+            end
+        end
+        IAM["OCI IAM"]
+        Billing["OCI Billing\n(既存契約充当)"]
+        Audit["Audit & Logging"]
+    end
+
+    App --> SDK
+    SDK --> Gateway
+    Gateway --> GPT55
+    Gateway --> GPT54
+    Gateway --> Codex
+    IAM --> Gateway
+    Billing --> AIServices
+    Audit --> AIServices
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef oracle fill:#C74634,stroke:#A03828,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT55,GPT54,Codex openai
+    class App,SDK dark
+    class Gateway,IAM,Billing,Audit,AIServices oracle
+    class Enterprise light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Oracle Cloud 経由での OpenAI モデル利用の想定コード。OpenAI SDK の互換クライアントを通じて OCI 上のモデルにアクセスする。</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                    <span>Python - OracleCloudOpenAI Client</span>
+                </div>
+                <pre><code class="language-python"># Oracle Cloud 経由での OpenAI モデル利用 (想定)
+from openai import OracleCloudOpenAI
+
+client = OracleCloudOpenAI(
+    oci_region="us-ashburn-1",
+    # OCI 認証情報は環境変数または OCI Config から自動取得
+)
+
+response = client.responses.create(
+    model="openai.gpt-5.5",
+    input="Analyze the quarterly financial report and summarize key trends.",
+)
+
+print(response.output_text)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース: 想定される導入シナリオ</h2>
+            <div class="use-case">
+                <h4>&#x1F3E6; 金融機関</h4>
+                <p>Oracle Database を中核システムとして利用し、厳格なベンダー管理を求める組織。既存の OCI 契約内で AI モデルを導入し、コンプライアンス要件を満たしつつリスク分析や不正検知に活用。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3DB; 政府・公共機関</h4>
+                <p>調達プロセスが複雑で、既存契約の枠組み内での調達を優先する機関。データレジデンシー要件を満たしながら、行政文書の分析や市民サービスの AI 化を推進。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3ED; 製造業</h4>
+                <p>Oracle ERP/SCM を利用し、OCI 上でデータ分析基盤を構築している企業。サプライチェーン最適化、品質管理予測、技術文書の自動生成に AI モデルを活用。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4BB; ソフトウェア開発チーム</h4>
+                <p>Oracle Cloud 上にアプリケーション基盤を持つ開発組織。Codex を活用したコードレビュー自動化、デバッグ支援、テスト生成により開発生産性を向上。</p>
+            </div>
+            <table class="timeline-table" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>利用シナリオ</th>
+                        <th>推奨プラットフォーム</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Azure エコシステムとの統合</td>
+                        <td>Azure OpenAI Service</td>
+                    </tr>
+                    <tr>
+                        <td>AWS ワークロードとの統合</td>
+                        <td>Amazon Bedrock</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Oracle DB/ERP との統合</td>
+                        <td>Oracle Cloud</td>
+                    </tr>
+                    <tr>
+                        <td>最新機能の即時利用</td>
+                        <td>OpenAI 直接 API</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-text">
+                OpenAI モデルと Codex の Oracle Cloud 対応は、OpenAI のマルチクラウド戦略における新たな拡張である。Azure、AWS に続き Oracle Cloud が加わったことで、主要 3 大クラウドプラットフォーム全てで OpenAI のフロンティアモデルが利用可能な環境が整った。特に注目すべきは「既存クラウド契約の活用」というアプローチである。企業が AI 導入に際して直面する最大の障壁の一つは予算確保と調達プロセスであるが、既存の Oracle Cloud コミットメントを充当できることで、この障壁が大幅に低減される。Oracle Cloud のエンタープライズ顧客基盤 (金融、政府、製造業など) へのリーチにより、OpenAI モデルの利用層がさらに拡大することが期待される。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/openai-on-oracle-cloud" target="_blank" rel="noopener noreferrer">https://openai.com/index/openai-on-oracle-cloud</a></li>
+            </ul>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/openai-frontier-models-and-codex-are-now-available-on-aws/" target="_blank" rel="noopener noreferrer">OpenAI フロンティアモデルと Codex が AWS で利用可能に</a></li>
+                <li><a href="https://developers.openai.com/api/docs/guides/amazon-bedrock" target="_blank" rel="noopener noreferrer">Amazon Bedrock 統合ガイド</a></li>
+                <li><a href="https://www.oracle.com/cloud/" target="_blank" rel="noopener noreferrer">Oracle Cloud Infrastructure 公式</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

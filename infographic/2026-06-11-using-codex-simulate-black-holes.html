@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天体物理学者が Codex を活用してブラックホールシミュレーションを実現 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .use-case ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 2px 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #D9D9E3;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links ul li a {
+            font-size: 13px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">ケーススタディ</span>
+                <h1>天体物理学者が Codex を活用してブラックホールシミュレーションを実現</h1>
+                <p class="date">2026-06-11</p>
+            </div>
+        </header>
+
+        <!-- 概要 (Key Points) -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                OpenAI は 2026 年 6 月 11 日、天体物理学者 Chi-kwan Chan 氏が Codex を活用してブラックホールシミュレーションを行っている事例を公開した。Codex が従来のソフトウェア開発領域を超え、科学研究の最前線で活用されていることを示すケーススタディである。
+            </p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F30C;</div>
+                    <div class="key-point-content">
+                        <h3>科学計算への適用実証</h3>
+                        <p>ブラックホールシミュレーションという高度に専門的な計算科学分野において、Codex が研究者の生産性向上に寄与していることが確認された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9EC;</div>
+                    <div class="key-point-content">
+                        <h3>研究プロセスの変革</h3>
+                        <p>AI がデータ解析だけでなく、シミュレーションコードの開発・最適化という研究の根幹プロセスに関与する新しいパラダイムが示された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-content">
+                        <h3>Codex の汎用性の証明</h3>
+                        <p>開発者向けツールとして出発した Codex が、天体物理学のような専門分野でも有効に機能することで、プラットフォームの汎用性と適応力の高さを証明。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F393;</div>
+                    <div class="key-point-content">
+                        <h3>科学研究の民主化</h3>
+                        <p>高度な数値計算スキルへのアクセス障壁を下げることで、より多くの研究者がシミュレーション科学に参入できる可能性がある。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>AI と基礎科学の共進化</h3>
+                        <p>AI ツールが基礎科学の進展を加速し、その成果がさらに AI 技術の発展にフィードバックされるという好循環の一例。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主な機能 -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4DD; 数値計算コード開発</h3>
+                    <p>一般相対性理論の数値解法 (GRMHD) の実装において、複雑な数学的表現をコードに変換。計算カーネルの高速化や並列化パターンの適用を支援。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4CA; データ解析と可視化</h3>
+                    <p>大量のシミュレーション出力データから物理量を抽出するスクリプト作成、ブラックホール降着円盤の画像レンダリングや可視化コード生成。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A1; パフォーマンス最適化</h3>
+                    <p>GPU カーネルの最適化提案、メモリアクセスパターンの改善、MPI / OpenMP / CUDA による並列化支援を実現。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4D6; 研究ワークフロー効率化</h3>
+                    <p>他の研究グループが公開した計算コードの理解と移植、新しい物理モデルの迅速なプロトタイピング、ドキュメント生成を支援。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9EA; テストコード自動生成</h3>
+                    <p>既知の解析解との比較による数値コードの検証テストを自動生成し、シミュレーション結果の物理的妥当性を確認。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4AC; コードの移植と統合</h3>
+                    <p>Fortran で書かれたレガシーコードを現代的な言語に移植、異なる物理モデル (磁気流体力学、放射輸送) の統合を支援。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技術詳細 (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">技術詳細</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">研究者から研究成果までのワークフローにおける Codex の位置づけ。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Researcher["研究者"]
+        Chan["Chi-kwan Chan"]
+        Requirements["物理的要件・研究課題"]
+    end
+
+    subgraph Codex["OpenAI Codex"]
+        CodeGen["コード生成"]
+        Optimize["最適化提案"]
+        Debug["デバッグ支援"]
+        Document["ドキュメント生成"]
+    end
+
+    subgraph SimCode["シミュレーションコード"]
+        GRMHD["GRMHD ソルバー"]
+        RadTransfer["放射輸送コード"]
+        Analysis["解析・可視化"]
+    end
+
+    subgraph HPC["HPC 環境"]
+        GPU["GPU クラスタ"]
+        Storage["大規模ストレージ"]
+    end
+
+    subgraph Output["研究成果"]
+        Images["ブラックホール画像"]
+        Papers["学術論文"]
+        Data["公開データセット"]
+    end
+
+    Chan --> Requirements
+    Requirements --> CodeGen
+    CodeGen --> GRMHD
+    CodeGen --> RadTransfer
+    CodeGen --> Analysis
+
+    GRMHD --> Optimize
+    Optimize --> GRMHD
+    Debug --> GRMHD
+    Document --> Papers
+
+    GRMHD --> GPU
+    RadTransfer --> GPU
+    GPU --> Storage
+    Storage --> Analysis
+
+    Analysis --> Images
+    Analysis --> Data
+    Images --> Papers
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef science fill:#1565C0,stroke:#0D47A1,stroke-width:2px,color:white
+
+    class CodeGen,Optimize,Debug,Document openai
+    class GPU,Storage dark
+    class Chan,Requirements,Images,Papers,Data light
+    class GRMHD,RadTransfer,Analysis science
+                </pre>
+            </div>
+        </section>
+
+        <!-- コードサンプル -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Codex を活用した GRMHD シミュレーションコードの開発支援イメージ: Kerr ブラックホールの計量テンソル計算。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Kerr metric / ISCO 計算</span>
+                </div>
+                <pre><code class="language-python">import numpy as np
+
+
+def kerr_metric(r, theta, a):
+    """
+    Kerr ブラックホールの計量テンソルを計算する。
+
+    Parameters:
+        r: 動径座標
+        theta: 極角座標
+        a: スピンパラメータ (0 &lt;= a &lt;= 1)
+
+    Returns:
+        計量テンソルの成分 (g_tt, g_rr, g_thth, g_phph, g_tph)
+    """
+    sigma = r**2 + a**2 * np.cos(theta)**2
+    delta = r**2 - 2 * r + a**2
+
+    g_tt = -(1 - 2 * r / sigma)
+    g_rr = sigma / delta
+    g_thth = sigma
+    g_phph = (
+        (r**2 + a**2 + 2 * r * a**2 * np.sin(theta)**2 / sigma)
+        * np.sin(theta)**2
+    )
+    g_tph = -2 * a * r * np.sin(theta)**2 / sigma
+
+    return g_tt, g_rr, g_thth, g_phph, g_tph
+
+
+def compute_isco(a):
+    """
+    Kerr ブラックホールの最内安定円軌道 (ISCO) 半径を計算する。
+    Codex はこのような解析的公式のコード化を支援する。
+
+    Parameters:
+        a: スピンパラメータ (-1 &lt;= a &lt;= 1)
+
+    Returns:
+        ISCO 半径 (重力半径単位)
+    """
+    z1 = 1 + (1 - a**2)**(1/3) * (
+        (1 + a)**(1/3) + (1 - a)**(1/3)
+    )
+    z2 = np.sqrt(3 * a**2 + z1**2)
+
+    if a &gt;= 0:
+        return 3 + z2 - np.sqrt((3 - z1) * (3 + z1 + 2 * z2))
+    else:
+        return 3 + z2 + np.sqrt((3 - z1) * (3 + z1 + 2 * z2))</code></pre>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;"><strong>注:</strong> 上記のコード例は Codex による科学計算コード生成の一例であり、実際の研究ではより複雑な GRMHD 方程式の実装に活用されている。</p>
+        </section>
+
+        <!-- ユースケース -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>数値計算アルゴリズムの実装</h4>
+                <p>一般相対性理論の方程式を数値的に解くための高度なアルゴリズムを Codex が生成・最適化する。</p>
+                <ul>
+                    <li>GRMHD (一般相対論的磁気流体力学) の保存形式での実装</li>
+                    <li>有限体積法による離散化と適応格子細分化</li>
+                    <li>Boyer-Lindquist 座標系での計量テンソル計算</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>HPC パフォーマンスチューニング</h4>
+                <p>スーパーコンピュータ上での大規模シミュレーションを高速化するための最適化。</p>
+                <ul>
+                    <li>CUDA カーネルの最適化とメモリアクセスパターン改善</li>
+                    <li>MPI / OpenMP による並列化パターンの適用</li>
+                    <li>Fortran レガシーコードの現代的言語への移植</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>シミュレーション結果の解析・可視化</h4>
+                <p>ブラックホール周辺の物理現象を理解するためのデータ処理と可視化。</p>
+                <ul>
+                    <li>降着円盤の画像レンダリングパイプライン構築</li>
+                    <li>時系列データの統計解析と観測データとの比較</li>
+                    <li>論文用の高品質な図表作成スクリプト生成</li>
+                </ul>
+            </div>
+            <div class="use-case">
+                <h4>研究の民主化と学際的協力</h4>
+                <p>高度な数値計算の専門知識がなくても、Codex の支援によりシミュレーション科学への参入が可能に。</p>
+                <ul>
+                    <li>異なる専門分野間のコード翻訳と統合</li>
+                    <li>新しい物理モデルの迅速なプロトタイピング</li>
+                    <li>複雑な計算コードの解説文書や疑似コードの自動生成</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/using-codex-to-simulate-black-holes" target="_blank" rel="noopener noreferrer">https://openai.com/index/using-codex-to-simulate-black-holes</a></p>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="https://openai.com/codex" target="_blank" rel="noopener noreferrer">OpenAI Codex</a></li>
+                    <li><a href="https://openai.com/index/codex-for-every-role-tool-workflow/" target="_blank" rel="noopener noreferrer">Codex for Every Role</a></li>
+                    <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

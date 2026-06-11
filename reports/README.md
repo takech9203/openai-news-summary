@@ -5,12 +5,21 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-11](2026/2026-06-11-using-codex-simulate-black-holes.md) - 天体物理学者が Codex を活用してブラックホールシミュレーションを実現
+- [2026-06-10](2026/2026-06-10-prc-linked-influence-operations-ai-debates.md) - 中国 (PRC) に関連する影響工作が米国の AI 政策議論を標的に
+- [2026-06-10](2026/2026-06-10-openai-on-oracle-cloud.md) - OpenAI モデルと Codex が Oracle Cloud で利用可能に -- 既存クラウド契約を活用した AI 導入
+- [2026-06-10](2026/2026-06-10-lseg-scaling-trusted-ai.md) - LSEG が OpenAI で「信頼される AI」をスケーリング -- データから意思決定へ
+- [2026-06-09](2026/2026-06-09-web-search-image-results.md) - Web Search で画像検索結果が返却可能に
+- [2026-06-09](2026/2026-06-09-notion-codex.md) - Notion が Codex で実現する「ワンショット仕様書」と少人数チームのエンジニアリング革命
+- [2026-06-09](2026/2026-06-09-nextdoor-codex.md) - Nextdoor のエンジニアが Codex を活用し制約なき開発を実現
 - [2026-06-09](2026/2026-06-09-john-deere-openai-partnership.md) - John Deere × OpenAI — 農業 AI の新たなフロンティア
+- [2026-06-09](2026/2026-06-09-industrial-policy-intelligence-age.md) - OpenAI「Intelligence Age の産業政策」-- 人間中心の AI 時代における経済政策ビジョンを提示
 - [2026-06-09](2026/2026-06-09-built-to-benefit-everyone.md) - OpenAI「Built to Benefit Everyone」— 全人類への利益を目指す企業方針
 - [2026-06-09](2026/2026-06-09-ai-literacy-resources-teens-parents.md) - AI リテラシーリソース — ティーン・保護者向けガイドの公開
 - [2026-06-08](2026/2026-06-08-openai-submits-confidential-s-1.md) - OpenAI、SEC に S-1 を機密提出 — IPO に向けた第一歩
 - [2026-06-08](2026/2026-06-08-gdpval-benchmark.md) - GDPVal — AI の実世界パフォーマンスを測定する新ベンチマーク
 - [2026-06-08](2026/2026-06-08-evaluating-cot-monitorability.md) - Chain of Thought モニタリング可能性の評価 -- 推論モデルの安全性検証
+- [2026-06-08](2026/2026-06-08-economic-research-exchange.md) - OpenAI Economic Research Exchange -- AI の経済的影響を解明する研究プログラム
 - [2026-06-08](2026/2026-06-08-chatgpt-for-teachers.md) - ChatGPT for Teachers — 米国 K-12 教育者向け無料ワークスペース
 - [2026-06-08](2026/2026-06-08-buy-it-in-chatgpt.md) - Buy it in ChatGPT -- ChatGPT 内購入機能の本格展開
 - [2026-06-08](2026/2026-06-08-agentic-ai-foundation.md) - Agentic AI Foundation -- AI エージェント時代の基盤構築

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nextdoor のエンジニアが Codex を活用し制約なき開発を実現 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .comparison-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .comparison-table thead th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .comparison-table thead th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .comparison-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        .comparison-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        .comparison-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        .comparison-table .before {
+            color: var(--text-muted);
+        }
+
+        .comparison-table .after {
+            color: var(--openai-green);
+            font-weight: 500;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 12px;
+            }
+
+            .comparison-table thead th,
+            .comparison-table tbody td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">ケーススタディ</span>
+                <h1>Nextdoor のエンジニアが Codex を活用し制約なき開発を実現</h1>
+                <p class="date">2026-06-09</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.5 搭載 Codex の実力</h3>
+                        <p>単なるコード補完を超え、複雑な調査や設計判断を含むエージェンティックな開発タスクを遂行</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>再現困難なバグの迅速解決</h3>
+                        <p>従来数日かかっていた調査を AI の網羅的なコード分析とパターン認識により大幅に短縮</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📱</div>
+                    <div class="key-point-content">
+                        <h3>クロスプラットフォーム開発の新パラダイム</h3>
+                        <p>iOS / Android / Web のネイティブ実装を維持しつつ AI による変換・支援を活用</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>プロダクト成果へのシフト</h3>
+                        <p>ボイラープレート作業から解放され、ユーザー体験やプロダクト価値の創出に集中</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏢</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズ導入モデル</h3>
+                        <p>マルチプラットフォーム開発チームにとって実践的な AI コーディングツール導入の指標を提供</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: 3 Main Capabilities -->
+        <section class="section">
+            <h2 class="section-title">Codex 活用の 3 つの柱</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔍 バグ調査の自動化</h3>
+                    <p>ログ分析、コードパス分析、テストケース生成を AI が自律的に実行。再現困難な問題の根本原因を迅速に特定する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📱 クロスプラットフォーム変換</h3>
+                    <p>iOS (Swift) / Android (Kotlin) / Web (React) 間の機能変換と統一的なビジネスロジックの維持を AI が支援</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 プロダクトフォーカス</h3>
+                    <p>定型的なコーディング作業を委任し、エンジニアがアーキテクチャ設計やユーザー価値の創出に集中できる環境を実現</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison Table -->
+        <section class="section">
+            <h2 class="section-title">開発アプローチの変化 (Before / After)</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>従来のアプローチ</th>
+                        <th>Codex 活用後</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="before">ボイラープレートコードの手動作成</td>
+                        <td class="after">AI による自動生成とカスタマイズ</td>
+                    </tr>
+                    <tr>
+                        <td class="before">複雑なバグの手動調査 (数日)</td>
+                        <td class="after">AI 支援による迅速な特定 (数時間)</td>
+                    </tr>
+                    <tr>
+                        <td class="before">プラットフォームごとの個別実装</td>
+                        <td class="after">AI による変換と統一性確保</td>
+                    </tr>
+                    <tr>
+                        <td class="before">技術的負債への対応に時間消費</td>
+                        <td class="after">AI がリファクタリングを支援</td>
+                    </tr>
+                    <tr>
+                        <td class="before">インフラ設定に時間消費</td>
+                        <td class="after">プロダクト機能開発に注力</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">Nextdoor x Codex アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Nextdoor["Nextdoor エンジニアリング"]
+        subgraph Platforms["プラットフォーム"]
+            iOS["iOS アプリ\n(Swift)"]
+            Android["Android アプリ\n(Kotlin)"]
+            Web["Web アプリ\n(React)"]
+        end
+        subgraph Backend["バックエンド"]
+            API["API サーバー"]
+            Services["マイクロサービス群"]
+        end
+        subgraph DevOps["開発インフラ"]
+            Git["Git リポジトリ"]
+            CI["CI/CD パイプライン"]
+            Tests["テストスイート"]
+        end
+    end
+
+    subgraph OpenAI["OpenAI Codex"]
+        subgraph Engine["エンジン"]
+            GPT55["GPT-5.5"]
+            Agent["エージェント実行環境"]
+        end
+        subgraph Capabilities["能力"]
+            CodeGen["コード生成"]
+            BugInvest["バグ調査"]
+            CrossPlat["クロスプラットフォーム\n変換"]
+            Review["コードレビュー"]
+        end
+    end
+
+    subgraph Engineers["エンジニアチーム"]
+        ProductFocus["プロダクト成果\nへのフォーカス"]
+        TaskDelegate["タスク委任"]
+    end
+
+    Engineers --> |タスク指示| Agent
+    Agent --> GPT55
+    GPT55 --> CodeGen
+    GPT55 --> BugInvest
+    GPT55 --> CrossPlat
+    GPT55 --> Review
+
+    CodeGen --> Git
+    BugInvest --> Tests
+    CrossPlat --> iOS
+    CrossPlat --> Android
+    CrossPlat --> Web
+    Review --> Git
+
+    Git --> CI
+    CI --> Tests
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef nextdoor fill:#8ED500,stroke:#6FA300,stroke-width:2px,color:#343541
+    classDef engineer fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class GPT55,Agent,CodeGen,BugInvest,CrossPlat,Review openai
+    class API,Services,Git,CI,Tests dark
+    class iOS,Android,Web nextdoor
+    class ProductFocus,TaskDelegate engineer
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>AI コーディングツールの実践的導入モデル</h4>
+                <p>エンタープライズ規模のチームが Codex を日常ワークフローに統合する具体的な参考事例。特にマルチプラットフォーム開発を行うチームに有益</p>
+            </div>
+            <div class="use-case">
+                <h4>エンジニアリング文化の転換</h4>
+                <p>低レベルな実装作業から解放されたエンジニアが、アーキテクチャ設計やプロダクト戦略により時間を割ける新しいエンジニアリング文化</p>
+            </div>
+            <div class="use-case">
+                <h4>再現困難なバグへのアプローチ変革</h4>
+                <p>AI を活用したバグ調査手法は、QA チームやサポートエンジニアの作業効率を根本的に変える可能性がある</p>
+            </div>
+            <div class="use-case">
+                <h4>クロスプラットフォーム開発の新たな選択肢</h4>
+                <p>Flutter / React Native に頼らず、AI 支援によりネイティブ実装を効率的に行う新アプローチ</p>
+            </div>
+            <div class="use-case">
+                <h4>プロダクトマネジメントとの協働強化</h4>
+                <p>技術的制約からの解放により、PM との協働がより創造的になり、プロダクト開発全体のアジリティが向上</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/nextdoor" target="_blank" rel="noopener noreferrer">https://openai.com/index/nextdoor</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
