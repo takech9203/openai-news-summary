@@ -6,6 +6,9 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-06-11](2026/2026-06-11-using-codex-simulate-black-holes.md) - 天体物理学者が Codex を活用してブラックホールシミュレーションを実現
+- [2026-06-11](2026/2026-06-11-openai-to-acquire-ona.md) - OpenAI が Ona を買収: Codex にセキュアで永続的なクラウド環境を統合し、長時間稼働 AI エージェントを実現へ
+- [2026-06-11](2026/2026-06-11-openai-eu-trustworthy-ai-ecosystem.md) - OpenAI、欧州の信頼できる AI エコシステム構築を支援
+- [2026-06-11](2026/2026-06-11-bbva-openai-banking.md) - BBVA が OpenAI と連携し AI を銀行業務の中核に据える
 - [2026-06-10](2026/2026-06-10-prc-linked-influence-operations-ai-debates.md) - 中国 (PRC) に関連する影響工作が米国の AI 政策議論を標的に
 - [2026-06-10](2026/2026-06-10-openai-on-oracle-cloud.md) - OpenAI モデルと Codex が Oracle Cloud で利用可能に -- 既存クラウド契約を活用した AI 導入
 - [2026-06-10](2026/2026-06-10-lseg-scaling-trusted-ai.md) - LSEG が OpenAI で「信頼される AI」をスケーリング -- データから意思決定へ
