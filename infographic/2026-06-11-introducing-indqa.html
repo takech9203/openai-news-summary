@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducing IndQA — OpenAI による新たな質問応答ベンチマークの公開 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .category-badge + .category-badge {
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .speculation-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--openai-green), rgba(16, 163, 127, 0.3));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 16px 0;
+            padding-left: 24px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 24px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 3px solid var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .timeline-item.current::before {
+            background: var(--openai-green);
+            box-shadow: 0 0 0 4px rgba(16, 163, 127, 0.2);
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--openai-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Info Note */
+        .info-note {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-note-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .info-note-content {
+            font-size: 13px;
+            color: #92400E;
+            line-height: 1.6;
+        }
+
+        .info-note-content strong {
+            color: #78350F;
+        }
+
+        /* Metadata Table */
+        .metadata-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .metadata-table th,
+        .metadata-table td {
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .metadata-table th {
+            font-weight: 700;
+            color: var(--text-primary);
+            width: 30%;
+            background: var(--openai-gray);
+            border-radius: 4px;
+        }
+
+        .metadata-table td {
+            color: var(--text-secondary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline {
+                padding-left: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Research</span>
+                <span class="category-badge">Release</span>
+                <h1>Introducing IndQA — OpenAI による新たな質問応答ベンチマークの公開</h1>
+                <p class="date">2026-06-11</p>
+            </div>
+        </header>
+
+        <!-- Overview / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>新たなベンチマークの公開</h3>
+                        <p>OpenAI が Research と Release の両カテゴリで発表した「IndQA」は、AI モデルの質問応答能力を評価する新しいベンチマークまたはデータセットと推測される。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>2026 年ベンチマーク戦略刷新の一環</h3>
+                        <p>SWE-bench Verified の終了、EVMBench の導入、GDPVal の発表に続くベンチマーク戦略刷新の流れに位置付けられる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌐</div>
+                    <div class="key-point-content">
+                        <h3>多言語対応</h3>
+                        <p>サイトマップ上に多数のロケール向け代替ページが存在し、多言語での展開が確認されている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-content">
+                        <h3>研究とリリースの同時発表</h3>
+                        <p>Research と Release の双方に分類されており、研究論文の発表と同時に実際に利用可能なリソースが公開された可能性が高い。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Confirmed Facts -->
+        <section class="section">
+            <h2 class="section-title">確認されている事実</h2>
+            <table class="metadata-table">
+                <tr>
+                    <th>公開 URL</th>
+                    <td>openai.com/index/introducing-indqa/</td>
+                </tr>
+                <tr>
+                    <th>最終更新日時</th>
+                    <td>2026-06-11T07:37:17.482Z</td>
+                </tr>
+                <tr>
+                    <th>カテゴリ</th>
+                    <td>Research、Release の両方に掲載</td>
+                </tr>
+                <tr>
+                    <th>多言語対応</th>
+                    <td>多数のロケール向け代替ページが存在</td>
+                </tr>
+            </table>
+            <div class="info-note">
+                <div class="info-note-icon">&#x26A0;&#xFE0F;</div>
+                <div class="info-note-content">
+                    <strong>情報制限に関する注記:</strong> 記事本文へのアクセスは Cloudflare の保護により制限されているため (HTTP 403)、本レポートはサイトマップメタデータおよび URL スラッグから構成している。正確な詳細については公式ページを参照されたい。
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: Possible Interpretations -->
+        <section class="section">
+            <h2 class="section-title">「IndQA」の想定される意味</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="speculation-badge">推測</span>
+                    <h3>🏭 Industrial QA</h3>
+                    <p>製造業、エネルギー、建設等の産業ドメインにおける専門的な質問応答能力を評価するベンチマーク。技術文書やマニュアルに基づく QA 精度を測定。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="speculation-badge">推測</span>
+                    <h3>🧠 Independent QA</h3>
+                    <p>外部検索や補助ツールなしにモデル単体の知識で回答する能力を評価。長文読解や推論に基づく独立した質問応答タスク。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="speculation-badge">推測</span>
+                    <h3>🇮🇳 India QA</h3>
+                    <p>インドの言語・文化・社会に関する質問応答の評価データセット。多言語 AI システムのインド市場向け能力測定。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2 class="section-title">2026 年ベンチマーク関連タイムライン</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2026 年 5 月</div>
+                    <div class="timeline-title">EVMBench の公開</div>
+                    <div class="timeline-desc">Ethereum Virtual Machine ベンチマークの初公開</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-06-05</div>
+                    <div class="timeline-title">SWE-bench Verified の評価終了</div>
+                    <div class="timeline-desc">既存ベンチマークの引退を発表</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-06-06</div>
+                    <div class="timeline-title">EVMBench の正式導入</div>
+                    <div class="timeline-desc">正式なベンチマークとして導入</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026-06-08</div>
+                    <div class="timeline-title">GDPVal ベンチマーク</div>
+                    <div class="timeline-desc">新たな評価基準の発表</div>
+                </div>
+                <div class="timeline-item current">
+                    <div class="timeline-date">2026-06-11</div>
+                    <div class="timeline-title">IndQA の発表 (本件)</div>
+                    <div class="timeline-desc">質問応答ベンチマークの公開</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>モデル評価の新基準</h4>
+                <p>新しいベンチマークが公開されることで、AI モデルの能力を測定する新たな軸が追加される。</p>
+            </div>
+            <div class="use-case">
+                <h4>研究コミュニティへの貢献</h4>
+                <p>公開ベンチマークにより、外部の研究者も同一基準での評価が可能になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>アプリケーション開発の指針</h4>
+                <p>特定ドメインのベンチマークは、そのドメインにおける AI 活用の可能性と限界を示す。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔗</div>
+                    <div class="key-point-content">
+                        <h3>関連する OpenAI の発表</h3>
+                        <p>
+                            <a href="https://openai.com/index/gdpval/" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">GDPVal (2026-06-08)</a><br>
+                            <a href="https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">SWE-Bench Verified 終了 (2026-06-05)</a><br>
+                            <a href="https://openai.com/index/introducing-evmbench/" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">EVMBench (2026-06-06)</a><br>
+                            <a href="https://openai.com/research" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">OpenAI Research</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/introducing-indqa/" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-indqa/</a></p>
+            <p><strong>注記:</strong> 本インフォグラフィックはサイトマップメタデータに基づいて作成。詳細は公式ページを参照。</p>
+        </footer>
+    </div>
+</body>
+</html>

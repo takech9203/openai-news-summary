@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preply が OpenAI を活用し AI と人間の講師を組み合わせた個別学習を実現 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Quote */
+        .quote-block {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 24px 28px;
+            border-radius: 0 16px 16px 0;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .quote-block::before {
+            content: '\201C';
+            font-size: 4rem;
+            color: var(--openai-green);
+            position: absolute;
+            top: -10px;
+            left: 12px;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .quote-block p {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            padding-left: 8px;
+        }
+
+        .quote-block .quote-author {
+            font-size: 13px;
+            color: var(--text-muted);
+            padding-left: 8px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Tutor Benefits */
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits-list li {
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            background: var(--openai-gray);
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .benefits-list li .benefit-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">APPLIED AI</span>
+                <h1>Preply が OpenAI を活用し AI と人間の講師を組み合わせた個別学習を実現</h1>
+                <p class="date">2026-06-12</p>
+            </div>
+        </header>
+
+        <!-- Overview / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4DD;</div>
+                    <div class="key-point-content">
+                        <h3>AI レッスンサマリー</h3>
+                        <p>ライブレッスン終了直後に、AI がレッスン内容を要約し学習者にパーソナライズされたフィードバックを即時生成する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AF;</div>
+                    <div class="key-point-content">
+                        <h3>習熟度別パーソナライズ</h3>
+                        <p>各学習者の語学レベルに合わせた練習問題を自動生成し、学習の定着を促進する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F91D;</div>
+                    <div class="key-point-content">
+                        <h3>AI + 人間の講師の協調</h3>
+                        <p>「AI が教育者を置き換えるのではなく、その能力を拡張する」-- CTO Dmytro Voloshyn 氏のビジョン</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-content">
+                        <h3>既存 ML 基盤上の統合</h3>
+                        <p>創業時から構築してきた講師-学習者マッチング ML 基盤の上に、OpenAI モデルを段階的に統合</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F30D;</div>
+                    <div class="key-point-content">
+                        <h3>グローバル語学プラットフォーム</h3>
+                        <p>Preply は世界規模で展開するオンライン語学学習プラットフォーム。学習者と講師をマッチングしライブレッスンを提供</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote -->
+        <section class="section">
+            <h2 class="section-title">ビジョン</h2>
+            <div class="quote-block">
+                <p>目標は人間の教育者を置き換えることではなく、その能力を拡張することである</p>
+                <span class="quote-author">-- Dmytro Voloshyn, Preply 共同創業者 兼 CTO</span>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4CB; AI レッスンサマリー</h3>
+                    <p>ライブレッスン終了直後に、会話内容と進捗データから AI がレッスンの要約を自動生成。学習者は効率的に振り返りが可能</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4DA; パーソナライズ練習問題</h3>
+                    <p>各学習者の習熟度レベルに応じた語学練習問題を自動生成。レッスン外でも自律的な学習を継続できる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F517; 講師-学習者マッチング</h3>
+                    <p>機械学習による最適な講師-学習者ペアリング。創業時から培ってきた ML 基盤で学習効果を最大化</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A1; 即時フィードバック</h3>
+                    <p>レッスン終了直後にパーソナライズされたフィードバックを提供。学習の即時性と連続性を実現する</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tutor Benefits -->
+        <section class="section">
+            <h2 class="section-title">講師への恩恵</h2>
+            <ul class="benefits-list">
+                <li>
+                    <span class="benefit-icon">&#x23F0;</span>
+                    <div>
+                        <strong>教育に集中する時間の確保:</strong> AI がサマリーやフィードバック生成を担うことで、講師は教育そのものにより多くの時間を割ける
+                    </div>
+                </li>
+                <li>
+                    <span class="benefit-icon">&#x1F4CA;</span>
+                    <div>
+                        <strong>学習者の進捗把握:</strong> AI が生成するデータにより、学習者の理解度や弱点を効率的に把握できる
+                    </div>
+                </li>
+                <li>
+                    <span class="benefit-icon">&#x1F504;</span>
+                    <div>
+                        <strong>反復作業の削減:</strong> レッスン後のフォローアップ作業を自動化し、講師の負担を軽減
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Preply["Preply プラットフォーム"]
+        subgraph Lesson["レッスン環境"]
+            LiveClass["ライブレッスン\n(講師 + 学習者)"]
+            LessonData["レッスンデータ\n(会話内容・進捗)"]
+        end
+        subgraph AI["AI 機能"]
+            Matching["講師-学習者\nマッチング (ML)"]
+            Summary["AI レッスン\nサマリー生成"]
+            Exercises["パーソナライズ\n練習問題生成"]
+        end
+        subgraph Output["学習者向けアウトプット"]
+            Feedback["個別フィードバック"]
+            Practice["習熟度別\n練習問題"]
+        end
+    end
+
+    subgraph OpenAI["OpenAI"]
+        subgraph Models["モデル"]
+            LLM["大規模言語モデル"]
+        end
+        subgraph Services["サービス"]
+            API["OpenAI API"]
+        end
+    end
+
+    subgraph Users["利用者"]
+        Learner["学習者"]
+        Tutor["講師"]
+    end
+
+    LiveClass --> LessonData
+    LessonData --> Summary
+    LessonData --> Exercises
+    API --> Summary
+    API --> Exercises
+    LLM --> API
+    Summary --> Feedback
+    Exercises --> Practice
+    Feedback --> Learner
+    Practice --> Learner
+    Matching --> LiveClass
+    Tutor --> LiveClass
+    Learner --> LiveClass
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef preply fill:#5624D0,stroke:#4518B0,stroke-width:2px,color:white
+    classDef outcome fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class LLM,API openai
+    class Summary,Exercises,Matching dark
+    class LiveClass,LessonData preply
+    class Feedback,Practice,Learner,Tutor outcome
+                </pre>
+            </div>
+        </section>
+
+        <!-- Technology Integration -->
+        <section class="section">
+            <h2 class="section-title">技術統合の段階</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">ML</div>
+                    <div class="stat-label">講師-学習者<br>マッチング (既存)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">AI</div>
+                    <div class="stat-label">クラスルーム<br>機能最適化 (既存)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">LLM</div>
+                    <div class="stat-label">レッスンサマリー<br>生成 (新機能)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Gen</div>
+                    <div class="stat-label">練習問題<br>自動生成 (新機能)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケースと影響</h2>
+            <div class="use-case">
+                <h4>&#x1F4D6; 語学学習のパーソナライゼーション</h4>
+                <p>学習者一人ひとりの習熟度に応じた最適な学習体験を AI が自動で設計。追加コストなく全ユーザーに個別最適化学習を提供する可能性がある</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x23F1; 講師の時間節約と役割進化</h4>
+                <p>AI がルーチン作業 (サマリー作成・練習問題生成) を担うことで、人間の講師はより付加価値の高い教育活動に集中。教育者の役割を進化させる</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F3D7; EdTech 設計パターンの参考事例</h4>
+                <p>AI と人間の講師が協調するハイブリッドモデルは、語学教育に限らず広く教育テクノロジー分野における設計パターンの参考となる先進的ケーススタディ</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F468;&#x200D;&#x1F4BB; 開発者への参考事例</h4>
+                <p>OpenAI API を活用したレッスンコンテンツからの構造化サマリー生成や適応型問題生成のパターンが示されており、類似サービス開発の参考となる</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">1</div>
+                    <div class="key-point-content">
+                        <h3>AI + 人間の協調モデル</h3>
+                        <p>「AI が教育者を置き換えるのではなく拡張する」という明確なビジョンのもと、両者の強みを活かしたハイブリッドアプローチを実現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">2</div>
+                    <div class="key-point-content">
+                        <h3>即時パーソナライズの実現</h3>
+                        <p>レッスン終了直後に学習者一人ひとりの習熟度に合わせたサマリーと練習問題を生成し、学習体験の質を大幅に向上</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">3</div>
+                    <div class="key-point-content">
+                        <h3>段階的な技術統合</h3>
+                        <p>創業時から機械学習を活用してきた Preply のアーキテクチャ上に OpenAI のモデルを自然に統合する段階的アプローチ</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">4</div>
+                    <div class="key-point-content">
+                        <h3>講師の価値の再定義</h3>
+                        <p>AI がルーチン作業を担うことで、人間の講師がより付加価値の高い教育活動に集中できる環境を構築</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/preply" target="_blank" rel="noopener noreferrer">https://openai.com/index/preply</a></p>
+            <p style="margin-top: 8px;"><strong>関連:</strong> <a href="https://preply.com" target="_blank" rel="noopener noreferrer">Preply 公式サイト</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
