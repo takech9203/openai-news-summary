@@ -8,10 +8,13 @@ OpenAI の最新ニュースレポート一覧
 - [2026-06-13](2026/2026-06-13-gpt-5-safe-completions.md) - GPT-5 Safe Completions: GPT-5 モデルファミリーにおける安全な出力生成メカニズム
 - [2026-06-12](2026/2026-06-12-preply-ai-personalized-learning.md) - Preply が OpenAI を活用し AI と人間の講師を組み合わせた個別学習を実現
 - [2026-06-12](2026/2026-06-12-openai-academy-courses-ai-work.md) - OpenAI Academy に仕事の新時代に向けた 3 つの新コースが追加
+- [2026-06-12](2026/2026-06-12-introducing-stargate-norway.md) - OpenAI、Stargate プロジェクト初の海外拠点としてノルウェーにデータセンターを設立 -- 再生可能エネルギーと欧州接続性を活用
+- [2026-06-12](2026/2026-06-12-advancing-independent-research-ai-alignment.md) - AI アラインメントにおける独立研究の推進 -- OpenAI による外部研究支援の新たな取り組み
 - [2026-06-11](2026/2026-06-11-using-codex-simulate-black-holes.md) - 天体物理学者が Codex を活用してブラックホールシミュレーションを実現
 - [2026-06-11](2026/2026-06-11-openai-to-acquire-ona.md) - OpenAI が Ona を買収: Codex にセキュアで永続的なクラウド環境を統合し、長時間稼働 AI エージェントを実現へ
 - [2026-06-11](2026/2026-06-11-openai-eu-trustworthy-ai-ecosystem.md) - OpenAI、欧州の信頼できる AI エコシステム構築を支援
 - [2026-06-11](2026/2026-06-11-introducing-indqa.md) - Introducing IndQA — OpenAI による新たな質問応答ベンチマークの公開
+- [2026-06-11](2026/2026-06-11-gpt-oss-model-card.md) - GPT-OSS Model Card: オープンソース安全モデル gpt-oss-safeguard の公式モデルカード
 - [2026-06-11](2026/2026-06-11-bbva-openai-banking.md) - BBVA が OpenAI と連携し AI を銀行業務の中核に据える
 - [2026-06-10](2026/2026-06-10-prc-linked-influence-operations-ai-debates.md) - 中国 (PRC) に関連する影響工作が米国の AI 政策議論を標的に
 - [2026-06-10](2026/2026-06-10-openai-on-oracle-cloud.md) - OpenAI モデルと Codex が Oracle Cloud で利用可能に -- 既存クラウド契約を活用した AI 導入
