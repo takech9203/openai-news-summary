@@ -5,9 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-15](2026/2026-06-15-xai-trade-secret-lawsuit-dismissed.md) - xAI の営業秘密訴訟が棄却: Musk 氏、約 4 週間で OpenAI に対し 2 度目の法的敗北
+- [2026-06-15](2026/2026-06-15-openai-34-billion-spending-ipo.md) - OpenAI、2025 年の支出が 340 億ドルに到達 — IPO を前に財務実態が明らかに
 - [2026-06-14](2026/2026-06-14-new-economic-analysis.md) - OpenAI New Economic Analysis -- ChatGPT の経済的影響に関する新たな分析レポート
 - [2026-06-14](2026/2026-06-14-introducing-openai-partner-network.md) - OpenAI Partner Network 発表: 1.5 億ドル投資と 30 万人認定コンサルタント育成でエンタープライズ AI 導入を加速
 - [2026-06-14](2026/2026-06-14-estimating-worst-case-frontier-risks-open-weight-llms.md) - オープンウェイト LLM の最悪ケースにおけるフロンティアリスク推定
+- [2026-06-13](2026/2026-06-13-state-attorneys-general-investigation.md) - 複数州の司法長官が OpenAI に対する合同調査を開始、ニューヨーク州がサブピーナを発行
 - [2026-06-13](2026/2026-06-13-gpt-5-safe-completions.md) - GPT-5 Safe Completions: GPT-5 モデルファミリーにおける安全な出力生成メカニズム
 - [2026-06-12](2026/2026-06-12-preply-ai-personalized-learning.md) - Preply が OpenAI を活用し AI と人間の講師を組み合わせた個別学習を実現
 - [2026-06-12](2026/2026-06-12-openai-academy-courses-ai-work.md) - OpenAI Academy に仕事の新時代に向けた 3 つの新コースが追加
