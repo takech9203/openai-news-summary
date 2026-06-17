@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-16](2026/2026-06-16-detecting-reducing-scheming-ai-models.md) - AI モデルにおけるスキーミングの検出と低減 -- 欺瞞的アラインメントへの体系的対策
+- [2026-06-16](2026/2026-06-16-deployment-simulation.md) - Deployment Simulation: AI モデルのデプロイ前安全性シミュレーション手法
+- [2026-06-16](2026/2026-06-16-chatgpt-market-share-below-50.md) - ChatGPT の市場シェアが初めて 50% を下回る — AI アシスタント市場の多極化が加速
 - [2026-06-15](2026/2026-06-15-xai-trade-secret-lawsuit-dismissed.md) - xAI の営業秘密訴訟が棄却: Musk 氏、約 4 週間で OpenAI に対し 2 度目の法的敗北
 - [2026-06-15](2026/2026-06-15-openai-34-billion-spending-ipo.md) - OpenAI、2025 年の支出が 340 億ドルに到達 — IPO を前に財務実態が明らかに
 - [2026-06-14](2026/2026-06-14-new-economic-analysis.md) - OpenAI New Economic Analysis -- ChatGPT の経済的影響に関する新たな分析レポート

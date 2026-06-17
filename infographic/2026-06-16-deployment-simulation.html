@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Simulation: AI モデルのデプロイ前安全性シミュレーション手法</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-dark-secondary: #444654;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, var(--openai-dark-secondary) 100%);
+            border-radius: 24px;
+            padding: 48px 40px;
+            color: white;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            background: var(--openai-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .key-point-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .key-point-text strong {
+            color: var(--openai-dark);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, var(--openai-light) 0%, white 100%);
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.12);
+        }
+
+        .feature-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            margin-bottom: 8px;
+        }
+
+        .feature-card-desc {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--openai-dark);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 16px;
+            padding: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+        }
+
+        /* Evaluation Table */
+        .eval-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+
+        .eval-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .eval-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .eval-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .eval-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .eval-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Use Cases */
+        .use-cases {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-light) 0%, var(--openai-gray) 100%);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 12px;
+            padding: 20px 24px;
+        }
+
+        .use-case-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .use-case-desc {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 16px;
+            padding: 24px 36px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px;
+                border-radius: 16px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .mermaid-container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="category-badge">研究成果 / 安全性</span>
+            <h1>Deployment Simulation: AI モデルのデプロイ前安全性シミュレーション手法</h1>
+            <div class="header-date">2026-06-16 | OpenAI Research</div>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-text">
+                        <strong>デプロイ前の安全性検証:</strong> フロンティアモデルが実環境で運用される際に発生しうる安全性上の問題を、シミュレーション環境で事前に検出・評価
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-text">
+                        <strong>エージェント型 AI への対応:</strong> ツール使用・マルチステップタスク・長期自律行動における動的リスクを体系的にテスト
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-text">
+                        <strong>一連の安全性研究との連携:</strong> Confessions、Chain-of-Thought モニタリング、MFT 評価と組み合わせた統合的な安全性フレームワーク
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-text">
+                        <strong>Preparedness Framework の強化:</strong> 静的ベンチマークでは捉えきれないデプロイメント条件固有のリスクを動的に検出
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-text">
+                        <strong>スケーラブルなレッドチーミング:</strong> 自動化されたシナリオ生成により、人手テストの限界を超えたカバレッジを実現
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要機能 (Feature Cards) -->
+        <div class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-title">シミュレーション環境</div>
+                    <div class="feature-card-desc">
+                        実際のデプロイメント環境 (API エンドポイント、ツール、UI) を再現するサンドボックス。合成ユーザーによる多様な入力パターンを再現
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">シナリオ生成</div>
+                    <div class="feature-card-desc">
+                        通常シナリオ、エッジケース、敵対的シナリオを自動生成。分布シフトや予期せぬ入力パターンを網羅的にカバー
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">モニタリング</div>
+                    <div class="feature-card-desc">
+                        Chain-of-Thought 追跡、アクションログ、安全性メトリクスによるモデルの内部状態と外部行動の包括的な監視
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">評価・判定</div>
+                    <div class="feature-card-desc">
+                        Preparedness Framework に基づく判定基準、リスクレポート生成、デプロイ可否の自動判定を実施
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 統計情報 (Stats) -->
+        <div class="section">
+            <h2 class="section-title">評価次元</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">評価次元<br/>(安全性・ロバスト性・整合性・スケーラビリティ・回復力)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">リスク段階<br/>(Low / Medium / High / Critical)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">シナリオ種別<br/>(通常・エッジケース・敵対的)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">構成要素<br/>(環境・生成・監視・評価)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技術詳細 (Technical Details) -->
+        <div class="section">
+            <h2 class="section-title">技術詳細 - アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    subgraph DS["Deployment Simulation Framework"]
+        direction TB
+        subgraph Env["シミュレーション環境"]
+            Sandbox["サンドボックス環境"]
+            Tools["ツールエミュレータ<br/>(API, ファイルシステム, Web)"]
+            Users["合成ユーザー<br/>(多様な入力パターン)"]
+        end
+        subgraph Gen["シナリオ生成"]
+            Normal["通常シナリオ"]
+            Edge["エッジケース"]
+            Adversarial["敵対的シナリオ"]
+        end
+        subgraph Monitor["モニタリング"]
+            CoT["Chain-of-Thought<br/>追跡"]
+            Actions["アクション<br/>ログ"]
+            Safety["安全性<br/>メトリクス"]
+        end
+        subgraph Eval["評価・判定"]
+            Criteria["判定基準<br/>(Preparedness Framework)"]
+            Report["リスクレポート<br/>生成"]
+            Decision["デプロイ可否<br/>判定"]
+        end
+    end
+
+    subgraph Target["評価対象モデル"]
+        Model["フロンティアモデル"]
+        Agent["エージェント<br/>システム"]
+    end
+
+    Gen --> Env
+    Target --> Sandbox
+    Sandbox --> Tools
+    Users --> Sandbox
+    Env --> Monitor
+    Monitor --> Eval
+    Decision -->|"Pass"| Deploy["実環境デプロイ"]
+    Decision -->|"Fail"| Remediate["改善・再評価"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Model,Agent,Deploy openai
+    class Sandbox,Tools,CoT,Actions,Safety dark
+    class Normal,Edge,Adversarial,Users,Criteria,Report,Decision,Remediate light
+                </div>
+            </div>
+
+            <!-- Evaluation Table -->
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-top: 28px; margin-bottom: 12px; color: var(--openai-dark);">評価の次元</h3>
+            <table class="eval-table">
+                <thead>
+                    <tr>
+                        <th>評価次元</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>安全性遵守</strong></td>
+                        <td>デプロイメントポリシーへの適合率</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ロバスト性</strong></td>
+                        <td>入力の変動に対する振る舞いの安定性</td>
+                    </tr>
+                    <tr>
+                        <td><strong>整合性</strong></td>
+                        <td>宣言された意図と実際のアクションの一致度</td>
+                    </tr>
+                    <tr>
+                        <td><strong>スケーラビリティ</strong></td>
+                        <td>負荷増大時の安全性保持能力</td>
+                    </tr>
+                    <tr>
+                        <td><strong>回復力</strong></td>
+                        <td>エラー発生時の適切な回復・エスカレーション</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- エージェント型 AI リスク -->
+        <div class="section">
+            <h2 class="section-title">エージェント型 AI の新たなリスク</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-title">累積的エラー</div>
+                    <div class="feature-card-desc">
+                        複数ステップにわたるタスクで小さなエラーが蓄積し、重大な結果をもたらすリスク
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">不可逆的影響</div>
+                    <div class="feature-card-desc">
+                        ファイル削除、外部 API 呼び出しなど、取り消せないアクションの実行リスク
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">目標の逸脱</div>
+                    <div class="feature-card-desc">
+                        長期タスクにおいて当初の目標から逸脱する振る舞いのリスク
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-title">権限の過剰利用</div>
+                    <div class="feature-card-desc">
+                        与えられた権限の範囲を超えたアクションの試行リスク
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 (Use Cases) -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-cases">
+                <div class="use-case">
+                    <div class="use-case-title">プリデプロイメントテストの標準化</div>
+                    <div class="use-case-desc">
+                        OpenAI が提供する API やモデルにおいて、Deployment Simulation に基づく安全性証明が付与される可能性。開発者はモデルの安全性プロファイルをより正確に把握できる
+                    </div>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-title">エージェント型アプリケーションの設計指針</div>
+                    <div class="use-case-desc">
+                        シミュレーションで発見されるリスクパターンが公開されれば、エージェント型システム構築の設計上のベストプラクティスとして活用可能
+                    </div>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-title">カスタムデプロイメントの安全性評価</div>
+                    <div class="use-case-desc">
+                        将来的に、開発者が自身のデプロイメント構成に対してシミュレーションを実行できるツールが提供される可能性
+                    </div>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-title">規制対応の支援</div>
+                    <div class="use-case-desc">
+                        AI 規制が強化される中、プリデプロイメントシミュレーションの結果がコンプライアンス証明として機能する可能性
+                    </div>
+                </div>
+                <div class="use-case">
+                    <div class="use-case-title">インシデント予防</div>
+                    <div class="use-case-desc">
+                        実環境での安全性インシデントを事前にシミュレーションで検出することで、運用上のリスクを低減
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <a href="https://openai.com/index/deployment-simulation/" target="_blank" rel="noopener noreferrer">
+                https://openai.com/index/deployment-simulation/
+            </a>
+            <div class="footer-note">Source: OpenAI Research | 2026-06-16</div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
