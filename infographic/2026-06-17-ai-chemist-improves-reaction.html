@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 化学者が創薬化学の難反応を改善 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+
+        .key-point:hover {
+            transform: translateX(4px);
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card .stat-item {
+            margin-bottom: 12px;
+        }
+
+        .comparison-card .stat-item .value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .comparison-card.before .stat-item .value {
+            color: #DC2626;
+        }
+
+        .comparison-card.after .stat-item .value {
+            color: #059669;
+        }
+
+        .comparison-card .stat-item .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Blockquote */
+        .expert-quote {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 5px solid var(--openai-green);
+            padding: 28px 32px;
+            border-radius: 0 16px 16px 0;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .expert-quote::before {
+            content: '\201C';
+            font-size: 4rem;
+            color: var(--openai-green);
+            opacity: 0.3;
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            font-family: Georgia, serif;
+        }
+
+        .expert-quote p {
+            font-size: 15px;
+            color: var(--text-primary);
+            line-height: 1.8;
+            margin-bottom: 12px;
+            padding-left: 8px;
+        }
+
+        .expert-quote .quote-author {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding-left: 8px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+            transition: transform 0.2s;
+        }
+
+        .use-case:hover {
+            transform: translateX(4px);
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Limitations */
+        .limitations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .limitation-card {
+            background: #FFF7ED;
+            border: 1px solid #FDBA74;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .limitation-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #9A3412;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .limitation-card p {
+            font-size: 13px;
+            color: #78350F;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Arrow indicator */
+        .arrow-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--openai-green);
+            margin: 8px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .limitations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">研究成果 / 創薬化学</span>
+                <h1>ほぼ自律的な AI 化学者が創薬化学の難反応を改善</h1>
+                <p class="date">2026-06-17</p>
+            </div>
+        </header>
+
+        <!-- Key Points (概要) -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.4 による自律的研究計画</h3>
+                        <p>GPT-5.4 が数千件の研究提案を生成し、優先順位付けを行う。人間の化学者は上位提案をレビュー・選定するのみで、研究の方向性は AI が主導。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚗️</div>
+                    <div class="key-point-content">
+                        <h3>Chan-Lam カップリングの最適化</h3>
+                        <p>創薬化学で重要な Chan-Lam カップリング反応を対象に、AI が酸化剤として TEMPO を発見。平均収率を 16.6% から 25.2% に改善。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-content">
+                        <h3>Maria AI による実験自動化</h3>
+                        <p>高レベルの研究計画を詳細な実験手順に変換し、高スループット実験を実行。生データの分析と構造化された結果の生成まで自動化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>10,080 反応の大規模実験</h3>
+                        <p>2 サイクルの実験で合計 10,080 反応を実施。ボロン酸の 88%、スルホンアミドの 83% で収率が改善された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>コスト効率の高い代替発見</h3>
+                        <p>4-hydroxy-TEMPO が TEMPO の低コスト代替として同等の性能を発揮することを発見。実用化に向けた経済性も確保。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (従来法)</h4>
+                    <div class="stat-item">
+                        <div class="value">16.6%</div>
+                        <div class="label">平均収率</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="value">15.6%</div>
+                        <div class="label">30% 超収率の割合</div>
+                    </div>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (AI 最適化後)</h4>
+                    <div class="stat-item">
+                        <div class="value">25.2%</div>
+                        <div class="label">平均収率</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="value">37.5%</div>
+                        <div class="label">30% 超収率の割合</div>
+                    </div>
+                </div>
+            </div>
+            <div class="arrow-indicator" style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">
+                平均収率 <span style="color: var(--openai-green); font-weight: 700; margin: 0 8px;">+51.8% 向上</span> | 高収率反応の割合 <span style="color: var(--openai-green); font-weight: 700; margin: 0 8px;">2.4 倍</span>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="section">
+            <h2 class="section-title">数字で見る成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">10,080</div>
+                    <div class="stat-label">反応数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">88%</div>
+                    <div class="stat-label">ボロン酸改善率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">83%</div>
+                    <div class="stat-label">スルホンアミド改善率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 ヶ月</div>
+                    <div class="stat-label">研究期間</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards (主要機能) -->
+        <section class="section">
+            <h2 class="section-title">主要な発見と機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧪 Chan-Lam カップリング選定</h3>
+                    <p>GPT-5.4 が創薬化学で最も改善の余地がある反応クラスとして Chan-Lam カップリングを特定。開放的な研究目標から具体的なターゲットを自律的に選定。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💡 TEMPO 酸化剤の発見</h3>
+                    <p>AI が Chan-Lam 反応の酸化剤として TEMPO を提案。従来使用されていなかった新規条件により、収率を大幅に向上させることに成功。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💲 4-hydroxy-TEMPO コスト削減</h3>
+                    <p>TEMPO の低コスト代替として 4-hydroxy-TEMPO が同等の性能を発揮することを発見。実用化に向けた経済的なハードルを解消。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏭 ベンチスケール検証</h3>
+                    <p>人間の化学者による独立したベンチスケール検証で、高スループット実験の結果が再現可能であることを確認。実験室スケールでの実用性を実証。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">研究ワークフロー</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["研究開始"]
+        Goal["開放的研究目標:<br/>重要な反応クラスの改善"]
+    end
+    subgraph AI_Planning["GPT-5.4 研究計画"]
+        Propose["研究提案生成<br/>(数千件)"]
+        Rank["提案のランク付け<br/>と優先順位付け"]
+    end
+    subgraph Human["人間の化学者"]
+        Review["上位提案のレビュー"]
+        Select["4 件の提案を選定"]
+        Validate["ベンチスケール検証"]
+    end
+    subgraph Maria["Maria AI"]
+        Translate["高レベル計画 →<br/>詳細実験手順"]
+        Execute["高スループット<br/>実験実行"]
+        Analyze["生データ分析<br/>構造化結果生成"]
+    end
+    subgraph Lab["高スループット実験室"]
+        HT["10,080 反応<br/>(2 サイクル)"]
+    end
+    subgraph Results["成果"]
+        Output["Chan-Lam カップリング最適化<br/>平均収率 16.6% → 25.2%"]
+    end
+    Goal --> Propose
+    Propose --> Rank
+    Rank --> Review
+    Review --> Select
+    Select --> Translate
+    Translate --> Execute
+    Execute --> HT
+    HT --> Analyze
+    Analyze -->|"サイクル 1 完了"| Propose
+    Analyze -->|"サイクル 2 完了"| Validate
+    Validate --> Output
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:3px,color:white
+    class Propose,Rank,Analyze openai
+    class Translate,Execute,HT dark
+    class Review,Select,Validate light
+    class Goal,Output highlight
+                </pre>
+            </div>
+        </section>
+
+        <!-- Expert Quote -->
+        <section class="section">
+            <h2 class="section-title">専門家の評価</h2>
+            <div class="expert-quote">
+                <p>この研究は、AI が化学研究のパートナーとして機能し得ることを示す重要な実証です。AI は単に既存の知識を整理するだけでなく、人間の化学者が思いつかなかった新しい条件を提案し、それが実際に有効であることが証明されました。</p>
+                <span class="quote-author">-- Tim Cernak (ミシガン大学 准教授、共同研究者)</span>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">活用分野とインパクト</h2>
+            <div class="use-case">
+                <h4>🏥 AI for Drug Discovery (創薬への応用)</h4>
+                <p>創薬化学における合成ルート最適化を AI が支援。反応条件の探索空間を大幅に拡大し、従来の試行錯誤的アプローチでは発見困難な条件を特定可能に。新薬開発のタイムラインを短縮する可能性。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ Safety Design Pattern (安全設計パターン)</h4>
+                <p>AI の自律性と人間の監督のバランスを実現する設計パターン。AI が提案を生成し、人間が選定・承認するワークフローにより、AI の能力を最大限活用しつつ安全性を確保。他の科学研究分野への適用モデルとなる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔄 High-throughput Integration (高スループット統合)</h4>
+                <p>AI の計画能力と高スループット実験装置を統合するアプローチ。1 回の実験サイクルで数千反応を評価でき、データ駆動型の最適化サイクルを高速に回すことが可能。マテリアルズインフォマティクスなど他分野への展開も期待。</p>
+            </div>
+        </section>
+
+        <!-- Limitations -->
+        <section class="section">
+            <h2 class="section-title">留意点と制限事項</h2>
+            <div class="limitations-grid">
+                <div class="limitation-card">
+                    <h4>⚠️ 限定的な反応クラス</h4>
+                    <p>本研究は Chan-Lam カップリングに特化。他の反応クラスへの一般化可能性は未検証。</p>
+                </div>
+                <div class="limitation-card">
+                    <h4>⚠️ 高スループット環境依存</h4>
+                    <p>専用の高スループット実験装置が前提。一般的な研究室環境での再現性は別途検証が必要。</p>
+                </div>
+                <div class="limitation-card">
+                    <h4>⚠️ 人間の監督が必須</h4>
+                    <p>完全自律ではなく「ほぼ自律的」。人間の化学者による提案の選定とベンチスケール検証が不可欠。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/ai-chemist-improves-reaction/" target="_blank" rel="noopener noreferrer">https://openai.com/index/ai-chemist-improves-reaction/</a></p>
+            <p style="margin-top: 8px;">Generated on 2026-06-17 | OpenAI News Summary Infographic</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

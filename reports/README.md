@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-17](2026/2026-06-17-introducing-life-sci-bench.md) - LifeSciBench: ライフサイエンス研究タスク向け AI 評価ベンチマークの導入
+- [2026-06-17](2026/2026-06-17-ai-chemist-improves-reaction.md) - ほぼ自律的な AI 化学者が創薬化学の難反応を改善 -- GPT-5.4 と Maria Lab による Chan-Lam カップリングの最適化
 - [2026-06-16](2026/2026-06-16-detecting-reducing-scheming-ai-models.md) - AI モデルにおけるスキーミングの検出と低減 -- 欺瞞的アラインメントへの体系的対策
 - [2026-06-16](2026/2026-06-16-deployment-simulation.md) - Deployment Simulation: AI モデルのデプロイ前安全性シミュレーション手法
 - [2026-06-16](2026/2026-06-16-chatgpt-market-share-below-50.md) - ChatGPT の市場シェアが初めて 50% を下回る — AI アシスタント市場の多極化が加速
