@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4o Image Generation の導入 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Evolution Timeline */
+        .evolution-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .evolution-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .evolution-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .evolution-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .evolution-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 14px;
+        }
+
+        .evolution-table tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        .evolution-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .evolution-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        .evolution-table .highlight-row {
+            background: rgba(16, 163, 127, 0.1) !important;
+            font-weight: 700;
+        }
+
+        /* Parameters Table */
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .params-table th {
+            background: var(--openai-green);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .params-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .params-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .params-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 14px;
+        }
+
+        .params-table tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        .params-table code {
+            background: rgba(16, 163, 127, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--openai-dark);
+        }
+
+        /* Pricing Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .pricing-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .pricing-table th:first-child {
+            text-align: left;
+            border-radius: 8px 0 0 0;
+        }
+
+        .pricing-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .pricing-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .pricing-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .pricing-table tr:nth-child(even) {
+            background: var(--openai-gray);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .evolution-table,
+            .params-table,
+            .pricing-table {
+                font-size: 12px;
+            }
+
+            .evolution-table th,
+            .evolution-table td,
+            .params-table th,
+            .params-table td,
+            .pricing-table th,
+            .pricing-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">画像生成 API</span>
+                <h1>4o Image Generation の導入</h1>
+                <p class="date">2026-06-18</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎨</div>
+                    <div class="key-point-content">
+                        <h3>GPT-4o ネイティブ画像生成</h3>
+                        <p>画像生成が GPT-4o に直接統合され、テキスト理解と画像生成がシームレスに連携</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>ストリーミング対応</h3>
+                        <p>partial_images パラメータにより、生成途中の画像を 0-3 枚リアルタイムで取得可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>マルチターン編集</h3>
+                        <p>Responses API で会話コンテキストを維持し、既存画像を自然言語で繰り返し編集</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔌</div>
+                    <div class="key-point-content">
+                        <h3>2 つの API エンドポイント</h3>
+                        <p>Images API (/v1/images/generations) と Responses API (/v1/responses) の両方で利用可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>トークンベース課金</h3>
+                        <p>サイズと品質に応じた柔軟なトークンベースの料金体系</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evolution Timeline -->
+        <section class="section">
+            <h2 class="section-title">画像生成モデルの進化</h2>
+            <table class="evolution-table">
+                <thead>
+                    <tr>
+                        <th>モデル</th>
+                        <th>特徴</th>
+                        <th>API</th>
+                        <th>状態</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DALL-E 3</td>
+                        <td>専用画像生成モデル</td>
+                        <td>Images API</td>
+                        <td>利用可能</td>
+                    </tr>
+                    <tr>
+                        <td>gpt-image-1</td>
+                        <td>GPT ベース画像生成 (初代)</td>
+                        <td>Images API</td>
+                        <td>利用可能</td>
+                    </tr>
+                    <tr>
+                        <td>gpt-image-2</td>
+                        <td>品質向上版</td>
+                        <td>Images API</td>
+                        <td>利用可能</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>4o Native</td>
+                        <td>GPT-4o 統合ネイティブ生成</td>
+                        <td>Images + Responses API</td>
+                        <td>NEW</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧠 ネイティブ統合</h3>
+                    <p>GPT-4o の言語理解能力と画像生成が一体化。プロンプトの意図をより正確に反映した画像を生成</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📡 ストリーミング</h3>
+                    <p>partial_images パラメータ (0-3) で生成途中の中間画像をリアルタイム配信。UX の大幅改善</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 マルチターン編集</h3>
+                    <p>Responses API の会話コンテキストを活用し、「もっと明るく」「背景を変更」など自然言語で繰り返し編集</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📐 豊富な出力形式</h3>
+                    <p>PNG / WebP / JPEG フォーマット、透明背景対応、複数サイズから選択可能</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parameters Table -->
+        <section class="section">
+            <h2 class="section-title">パラメータ一覧</h2>
+            <table class="params-table">
+                <thead>
+                    <tr>
+                        <th>パラメータ</th>
+                        <th>選択肢</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Size</strong></td>
+                        <td><code>1024x1024</code> <code>1024x1536</code> <code>1536x1024</code> <code>auto</code></td>
+                        <td>出力画像のサイズ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Quality</strong></td>
+                        <td><code>low</code> <code>medium</code> <code>high</code> <code>auto</code></td>
+                        <td>画像の品質レベル</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Output Format</strong></td>
+                        <td><code>png</code> <code>webp</code> <code>jpeg</code></td>
+                        <td>出力フォーマット</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Background</strong></td>
+                        <td><code>transparent</code> <code>opaque</code> <code>auto</code></td>
+                        <td>背景の透過設定</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Partial Images</strong></td>
+                        <td><code>0</code> <code>1</code> <code>2</code> <code>3</code></td>
+                        <td>ストリーミング時の中間画像数</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Token Pricing Table -->
+        <section class="section">
+            <h2 class="section-title">トークン課金</h2>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>サイズ</th>
+                        <th>Low</th>
+                        <th>Medium</th>
+                        <th>High</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1024x1024</td>
+                        <td>272 tokens</td>
+                        <td>1,056 tokens</td>
+                        <td>4,160 tokens</td>
+                    </tr>
+                    <tr>
+                        <td>1024x1536</td>
+                        <td>408 tokens</td>
+                        <td>1,584 tokens</td>
+                        <td>6,240 tokens</td>
+                    </tr>
+                    <tr>
+                        <td>1536x1024</td>
+                        <td>408 tokens</td>
+                        <td>1,584 tokens</td>
+                        <td>6,240 tokens</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 12px;">* トークン数は出力トークンとして計算されます。実際の料金はモデルの出力トークン単価に基づきます。</p>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["リクエスト"]
+        Text["テキストプロンプト"]
+        Ref["参照画像"]
+    end
+    subgraph GPT4o["GPT-4o"]
+        Understanding["言語理解"]
+        Generation["画像生成"]
+    end
+    subgraph Output["出力"]
+        Partial["ストリーミング&lt;br/&gt;(partial_images)"]
+        Final["完成画像&lt;br/&gt;(png/webp/jpeg)"]
+    end
+    Text --> Understanding
+    Ref --> Understanding
+    Understanding --> Generation
+    Generation --> Partial
+    Partial --> Final
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    class Understanding,Generation openai
+    class Partial,Final dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Images API - 基本的な画像生成</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+client = OpenAI()
+
+response = client.images.generate(
+    model="gpt-4o",
+    prompt="A sunset over Tokyo skyline",
+    size="1536x1024",
+    quality="high",
+    output_format="png",
+)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Responses API - ツール経由の画像生成</span>
+                </div>
+                <pre><code class="language-python">response = client.responses.create(
+    model="gpt-4o",
+    input="Generate an image of a cat on a windowsill",
+    tools=[{"type": "image_generation"}],
+)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">ストリーミング + partial_images</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+client = OpenAI()
+
+# ストリーミングで中間画像を取得
+stream = client.responses.create(
+    model="gpt-4o",
+    input="A watercolor painting of cherry blossoms",
+    tools=[{"type": "image_generation"}],
+    stream=True,
+    partial_images=3,  # 生成中に最大 3 枚の中間画像を配信
+)
+
+for event in stream:
+    if event.type == "response.image.partial":
+        print(f"中間画像を受信: {len(event.data)} bytes")
+    elif event.type == "response.image.done":
+        print("最終画像が完成しました")</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🎨 クリエイティブツール</h4>
+                <p>デザイナーやクリエイターがアイデアを即座に視覚化。マルチターン編集により、細部の調整を会話形式で繰り返し実施可能。コンセプトアートの探索やムードボード作成に最適</p>
+            </div>
+            <div class="use-case">
+                <h4>🛒 E コマース</h4>
+                <p>商品画像の背景変更、バリエーション生成、プロモーション素材の大量作成。透明背景オプションにより、既存のカタログシステムとの統合が容易</p>
+            </div>
+            <div class="use-case">
+                <h4>💬 マルチターン編集ワークフロー</h4>
+                <p>Responses API の会話コンテキストを活用し、「色を変更」「テキストを追加」「スタイルを調整」など段階的な画像改善。非デザイナーでも高品質な画像を制作可能</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/introducing-4o-image-generation/" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-4o-image-generation/</a></p>
+            <p style="margin-top: 8px;">作成日: 2026-06-18 | OpenAI News Summary</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

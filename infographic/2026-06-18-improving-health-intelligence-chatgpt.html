@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT のヘルスインテリジェンス向上 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            color: var(--text-secondary);
+        }
+
+        .comparison-card ul li::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .comparison-card.before ul li::before {
+            background: #F87171;
+        }
+
+        .comparison-card.after ul li::before {
+            background: #34D399;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Evaluation Categories */
+        .eval-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .eval-item {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(16, 163, 127, 0.15);
+        }
+
+        .eval-item .eval-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .eval-item .eval-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">ヘルスケア AI</span>
+                <h1>ChatGPT のヘルスインテリジェンス向上</h1>
+                <p class="date">2026-06-18</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🏥</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.5 Instant で健康情報の品質を大幅向上</h3>
+                        <p>高価な Thinking モデルと同等の性能を低コストで実現。誤った健康情報を 71% 削減</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-content">
+                        <h3>全ての無料ユーザーに提供</h3>
+                        <p>ChatGPT の無料ユーザーを含む全てのユーザーが GPT-5.5 Instant による高品質な健康情報にアクセス可能</p>
+                    </div>
+                    <div class="key-point-icon">🆓</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👨‍⚕️</div>
+                    <div class="key-point-content">
+                        <h3>260+ 名の医師による品質検証</h3>
+                        <p>60 カ国以上の医師ネットワークが 700K 以上のモデル応答をレビュー</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-content">
+                        <h3>HealthBench 評価フレームワーク</h3>
+                        <p>正確性、完全性、安全性、指示追従、有用性の 5 カテゴリで体系的に評価</p>
+                    </div>
+                    <div class="key-point-icon">📊</div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏢</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズ向け医療製品</h3>
+                        <p>ChatGPT for Clinicians と OpenAI for Healthcare で医療従事者向けの専門ツールを展開</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る改善</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">71%</div>
+                    <div class="stat-label">誤情報の削減率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">230M+</div>
+                    <div class="stat-label">週間健康クエリ数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">260+</div>
+                    <div class="stat-label">医師ネットワーク</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">700K+</div>
+                    <div class="stat-label">レビュー済み応答</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: GPT-4o</h4>
+                    <ul>
+                        <li>健康情報の誤りが頻発</li>
+                        <li>指示追従スコアが低い</li>
+                        <li>安全性チェックが限定的</li>
+                        <li>高コストモデルでのみ高品質</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: GPT-5.5 Instant</h4>
+                    <ul>
+                        <li>誤情報 71% 削減</li>
+                        <li>89.9% の指示追従スコア</li>
+                        <li>包括的な安全性フィルター</li>
+                        <li>低コストで全ユーザーに提供</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evaluation Categories -->
+        <section class="section">
+            <h2 class="section-title">HealthBench 評価カテゴリ</h2>
+            <div class="eval-grid">
+                <div class="eval-item">
+                    <div class="eval-icon">🎯</div>
+                    <div class="eval-name">Accuracy<br>(正確性)</div>
+                </div>
+                <div class="eval-item">
+                    <div class="eval-icon">📋</div>
+                    <div class="eval-name">Completeness<br>(完全性)</div>
+                </div>
+                <div class="eval-item">
+                    <div class="eval-icon">🛡️</div>
+                    <div class="eval-name">Safety<br>(安全性)</div>
+                </div>
+                <div class="eval-item">
+                    <div class="eval-icon">📝</div>
+                    <div class="eval-name">Instruction<br>Following</div>
+                </div>
+                <div class="eval-item">
+                    <div class="eval-icon">💡</div>
+                    <div class="eval-name">Helpfulness<br>(有用性)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">主な機能と取り組み</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⚡ GPT-5.5 Instant</h3>
+                    <p>高価な Thinking モデルと同等の健康情報品質を、低コストかつ高速で全ユーザーに提供</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 HealthBench 評価</h3>
+                    <p>5 つの評価軸で体系的にモデルの健康情報品質を測定。89.9% の指示追従スコアを達成</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👨‍⚕️ 医師ネットワーク</h3>
+                    <p>60 カ国以上から 260 名以上の医師が参加。700K 以上のモデル応答を専門家がレビュー</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏢 エンタープライズ製品</h3>
+                    <p>ChatGPT for Clinicians: 臨床医向け専用ツール。OpenAI for Healthcare: 医療機関向けプラットフォーム</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー"]
+        FreeUser["無料ユーザー"]
+        PaidUser["有料ユーザー"]
+    end
+    subgraph ChatGPT["ChatGPT"]
+        Model["GPT-5.5 Instant"]
+    end
+    subgraph HealthIntel["Health Intelligence Layer"]
+        Safety["安全性フィルター"]
+        Accuracy["正確性チェック"]
+    end
+    subgraph QA["品質保証"]
+        DoctorNetwork["260+ 医師ネットワーク"]
+        HealthBench["HealthBench 評価"]
+    end
+    FreeUser --> Model
+    PaidUser --> Model
+    Model --> Safety
+    Safety --> Accuracy
+    DoctorNetwork --> HealthBench
+    HealthBench --> Model
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    class Model,Safety,Accuracy openai
+    class DoctorNetwork,HealthBench dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">GPT-5.5 Instant ヘルスケア問い合わせ例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+    model="gpt-5.5-instant",
+    messages=[
+        {"role": "system", "content": "あなたは医療情報を提供するアシスタントです。"},
+        {"role": "user", "content": "頭痛が3日間続いています。考えられる原因は？"}
+    ],
+    temperature=0.3,
+)
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🔬 検査結果の理解</h4>
+                <p>血液検査や画像検査の結果を分かりやすく説明。専門用語を平易な言葉に変換し、次のステップを提案</p>
+            </div>
+            <div class="use-case">
+                <h4>📅 受診準備</h4>
+                <p>症状の整理、質問リストの作成、過去の病歴の要約など、医師との対話を効果的にするための準備をサポート</p>
+            </div>
+            <div class="use-case">
+                <h4>💰 保険に関する質問</h4>
+                <p>医療保険の適用範囲、自己負担額、手続き方法などの複雑な保険情報を分かりやすく整理</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/improving-health-intelligence-in-chatgpt/" target="_blank" rel="noopener noreferrer">https://openai.com/index/improving-health-intelligence-in-chatgpt/</a></p>
+            <p style="margin-top: 8px;">生成日: 2026-06-18</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

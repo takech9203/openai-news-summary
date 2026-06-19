@@ -5,8 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-18](2026/2026-06-18-noam-shazeer-joins-openai.md) - Noam Shazeer が Google を離れ OpenAI に参画 -- Transformer 共同発明者の移籍が AI 業界に衝撃
+- [2026-06-18](2026/2026-06-18-introducing-4o-image-generation.md) - 4o Image Generation の導入 -- GPT-4o ネイティブ画像生成の新世代
+- [2026-06-18](2026/2026-06-18-improving-health-intelligence-chatgpt.md) - ChatGPT のヘルスインテリジェンス向上 -- GPT-5.5 Instant による医療情報精度の飛躍的改善
+- [2026-06-18](2026/2026-06-18-chatgpt-enterprise-spend-controls.md) - ChatGPT Enterprise にスペンドコントロール機能を導入 -- 企業の AI 利用コストを可視化・制御
+- [2026-06-17](2026/2026-06-17-openai-for-healthcare.md) - OpenAI for Healthcare -- 医療機関向けエンタープライズ AI プラットフォームの拡充
 - [2026-06-17](2026/2026-06-17-introducing-life-sci-bench.md) - LifeSciBench: ライフサイエンス研究タスク向け AI 評価ベンチマークの導入
 - [2026-06-17](2026/2026-06-17-ai-chemist-improves-reaction.md) - ほぼ自律的な AI 化学者が創薬化学の難反応を改善 -- GPT-5.4 と Maria Lab による Chan-Lam カップリングの最適化
+- [2026-06-17](2026/2026-06-17-accelerating-biological-research-wet-lab.md) - ウェットラボにおける生物学研究の加速 -- AI と実験自動化の融合による科学的発見
 - [2026-06-16](2026/2026-06-16-detecting-reducing-scheming-ai-models.md) - AI モデルにおけるスキーミングの検出と低減 -- 欺瞞的アラインメントへの体系的対策
 - [2026-06-16](2026/2026-06-16-deployment-simulation.md) - Deployment Simulation: AI モデルのデプロイ前安全性シミュレーション手法
 - [2026-06-16](2026/2026-06-16-chatgpt-market-share-below-50.md) - ChatGPT の市場シェアが初めて 50% を下回る — AI アシスタント市場の多極化が加速

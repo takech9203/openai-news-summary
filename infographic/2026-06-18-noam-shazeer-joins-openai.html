@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noam Shazeer が Google を離れ OpenAI に参画 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Quote */
+        .quote-block {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 24px 28px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .quote-block .quote-author {
+            font-style: normal;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        /* Use Cases / Impact */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">人事・企業ニュース</span>
+                <h1>Noam Shazeer が Google を離れ OpenAI に参画</h1>
+                <p class="date">2026-06-18</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">Key Points</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>Transformer 論文の筆頭著者が OpenAI へ</h3>
+                        <p>"Attention Is All You Need" (2017) の共著者であり、現代 AI の基盤を築いた Noam Shazeer が OpenAI に参画。AI 史上最も影響力のある論文の立役者。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>$2.7B で Google に復帰した人物の再離脱</h3>
+                        <p>2024 年に Google が Character.AI との $2.7B ライセンス契約で呼び戻したにもかかわらず、わずか 2 年で OpenAI へ移籍。Google にとって巨額投資の損失。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚔️</div>
+                    <div class="key-point-content">
+                        <h3>AI 人材獲得競争の最大級の動き</h3>
+                        <p>Karpathy の Anthropic 参画に匹敵する、2026 年最大の AI 人材ニュース。トップ研究者の争奪戦が激化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-content">
+                        <h3>Google Gemini の中核リーダーを喪失</h3>
+                        <p>VP of Engineering として Jeff Dean、Oriol Vinyals と共に Gemini を共同統括。Google の推論モデル開発に大きな打撃。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">❓</div>
+                    <div class="key-point-content">
+                        <h3>OpenAI での具体的な役職は未公表</h3>
+                        <p>OpenAI は参画を歓迎する発表のみで、具体的な担当領域や役職については明かしていない。今後の動向に注目。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote -->
+        <section class="section">
+            <h2 class="section-title">本人コメント</h2>
+            <div class="quote-block">
+                "It was a difficult decision to move on"
+                <div class="quote-author">-- Noam Shazeer、Google 離脱に際して</div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2 class="section-title">キャリアタイムライン</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    A["2000&lt;br/&gt;Google 入社"] --> B["2017&lt;br/&gt;Transformer 論文"]
+    B --> C["2021&lt;br/&gt;Character.AI 創業"]
+    C --> D["2024&lt;br/&gt;Google 復帰&lt;br/&gt;($2.7B)"]
+    D --> E["2026&lt;br/&gt;OpenAI 参画"]
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    class E openai
+    class A,B,C,D dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るインパクト</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">$2.7B</div>
+                    <div class="stat-label">Character.AI<br>ライセンス契約額</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Transformer 論文<br>共著者数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">26</div>
+                    <div class="stat-label">Google 在籍年数<br>(通算)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">200K+</div>
+                    <div class="stat-label">論文引用数<br>(推定)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">多角的分析</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📄 Transformer 論文の意義</h3>
+                    <p>"Attention Is All You Need" は GPT、BERT、Gemini、Claude など現代の全ての大規模言語モデルの基盤。AI 分野で史上最も引用された論文の一つ。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📉 Google の損失</h3>
+                    <p>$2.7B を投じて呼び戻した人材の流出。Gemini の推論能力強化を担う中核人物を失い、OpenAI・Anthropic との競争で更に不利な状況に。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 OpenAI の獲得</h3>
+                    <p>Transformer アーキテクチャの設計者を迎えることで、次世代モデル開発に大きなアドバンテージ。研究と工学の両面での強化。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏆 AI 人材戦争</h3>
+                    <p>Karpathy (Tesla/OpenAI から Anthropic)、Shazeer (Google から OpenAI) と、トップクラスの AI 研究者の移籍が相次ぐ。企業間の人材争奪は過熱の一途。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison: Google vs OpenAI -->
+        <section class="section">
+            <h2 class="section-title">推論モデル競争: Google vs OpenAI</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Google (苦戦)</h4>
+                    <ul>
+                        <li>Gemini 推論モデルの遅れ</li>
+                        <li>Shazeer 離脱で開発体制に打撃</li>
+                        <li>Transformer 著者 8 名中複数が退社</li>
+                        <li>競合に対する技術的優位の喪失</li>
+                        <li>$2.7B 投資のリターンなし</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>OpenAI (優勢)</h4>
+                    <ul>
+                        <li>o1/o3 推論モデルで業界リード</li>
+                        <li>Transformer 設計者を獲得</li>
+                        <li>GPT-5 系列の継続的進化</li>
+                        <li>研究 + エンジニアリングの融合強化</li>
+                        <li>人材引力が更に増大</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact Section -->
+        <section class="section">
+            <h2 class="section-title">業界への影響</h2>
+            <div class="use-case">
+                <h4>AI 研究コミュニティへの影響</h4>
+                <p>Transformer の生みの親が OpenAI に参画したことで、同社の研究方向性に大きな変化が生まれる可能性。特にアーキテクチャレベルの革新が期待される。</p>
+            </div>
+            <div class="use-case">
+                <h4>Google DeepMind の戦略再考</h4>
+                <p>核心的な技術リーダーの連続流出により、Google は人材リテンション戦略の根本的な見直しを迫られる。報酬だけでなく、研究の自由度や影響力が鍵。</p>
+            </div>
+            <div class="use-case">
+                <h4>AI スタートアップエコシステム</h4>
+                <p>Character.AI のような創業者の離脱と大手への人材集中が加速。スタートアップが優秀な研究者を維持する難しさが浮き彫りに。</p>
+            </div>
+            <div class="use-case">
+                <h4>次世代モデルアーキテクチャ</h4>
+                <p>Shazeer は Transformer 以降の新しいアーキテクチャ探索にも関心を持つとされる。OpenAI での研究が「ポスト Transformer」時代を切り開く可能性。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/openai-welcomes-cfo-cpo/" target="_blank" rel="noopener noreferrer">https://openai.com/index/openai-welcomes-cfo-cpo/</a></p>
+            <p style="margin-top: 8px;">2026 年最大級の AI 人材移籍ニュース。今後の OpenAI の研究戦略と新モデル開発への影響に注目。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
