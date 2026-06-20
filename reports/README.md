@@ -5,10 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-19](2026/2026-06-19-barret-zoph-leaves-openai-thinking-machines.md) - Barret Zoph が わずか 5 ヶ月で再び OpenAI を離脱 -- 新会社 Thinking Machines Lab を設立
+- [2026-06-19](2026/2026-06-19-amazon-drops-altman-biopic-openai-partnership.md) - Amazon が Sam Altman 伝記映画「Artificial」を降板 -- OpenAI パートナーシップとの利益相反で
 - [2026-06-18](2026/2026-06-18-noam-shazeer-joins-openai.md) - Noam Shazeer が Google を離れ OpenAI に参画 -- Transformer 共同発明者の移籍が AI 業界に衝撃
 - [2026-06-18](2026/2026-06-18-introducing-4o-image-generation.md) - 4o Image Generation の導入 -- GPT-4o ネイティブ画像生成の新世代
 - [2026-06-18](2026/2026-06-18-improving-health-intelligence-chatgpt.md) - ChatGPT のヘルスインテリジェンス向上 -- GPT-5.5 Instant による医療情報精度の飛躍的改善
 - [2026-06-18](2026/2026-06-18-chatgpt-enterprise-spend-controls.md) - ChatGPT Enterprise にスペンドコントロール機能を導入 -- 企業の AI 利用コストを可視化・制御
+- [2026-06-18](2026/2026-06-18-beneficial-rl-alignment-research.md) - 強化学習による広範かつ持続的に有益なモデルの構築 -- アライメント研究の新アプローチ
+- [2026-06-17](2026/2026-06-17-openai-rust-foundation-platinum.md) - OpenAI が Rust Foundation にプラチナメンバーとして参画 -- 60 万ドルの拠出でエコシステム支援
 - [2026-06-17](2026/2026-06-17-openai-for-healthcare.md) - OpenAI for Healthcare -- 医療機関向けエンタープライズ AI プラットフォームの拡充
 - [2026-06-17](2026/2026-06-17-introducing-life-sci-bench.md) - LifeSciBench: ライフサイエンス研究タスク向け AI 評価ベンチマークの導入
 - [2026-06-17](2026/2026-06-17-ai-chemist-improves-reaction.md) - ほぼ自律的な AI 化学者が創薬化学の難反応を改善 -- GPT-5.4 と Maria Lab による Chan-Lam カップリングの最適化

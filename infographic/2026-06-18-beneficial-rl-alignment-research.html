@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>強化学習による広範かつ持続的に有益なモデルの構築 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .authors {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .comparison-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--openai-green);
+        }
+
+        .timeline-item .timeline-date {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .timeline-item .timeline-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">研究成果</span>
+                <h1>強化学習による広範かつ持続的に有益なモデルの構築</h1>
+                <p class="date">2026-06-18</p>
+                <p class="authors">Authors: Akshay V. Jagadeesh, Rahul K. Arora, Khaled Saab, Ali Malik, Mikhail Trofimov, Foivos Tsimpourlas, Johannes Heidecke, Karan Singhal</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主要な発見</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>53 ベンチマーク中 44 で改善</h3>
+                        <p>有益特性を対象とした RL トレーニングにより、直接最適化していない広範なベンチマークでも性能が向上することを実証。汎用的なアライメント改善効果を確認。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>クロスドメイン転移の確認</h3>
+                        <p>健康ドメインのみで訓練したモデルが、非健康ドメイン (教育、法律、工学など) でも有益特性スコアが向上。ドメイン固有の訓練なしに汎化する能力を実証。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>敵対的耐性 (Adversarial Persistence)</h3>
+                        <p>ペルソナプロンプトや有害なファインチューニングに対しても有益特性が持続。モデルの安全性が外部攻撃に対して堅牢であることを示唆。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>7 つの有益特性の定義と評価</h3>
+                        <p>Truthfulness、Epistemic humility、Metacognitive transparency、Corrigibility、Risk sensitivity、Universal fairness、Concern for human welfare の 7 特性を体系的に定義。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>Emergent Misalignment の抑制</h3>
+                        <p>Beneficial RL が emergent misalignment (創発的ミスアライメント) の発生可能性を低減するという予備的証拠を提示。将来の高度な AI の安全性に重要な示唆。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: 7 Beneficial Traits -->
+        <section class="section">
+            <h2 class="section-title">7 つの有益特性 (Beneficial Traits)</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>✅ Truthfulness</h3>
+                    <p>正確で検証可能な情報を提供し、誤った情報や誤解を招く表現を回避する特性。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤔 Epistemic Humility</h3>
+                    <p>自身の知識の限界を認識し、不確実性を適切に伝達する特性。知らないことを「知らない」と言える能力。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Metacognitive Transparency</h3>
+                    <p>自身の推論プロセスや判断根拠を透明に説明する特性。なぜその回答に至ったかを明示。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 Corrigibility</h3>
+                    <p>人間からの修正や介入を受け入れ、自律的に目標を変更しない特性。人間のコントロールを尊重。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚠️ Risk Sensitivity</h3>
+                    <p>潜在的なリスクや危害を認識し、慎重に行動する特性。高リスクな状況での適切な警告と回避。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚖️ Universal Fairness</h3>
+                    <p>全てのユーザーに対して公平かつ偏りのない対応をする特性。特定の集団への差別や偏見を排除。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💚 Concern for Human Welfare</h3>
+                    <p>人間の幸福と安全を優先的に考慮する特性。有害な行動の提案を拒否し、ユーザーの利益を保護。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics -->
+        <section class="section">
+            <h2 class="section-title">数字で見る研究成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">44/53</div>
+                    <div class="stat-label">ベンチマーク改善数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">有益特性</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">評価ドメイン</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Standard RL Baseline</h4>
+                    <ul>
+                        <li>不確実性の明示が不十分</li>
+                        <li>プロンプト攻撃に脆弱</li>
+                        <li>有害ファインチューニングで容易に劣化</li>
+                        <li>ドメイン固有の安全性のみ</li>
+                        <li>Emergent misalignment のリスク</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>Beneficial RL Model</h4>
+                    <ul>
+                        <li>不確実性を積極的に伝達</li>
+                        <li>ペルソナプロンプトに耐性</li>
+                        <li>有害ファインチューニング後も特性維持</li>
+                        <li>クロスドメインで汎化</li>
+                        <li>Emergent misalignment を抑制</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mermaid Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ: Beneficial RL パイプライン</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Dataset["有益特性データセット構築"]
+        Traits["7 つの有益特性定義"]
+        Domains["7 ドメイン<br/>(健康/教育/科学/法律/工学/経済/ビジネス)"]
+        Synth["合成会話生成<br/>(不確実性・圧力・競合条件)"]
+        Traits --> Synth
+        Domains --> Synth
+    end
+
+    subgraph Training["RL ポストトレーニング"]
+        Base["ベースモデル"]
+        Mix["訓練ミクスチャー<br/>(標準 RL + 有益特性データ)"]
+        BenRL["Beneficial RL モデル"]
+        Base --> Mix
+        Mix --> BenRL
+    end
+
+    subgraph Eval["多層評価"]
+        InDist["分布内評価<br/>(有益特性スコア)"]
+        OOD["分布外評価<br/>(44/53 ベンチマーク改善)"]
+        Cross["クロスドメイン転移<br/>(健康 → 非健康 / 非健康 → 健康)"]
+        Adv["敵対的耐性評価<br/>(プロンプト / ファインチューニング)"]
+    end
+
+    Synth --> Mix
+    BenRL --> InDist
+    BenRL --> OOD
+    BenRL --> Cross
+    BenRL --> Adv
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class BenRL,Traits openai
+    class Base,Mix,Synth dark
+    class InDist,OOD,Cross,Adv light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Model Progression Timeline -->
+        <section class="section">
+            <h2 class="section-title">モデル進化タイムライン</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2025 年 4 月</div>
+                    <div class="timeline-content">o3 - 初期の Beneficial RL 適用</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2025 年 8 月</div>
+                    <div class="timeline-content">GPT-5 Thinking - 思考能力と有益特性の統合</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026 年 4 月</div>
+                    <div class="timeline-content">GPT-5.5 Thinking - 最新モデルでの全面適用</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケースと応用</h2>
+            <div class="use-case">
+                <h4>🤖 エージェント安全性の向上</h4>
+                <p>自律的に行動する AI エージェントにおいて、有益特性が組み込まれることで、予期しない有害行動のリスクを低減。Corrigibility と Risk sensitivity により、人間の監督下で安全に動作。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ 有害ファインチューニングの防止</h4>
+                <p>悪意あるユーザーによるファインチューニング攻撃に対して、Beneficial RL で訓練されたモデルは有益特性を維持。安全性の劣化を抑制し、モデルの悪用リスクを低減。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧬 Emergent Misalignment の予防</h4>
+                <p>モデルの能力向上に伴い発生し得る emergent misalignment (創発的ミスアライメント) に対する予防策として機能。予備的証拠ではあるが、将来の超知能 AI の安全性に向けた重要なステップ。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://alignment.openai.com/beneficial-rl/" target="_blank" rel="noopener noreferrer">https://alignment.openai.com/beneficial-rl/</a></p>
+            <p style="margin-top: 8px;">OpenAI Alignment Research | 2026-06-18</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
