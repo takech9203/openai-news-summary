@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI による小児希少遺伝性疾患の診断支援 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card ul li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-secondary);
+        }
+
+        .comparison-card ul li::before {
+            content: '• ';
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">研究成果 / ヘルスケア</span>
+                <h1>🧬 AI による小児希少遺伝性疾患の診断支援<br>OpenAI 推論モデルが未解決症例 18 件の新規診断を実現</h1>
+                <p class="date">📅 2026-06-18</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>推論モデルで臨床推論を支援</h3>
+                        <p>OpenAI の推論モデル (o シリーズ) の chain-of-thought 能力を活用し、遺伝子変異・表現型・家族歴を統合的に多段階分析</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>18 件の新規診断を達成</h3>
+                        <p>従来の診断プロセスでは解決できなかった未解決症例から、推論モデルの支援により 18 件の新規診断が確定</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👶</div>
+                    <div class="key-point-content">
+                        <h3>小児の「診断オデッセイ」を短縮</h3>
+                        <p>平均 5 - 7 年かかる希少疾患の診断期間を数日 - 数週間に短縮。早期治療介入を実現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-content">
+                        <h3>臨床遺伝専門医による検証済み</h3>
+                        <p>すべての AI 支援診断は臨床遺伝学の専門家が検証し確定。Human-in-the-Loop 設計を実証</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">新規診断数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7,000+</div>
+                    <div class="stat-label">既知の希少疾患</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 億</div>
+                    <div class="stat-label">世界の罹患者数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">50%</div>
+                    <div class="stat-label">小児期に発症</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>❌ Before (従来の診断)</h4>
+                    <ul>
+                        <li>平均診断期間: 5 - 7 年</li>
+                        <li>7 人以上の専門医を受診</li>
+                        <li>専門医の知識に依存</li>
+                        <li>文献参照範囲が限定的</li>
+                        <li>50 - 70% が未診断のまま</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>✅ After (AI 推論モデル支援)</h4>
+                    <ul>
+                        <li>診断期間: 数日 - 数週間</li>
+                        <li>全既知遺伝子を網羅的に考慮</li>
+                        <li>包括的な文献マイニング</li>
+                        <li>体系的・バイアスフリーな分析</li>
+                        <li>高いスケーラビリティ</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">推論モデルのアプローチ</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔗 多段階推論</h3>
+                    <p>Chain-of-thought 能力で症状→候補疾患→関連遺伝子と論理的に絞り込み</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📚 文献マイニング</h3>
+                    <p>PubMed・OMIM から最新の遺伝子-疾患関連を自動抽出</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 鑑別診断生成</h3>
+                    <p>複数の候補診断を確信度付きで体系的にランク付け</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚠️ 矛盾検出</h3>
+                    <p>表現型と候補診断の不整合を自動で検出し、精度を向上</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧬 遺伝子解析</h3>
+                    <p>VUS (意義不明変異) の再分類を支援し、病因変異を特定</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📝 エビデンス提示</h3>
+                    <p>各候補に対する根拠を明示し、臨床医の最終判断を支援</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["入力データ"]
+        EHR["電子カルテ\n(HPO 表現型)"]
+        WGS["全ゲノムシーケンス\n(遺伝子変異)"]
+        Literature["医学文献\n(PubMed / OMIM)"]
+    end
+
+    subgraph Preprocessing["前処理"]
+        Phenotype["表現型の標準化\n(HPO Ontology)"]
+        Variant["変異のフィルタリング\n(頻度・影響度)"]
+        Context["コンテキスト構築\n(患者サマリー生成)"]
+    end
+
+    subgraph ReasoningEngine["OpenAI 推論エンジン"]
+        O3["o3 推論モデル"]
+        CoT["Chain-of-Thought\n多段階臨床推論"]
+        DiffDx["鑑別診断\nランキング生成"]
+    end
+
+    subgraph Output["出力"]
+        Candidates["候補診断リスト\n(確信度付き)"]
+        Evidence["エビデンスレポート"]
+        Tests["推奨追加検査"]
+    end
+
+    subgraph Validation["臨床検証"]
+        Geneticist["臨床遺伝専門医\nによる検証"]
+        Confirm["確定診断"]
+        Treatment["治療計画策定"]
+    end
+
+    EHR --> Phenotype
+    WGS --> Variant
+    Literature --> Context
+    Phenotype --> O3
+    Variant --> O3
+    Context --> O3
+    O3 --> CoT
+    CoT --> DiffDx
+    DiffDx --> Candidates
+    DiffDx --> Evidence
+    DiffDx --> Tests
+    Candidates --> Geneticist
+    Evidence --> Geneticist
+    Tests --> Geneticist
+    Geneticist --> Confirm
+    Confirm --> Treatment
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D9D9E3,stroke-width:2px,color:#343541
+
+    class O3,CoT,DiffDx openai
+    class EHR,WGS,Literature,Phenotype,Variant,Context dark
+    class Candidates,Evidence,Tests light
+    class Geneticist,Confirm,Treatment gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">推論モデルによる鑑別診断支援</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 患者の臨床情報を構造化
+patient_data = {
+    "age": "3 years",
+    "sex": "female",
+    "phenotypes": [
+        "HP:0001263",  # Global developmental delay
+        "HP:0001252",  # Hypotonia
+        "HP:0000256",  # Macrocephaly
+    ],
+    "genetic_variants": [{
+        "gene": "GNAO1",
+        "variant": "c.607G>A",
+        "zygosity": "heterozygous",
+        "inheritance": "de novo",
+        "classification": "VUS"
+    }]
+}
+
+# 推論モデルを使用した鑑別診断
+response = client.chat.completions.create(
+    model="o3",  # OpenAI 推論モデル
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a clinical genetics expert. "
+                "Analyze patient data and provide ranked "
+                "differential diagnosis with evidence."
+            )
+        },
+        {
+            "role": "user",
+            "content": f"Analyze: {patient_data}"
+        }
+    ],
+    reasoning_effort="high",  # 最大推論深度
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>🏥 推論モデルの医療応用</h4>
+                <p>o3 などの推論モデルは複雑な臨床推論タスクに適しており、ヘルスケア AI 開発者に新たな設計パターンを提供。reasoning_effort="high" で推論深度を最大化することが推奨される。</p>
+            </div>
+            <div class="use-case">
+                <h4>📋 構造化出力との組み合わせ</h4>
+                <p>鑑別診断リストの生成には response_format: json_object を組み合わせることで、下流のシステムとの統合が容易に。臨床ワークフローへの組み込みが加速する。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚡ バッチ API による大規模解析</h4>
+                <p>未解決症例の一括解析にはバッチ API を活用することで、コスト効率とスループットを最適化。数百件の症例を 24 時間以内に処理可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>👨‍⚕️ Human-in-the-Loop 設計の必須化</h4>
+                <p>AI は診断候補を提示するが、最終判断は必ず臨床専門医が行うアーキテクチャが必須。医療 AI の規制 (FDA、PMDA) への準拠が求められる。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 8px 0;"><a href="https://openai.com/index/diagnose-rare-childhood-diseases" target="_blank" style="color: var(--openai-green); text-decoration: none;">📄 公式発表 (OpenAI Blog)</a></li>
+                <li style="padding: 8px 0;"><a href="https://openai.com/index/improving-health-intelligence-in-chatgpt/" target="_blank" style="color: var(--openai-green); text-decoration: none;">🏥 Improving Health Intelligence in ChatGPT</a></li>
+                <li style="padding: 8px 0;"><a href="https://platform.openai.com/docs/models" target="_blank" style="color: var(--openai-green); text-decoration: none;">📚 OpenAI o3 モデル ドキュメント</a></li>
+                <li style="padding: 8px 0;"><a href="https://hpo.jax.org/" target="_blank" style="color: var(--openai-green); text-decoration: none;">🧬 Human Phenotype Ontology (HPO)</a></li>
+                <li style="padding: 8px 0;"><a href="https://omim.org/" target="_blank" style="color: var(--openai-green); text-decoration: none;">📖 OMIM - Online Mendelian Inheritance in Man</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/diagnose-rare-childhood-diseases" target="_blank" rel="noopener noreferrer">https://openai.com/index/diagnose-rare-childhood-diseases</a></p>
+            <p style="margin-top: 8px;"><strong>レポート:</strong> reports/2026/2026-06-18-diagnose-rare-childhood-diseases.md</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
