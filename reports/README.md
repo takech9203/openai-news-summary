@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-20](2026/2026-06-20-introducing-operator.md) - Introducing Operator -- AI ブラウザエージェントの再始動
+- [2026-06-19](2026/2026-06-19-openai-and-journalism.md) - OpenAI とジャーナリズム -- ローカルニュース支援とメディアパートナーシップの全体像
+- [2026-06-19](2026/2026-06-19-gpt-5-1-update.md) - GPT-5.1 ページ更新 -- Adaptive Thinking とエージェント最適化を備えたモデルファミリーの全容
 - [2026-06-19](2026/2026-06-19-barret-zoph-leaves-openai-thinking-machines.md) - Barret Zoph が わずか 5 ヶ月で再び OpenAI を離脱 -- 新会社 Thinking Machines Lab を設立
 - [2026-06-19](2026/2026-06-19-amazon-drops-altman-biopic-openai-partnership.md) - Amazon が Sam Altman 伝記映画「Artificial」を降板 -- OpenAI パートナーシップとの利益相反で
 - [2026-06-18](2026/2026-06-18-noam-shazeer-joins-openai.md) - Noam Shazeer が Google を離れ OpenAI に参画 -- Transformer 共同発明者の移籍が AI 業界に衝撃
