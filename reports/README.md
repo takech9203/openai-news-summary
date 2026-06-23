@@ -5,7 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-23](2026/2026-06-23-daybreak-securing-the-world.md) - Daybreak: Securing the World — OpenAI サイバー防衛イニシアチブのグローバル展開
+- [2026-06-22](2026/2026-06-22-samsung-electronics-chatgpt-codex-deployment.md) - Samsung Electronics が ChatGPT と Codex を全社展開
 - [2026-06-20](2026/2026-06-20-introducing-operator.md) - Introducing Operator -- AI ブラウザエージェントの再始動
+- [2026-06-20](2026/2026-06-20-computer-using-agent.md) - Computer-Using Agent (CUA) -- コンピュータ操作 AI の API 公開
 - [2026-06-19](2026/2026-06-19-openai-and-journalism.md) - OpenAI とジャーナリズム -- ローカルニュース支援とメディアパートナーシップの全体像
 - [2026-06-19](2026/2026-06-19-gpt-5-1-update.md) - GPT-5.1 ページ更新 -- Adaptive Thinking とエージェント最適化を備えたモデルファミリーの全容
 - [2026-06-19](2026/2026-06-19-barret-zoph-leaves-openai-thinking-machines.md) - Barret Zoph が わずか 5 ヶ月で再び OpenAI を離脱 -- 新会社 Thinking Machines Lab を設立
