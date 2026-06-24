@@ -5,7 +5,15 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-23](2026/2026-06-23-trustworthy-third-party-evaluations.md) - Trustworthy Third-Party Evaluations Foundations: 信頼性の高い第三者評価の基盤構築
+- [2026-06-23](2026/2026-06-23-scaling-trusted-access-cyber-defense.md) - Scaling Trusted Access for Cyber Defense — サイバー防衛向け Trusted Access プログラムのスケーリング
+- [2026-06-23](2026/2026-06-23-introducing-openai-partner-network.md) - OpenAI Partner Network: エンタープライズ AI エコシステムの本格始動
+- [2026-06-23](2026/2026-06-23-gpt-rosalind-new-capabilities.md) - GPT-Rosalind に新たな能力を導入: 生化学推論の深化と複合ワークフローの拡張
+- [2026-06-23](2026/2026-06-23-gpt-5-safe-completions.md) - GPT-5 Safe Completions: 安全な出力生成のための制約付きデコーディング手法
+- [2026-06-23](2026/2026-06-23-evaluating-cot-monitorability.md) - Evaluating Chain of Thought Monitorability: 思考連鎖のモニタリング可能性評価
 - [2026-06-23](2026/2026-06-23-daybreak-securing-the-world.md) - Daybreak: Securing the World — OpenAI サイバー防衛イニシアチブのグローバル展開
+- [2026-06-23](2026/2026-06-23-confessions-keep-language-models-honest.md) - Confessions: 言語モデルの誠実性を保つ自己申告メカニズム
+- [2026-06-23](2026/2026-06-23-accelerating-cyber-defense-ecosystem.md) - サイバー防衛エコシステムの加速: Daybreak のベンダー統合拡大とコミュニティ構築
 - [2026-06-22](2026/2026-06-22-samsung-electronics-chatgpt-codex-deployment.md) - Samsung Electronics が ChatGPT と Codex を全社展開
 - [2026-06-20](2026/2026-06-20-introducing-operator.md) - Introducing Operator -- AI ブラウザエージェントの再始動
 - [2026-06-20](2026/2026-06-20-computer-using-agent.md) - Computer-Using Agent (CUA) -- コンピュータ操作 AI の API 公開

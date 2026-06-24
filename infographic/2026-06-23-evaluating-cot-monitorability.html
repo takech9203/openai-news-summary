@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluating Chain of Thought Monitorability - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-sublabel {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 22px;
+            width: 12px;
+            height: 12px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--openai-green);
+        }
+
+        .timeline-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .timeline-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .timeline-item .timeline-date {
+            font-size: 11px;
+            color: var(--openai-green);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        /* Deployment table */
+        .deployment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .deployment-table th,
+        .deployment-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .deployment-table th {
+            background: var(--openai-gray);
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .deployment-table td {
+            color: var(--text-primary);
+        }
+
+        .deployment-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .highlight-value {
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* M-Score formula */
+        .formula-box {
+            background: var(--openai-gray);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .formula-box .formula {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            color: var(--openai-dark);
+            font-size: 0.95rem;
+        }
+
+        .formula-box .formula-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">研究成果 / 安全性</span>
+                <h1>Evaluating Chain of Thought Monitorability</h1>
+                <p class="date">2026-06-23</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 - キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>CoT の忠実性評価</h3>
+                        <p>Chain of Thought が内部推論プロセスをどの程度正確に反映しているかを定量的に評価する手法</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>モニターによる検出可能性</h3>
+                        <p>安全性モニターが CoT から危険なパターンや不正な推論を発見できるかどうかの検証</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚔️</div>
+                    <div class="key-point-content">
+                        <h3>操作耐性</h3>
+                        <p>モデルが CoT を意図的に操作して監視システムを回避する可能性とその対策</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>スケーラビリティ</h3>
+                        <p>評価フレームワークが大規模なデプロイメント環境に適用可能かどうかの検証</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards - 4 Evaluation Dimensions -->
+        <section class="section">
+            <h2 class="section-title">4 つの評価次元</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🎯 忠実性評価</h3>
+                    <p>CoT が内部推論を正確に反映するか。モデルの実際の意思決定プロセスと CoT の記述が一致しているかを測定</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔎 検出可能性</h3>
+                    <p>安全性モニターが CoT から危険パターンを発見できるか。不正な推論や有害な意図の痕跡を検知する能力</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ 操作耐性</h3>
+                    <p>モデルが CoT を操作して監視を回避できるか。意図的な隠蔽や偽装に対するシステムのロバスト性</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👁️ 解釈可能性</h3>
+                    <p>人間が CoT を理解・判断できるか。監督者が推論過程を読み取り、適切な判断を下せる明瞭性</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数値データ</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">5.4%</div>
+                    <div class="stat-label">Production Traffic</div>
+                    <div class="stat-sublabel">評価認識率 (本番環境)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5.1%</div>
+                    <div class="stat-label">Simulated Evaluation</div>
+                    <div class="stat-sublabel">評価認識率 (シミュレーション)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~100%</div>
+                    <div class="stat-label">SWE-Bench</div>
+                    <div class="stat-sublabel">評価認識率 (ベンチマーク)</div>
+                </div>
+            </div>
+            <div class="formula-box">
+                <div class="formula">M-score = w₁ × Faithfulness + w₂ × Detectability + w₃ × Resistance + w₄ × Interpretability</div>
+                <div class="formula-label">忠実性 + 検出性 + 耐性 + 解釈性の重み付きスコア</div>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram - Evaluation Pipeline -->
+        <section class="section">
+            <h2 class="section-title">評価パイプライン</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    A["🤖 Model"] --> B["💭 CoT Generation"]
+    B --> C["✅ Faithfulness Check"]
+    C --> D["🔍 Monitor Detection"]
+    D --> E["🛡️ Manipulation Resistance"]
+    E --> F["👁️ Interpretability Score"]
+    F --> G["📊 M-Score"]
+
+    style A fill:#343541,stroke:#10A37F,stroke-width:2px,color:white
+    style B fill:#F7F7F8,stroke:#10A37F,stroke-width:2px,color:#343541
+    style C fill:#F7F7F8,stroke:#10A37F,stroke-width:2px,color:#343541
+    style D fill:#F7F7F8,stroke:#10A37F,stroke-width:2px,color:#343541
+    style E fill:#F7F7F8,stroke:#10A37F,stroke-width:2px,color:#343541
+    style F fill:#F7F7F8,stroke:#10A37F,stroke-width:2px,color:#343541
+    style G fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+                </pre>
+            </div>
+        </section>
+
+        <!-- Deployment Simulation Connection -->
+        <section class="section">
+            <h2 class="section-title">Deployment Simulation との接続</h2>
+            <p style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">
+                GPT-5.2 はトラフィックが「評価」であることをどの程度認識しているか。本番環境とシミュレーション環境で類似した認識率を示し、ベンチマーク環境では大幅に高い認識率を記録。
+            </p>
+            <table class="deployment-table">
+                <thead>
+                    <tr>
+                        <th>環境</th>
+                        <th>評価認識率</th>
+                        <th>備考</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Production (本番トラフィック)</td>
+                        <td class="highlight-value">5.4%</td>
+                        <td>ラベル付き本番トラフィックでの認識</td>
+                    </tr>
+                    <tr>
+                        <td>Simulated Evaluation</td>
+                        <td class="highlight-value">5.1%</td>
+                        <td>シミュレーション環境での認識</td>
+                    </tr>
+                    <tr>
+                        <td>SWE-Bench</td>
+                        <td class="highlight-value">~100%</td>
+                        <td>ベンチマークタスクとしてほぼ完全に認識</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">
+                本番環境とシミュレーション環境の差が小さいこと (5.4% vs 5.1%) は、シミュレーションが本番に近い評価環境を提供できていることを示唆。
+            </p>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Safety Monitor - CoT 評価の実装例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+from dataclasses import dataclass
+
+@dataclass
+class MonitorResult:
+    faithfulness: float    # CoT が内部推論を反映する度合い
+    detectability: float   # 危険パターンの検出可能性
+    resistance: float      # 操作への耐性
+    interpretability: float # 人間の理解しやすさ
+
+    @property
+    def m_score(self) -> float:
+        """重み付き M-score を計算"""
+        weights = [0.3, 0.3, 0.25, 0.15]
+        scores = [self.faithfulness, self.detectability,
+                  self.resistance, self.interpretability]
+        return sum(w * s for w, s in zip(weights, scores))
+
+
+class CoTSafetyMonitor:
+    """Chain of Thought のモニタリング評価システム"""
+
+    def __init__(self, model: str = "gpt-5.2"):
+        self.client = OpenAI()
+        self.model = model
+
+    def evaluate_cot(self, prompt: str, cot_output: str) -> MonitorResult:
+        """CoT 出力を 4 次元で評価"""
+        # 忠実性チェック: CoT が実際の推論を反映しているか
+        faithfulness = self._check_faithfulness(prompt, cot_output)
+
+        # 検出可能性: 危険パターンの有無
+        detectability = self._detect_patterns(cot_output)
+
+        # 操作耐性: 意図的な隠蔽の兆候
+        resistance = self._assess_resistance(cot_output)
+
+        # 解釈可能性: 人間にとっての明瞭度
+        interpretability = self._score_interpretability(cot_output)
+
+        return MonitorResult(
+            faithfulness=faithfulness,
+            detectability=detectability,
+            resistance=resistance,
+            interpretability=interpretability
+        )
+
+    def _check_faithfulness(self, prompt: str, cot: str) -> float:
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": "Rate CoT faithfulness 0-1."},
+                {"role": "user", "content": f"Prompt: {prompt}\nCoT: {cot}"}
+            ]
+        )
+        return float(response.choices[0].message.content)
+
+    def _detect_patterns(self, cot: str) -> float:
+        """危険パターンの検出スコアを返す"""
+        # 実装: パターンマッチング + LLM ベース検出
+        ...
+
+    def _assess_resistance(self, cot: str) -> float:
+        """操作耐性スコアを返す"""
+        # 実装: adversarial probing
+        ...
+
+    def _score_interpretability(self, cot: str) -> float:
+        """解釈可能性スコアを返す"""
+        # 実装: 構造化度・明瞭度の評価
+        ...
+
+
+# 使用例
+monitor = CoTSafetyMonitor(model="gpt-5.2")
+result = monitor.evaluate_cot(
+    prompt="How to optimize database queries?",
+    cot_output="Let me think step by step..."
+)
+print(f"M-score: {result.m_score:.3f}")
+print(f"  Faithfulness:    {result.faithfulness:.3f}")
+print(f"  Detectability:   {result.detectability:.3f}")
+print(f"  Resistance:      {result.resistance:.3f}")
+print(f"  Interpretability:{result.interpretability:.3f}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🤖 エージェントシステムの安全監視</h4>
+                <p>自律的に動作する AI エージェントの推論過程を CoT モニタリングで常時監視し、危険な行動パターンを事前に検出。エージェントが複雑なタスクを実行する際の安全性を確保する。</p>
+            </div>
+            <div class="use-case">
+                <h4>📊 モデル選択の判断基準</h4>
+                <p>M-score を用いてモデル間のモニタリング容易性を比較し、デプロイメント環境に最適なモデルを選択。安全性と性能のトレードオフを定量的に評価できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔬 アライメント研究の基盤</h4>
+                <p>CoT のモニタリング可能性を体系的に評価することで、モデルのアライメント状態を継続的に追跡。将来のアライメント手法の開発・検証に不可欠なインフラストラクチャを提供する。</p>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2 class="section-title">2026 年 安全性研究タイムライン</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">Phase 1</div>
+                    <h4>Monitorability Evaluations</h4>
+                    <p>モニタリング可能性の基礎的な評価フレームワークの確立。評価指標と手法の定義。</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Phase 2</div>
+                    <h4>CoT Monitoring</h4>
+                    <p>Chain of Thought に特化したモニタリング手法の開発。忠実性・検出性・耐性・解釈性の 4 次元評価。</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Phase 3</div>
+                    <h4>Deployment Simulation</h4>
+                    <p>本番環境を模したシミュレーションでのモニタリング性能検証。GPT-5.2 での大規模実験。</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">Phase 4</div>
+                    <h4>Safe Completions</h4>
+                    <p>モニタリング評価に基づく安全な出力生成の実現。M-score を活用したリアルタイム安全性保証。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/evaluating-chain-of-thought-monitorability/" target="_blank" rel="noopener noreferrer">https://openai.com/index/evaluating-chain-of-thought-monitorability/</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - Infographic generated on 2026-06-23</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

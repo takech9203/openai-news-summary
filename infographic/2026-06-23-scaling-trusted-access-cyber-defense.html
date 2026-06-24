@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scaling Trusted Access for Cyber Defense - サイバー防衛のための信頼されたアクセスのグローバルスケーリング</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content { position: relative; z-index: 1; }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-bottom: 8px;
+        }
+
+        .header .date {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header .shield-icon {
+            font-size: 3rem;
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            opacity: 0.3;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid var(--openai-green);
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--openai-dark);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.1);
+        }
+
+        .stat-card .phase-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-card .phase-label {
+            font-size: 0.72rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.1);
+        }
+
+        .feature-card .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .feature-card p {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--openai-green), var(--openai-dark));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 18px;
+            width: 12px;
+            height: 12px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--openai-green);
+        }
+
+        .timeline-item.highlight {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08), rgba(16, 163, 127, 0.02));
+            border-color: var(--openai-green);
+        }
+
+        .timeline-item.highlight::before {
+            width: 14px;
+            height: 14px;
+            left: -27px;
+            top: 17px;
+            background: var(--openai-green);
+            box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.3);
+        }
+
+        .timeline-date {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 2px;
+        }
+
+        .timeline-desc {
+            font-size: 0.78rem;
+            color: #666;
+        }
+
+        /* Tables */
+        .expansion-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+
+        .expansion-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .expansion-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .expansion-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .expansion-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .expansion-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .expansion-table tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        .expansion-table tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        /* Geographic Expansion */
+        .geo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .geo-card {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .geo-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--openai-dark);
+        }
+
+        .geo-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .geo-card li {
+            font-size: 0.8rem;
+            padding: 4px 0;
+            padding-left: 14px;
+            position: relative;
+            color: #555;
+        }
+
+        .geo-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 5px;
+            height: 5px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid-container .diagram-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .mermaid { display: flex; justify-content: center; }
+
+        /* Use Cases */
+        .usecase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .usecase-card {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.05), rgba(16, 163, 127, 0.02));
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+        }
+
+        .usecase-card .icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .usecase-card h3 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .usecase-card p {
+            font-size: 0.78rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Code block */
+        .code-container {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .code-header {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-header .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .code-header .dot-red { background: #f38ba8; }
+        .code-header .dot-yellow { background: #f9e2af; }
+        .code-header .dot-green { background: #a6e3a1; }
+
+        pre {
+            margin: 0;
+            border-radius: 0 0 12px 12px;
+        }
+
+        pre code {
+            font-size: 0.78rem !important;
+            line-height: 1.6 !important;
+            padding: 20px !important;
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 16px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--openai-green);
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin: 2px;
+        }
+
+        /* Deco */
+        .deco-line {
+            width: 60px;
+            height: 3px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            margin: 16px 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            color: #666;
+            font-size: 0.82rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .disclaimer {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header { padding: 32px 20px; }
+            .header h1 { font-size: 1.4rem; }
+            .section { padding: 24px 20px; }
+            .key-points { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+            .geo-grid { grid-template-columns: 1fr; }
+            .usecase-grid { grid-template-columns: 1fr; }
+            .header .shield-icon { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">セキュリティ / サイバー防衛</span>
+                <h1>Scaling Trusted Access for Cyber Defense</h1>
+                <p class="subtitle">サイバー防衛のための信頼されたアクセスのグローバルスケーリング</p>
+                <p class="date">2026-06-23 | OpenAI News</p>
+            </div>
+            <div class="shield-icon">&#x1F6E1;</div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">&#x1F4CC; キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">Trusted Access プログラムのグローバルスケーリング</div>
+                <div class="key-point">対象国・組織の大幅拡大</div>
+                <div class="key-point">国際審査標準の確立</div>
+                <div class="key-point">脆弱性パッチの民主化</div>
+            </div>
+        </section>
+
+        <!-- Stats: 4 Phases -->
+        <section class="section">
+            <h2 class="section-title">&#x1F4CA; プログラム進化の 4 フェーズ</h2>
+            <p class="summary-text">
+                Trusted Access for Cyber Defense プログラムは、4 つのフェーズを経てグローバルスケーリングを実現する段階的アプローチを採用している。
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="phase-num">Phase 1</div>
+                    <div class="phase-label">基盤構築<br/>Foundation</div>
+                </div>
+                <div class="stat-card">
+                    <div class="phase-num">Phase 2</div>
+                    <div class="phase-label">次世代モデル<br/>Next-Gen Models</div>
+                </div>
+                <div class="stat-card">
+                    <div class="phase-num">Phase 3</div>
+                    <div class="phase-label">Daybreak 統合<br/>Integration</div>
+                </div>
+                <div class="stat-card">
+                    <div class="phase-num">Phase 4</div>
+                    <div class="phase-label">グローバルスケーリング<br/>Global Scaling</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards: Target Organizations -->
+        <section class="section">
+            <h2 class="section-title">&#x1F3E2; 対象組織カテゴリ</h2>
+            <p class="summary-text">
+                Trusted Access プログラムのグローバル展開により、以下の 5 つのカテゴリの組織がサイバー防衛 AI へのアクセスを獲得する。
+            </p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">&#x1F3DB;</div>
+                    <h3>政府系サイバー防衛機関</h3>
+                    <p>各国の CERT/CSIRT、国家サイバーセキュリティセンター</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">&#x26A1;</div>
+                    <h3>重要インフラ事業者</h3>
+                    <p>エネルギー、通信、交通、金融セクター</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">&#x1F6E1;</div>
+                    <h3>セキュリティベンダー</h3>
+                    <p>グローバルおよびリージョナルのセキュリティ企業</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">&#x1F393;</div>
+                    <h3>学術・研究機関</h3>
+                    <p>大学のサイバーセキュリティ研究室、研究所</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">&#x1F680;</div>
+                    <h3>サイバーセキュリティスタートアップ</h3>
+                    <p>革新的なセキュリティソリューション開発企業</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Table -->
+        <section class="section">
+            <h2 class="section-title">&#x1F4C5; フェーズ進化タイムライン</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2026 年 4 月 - Phase 1: 基盤構築</div>
+                    <div class="timeline-title">Trusted Access for Cyber プログラム開始</div>
+                    <div class="timeline-desc">初期パートナーの選定、審査基準の確立、GPT-5.4-Cyber の限定アクセス提供</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026 年 5 月上旬 - Phase 2: 次世代モデル</div>
+                    <div class="timeline-title">GPT-5.5-Cyber 展開</div>
+                    <div class="timeline-desc">次世代サイバーセキュリティ特化モデルの導入、性能大幅向上</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026 年 5 月中旬 - Phase 3: Daybreak 統合</div>
+                    <div class="timeline-title">Daybreak ブランドへの統合</div>
+                    <div class="timeline-desc">全サイバーセキュリティ施策の統合ブランド化、EU アクセス開始</div>
+                </div>
+                <div class="timeline-item highlight">
+                    <div class="timeline-date">2026 年 6 月 - Phase 4: グローバルスケーリング</div>
+                    <div class="timeline-title">Scaling Trusted Access for Cyber Defense</div>
+                    <div class="timeline-desc">対象国・組織の大幅拡大、国際審査標準の確立、脆弱性パッチの民主化</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Geographic Expansion -->
+        <section class="section">
+            <h2 class="section-title">&#x1F30D; 地理的拡大</h2>
+            <p class="summary-text">
+                Trusted Access プログラムは、以下の 4 つの主要地域ブロックへの展開を通じてグローバルカバレッジを実現する。
+            </p>
+            <div class="geo-grid">
+                <div class="geo-card">
+                    <h3>&#x1F1EA;&#x1F1FA; EU 圏</h3>
+                    <ul>
+                        <li>ENISA との連携強化</li>
+                        <li>GDPR 準拠のデータ処理基盤</li>
+                        <li>EU 加盟国 CERT への展開</li>
+                        <li>デジタルサービス法対応</li>
+                    </ul>
+                </div>
+                <div class="geo-card">
+                    <h3>&#x1F30F; アジア太平洋</h3>
+                    <ul>
+                        <li>日本 (JPCERT/CC、NISC)</li>
+                        <li>韓国 (KISA)</li>
+                        <li>オーストラリア (ACSC)</li>
+                        <li>シンガポール (CSA)</li>
+                    </ul>
+                </div>
+                <div class="geo-card">
+                    <h3>&#x1F441; Five Eyes</h3>
+                    <ul>
+                        <li>米国 (CISA)</li>
+                        <li>英国 (NCSC)</li>
+                        <li>カナダ (CCCS)</li>
+                        <li>豪州・ニュージーランド</li>
+                    </ul>
+                </div>
+                <div class="geo-card">
+                    <h3>&#x1F6E1; NATO</h3>
+                    <ul>
+                        <li>NATO CCDCOE との協力</li>
+                        <li>加盟国サイバー防衛機関</li>
+                        <li>集団防衛のサイバー次元</li>
+                        <li>共同演習への AI 統合</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram -->
+        <section class="section">
+            <h2 class="section-title">&#x1F3D7; Trusted Access プログラム構造</h2>
+            <div class="mermaid-container">
+                <div class="diagram-title">Trusted Access for Cyber Defense - アクセス階層とグローバルスケーリング</div>
+                <pre class="mermaid">
+flowchart TD
+    subgraph Program["Trusted Access for Cyber Defense"]
+        direction TB
+        Portal["Trusted Access ポータル"]
+
+        subgraph Tiers["アクセス階層"]
+            Tier1["Tier 1: フルアクセス<br/>(国家レベル CERT/CSIRT)"]
+            Tier2["Tier 2: 拡張アクセス<br/>(重要インフラ・ベンダー)"]
+            Tier3["Tier 3: 標準アクセス<br/>(学術・スタートアップ)"]
+        end
+
+        subgraph Vetting["国際審査標準"]
+            V1["組織信頼性評価"]
+            V2["セキュリティクリアランス"]
+            V3["利用目的審査"]
+            V4["データ管理能力"]
+        end
+    end
+
+    subgraph Scaling["グローバルスケーリング"]
+        EU["EU 圏展開"]
+        APAC["アジア太平洋展開"]
+        FE["Five Eyes 展開"]
+        NATO_S["NATO 展開"]
+    end
+
+    subgraph Capabilities["提供機能"]
+        VulnPatch["脆弱性パッチ<br/>民主化"]
+        ThreatIntel["脅威インテリジェンス<br/>共有"]
+        IncidentResp["インシデント<br/>レスポンス支援"]
+    end
+
+    Portal --> Tiers
+    Tiers --> Vetting
+    Vetting --> Scaling
+    Scaling --> Capabilities
+
+    Tier1 --> VulnPatch
+    Tier2 --> ThreatIntel
+    Tier3 --> IncidentResp
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Portal,VulnPatch,ThreatIntel,IncidentResp openai
+    class Tier1,Tier2,Tier3 dark
+    class V1,V2,V3,V4 light
+    class EU,APAC,FE,NATO_S accent
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">&#x1F4A1; 主要ユースケース</h2>
+            <div class="usecase-grid">
+                <div class="usecase-card">
+                    <div class="icon">&#x1F3DB;</div>
+                    <h3>国家レベル CERT/CSIRT のアクセス</h3>
+                    <p>各国の CERT/CSIRT が GPT-5.5-Cyber のフルアクセスを獲得。国家規模のサイバー脅威の検知・分析・対応を AI が支援し、従来は大国のみが保有していた高度な分析能力を中小国にも提供。</p>
+                </div>
+                <div class="usecase-card">
+                    <div class="icon">&#x26A1;</div>
+                    <h3>重要インフラ防衛</h3>
+                    <p>エネルギー、通信、交通、金融といった重要インフラセクターの事業者が、AI を活用した ICS/OT セキュリティ監視と脅威ハンティングを実施。サプライチェーン攻撃の早期検知を実現。</p>
+                </div>
+                <div class="usecase-card">
+                    <div class="icon">&#x1F527;</div>
+                    <h3>脆弱性パッチ適用の民主化</h3>
+                    <p>セキュリティリソースが限られた組織でも、AI による脆弱性評価とパッチ優先度判定を活用可能に。CVE 分析の自動化により、パッチ適用までの時間を大幅短縮。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- International Vetting Standards -->
+        <section class="section">
+            <h2 class="section-title">&#x1F50D; 国際審査標準フレームワーク</h2>
+            <div style="overflow-x: auto;">
+                <table class="expansion-table">
+                    <thead>
+                        <tr>
+                            <th>審査項目</th>
+                            <th>基準内容</th>
+                            <th>適用レベル</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>組織信頼性</strong></td>
+                            <td>政府推薦または国際機関認証</td>
+                            <td>全 Tier 必須</td>
+                        </tr>
+                        <tr>
+                            <td><strong>セキュリティクリアランス</strong></td>
+                            <td>相互認証協定に基づく国際標準</td>
+                            <td>Tier 1・2 必須</td>
+                        </tr>
+                        <tr>
+                            <td><strong>防衛目的確認</strong></td>
+                            <td>サイバー防衛目的 + 国際法遵守</td>
+                            <td>全 Tier 必須</td>
+                        </tr>
+                        <tr>
+                            <td><strong>データ管理能力</strong></td>
+                            <td>複数法域データガバナンス対応</td>
+                            <td>Tier 1・2 必須</td>
+                        </tr>
+                        <tr>
+                            <td><strong>監査体制</strong></td>
+                            <td>国際基準に基づく監査証跡の維持</td>
+                            <td>全 Tier 必須</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">&#x1F4BB; コードサンプル: Trusted Access API</h2>
+            <p class="summary-text">Trusted Access プログラムを通じた脆弱性パッチ優先度評価の API 実装例。</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span style="margin-left: 8px;">trusted-access-vuln-assessment.py</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Trusted Access for Cyber Defense - 脆弱性パッチ優先度評価
+response = client.chat.completions.create(
+    model="gpt-5.5-cyber",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a vulnerability assessment specialist operating under "
+                "the Trusted Access for Cyber Defense program. Evaluate "
+                "vulnerabilities using CVSS 4.0, EPSS, and contextual risk "
+                "factors specific to the requesting organization's sector and "
+                "region. Provide patch prioritization recommendations."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Assess the following CVEs for a critical infrastructure "
+                "operator in the energy sector (APAC region):\n\n"
+                "- CVE-2026-4521: RCE in SCADA HMI (CVSS 9.8)\n"
+                "- CVE-2026-4499: Auth bypass in OT gateway (CVSS 8.1)\n"
+                "- CVE-2026-4387: DoS in ICS protocol stack (CVSS 7.5)\n"
+                "- CVE-2026-4201: Info disclosure in historian DB (CVSS 5.3)\n\n"
+                "Provide: patch priority ranking, exploitation likelihood, "
+                "sector-specific impact analysis, and compensating controls."
+            )
+        }
+    ],
+    max_tokens=4096,
+    response_format={"type": "json_object"}
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">&#x1F4DD; まとめ</h2>
+            <p class="summary-text">
+                「Scaling Trusted Access for Cyber Defense」は、OpenAI のサイバー防衛プログラムが国内限定の初期段階からグローバル規模へと拡大する重要なマイルストーンである。国際審査標準の確立により、世界各国の防衛機関や重要インフラ事業者が統一されたフレームワークのもとでアクセスを獲得できるようになった。
+            </p>
+            <p class="summary-text">
+                脆弱性パッチの民主化は、セキュリティリソースの格差を AI で補完するというビジョンを具体化したものであり、従来は先進国の大規模組織のみが保有していたサイバー防衛能力を、グローバルに展開するための基盤が整った。
+            </p>
+            <div class="deco-line"></div>
+            <div style="margin-top: 12px;">
+                <span class="tag">Trusted Access</span>
+                <span class="tag">Cyber Defense</span>
+                <span class="tag">Global Scaling</span>
+                <span class="tag">GPT-5.5-Cyber</span>
+                <span class="tag">Vulnerability Patching</span>
+                <span class="tag">CERT/CSIRT</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                &#x1F517; ソース: <a href="https://openai.com/index/scaling-trusted-access-for-cyber-defense/">https://openai.com/index/scaling-trusted-access-for-cyber-defense/</a>
+            </p>
+            <div class="disclaimer">
+                本インフォグラフィックは公開情報に基づいて作成されたものです。正確な詳細については公式ページを直接参照されたい。
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
