@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Usage Dashboard - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Timeline Table */
+        .timeline-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .timeline-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .timeline-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .timeline-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .timeline-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 14px;
+        }
+
+        .timeline-table tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        .timeline-table tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        .timeline-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .timeline-table tr:hover {
+            background: rgba(16, 163, 127, 0.05);
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .timeline-badge.existing {
+            background: var(--text-muted);
+        }
+
+        .timeline-badge.new {
+            background: var(--openai-green);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-block:first-of-type {
+            margin-top: 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Impact List */
+        .impact-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--openai-gray);
+            font-size: 15px;
+        }
+
+        .impact-list li:last-child {
+            border-bottom: none;
+        }
+
+        .impact-list li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-table {
+                font-size: 12px;
+            }
+
+            .timeline-table th,
+            .timeline-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新 / セキュリティ</span>
+                <h1>Safety Usage Dashboard — API セーフティモニタリングの新機能</h1>
+                <p class="date">2026-06-23</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>Safety Usage Dashboard の新規リリース</h3>
+                        <p>OpenAI Platform に新たにリリースされたダッシュボードで、API 利用時のセーフティ状況をリアルタイムに把握可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>ブロックリクエストの可視化</h3>
+                        <p>safety_identifier 値に基づいてブロックされたリクエストを集約し、グラフィカルに可視化</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔗</div>
+                    <div class="key-point-content">
+                        <h3>インラインモデレーションスコアとの補完</h3>
+                        <p>6 月 4 日リリースのインラインモデレーションスコアと組み合わせ、包括的なセーフティインフラを構築</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👤</div>
+                    <div class="key-point-content">
+                        <h3>エンドユーザー別分析</h3>
+                        <p>エンドユーザー別のブロック頻度・傾向を分析し、不正利用パターンを早期に検出</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>簡単な導入</h3>
+                        <p>metadata.safety_identifier の追加のみで利用開始可能。既存の API コールに最小限の変更で対応</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Safety Infrastructure Components Table -->
+        <section class="section">
+            <h2 class="section-title">セーフティインフラストラクチャの進化</h2>
+            <table class="timeline-table">
+                <thead>
+                    <tr>
+                        <th>コンポーネント</th>
+                        <th>リリース日</th>
+                        <th>機能</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Moderation API</strong></td>
+                        <td><span class="timeline-badge existing">既存</span></td>
+                        <td>テキスト・画像の有害性判定</td>
+                    </tr>
+                    <tr>
+                        <td><strong>インラインモデレーションスコア</strong></td>
+                        <td><span class="timeline-badge new">2026-06-04</span></td>
+                        <td>リアルタイムモデレーション</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Safety Usage Dashboard</strong></td>
+                        <td><span class="timeline-badge new">2026-06-23</span></td>
+                        <td>ブロックリクエストの集約可視化</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Dashboard Features -->
+        <section class="section">
+            <h2 class="section-title">ダッシュボードの表示内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📈 集計と推移</h3>
+                    <p>ブロックされたリクエストの総数と時系列での推移をグラフで確認</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👥 エンドユーザー別分析</h3>
+                    <p>safety_identifier ごとにブロック頻度を集計し、問題ユーザーを特定</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📅 時系列データ</h3>
+                    <p>日別・週別・月別のトレンドを把握し、異常な増加を検知</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏷️ カテゴリ別内訳</h3>
+                    <p>ブロック理由のカテゴリ別内訳で、どの種類の違反が多いかを分析</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph App["開発者アプリケーション"]
+        User(["エンドユーザー"])
+        AppServer["アプリケーションサーバー"]
+    end
+
+    subgraph OpenAI["OpenAI Platform"]
+        API["Responses API / Chat Completions API"]
+        Safety["セーフティシステム"]
+        Dashboard["Safety Usage Dashboard"]
+    end
+
+    User --> AppServer
+    AppServer -->|"safety_identifier 付きリクエスト"| API
+    API --> Safety
+    Safety -->|"ブロック判定"| API
+    Safety -->|"ブロックログ集約"| Dashboard
+    API -->|"レスポンス or ブロック通知"| AppServer
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class API,Safety openai
+    class Dashboard dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Responses API での使用例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Responses API での使用例
+response = client.responses.create(
+    model="gpt-5.5",
+    input="Hello!",
+    metadata={
+        "safety_identifier": "user_12345"
+    }
+)
+print(response.output_text)</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Chat Completions API での使用例</span>
+                </div>
+                <pre><code class="language-python"># Chat Completions API での使用例
+response = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {"role": "user", "content": "Hello!"}
+    ],
+    metadata={
+        "safety_identifier": "user_12345"
+    }
+)
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🚨 不正利用の早期検出</h4>
+                <p>特定ユーザーのブロック頻度が急増した場合にアラートを設定し、不正利用を早期に発見・対処</p>
+            </div>
+            <div class="use-case">
+                <h4>📋 コンプライアンス対応</h4>
+                <p>規制要件に基づくセーフティ対策の実施状況をダッシュボードで証跡として記録・報告</p>
+            </div>
+            <div class="use-case">
+                <h4>🔧 プロダクト改善</h4>
+                <p>ブロックパターンの分析から、ユーザー体験を損なわない形でのセーフティ設計を最適化</p>
+            </div>
+            <div class="use-case">
+                <h4>🔔 アラート設定</h4>
+                <p>閾値を超えたブロック発生時に通知を受け取り、プロアクティブな対応を実現</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <ul class="impact-list">
+                <li>コンプライアンスの強化 — 規制対応のための可視性を大幅に向上</li>
+                <li>不正利用対策の効率化 — ユーザー別の傾向分析で的確な対策が可能に</li>
+                <li>運用コストの削減 — 手動モニタリングからダッシュボード監視への移行</li>
+                <li>実装の簡便さ — metadata に safety_identifier を追加するだけで利用開始</li>
+                <li>プロアクティブなセーフティ管理への移行 — リアクティブからプロアクティブへ</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - 2026-06-23</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

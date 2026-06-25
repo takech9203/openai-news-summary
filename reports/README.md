@@ -5,8 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-25](2026/2026-06-25-openai-broadcom-jalapeno-inference-chip.md) - OpenAI と Broadcom が「Jalapeno」を発表 -- OpenAI 初のカスタム AI 推論チップ
+- [2026-06-24](2026/2026-06-24-introducing-the-codex-app.md) - Codex App の発表: ChatGPT から独立したスタンドアロン AI ワークプラットフォームの誕生
+- [2026-06-24](2026/2026-06-24-chat-latest-snapshot-update.md) - chat-latest スナップショット更新 (2026 年 6 月)
 - [2026-06-23](2026/2026-06-23-trustworthy-third-party-evaluations.md) - Trustworthy Third-Party Evaluations Foundations: 信頼性の高い第三者評価の基盤構築
 - [2026-06-23](2026/2026-06-23-scaling-trusted-access-cyber-defense.md) - Scaling Trusted Access for Cyber Defense — サイバー防衛向け Trusted Access プログラムのスケーリング
+- [2026-06-23](2026/2026-06-23-safety-usage-dashboard.md) - Safety Usage Dashboard — API セーフティモニタリングの新機能
 - [2026-06-23](2026/2026-06-23-introducing-openai-partner-network.md) - OpenAI Partner Network: エンタープライズ AI エコシステムの本格始動
 - [2026-06-23](2026/2026-06-23-gpt-rosalind-new-capabilities.md) - GPT-Rosalind に新たな能力を導入: 生化学推論の深化と複合ワークフローの拡張
 - [2026-06-23](2026/2026-06-23-gpt-5-safe-completions.md) - GPT-5 Safe Completions: 安全な出力生成のための制約付きデコーディング手法
