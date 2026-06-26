@@ -5,7 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-26](2026/2026-06-26-how-agents-are-transforming-work.md) - エージェントが仕事を変革する -- OpenAI が業務領域別 AI エージェント活用の爆発的成長を報告
 - [2026-06-25](2026/2026-06-25-openai-broadcom-jalapeno-inference-chip.md) - OpenAI と Broadcom が「Jalapeno」を発表 -- OpenAI 初のカスタム AI 推論チップ
+- [2026-06-25](2026/2026-06-25-gpt-5-3-codex-sunset.md) - GPT-5.2 および GPT-5.3-Codex モデルのサンセット (提供終了)
 - [2026-06-24](2026/2026-06-24-introducing-the-codex-app.md) - Codex App の発表: ChatGPT から独立したスタンドアロン AI ワークプラットフォームの誕生
 - [2026-06-24](2026/2026-06-24-chat-latest-snapshot-update.md) - chat-latest スナップショット更新 (2026 年 6 月)
 - [2026-06-23](2026/2026-06-23-trustworthy-third-party-evaluations.md) - Trustworthy Third-Party Evaluations Foundations: 信頼性の高い第三者評価の基盤構築
