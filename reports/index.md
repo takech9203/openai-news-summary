@@ -8,6 +8,7 @@ OpenAI の最新ニュースレポート一覧
 - [2026-06-27](2026/2026-06-27-previewing-gpt-5-6-sol.md) - GPT-5.6 モデルファミリーのプレビュー発表: Sol / Terra / Luna の 3 モデル構成とホワイトハウスによるリリース制限
 - [2026-06-26](2026/2026-06-26-openai-hires-uber-india-chief.md) - OpenAI、Uber India 元社長 Prabhjeet Singh をインド初の MD に任命
 - [2026-06-26](2026/2026-06-26-how-agents-are-transforming-work.md) - エージェントが仕事を変革する -- OpenAI が業務領域別 AI エージェント活用の爆発的成長を報告
+- [2026-06-26](2026/2026-06-26-helping-build-shared-standards-advanced-ai.md) - Helping Build Shared Standards for Advanced AI: 高度な AI の国際共有標準の構築
 - [2026-06-25](2026/2026-06-25-openai-broadcom-jalapeno-inference-chip.md) - OpenAI と Broadcom が「Jalapeno」を発表 -- OpenAI 初のカスタム AI 推論チップ
 - [2026-06-25](2026/2026-06-25-gpt-5-3-codex-sunset.md) - GPT-5.2 および GPT-5.3-Codex モデルのサンセット (提供終了)
 - [2026-06-24](2026/2026-06-24-introducing-the-codex-app.md) - Codex App の発表: ChatGPT から独立したスタンドアロン AI ワークプラットフォームの誕生
