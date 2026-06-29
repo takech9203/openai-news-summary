@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-28](2026/2026-06-28-hp-frontier-partnership.md) - HP Inc. が OpenAI と Frontier Strategic Partnership を締結 -- エンタープライズ AI をプラットフォームレベルで全社統合
+- [2026-06-28](2026/2026-06-28-apple-vision-pro-exec-openai.md) - Apple Vision Pro 担当副社長 Paul Meade が OpenAI ハードウェアチームに移籍
 - [2026-06-27](2026/2026-06-27-previewing-gpt-5-6-sol.md) - GPT-5.6 モデルファミリーのプレビュー発表: Sol / Terra / Luna の 3 モデル構成とホワイトハウスによるリリース制限
 - [2026-06-26](2026/2026-06-26-openai-hires-uber-india-chief.md) - OpenAI、Uber India 元社長 Prabhjeet Singh をインド初の MD に任命
 - [2026-06-26](2026/2026-06-26-how-agents-are-transforming-work.md) - エージェントが仕事を変革する -- OpenAI が業務領域別 AI エージェント活用の爆発的成長を報告
