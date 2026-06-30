@@ -5,9 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-06-29](2026/2026-06-29-mapping-ai-jobs-transition-eu.md) - EU における AI 雇用転換のマッピング -- OpenAI が欧州労働市場向け 4 次元フレームワークを発表
+- [2026-06-29](2026/2026-06-29-introducing-upgrades-to-codex.md) - GPT-5-Codex: Codex プラットフォーム向けに最適化された GPT-5 ベースのコーディングモデル
+- [2026-06-29](2026/2026-06-29-codex-now-generally-available.md) - OpenAI Codex が Amazon Bedrock で正式に一般提供開始
 - [2026-06-28](2026/2026-06-28-hp-frontier-partnership.md) - HP Inc. が OpenAI と Frontier Strategic Partnership を締結 -- エンタープライズ AI をプラットフォームレベルで全社統合
 - [2026-06-28](2026/2026-06-28-apple-vision-pro-exec-openai.md) - Apple Vision Pro 担当副社長 Paul Meade が OpenAI ハードウェアチームに移籍
 - [2026-06-27](2026/2026-06-27-previewing-gpt-5-6-sol.md) - GPT-5.6 モデルファミリーのプレビュー発表: Sol / Terra / Luna の 3 モデル構成とホワイトハウスによるリリース制限
+- [2026-06-27](2026/2026-06-27-openai-devday-2026.md) - OpenAI DevDay 2026 - 参加応募受付開始
 - [2026-06-26](2026/2026-06-26-openai-hires-uber-india-chief.md) - OpenAI、Uber India 元社長 Prabhjeet Singh をインド初の MD に任命
 - [2026-06-26](2026/2026-06-26-how-agents-are-transforming-work.md) - エージェントが仕事を変革する -- OpenAI が業務領域別 AI エージェント活用の爆発的成長を報告
 - [2026-06-26](2026/2026-06-26-helping-build-shared-standards-advanced-ai.md) - Helping Build Shared Standards for Advanced AI: 高度な AI の国際共有標準の構築
