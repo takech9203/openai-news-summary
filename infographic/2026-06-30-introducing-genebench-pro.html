@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeneBench-Pro: ゲノミクス・生物学における AI 研究エージェント評価ベンチマーク</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white; padding: 48px 32px; border-radius: 24px;
+            margin-bottom: 32px; position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header-content { position: relative; z-index: 1; }
+        .category-badge {
+            display: inline-block; background: #10A37F; color: white;
+            padding: 6px 16px; border-radius: 20px; font-size: 12px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white; border-radius: 20px; padding: 32px;
+            margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+        .section-title {
+            font-size: 1.25rem; font-weight: 700; color: #343541;
+            margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+        }
+        .section-title::before {
+            content: ''; width: 4px; height: 24px;
+            background: #10A37F; border-radius: 2px;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+        .key-point {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 20px; background: #ECECF1; border-radius: 12px;
+        }
+        .key-point-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; flex-shrink: 0;
+        }
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px; padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15); }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .comparison-card { padding: 24px; border-radius: 16px; }
+        .comparison-card.before { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); border: 2px solid #F87171; }
+        .comparison-card.after { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border: 2px solid #34D399; }
+        .comparison-card h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .comparison-card.before h4 { color: #DC2626; }
+        .comparison-card.after h4 { color: #059669; }
+        .comparison-card ul { list-style: none; padding: 0; }
+        .comparison-card ul li { font-size: 14px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .comparison-card ul li:last-child { border-bottom: none; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .stat-card { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 24px; border-radius: 16px; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: #10A37F; margin-bottom: 8px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+        .stat-note { font-size: 11px; opacity: 0.7; margin-top: 4px; }
+
+        .mermaid-container { background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid rgba(16, 163, 127, 0.2); overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+
+        .use-case { background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%); border-left: 4px solid #10A37F; padding: 20px 24px; border-radius: 0 12px 12px 0; margin-bottom: 16px; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .footer { margin-top: 40px; padding: 24px 32px; background: #ECECF1; border-radius: 16px; font-size: 13px; color: #8E8EA0; }
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+        .footer p { margin-bottom: 8px; }
+        .footer p:last-child { margin-bottom: 0; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .comparison { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-value { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">研究成果 / ベンチマーク</span>
+                <h1>GeneBench-Pro: ゲノミクス・生物学における AI 研究エージェント評価ベンチマークの発表</h1>
+                <p class="date">2026-06-30 | OpenAI Research</p>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9EC;</div>
+                    <div class="key-point-content">
+                        <h3>研究レベルのベンチマーク</h3>
+                        <p>複雑なゲノミクス・生物学データ分析における AI エージェントの能力を評価する研究レベルのベンチマーク。シニア科学者が 1 問あたり 10-40 時間を要する高難度問題で構成されています。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4CA;</div>
+                    <div class="key-point-content">
+                        <h3>GeneBench からの拡張</h3>
+                        <p>2026 年 4 月に発表された GeneBench (103 問題、10 ドメイン) を大幅に拡張。より広範なドメインと高難度の問題セットを提供します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9D0;</div>
+                    <div class="key-point-content">
+                        <h3>「研究センス」の評価</h3>
+                        <p>分析を形作る判断の連鎖 - 「Research Taste (研究センス)」をテスト。データナビゲーション、分析パス選択、品質管理、仮定修正、結論の防御可能性、多段階推論を評価します。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AF;</div>
+                    <div class="key-point-content">
+                        <h3>最高スコアでも 33.2%</h3>
+                        <p>GPT-5.5 Pro が 33.2% で最高スコアを達成。約 60% の問題は最良モデルでもパス率 20% 未満にとどまり、AI 研究エージェントの大きな成長余地を示しています。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>GPT-Rosalind の効率性</h3>
+                        <p>GPT-Rosalind (6 月アップデート) は GPT-5.5 の 20.4% に対し 21.6% のパス率を達成しつつ、トークン使用量を 31% 削減。コスト効率の高い研究支援を実現します。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After Comparison -->
+        <div class="section">
+            <h2 class="section-title">GeneBench vs GeneBench-Pro</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: GeneBench (2026 年 4 月)</h4>
+                    <ul>
+                        <li>103 問題</li>
+                        <li>10 ドメイン</li>
+                        <li>基礎的な計算生物学評価</li>
+                        <li>単一段階の問題解決</li>
+                        <li>限定的なドメインカバレッジ</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: GeneBench-Pro (2026 年 6 月)</h4>
+                    <ul>
+                        <li>拡張問題セット</li>
+                        <li>広範なドメインカバレッジ</li>
+                        <li>研究レベルの多段階推論評価</li>
+                        <li>「研究センス (Research Taste)」の新概念導入</li>
+                        <li>判断の連鎖を形成する分析能力の測定</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <h2 class="section-title">6 つの評価能力</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F5C2; データナビゲーション</h3>
+                    <p>大規模で複雑なゲノミクスデータセットを効率的に探索し、関連する情報を特定・抽出する能力を評価します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E4; 分析パス選択</h3>
+                    <p>複数の分析アプローチから最適な手法を選択し、研究目的に合致した分析戦略を構築する判断力を測定します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2705; 品質管理</h3>
+                    <p>データの前処理、異常値の検出、バッチ効果の補正など、分析品質を保証するための適切な管理手順の実行能力を評価します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F504; 仮定修正</h3>
+                    <p>新たなエビデンスに基づいて初期仮定を柔軟に修正し、分析方針を適応的に変更する能力をテストします。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F6E1; 結論の防御可能性</h3>
+                    <p>導出した結論が統計的に妥当で、代替仮説に対して防御可能であることを論理的に示す能力を評価します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9E9; 多段階推論</h3>
+                    <p>データ前処理から結論導出まで、複数の分析ステージにわたる一貫した推論チェーンを維持する能力を測定します。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="section">
+            <h2 class="section-title">モデル別スコア</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">33.2%</div>
+                    <div class="stat-label">GPT-5.5 Pro</div>
+                    <div class="stat-note">最高スコア</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">31.5%</div>
+                    <div class="stat-label">GPT-5.6 Sol (Pro)</div>
+                    <div class="stat-note">&nbsp;</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">25.0%</div>
+                    <div class="stat-label">GPT-5.5</div>
+                    <div class="stat-note">standard</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">21.6%</div>
+                    <div class="stat-label">GPT-Rosalind</div>
+                    <div class="stat-note">-31% tokens</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">11.2%</div>
+                    <div class="stat-label">Gemini 3.1 Pro</div>
+                    <div class="stat-note">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagrams -->
+        <div class="section">
+            <h2 class="section-title">評価パイプライン</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Benchmark["GeneBench-Pro ベンチマーク"]
+        Problems["問題セット\n(拡張版: 広範なドメイン)"]
+        Datasets["実世界ゲノミクス\nデータセット"]
+    end
+
+    subgraph Pipeline["評価パイプライン"]
+        Stage1["Stage 1:\nデータ前処理・品質管理"]
+        Stage2["Stage 2:\n探索的データ分析"]
+        Stage3["Stage 3:\n統計モデリング"]
+        Stage4["Stage 4:\n結果解釈・文脈化"]
+        Stage5["Stage 5:\n結論導出・防御性検証"]
+    end
+
+    subgraph Models["評価対象モデル"]
+        GPT55Pro["GPT-5.5 Pro\n(33.2%)"]
+        GPT56Sol["GPT-5.6 Sol\n(31.5%)"]
+        GPT55["GPT-5.5\n(25.0%)"]
+        Rosalind["GPT-Rosalind\n(21.6%, -31% tokens)"]
+        Gemini["Gemini 3.1 Pro\n(11.2%)"]
+    end
+
+    subgraph Scoring["スコアリング"]
+        JudgmentEval["判断ポイント\n評価"]
+        StatValid["統計的妥当性\n検証"]
+        FinalScore["最終パス率\n算出"]
+    end
+
+    Problems --> Stage1
+    Datasets --> Stage1
+    Stage1 --> Stage2
+    Stage2 --> Stage3
+    Stage3 --> Stage4
+    Stage4 --> Stage5
+
+    Models --> Stage1
+
+    Stage5 --> JudgmentEval
+    JudgmentEval --> StatValid
+    StatValid --> FinalScore
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class GPT55Pro,GPT56Sol,GPT55,Rosalind openai
+    class Stage1,Stage2,Stage3,Stage4,Stage5 dark
+    class Problems,Datasets light
+    class JudgmentEval,StatValid,FinalScore gray
+    class Gemini light
+                </pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">GeneBench から GeneBench-Pro への進化</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph V1["GeneBench (2026-04-23)"]
+        V1Scale["103 問題"]
+        V1Domain["10 ドメイン"]
+        V1Focus["基礎的\n計算生物学評価"]
+    end
+
+    subgraph V2["GeneBench-Pro (2026-06-30)"]
+        V2Scale["拡張問題セット"]
+        V2Domain["広範なドメイン"]
+        V2Focus["研究レベル\n多段階推論評価"]
+        V2Taste["研究センス\n(Research Taste)"]
+    end
+
+    V1Scale -->|"拡張"| V2Scale
+    V1Domain -->|"拡大"| V2Domain
+    V1Focus -->|"高難度化"| V2Focus
+    V1Focus -->|"新概念"| V2Taste
+
+    classDef v1 fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef v2 fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+
+    class V1Scale,V1Domain,V1Focus v1
+    class V2Scale,V2Domain,V2Focus,V2Taste v2
+                </pre>
+            </div>
+        </div>
+
+        <!-- Developer Implications -->
+        <div class="section">
+            <h2 class="section-title">開発者への示唆</h2>
+            <div class="use-case">
+                <h4>AI 研究エージェントの能力評価</h4>
+                <p>GeneBench-Pro を活用して、自社のゲノミクス・生物学 AI エージェントの研究能力を客観的に評価できます。多段階推論や判断の連鎖における性能を定量的に測定し、改善ポイントを特定できます。</p>
+            </div>
+            <div class="use-case">
+                <h4>コスト効率の最適化</h4>
+                <p>GPT-Rosalind のように、パス率を維持しつつトークン消費を 31% 削減するモデルの存在は、大規模な生物学データ分析パイプラインにおけるコスト最適化の指標となります。精度とコストのトレードオフを定量的に判断できます。</p>
+            </div>
+            <div class="use-case">
+                <h4>研究ワークフローの自動化設計</h4>
+                <p>ベンチマークが示す 5 段階の評価パイプライン (前処理 → 探索的分析 → 統計モデリング → 解釈 → 結論) は、研究ワークフロー自動化の設計パターンとして参考になります。各段階での AI の介入ポイントと人間の監督が必要な箇所を明確化できます。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Source:</strong> OpenAI Research</p>
+            <p><strong>Official:</strong> <a href="https://openai.com/index/introducing-genebench-pro/" target="_blank" rel="noopener">https://openai.com/index/introducing-genebench-pro/</a></p>
+            <p><strong>bioRxiv:</strong> <a href="https://www.biorxiv.org/content/10.64898/2026.06.29.735386v1" target="_blank" rel="noopener">https://www.biorxiv.org/content/10.64898/2026.06.29.735386v1</a></p>
+            <p style="margin-top: 12px; font-size: 12px;">Generated: 2026-06-30 | OpenAI News Infographic</p>
+        </div>
+
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+</body>
+</html>
