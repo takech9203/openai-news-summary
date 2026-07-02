@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Dump Epidemiology: 18 年間潜伏したバグの発見と修正</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white; padding: 48px 32px; border-radius: 24px;
+            margin-bottom: 32px; position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: -50%; right: -20%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header-content { position: relative; z-index: 1; }
+        .category-badge {
+            display: inline-block; background: #10A37F; color: white;
+            padding: 6px 16px; border-radius: 20px; font-size: 12px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white; border-radius: 20px; padding: 32px;
+            margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+        .section-title {
+            font-size: 1.25rem; font-weight: 700; color: #343541;
+            margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+        }
+        .section-title::before {
+            content: ''; width: 4px; height: 24px;
+            background: #10A37F; border-radius: 2px;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+        .key-point {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 20px; background: #ECECF1; border-radius: 12px;
+        }
+        .key-point-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; flex-shrink: 0;
+        }
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .step-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px; padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .step-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15); }
+        .step-number {
+            position: absolute; top: -12px; left: 20px;
+            background: #10A37F; color: white; width: 28px; height: 28px;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 14px; font-weight: 700;
+        }
+        .step-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; margin-top: 8px; }
+        .step-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .stats-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .stats-table th, .stats-table td {
+            padding: 14px 16px; text-align: left; font-size: 14px;
+            border-bottom: 1px solid #ECECF1;
+        }
+        .stats-table th {
+            background: #343541; color: white; font-weight: 700;
+        }
+        .stats-table th:first-child { border-radius: 8px 0 0 0; }
+        .stats-table th:last-child { border-radius: 0 8px 0 0; }
+        .stats-table tr:last-child td { border-bottom: none; }
+        .stats-table tr:nth-child(even) { background: #F7F7F8; }
+        .stats-table td:first-child { font-weight: 700; color: #10A37F; }
+
+        .code-block { margin: 20px 0; border-radius: 12px; overflow: hidden; }
+        .code-block-header {
+            background: #1e1e2e; color: #cdd6f4; padding: 10px 16px;
+            font-size: 13px; font-weight: 700; border-bottom: 1px solid #313244;
+        }
+        .code-block pre { margin: 0; padding: 20px; background: #1e1e2e; overflow-x: auto; }
+        .code-block pre code { font-size: 13px; line-height: 1.6; font-family: 'Courier New', monospace; }
+
+        .mermaid-container { background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid rgba(16, 163, 127, 0.2); overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+
+        .use-case { background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%); border-left: 4px solid #10A37F; padding: 20px 24px; border-radius: 0 12px 12px 0; margin-bottom: 16px; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .footer { margin-top: 40px; padding: 24px 32px; background: #ECECF1; border-radius: 16px; font-size: 13px; color: #8E8EA0; }
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+        .footer p { margin-bottom: 8px; }
+        .footer p:last-child { margin-bottom: 0; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .stats-table { font-size: 12px; }
+            .stats-table th, .stats-table td { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">Engineering</span>
+                <h1>Core Dump Epidemiology: 18 年間潜伏したバグの発見と修正</h1>
+                <p class="date">2026-06-30 | エンジニアリング / インフラストラクチャ</p>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>疫学的手法を応用した大規模コアダンプ分析</h3>
+                        <p>感染症の疫学調査と同様のアプローチで、大規模インフラストラクチャにおけるクラッシュパターンを体系的に分析。統計的手法により、個別のデバッグでは発見困難な障害の根本原因を特定しました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4A5;</div>
+                    <div class="key-point-content">
+                        <h3>ハードウェア障害の発見 (特定ロットのビットフリップ)</h3>
+                        <p>コアダンプのメタデータとハードウェアロット情報の相関分析により、特定の製造ロットに起因するビットフリップ障害を統計的に検出。ハードウェアロットの交換・隔離による解決を実現しました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F41B;</div>
+                    <div class="key-point-content">
+                        <h3>18 年間潜伏したソフトウェアバグ (レースコンディション) の発見</h3>
+                        <p>長期間にわたりオープンソースコードに潜伏していたレースコンディションを、大規模 ML ワークロードの高負荷環境下で顕在化させ、疫学的分析により特定。パッチを作成し上流に貢献しました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F310;</div>
+                    <div class="key-point-content">
+                        <h3>オープンソースコミュニティへの貢献</h3>
+                        <p>発見されたバグの修正パッチをオープンソースプロジェクトの上流にコントリビュート。OpenAI のインフラ規模だからこそ発見できた問題を、コミュニティ全体で共有しています。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Steps -->
+        <div class="section">
+            <h2 class="section-title">疫学的デバッグの 4 ステップ</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>データ収集</h3>
+                    <p>クラッシュ時コアダンプの自動収集。数万台規模のサーバー群から発生するすべてのクラッシュイベントを網羅的に記録します。</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>分類と集約</h3>
+                    <p>スタックトレース・メモリパターンによる自動分類。類似するクラッシュをグループ化し、パターンを抽出します。</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>疫学的分析</h3>
+                    <p>ハードウェアロット・ソフトウェアバージョンとの相関分析。どの要因がクラッシュ率に影響しているかを統計的に評価します。</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>仮説検証</h3>
+                    <p>統計的に有意な相関からメカニズムを構築。因果関係を確認し、修正パッチの作成と検証を行います。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Table -->
+        <div class="section">
+            <h2 class="section-title">統計的検出手法</h2>
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>手法</th>
+                        <th>目的</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>スタックトレースクラスタリング</td>
+                        <td>類似クラッシュのグループ化</td>
+                    </tr>
+                    <tr>
+                        <td>ハードウェアロット相関分析</td>
+                        <td>HW 起因障害の特定</td>
+                    </tr>
+                    <tr>
+                        <td>時系列異常検知</td>
+                        <td>デプロイ起因障害の特定</td>
+                    </tr>
+                    <tr>
+                        <td>メモリパターン分析</td>
+                        <td>レースコンディション vs HW 障害の判別</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Code Samples -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-block-header">Python - コアダンプ分析パイプラインの概念的な実装例</div>
+                <pre><code class="language-python"># コアダンプ分析パイプラインの概念的な実装例
+import hashlib
+from dataclasses import dataclass
+from collections import defaultdict
+
+@dataclass
+class CoreDumpMetadata:
+    timestamp: str
+    hostname: str
+    hardware_lot: str
+    software_version: str
+    stack_trace_hash: str
+    register_state: dict
+    memory_pattern: bytes
+    workload_type: str
+
+def classify_crash(core_dump: CoreDumpMetadata) -&gt; str:
+    """スタックトレースとメモリパターンに基づきクラッシュを分類"""
+    signature = hashlib.sha256(
+        f"{core_dump.stack_trace_hash}:{core_dump.register_state}".encode()
+    ).hexdigest()[:16]
+    return signature
+
+def epidemiological_analysis(crashes: list[CoreDumpMetadata]) -&gt; dict:
+    """疫学的手法による相関分析"""
+    by_hardware_lot = defaultdict(list)
+    by_time_window = defaultdict(list)
+    by_workload = defaultdict(list)
+
+    for crash in crashes:
+        by_hardware_lot[crash.hardware_lot].append(crash)
+        by_time_window[crash.timestamp[:10]].append(crash)
+        by_workload[crash.workload_type].append(crash)
+
+    # 統計的に有意な集中を検出
+    anomalies = detect_statistical_anomalies(
+        by_hardware_lot, by_time_window, by_workload
+    )
+    return anomalies</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-header">C - 問題のあったパターン (概念的な再現)</div>
+                <pre><code class="language-c">// 擬似コード: 問題のあったパターン (概念的な再現)
+// 高負荷時に稀に発生するダブルフリー / use-after-free
+
+void process_request(request_t *req) {
+    buffer_t *buf = allocate_buffer(req-&gt;size);
+
+    // スレッド A: バッファへの書き込み
+    write_to_buffer(buf, req-&gt;data);
+
+    // 問題: 特定のタイミングで別スレッドが
+    // 同じバッファを解放済みと誤認する可能性
+    if (is_timeout_expired(req)) {
+        // スレッド B が先にここに到達した場合
+        // buf は既に解放されている可能性がある
+        free_buffer(buf);  // double-free の発生
+    }
+
+    submit_buffer(buf);  // use-after-free の発生
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title">システムアーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Infrastructure["OpenAI インフラストラクチャ"]
+        Servers["数万台規模の\nサーバー群"]
+        Workloads["ML ワークロード\n(学習・推論)"]
+    end
+
+    subgraph Collection["コアダンプ収集基盤"]
+        CrashHandler["クラッシュハンドラ"]
+        Storage["コアダンプ\nストレージ"]
+        Metadata["メタデータ\n抽出・保存"]
+    end
+
+    subgraph Analysis["疫学的分析パイプライン"]
+        Classification["自動分類\n(スタックトレース)"]
+        Correlation["相関分析\n(HW/SW/時間)"]
+        Anomaly["異常検知\n(統計的手法)"]
+    end
+
+    subgraph Discovery["発見された障害"]
+        HWFault["ハードウェア障害\n(特定ロットの\nビットフリップ)"]
+        SWBug["ソフトウェアバグ\n(18 年間潜伏の\nレースコンディション)"]
+    end
+
+    subgraph Resolution["解決"]
+        HWFix["HW ロット交換\n・隔離"]
+        SWFix["パッチ作成\n・上流への貢献"]
+    end
+
+    Servers --> CrashHandler
+    Workloads --> CrashHandler
+    CrashHandler --> Storage
+    CrashHandler --> Metadata
+    Storage --> Classification
+    Metadata --> Classification
+    Classification --> Correlation
+    Correlation --> Anomaly
+    Anomaly --> HWFault
+    Anomaly --> SWBug
+    HWFault --> HWFix
+    SWBug --> SWFix
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class Servers,Workloads openai
+    class CrashHandler,Storage,Metadata dark
+    class Classification,Correlation,Anomaly dark
+    class HWFault,SWBug light
+    class HWFix,SWFix gray
+                </pre>
+            </div>
+        </div>
+
+        <!-- Workflow Comparison Diagram -->
+        <div class="section">
+            <h2 class="section-title">従来のデバッグ vs 疫学的デバッグ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph Traditional["従来のデバッグ"]
+        T1["バグ報告"]
+        T2["再現"]
+        T3["修正"]
+    end
+
+    subgraph Epidemiological["疫学的デバッグ"]
+        E1["大規模データ収集"]
+        E2["統計的分類"]
+        E3["相関分析"]
+        E4["仮説構築"]
+        E5["検証・修正"]
+    end
+
+    T1 --> T2
+    T2 --> T3
+
+    E1 --> E2
+    E2 --> E3
+    E3 --> E4
+    E4 --> E5
+
+    classDef traditional fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+    classDef epidemiological fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+
+    class T1,T2,T3 traditional
+    class E1,E2,E3,E4,E5 epidemiological
+                </pre>
+            </div>
+        </div>
+
+        <!-- Developer Implications -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>インフラエンジニア: 再現困難な稀少バグへの対処法実証</h4>
+                <p>従来の「再現→デバッグ」アプローチでは発見不可能な、大規模環境でのみ顕在化する稀少なバグに対して、疫学的アプローチが有効であることを実証しました。数万台規模のクラスタで発生する低確率イベントを、統計的に有意なシグナルとして検出する手法は、インフラエンジニアリングの新しいパラダイムを示しています。</p>
+            </div>
+            <div class="use-case">
+                <h4>AI/ML 運用者: ML ワークロード特有のストレスが潜在バグを顕在化</h4>
+                <p>ML ワークロードは従来のサーバーワークロードと比較して、メモリ使用パターンや計算負荷のプロファイルが大きく異なります。この特異なストレスパターンが、18 年間他の環境では発現しなかったレースコンディションを顕在化させました。AI/ML インフラを運用する際は、既知の安定したコンポーネントでも予期せぬ障害が発生しうることを考慮する必要があります。</p>
+            </div>
+            <div class="use-case">
+                <h4>ソフトウェア品質: 長寿命コードのリスクと規模がもたらす発見力</h4>
+                <p>18 年間潜伏したバグの存在は、長寿命のオープンソースコードに内在するリスクを示しています。同時に、大規模インフラストラクチャの運用が「確率的に稀なイベントを観測可能にする」という発見力をもたらすことも実証されました。規模はバグを生むだけでなく、バグを見つける力にもなります。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Source:</strong> OpenAI Engineering Blog</p>
+            <p><strong>URL:</strong> <a href="https://openai.com/index/core-dump-epidemiology-data-infrastructure-bug" target="_blank" rel="noopener">https://openai.com/index/core-dump-epidemiology-data-infrastructure-bug</a></p>
+            <p style="margin-top: 12px; font-size: 12px;">Generated: 2026-06-30 | OpenAI News Infographic</p>
+        </div>
+
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+        });
+    </script>
+</body>
+</html>

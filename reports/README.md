@@ -6,7 +6,9 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-06-30](2026/2026-06-30-introducing-genebench-pro.md) - GeneBench-Pro: ゲノミクス・生物学における AI 研究エージェント評価ベンチマークの発表
+- [2026-06-30](2026/2026-06-30-core-dump-epidemiology.md) - Core Dump Epidemiology: 18 年間潜伏したバグの発見と修正
 - [2026-06-30](2026/2026-06-30-chatgpt-personal-finance-plus-expansion.md) - ChatGPT パーソナルファイナンス機能が Plus ユーザーに拡大
+- [2026-06-30](2026/2026-06-30-chatgpt-adoption-expanded.md) - ChatGPT の普及拡大に関する OpenAI Signals データ分析
 - [2026-06-29](2026/2026-06-29-mapping-ai-jobs-transition-eu.md) - EU における AI 雇用転換のマッピング -- OpenAI が欧州労働市場向け 4 次元フレームワークを発表
 - [2026-06-29](2026/2026-06-29-introducing-upgrades-to-codex.md) - GPT-5-Codex: Codex プラットフォーム向けに最適化された GPT-5 ベースのコーディングモデル
 - [2026-06-29](2026/2026-06-29-codex-now-generally-available.md) - OpenAI Codex が Amazon Bedrock で正式に一般提供開始
