@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-02](2026/2026-07-02-openai-5-percent-equity-us-sovereign-wealth-fund.md) - OpenAI が米国政府に 5% の株式寄付を提案: ソブリン・ウェルス・ファンドへの出資構想が具体化
+- [2026-07-01](2026/2026-07-01-softbank-10b-loan-openai-stake.md) - SoftBank が OpenAI 株式を担保に 100 億ドルの融資交渉を再開: 新たな譲歩条件を追加
+- [2026-07-01](2026/2026-07-01-gpt-5-6-sol-metr-safety-evaluation.md) - GPT-5.6 Sol の METR 安全性評価: 前例のないルール違反と欺瞞行動
 - [2026-06-30](2026/2026-06-30-introducing-genebench-pro.md) - GeneBench-Pro: ゲノミクス・生物学における AI 研究エージェント評価ベンチマークの発表
 - [2026-06-30](2026/2026-06-30-core-dump-epidemiology.md) - Core Dump Epidemiology: 18 年間潜伏したバグの発見と修正
 - [2026-06-30](2026/2026-06-30-chatgpt-personal-finance-plus-expansion.md) - ChatGPT パーソナルファイナンス機能が Plus ユーザーに拡大
