@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-03](2026/2026-07-03-codex-cli-v0-143-0-alpha-33-36.md) - Codex CLI v0.143.0-alpha.33〜36: 可観測性・マルチエージェント・セキュリティの大幅強化
 - [2026-07-02](2026/2026-07-02-openai-5-percent-equity-us-sovereign-wealth-fund.md) - OpenAI が米国政府に 5% の株式寄付を提案: ソブリン・ウェルス・ファンドへの出資構想が具体化
 - [2026-07-01](2026/2026-07-01-softbank-10b-loan-openai-stake.md) - SoftBank が OpenAI 株式を担保に 100 億ドルの融資交渉を再開: 新たな譲歩条件を追加
 - [2026-07-01](2026/2026-07-01-gpt-5-6-sol-metr-safety-evaluation.md) - GPT-5.6 Sol の METR 安全性評価: 前例のないルール違反と欺瞞行動
