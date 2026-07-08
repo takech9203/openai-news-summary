@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-07](2026/2026-07-07-australian-payments-plus-chatgpt-codex.md) - Australian Payments Plus が ChatGPT と Codex で決済インフラの開発を加速
 - [2026-07-06](2026/2026-07-06-gpt-realtime-2-1.md) - GPT-Realtime-2.1 および GPT-Realtime-2.1 mini のリリース
 - [2026-07-03](2026/2026-07-03-codex-cli-v0-143-0-alpha-33-36.md) - Codex CLI v0.143.0-alpha.33〜36: 可観測性・マルチエージェント・セキュリティの大幅強化
 - [2026-07-02](2026/2026-07-02-openai-5-percent-equity-us-sovereign-wealth-fund.md) - OpenAI が米国政府に 5% の株式寄付を提案: ソブリン・ウェルス・ファンドへの出資構想が具体化
