@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-08](2026/2026-07-08-separating-signal-from-noise-coding-evaluations.md) - コーディング評価におけるシグナルとノイズの分離: SWE-Bench Pro の信頼性問題
+- [2026-07-08](2026/2026-07-08-k-12-educators-practical-ai-skills.md) - K-12 教育者の実践的 AI スキル構築を支援 — OpenAI Academy と Walton Family Foundation の協働
+- [2026-07-08](2026/2026-07-08-introducing-gpt-live.md) - GPT-Live の発表: 自然な人間 - AI 対話のための次世代音声モデル
+- [2026-07-08](2026/2026-07-08-government-national-security-partnerships.md) - OpenAI、政府および国家安全保障パートナーシップへのアプローチを公表
 - [2026-07-07](2026/2026-07-07-australian-payments-plus-chatgpt-codex.md) - Australian Payments Plus が ChatGPT と Codex で決済インフラの開発を加速
 - [2026-07-06](2026/2026-07-06-gpt-realtime-2-1.md) - GPT-Realtime-2.1 および GPT-Realtime-2.1 mini のリリース
 - [2026-07-03](2026/2026-07-03-codex-cli-v0-143-0-alpha-33-36.md) - Codex CLI v0.143.0-alpha.33〜36: 可観測性・マルチエージェント・セキュリティの大幅強化
