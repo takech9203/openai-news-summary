@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Health の発表 -- ヘルスケア専用バーティカルの正式リリース</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-light: #1AC99A;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-dark-alt: #444654;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 32px rgba(16, 163, 127, 0.15);
+            --radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, var(--openai-dark-alt) 100%);
+            border-radius: var(--radius);
+            padding: 3rem 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            letter-spacing: 0.02em;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 0.8rem;
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .header .date {
+            color: var(--openai-green-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 1.2rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points li {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--openai-green);
+            background: var(--openai-light);
+            border-radius: 0 10px 10px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .key-points li .icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .key-points li .text {
+            flex: 1;
+        }
+
+        .key-points li strong {
+            color: var(--openai-green-dark);
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+            border-color: var(--openai-green);
+        }
+
+        .feature-card .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card h4 {
+            color: var(--openai-dark);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            font-size: 0.85rem;
+            color: #555;
+            padding: 0.2rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '\2022';
+            color: var(--openai-green);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, var(--openai-dark-alt) 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            color: var(--openai-green-light);
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .info-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .info-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .info-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .info-table td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .info-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .info-table tr:last-child td:first-child {
+            border-radius: 0 0 0 10px;
+        }
+
+        .info-table tr:last-child td:last-child {
+            border-radius: 0 0 10px 0;
+        }
+
+        /* Code Block */
+        .code-block {
+            margin-top: 1.2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-block .code-label {
+            background: var(--openai-green);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .code-block pre code {
+            font-size: 0.82rem;
+            line-height: 1.6;
+            padding: 1.2rem !important;
+        }
+
+        /* Mermaid Container */
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 1.2rem;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: inline-block;
+            text-align: left;
+        }
+
+        /* Target Users */
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .target-card {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border-top: 3px solid var(--openai-green);
+        }
+
+        .target-card h4 {
+            color: var(--openai-dark);
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .target-card p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Partnership */
+        .partnership-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .partnership-list li {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border: 1px solid var(--openai-gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .partnership-list li .partner-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .partnership-list li strong {
+            color: var(--openai-green-dark);
+        }
+
+        /* Developer Impact */
+        .impact-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .impact-list li {
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.8rem;
+            background: var(--openai-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--openai-green);
+            font-size: 0.9rem;
+        }
+
+        .impact-list li strong {
+            display: block;
+            color: var(--openai-dark);
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        /* Subsection Title */
+        .subsection-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--openai-gray);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.05) 0%, rgba(16, 163, 127, 0.1) 100%);
+            border: 1px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.9;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: var(--radius);
+            padding: 2rem 2.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .related-links {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #d1d1d6;
+        }
+
+        .footer .related-links a {
+            display: inline-block;
+            margin: 0.3rem 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Note Box */
+        .note-box {
+            background: rgba(16, 163, 127, 0.08);
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .note-box::before {
+            content: '\26A0\FE0F';
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .header {
+                padding: 2rem 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .feature-grid,
+            .stats-grid,
+            .target-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .mermaid-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">新製品 / ヘルスケア</span>
+                <h1>ChatGPT Health の発表</h1>
+                <p class="subtitle">ヘルスケア専用バーティカルの正式リリース -- 一般ユーザーから医療従事者まで包括的にカバー</p>
+                <p class="date">2026-07-09 | OpenAI News/Blog</p>
+            </div>
+        </header>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="note-box">本レポートは、記事の概要情報に基づいて作成されている。正確な詳細については公式ページを参照されたい。</div>
+            <ul class="key-points">
+                <li>
+                    <span class="icon">&#x1F3E5;</span>
+                    <span class="text"><strong>ヘルスケア専用バーティカル:</strong> ChatGPT 内にヘルスケア専用の統合プロダクト「ChatGPT Health」を正式リリース。ChatGPT for Clinicians (4 月)、OpenAI for Healthcare (6 月)、Health Intelligence の改善 (6 月) を包括的に統合。</span>
+                </li>
+                <li>
+                    <span class="icon">&#x1F4CA;</span>
+                    <span class="text"><strong>毎週 2 億 3,000 万人以上:</strong> 健康関連の質問に ChatGPT を利用するユーザーの実態を踏まえ、安全性と正確性を最大限に担保した専用環境を提供。</span>
+                </li>
+                <li>
+                    <span class="icon">&#x1F469;&#x200D;&#x2695;&#xFE0F;</span>
+                    <span class="text"><strong>デュアルモード対応:</strong> 一般ユーザー向け健康管理機能と認証済み医療従事者向け臨床支援機能を、ユーザー属性に応じて提供。</span>
+                </li>
+                <li>
+                    <span class="icon">&#x1F9E0;</span>
+                    <span class="text"><strong>GPT-5.6 基盤:</strong> 高度な医療推論能力を基盤として、個人の健康管理から臨床意思決定支援までをシームレスにカバー。</span>
+                </li>
+                <li>
+                    <span class="icon">&#x1F512;</span>
+                    <span class="text"><strong>集大成的位置づけ:</strong> OpenAI のヘルスケア AI 戦略における集大成。「個別機能の集合体」から「統合プラットフォーム」への昇華。</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- 統計 -->
+        <section class="section">
+            <h2 class="section-title">主要指標</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">230M+</div>
+                    <div class="stat-label">毎週の健康関連クエリ数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">GPT-5.6</div>
+                    <div class="stat-label">基盤モデル</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">260+</div>
+                    <div class="stat-label">医師レビューネットワーク</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">50+</div>
+                    <div class="stat-label">AdventHealth 運用病院数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 対象ユーザー -->
+        <section class="section">
+            <h2 class="section-title">ChatGPT Health の全体像</h2>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #555;">ChatGPT のメインインターフェースから直接アクセスできるヘルスケア専用バーティカル。ユーザーの属性に応じた適切な機能と情報精度を提供する。</p>
+            <div class="target-grid">
+                <div class="target-card">
+                    <h4>&#x1F464; 一般ユーザー</h4>
+                    <p>症状チェック、健康情報の検索、セルフケアガイダンス、受診推奨</p>
+                </div>
+                <div class="target-card">
+                    <h4>&#x1F469;&#x200D;&#x2695;&#xFE0F; 認証済み医療従事者</h4>
+                    <p>臨床意思決定支援、鑑別診断、文書作成、薬物相互作用確認</p>
+                </div>
+                <div class="target-card">
+                    <h4>&#x1F3E2; 医療機関 (エンタープライズ)</h4>
+                    <p>HIPAA 準拠環境、EHR 統合、組織管理、監査証跡</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 一般ユーザー向け機能 -->
+        <section class="section">
+            <h2 class="section-title">一般ユーザー向け健康管理機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F50D;</div>
+                    <h4>インテリジェント症状チェック</h4>
+                    <ul>
+                        <li>対話型の症状評価インターフェース</li>
+                        <li>エビデンスに基づいた情報提供</li>
+                        <li>緊急性の判断と適切な受診推奨</li>
+                        <li>症状の経時的な追跡と変化の通知</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4CB;</div>
+                    <h4>パーソナライズド健康情報</h4>
+                    <ul>
+                        <li>健康プロファイルに基づく個別化情報</li>
+                        <li>慢性疾患管理サポート (服薬リマインダー、生活習慣改善提案)</li>
+                        <li>予防接種スケジュールや健康診断の推奨</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F48A;</div>
+                    <h4>セルフケアガイダンス</h4>
+                    <ul>
+                        <li>軽症の自己管理に関するエビデンスベースのアドバイス</li>
+                        <li>受診が必要な兆候の明確な提示</li>
+                        <li>応急処置や家庭でのケア方法の説明</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 医療従事者向け機能 -->
+        <section class="section">
+            <h2 class="section-title">医療従事者向け臨床支援機能</h2>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #555;">ChatGPT for Clinicians の機能を発展させ、ChatGPT Health の臨床モードとして統合。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F9E0;</div>
+                    <h4>GPT-5.6 高度な臨床推論</h4>
+                    <ul>
+                        <li>複雑な症例における多段階推論</li>
+                        <li>稀少疾患の鑑別診断支援 (Diagnose Rare Childhood Diseases の成果を統合)</li>
+                        <li>マルチモーダル対応 (医療画像、検査データの解釈支援)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4DD;</div>
+                    <h4>臨床文書の自動生成</h4>
+                    <ul>
+                        <li>SOAP ノート、退院サマリー、紹介状のドラフト作成</li>
+                        <li>音声入力からの構造化文書生成</li>
+                        <li>ICD-11 / CPT コードの自動提案</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4DA;</div>
+                    <h4>リアルタイムナレッジアクセス</h4>
+                    <ul>
+                        <li>最新の臨床ガイドラインとの連携</li>
+                        <li>PubMed / Cochrane Library からのエビデンス検索</li>
+                        <li>薬物データベースとの統合</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 安全性とガードレール -->
+        <section class="section">
+            <h2 class="section-title">安全性とガードレール</h2>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #555;">医療情報の提供にあたって多層的な安全性メカニズムを実装。</p>
+            <div class="table-container">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>安全性レイヤー</th>
+                            <th>機能</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>医療情報正確性チェック</strong></td>
+                            <td>GPT-5.5 Instant で培った Health Intelligence Layer を拡張</td>
+                        </tr>
+                        <tr>
+                            <td><strong>緊急性判定エンジン</strong></td>
+                            <td>緊急受診が必要な症状の即座の識別と警告表示</td>
+                        </tr>
+                        <tr>
+                            <td><strong>免責事項の明示</strong></td>
+                            <td>AI は診断を行わないことの明確な表示と医師への相談推奨</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ハルシネーション抑制</strong></td>
+                            <td>医療領域特化の事実性検証メカニズム</td>
+                        </tr>
+                        <tr>
+                            <td><strong>有害情報フィルター</strong></td>
+                            <td>自傷・危険行為に繋がる情報の遮断</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- HIPAA コンプライアンス -->
+        <section class="section">
+            <h2 class="section-title">HIPAA コンプライアンスと Privacy by Design</h2>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #555;">設計段階からプライバシー保護を組み込んだアーキテクチャを採用。</p>
+            <div class="table-container">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>要件</th>
+                            <th>実装</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>データ暗号化</strong></td>
+                            <td>AES-256 (保存時) / TLS 1.3 (転送時)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PHI の管理</strong></td>
+                            <td>学習データへの不使用保証、セッション終了時の自動削除</td>
+                        </tr>
+                        <tr>
+                            <td><strong>アクセス制御</strong></td>
+                            <td>RBAC + MFA + 生体認証オプション</td>
+                        </tr>
+                        <tr>
+                            <td><strong>監査証跡</strong></td>
+                            <td>全操作の不変ログ記録 (HIPAA Security Rule 対応)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BAA</strong></td>
+                            <td>エンタープライズプラン利用医療機関と締結</td>
+                        </tr>
+                        <tr>
+                            <td><strong>データ所在地</strong></td>
+                            <td>米国内データセンターでの処理保証 (オプション)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>同意管理</strong></td>
+                            <td>ユーザーによる健康データ共有のきめ細かな制御</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- GPT-5.6 技術詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細: GPT-5.6 の医療推論能力</h2>
+            <div class="table-container">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>指標</th>
+                            <th>GPT-5.6</th>
+                            <th>GPT-5.5 Instant</th>
+                            <th>GPT-5.4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>HealthBench スコア</strong></td>
+                            <td>最高</td>
+                            <td>高</td>
+                            <td>中-高</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HealthBench Professional</strong></td>
+                            <td>最高</td>
+                            <td>高</td>
+                            <td>中</td>
+                        </tr>
+                        <tr>
+                            <td><strong>稀少疾患診断精度</strong></td>
+                            <td>大幅向上</td>
+                            <td>-</td>
+                            <td>ベースライン</td>
+                        </tr>
+                        <tr>
+                            <td><strong>マルチモーダル医療画像解釈</strong></td>
+                            <td>対応強化</td>
+                            <td>限定的</td>
+                            <td>対応</td>
+                        </tr>
+                        <tr>
+                            <td><strong>臨床推論ステップ数</strong></td>
+                            <td>拡張</td>
+                            <td>標準</td>
+                            <td>標準</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Health API コードサンプル -->
+        <section class="section">
+            <h2 class="section-title">Health API (開発者向け)</h2>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #555;">ChatGPT Health のリリースに伴い、開発者向けの Health API が提供される可能性がある。</p>
+
+            <h3 class="subsection-title">一般ユーザー向け: 健康情報アシスタントの例</h3>
+            <div class="code-block">
+                <div class="code-label">Python - Health API (一般ユーザー向け)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ChatGPT Health の機能を API 経由で利用する例
+response = client.chat.completions.create(
+    model="gpt-5.6",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "あなたは医療情報アシスタントです。"
+                "エビデンスに基づいた正確な健康情報を提供し、"
+                "必要に応じて医療専門家への相談を推奨してください。"
+                "診断は行わず、情報提供と受診の判断支援に徹してください。"
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "2 日間続く激しい頭痛があります。"
+                "市販の鎮痛剤が効きません。どうすればよいですか?"
+            )
+        }
+    ],
+    temperature=0.2,
+    # 医療応答における安全性パラメータ (想定)
+    metadata={"domain": "health"},
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <h3 class="subsection-title">臨床医向け: 鑑別診断支援の例</h3>
+            <div class="code-block">
+                <div class="code-label">Python - Health API (臨床医向け)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 臨床医向け: 鑑別診断支援の例
+response = client.chat.completions.create(
+    model="gpt-5.6",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a clinical decision support assistant for verified healthcare professionals. "
+                "Provide evidence-based differential diagnoses ranked by likelihood, "
+                "suggest relevant diagnostic workups, and cite clinical guidelines where applicable. "
+                "This is a decision support tool; final clinical judgment rests with the physician."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "68-year-old male presents with acute onset dyspnea, pleuritic chest pain, "
+                "and unilateral leg swelling. HR 110, BP 100/60, SpO2 91% on room air. "
+                "Recently underwent right knee arthroplasty 10 days ago. "
+                "Provide differential diagnosis and recommended workup."
+            )
+        }
+    ],
+    temperature=0.1,
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- 医療機関パートナーシップ -->
+        <section class="section">
+            <h2 class="section-title">医療機関パートナーシップ</h2>
+            <ul class="partnership-list">
+                <li>
+                    <span class="partner-icon">&#x1F3E5;</span>
+                    <span><strong>AdventHealth:</strong> 全米約 50 病院での本番運用継続と ChatGPT Health への移行</span>
+                </li>
+                <li>
+                    <span class="partner-icon">&#x1F4BB;</span>
+                    <span><strong>主要 EHR ベンダー:</strong> Epic、Oracle Health (Cerner) との統合深化</span>
+                </li>
+                <li>
+                    <span class="partner-icon">&#x1F393;</span>
+                    <span><strong>学術医療機関:</strong> 臨床研究における AI 活用の共同プログラム</span>
+                </li>
+                <li>
+                    <span class="partner-icon">&#x1F4B3;</span>
+                    <span><strong>保険会社:</strong> 事前承認 (Prior Authorization) プロセスの効率化パイロット</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    subgraph Users["ユーザー"]
+        GeneralUser(["一般ユーザー"])
+        Clinician(["認証済み医療従事者"])
+        Organization(["医療機関"])
+    end
+
+    subgraph ChatGPTHealth["ChatGPT Health"]
+        subgraph Interface["統合インターフェース"]
+            ConsumerMode["コンシューマーモード<br/>(健康管理・症状チェック)"]
+            ClinicalMode["臨床モード<br/>(意思決定支援・文書作成)"]
+            EnterpriseMode["エンタープライズモード<br/>(組織管理・EHR 統合)"]
+        end
+
+        subgraph Engine["GPT-5.6 Medical Engine"]
+            Reasoning["臨床推論エンジン"]
+            MultiModal["マルチモーダル解析<br/>(画像・検査データ)"]
+            NLP["医療 NLP<br/>(文書生成・構造化)"]
+        end
+
+        subgraph Safety["安全性レイヤー"]
+            HealthIntel["Health Intelligence Layer"]
+            Urgency["緊急性判定エンジン"]
+            FactCheck["医療事実性検証"]
+            Guardrails["ガードレール<br/>(有害情報フィルター)"]
+        end
+
+        subgraph Compliance["コンプライアンスレイヤー"]
+            HIPAA["HIPAA 準拠<br/>(BAA / PHI 管理)"]
+            Encryption["暗号化<br/>(AES-256 / TLS 1.3)"]
+            Audit["監査証跡"]
+            Consent["同意管理"]
+        end
+    end
+
+    subgraph Knowledge["ナレッジソース"]
+        Guidelines["臨床ガイドライン<br/>(AHA / NCCN / WHO)"]
+        Literature["医学文献<br/>(PubMed / Cochrane)"]
+        DrugDB["薬物データベース"]
+        DoctorNetwork["医師レビューネットワーク<br/>(260+ 名)"]
+    end
+
+    subgraph Integration["外部統合"]
+        EHR["EHR システム<br/>(Epic / Oracle Health)"]
+        FHIR["FHIR R4 API"]
+        Wearable["ウェアラブルデバイス<br/>(将来構想)"]
+    end
+
+    GeneralUser --> ConsumerMode
+    Clinician --> ClinicalMode
+    Organization --> EnterpriseMode
+
+    ConsumerMode --> Reasoning
+    ClinicalMode --> Reasoning
+    ClinicalMode --> MultiModal
+    ClinicalMode --> NLP
+    EnterpriseMode --> NLP
+
+    Reasoning --> HealthIntel
+    MultiModal --> HealthIntel
+    NLP --> HealthIntel
+    HealthIntel --> Urgency
+    HealthIntel --> FactCheck
+    FactCheck --> Guardrails
+
+    Guardrails --> HIPAA
+    HIPAA --> Encryption
+    Encryption --> Audit
+
+    Reasoning --> Guidelines
+    Reasoning --> Literature
+    Reasoning --> DrugDB
+    FactCheck --> DoctorNetwork
+
+    EnterpriseMode --> FHIR
+    FHIR --> EHR
+    ConsumerMode -.->|"将来統合"| Wearable
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class ConsumerMode,ClinicalMode,EnterpriseMode,Reasoning,MultiModal,NLP openai
+    class HealthIntel,Urgency,FactCheck,Guardrails,HIPAA,Encryption,Audit,Consent dark
+    class Guidelines,Literature,DrugDB,DoctorNetwork light
+    class GeneralUser,Clinician,Organization,EHR,FHIR,Wearable gray
+                </div>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <ul class="impact-list">
+                <li>
+                    <strong>Health API の活用機会</strong>
+                    GPT-5.6 の医療推論能力を API 経由で利用できることにより、サードパーティ製ヘルスケアアプリケーション (遠隔医療プラットフォーム、患者ポータル、健康管理アプリ) の開発が加速する
+                </li>
+                <li>
+                    <strong>FHIR 統合開発の需要拡大</strong>
+                    ChatGPT Health と EHR システムを橋渡しするインテグレーション開発の需要が急増し、FHIR R4、SMART on FHIR、CDS Hooks に精通した開発者の市場価値が一層高まる
+                </li>
+                <li>
+                    <strong>ヘルスケア AI のプラットフォーム化</strong>
+                    ChatGPT Health が統合プラットフォームとなることで、その上にプラグインやエクステンションを構築するエコシステムが形成される可能性がある
+                </li>
+                <li>
+                    <strong>安全性設計のベストプラクティス</strong>
+                    多層的な安全性メカニズム (Health Intelligence Layer、緊急性判定、事実性検証) は、医療 AI アプリケーション全般の設計指針として参照できる
+                </li>
+                <li>
+                    <strong>コンプライアンス対応のコスト低減</strong>
+                    OpenAI が HIPAA 準拠のインフラを提供することで、個々の開発者・スタートアップがコンプライアンス対応にかける負担が大幅に軽減される
+                </li>
+                <li>
+                    <strong>競合環境の変化</strong>
+                    ChatGPT Health の登場は、既存の医療情報プロバイダー (UpToDate、DynaMed 等) や医療 AI スタートアップとの競争を激化させ、差別化戦略の再考が必要となる
+                </li>
+            </ul>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>ChatGPT Health は、OpenAI が 2026 年前半を通じて段階的に構築してきたヘルスケア AI 機能群の統合プロダクトである。ChatGPT for Clinicians (4 月)、OpenAI for Healthcare プラットフォーム (6 月)、GPT-5.5 Instant による Health Intelligence 改善 (6 月)、稀少疾患診断機能 (6 月) を一つの専用バーティカルに集約し、一般ユーザーから認証済み医療従事者、医療機関エンタープライズまでをカバーする包括的なヘルスケア AI ソリューションとして提供される。</p>
+                <br>
+                <p>GPT-5.6 を基盤とした高度な医療推論、多層的な安全性メカニズム、HIPAA 準拠のコンプライアンス基盤、そして EHR システムとのネイティブ統合により、ChatGPT Health は AI による医療支援を「個別機能の集合体」から「統合プラットフォーム」へと昇華させる試みである。毎週 2 億人以上が健康関連で ChatGPT を利用する現実を踏まえ、その膨大なニーズに対して安全かつ正確な医療情報を体系的に提供する専用環境の構築は、ヘルスケア AI 市場全体の成熟を示す重要なマイルストーンである。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Source: OpenAI News/Blog | 2026-07-09</p>
+            <p><a href="https://openai.com/index/introducing-chatgpt-health/" target="_blank">https://openai.com/index/introducing-chatgpt-health/</a></p>
+            <div class="related-links">
+                <p style="font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">関連リンク:</p>
+                <a href="https://openai.com/index/openai-for-healthcare/" target="_blank">OpenAI for Healthcare</a>
+                <a href="https://openai.com/index/improving-health-intelligence-in-chatgpt/" target="_blank">Improving Health Intelligence</a>
+                <a href="https://openai.com/index/making-chatgpt-better-for-clinicians" target="_blank">ChatGPT for Clinicians</a>
+                <a href="https://openai.com/index/diagnose-rare-childhood-diseases/" target="_blank">Diagnose Rare Childhood Diseases</a>
+                <a href="https://openai.com/index/adventhealth" target="_blank">AdventHealth</a>
+                <a href="https://platform.openai.com/docs/api-reference" target="_blank">OpenAI API Reference</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#10A37F',
+            primaryTextColor: '#343541',
+            primaryBorderColor: '#10A37F',
+            lineColor: '#10A37F',
+            background: '#FFFFFF',
+            mainBkg: '#F7F7F8'
+        }
+    });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
