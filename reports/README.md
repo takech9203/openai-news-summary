@@ -7,8 +7,11 @@ OpenAI の最新ニュースレポート一覧
 
 - [2026-07-10](2026/2026-07-10-gpt-5-6-microsoft-365-copilot.md) - GPT-5.6 が Microsoft 365 Copilot の推奨モデルに選定: エンタープライズ AI の新たな標準
 - [2026-07-10](2026/2026-07-10-chatgpt-for-ambitious-work.md) - ChatGPT for Your Most Ambitious Work: GPT-5.6 が実現するプロフェッショナル向け次世代 AI ワークフロー
+- [2026-07-10](2026/2026-07-10-apple-sues-openai-trade-secrets.md) - Apple が OpenAI を営業秘密窃取で提訴 -- 元 Apple 幹部らの組織的な情報持ち出しを主張
+- [2026-07-09](2026/2026-07-09-openai-shutting-down-atlas.md) - OpenAI が AI ブラウザ Atlas を終了、ブラウジング機能は既存製品に統合へ
 - [2026-07-09](2026/2026-07-09-introducing-chatgpt-health.md) - ChatGPT Health の発表 -- ヘルスケア専用バーティカルの正式リリース
 - [2026-07-09](2026/2026-07-09-gpt-5-6-model-family.md) - GPT-5.6 モデルファミリーの発表: Sol / Terra / Luna の 3 モデル構成と新機能群
+- [2026-07-09](2026/2026-07-09-fidji-simo-departs-openai.md) - Fidji Simo が OpenAI No.2 の役職を正式に退任、パートタイムアドバイザーへ移行
 - [2026-07-08](2026/2026-07-08-separating-signal-from-noise-coding-evaluations.md) - コーディング評価におけるシグナルとノイズの分離: SWE-Bench Pro の信頼性問題
 - [2026-07-08](2026/2026-07-08-k-12-educators-practical-ai-skills.md) - K-12 教育者の実践的 AI スキル構築を支援 — OpenAI Academy と Walton Family Foundation の協働
 - [2026-07-08](2026/2026-07-08-introducing-gpt-live.md) - GPT-Live の発表: 自然な人間 - AI 対話のための次世代音声モデル
