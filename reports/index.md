@@ -6,7 +6,9 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-07-11](2026/2026-07-11-chatgpt-family-household-expansion.md) - OpenAI がファミリー市場に本格参入 -- ChatGPT を「家庭の AI」へと進化させる戦略
+- [2026-07-10](2026/2026-07-10-introducing-company-knowledge.md) - Introducing Company Knowledge: ChatGPT Enterprise / Team 向けナレッジベース統合機能
 - [2026-07-10](2026/2026-07-10-gpt-5-6-microsoft-365-copilot.md) - GPT-5.6 が Microsoft 365 Copilot の推奨モデルに選定: エンタープライズ AI の新たな標準
+- [2026-07-10](2026/2026-07-10-frontierscience.md) - FrontierScience: OpenAI が科学研究を加速するための包括的イニシアチブを発表
 - [2026-07-10](2026/2026-07-10-deutsche-telekom-openai-partnership.md) - Deutsche Telekom: AI ネイティブな通信会社への変革を OpenAI と推進
 - [2026-07-10](2026/2026-07-10-chatgpt-for-ambitious-work.md) - ChatGPT for Your Most Ambitious Work: GPT-5.6 が実現するプロフェッショナル向け次世代 AI ワークフロー
 - [2026-07-10](2026/2026-07-10-apple-sues-openai-trade-secrets.md) - Apple が OpenAI を営業秘密窃取で提訴 -- 元 Apple 幹部らの組織的な情報持ち出しを主張
