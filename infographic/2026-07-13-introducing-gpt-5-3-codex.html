@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.3 Codex: フロンティアコーディング性能と推論能力を統合したエージェント型モデル</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content { position: relative; z-index: 1; }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #343541;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #10A37F;
+            border-radius: 2px;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+        .key-point { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: #ECECF1; border-radius: 12px; }
+        .key-point-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card { background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%); border: 2px solid rgba(16, 163, 127, 0.2); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15); }
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .stat-card { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 24px; border-radius: 16px; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: #10A37F; margin-bottom: 8px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+
+        .code-block { background: #343541; border-radius: 12px; overflow: hidden; margin: 20px 0; }
+        .code-header { background: #444654; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .code-lang { color: #10A37F; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+        .code-block pre { margin: 0; padding: 0; }
+        .code-block code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.6; padding: 20px !important; }
+
+        .mermaid-container { background: #FFFFFF; border-radius: 12px; padding: 24px; margin: 20px 0; border: 2px solid rgba(16, 163, 127, 0.2); overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+
+        .use-case { background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%); border-left: 4px solid #10A37F; padding: 20px 24px; border-radius: 0 12px 12px 0; margin-bottom: 16px; }
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .footer { margin-top: 40px; padding: 24px 32px; background: #ECECF1; border-radius: 16px; font-size: 13px; color: #8E8EA0; }
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">新機能 / モデルリリース</span>
+                <h1>GPT-5.3 Codex: フロンティアコーディング性能と推論能力を統合したエージェント型モデル</h1>
+                <p class="date">2026-07-13 | OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F680;</div>
+                    <div class="key-point-content">
+                        <h3>史上最も高性能なエージェント型コーディングモデル</h3>
+                        <p>フロンティアレベルのコード生成性能を実現し、エージェント型コーディングにおけるリーダーシップを確立した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F9E0;</div>
+                    <div class="key-point-content">
+                        <h3>フロンティアコード生成 + プロフェッショナル推論を統合</h3>
+                        <p>従来は別々に提供されていたコーディングエージェントと汎用推論 LLM の機能を単一モデルに統合。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F504;</div>
+                    <div class="key-point-content">
+                        <h3>自身のデバッグとデプロイに貢献した初のモデル</h3>
+                        <p>AI モデルが自身のトレーニングスタックに貢献するという歴史的なマイルストーンを達成。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A1;</div>
+                    <div class="key-point-content">
+                        <h3>前世代比 25% の高速化</h3>
+                        <p>GPT-5.2-Codex と比較して 25% 高速なレスポンスを実現し、開発者の生産性を向上。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4D6;</div>
+                    <div class="key-point-content">
+                        <h3>192k トークンコンテキストウィンドウ</h3>
+                        <p>大規模なコードベース全体を把握しながら、一貫性のある開発タスクを遂行可能。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">パフォーマンス指標</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">25%</div>
+                    <div class="stat-label">前世代比高速化</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">192k</div>
+                    <div class="stat-label">トークンコンテキスト</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">72%</div>
+                    <div class="stat-label">SWE-Bench Pro スコア</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">15x</div>
+                    <div class="stat-label">高速バリアント (Spark)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F916; エージェント型コーディングの統合</h3>
+                    <p>コード記述からデバッグ、テスト、デプロイ、プロジェクト管理まで、エンドツーエンドの開発ワークフローを単一モデルで処理。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F504; 自己改善能力の実証</h3>
+                    <p>自身のトレーニングスタックのデバッグとデプロイに貢献した初の AI モデル。モデル開発プロセス自体を効率化。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4F1; 複数チャネル対応</h3>
+                    <p>CLI、IDE 拡張機能、Web インターフェース、macOS デスクトップ、GitHub Copilot で同一モデルにアクセス可能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F3AF; コンテキストを失わない方向転換</h3>
+                    <p>タスク実行中にコンテキストを維持したまま方向修正が可能。複雑なワークフロー自動化を容易に実現。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">GPT-5.3 Codex API 呼び出し例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+    model="gpt-5.3-codex",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are an expert software engineer. Analyze the code, identify bugs, and provide fixes with explanations."
+        },
+        {
+            "role": "user",
+            "content": "Review this Python function and fix any issues..."
+        }
+    ],
+    temperature=0.2,
+    max_tokens=2048
+)
+print(response.choices[0].message.content)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Interfaces["利用可能なインターフェース"]
+        CLI["CLI"]
+        IDE["IDE 拡張機能"]
+        Web["Web インターフェース"]
+        Desktop["macOS デスクトップ"]
+        Copilot["GitHub Copilot"]
+    end
+
+    subgraph Model["GPT-5.3 Codex"]
+        Reasoning["推論エンジン"]
+        CodeGen["コード生成"]
+        Agent["エージェント制御"]
+    end
+
+    subgraph Capabilities["エンドツーエンド機能"]
+        Write["コード記述"]
+        Debug["デバッグ"]
+        Test["テスト実行"]
+        Deploy["デプロイ"]
+        PM["プロジェクト管理"]
+    end
+
+    CLI --> Model
+    IDE --> Model
+    Web --> Model
+    Desktop --> Model
+    Copilot --> Model
+
+    Reasoning --> Agent
+    CodeGen --> Agent
+    Agent --> Write
+    Agent --> Debug
+    Agent --> Test
+    Agent --> Deploy
+    Agent --> PM
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Reasoning,CodeGen,Agent openai
+    class CLI,IDE,Web,Desktop,Copilot dark
+    class Write,Debug,Test,Deploy,PM light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>&#x1F3D7;&#xFE0F; エンドツーエンド開発自動化</h4>
+                <p>コード記述からデプロイまで一気通貫で処理。Jira チケットの更新やテスト実行も含め、開発ワークフロー全体を単一モデルで自動化。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F527; レガシーコードのリファクタリング</h4>
+                <p>192k トークンのコンテキストウィンドウにより、大規模なコードベースのコンテキストを保持したまま、包括的なリファクタリングを実施。</p>
+            </div>
+            <div class="use-case">
+                <h4>&#x1F4C2; マルチリポジトリ対応</h4>
+                <p>複数プロジェクトにまたがる変更の統合管理が可能。コンテキストを失わない方向転換により、横断的な修正も効率的に実行。</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F517;</div>
+                    <div class="key-point-content">
+                        <h3>統合されたワークフロー</h3>
+                        <p>コーディングと推論を別々のモデルに切り替える必要がなくなり、単一の API 呼び出しでエンドツーエンドの開発タスクを処理可能に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4A8;</div>
+                    <div class="key-point-content">
+                        <h3>エージェント型開発の加速</h3>
+                        <p>タスク実行中にコンテキストを失わず方向修正できるため、複雑な開発ワークフローの自動化が容易に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A0;&#xFE0F;</div>
+                    <div class="key-point-content">
+                        <h3>サンセットと移行</h3>
+                        <p>GPT-5.3 Codex は 2026 年 6 月にサンセット済み。GPT-5.5 または GPT-5.6 への移行が推奨される。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/introducing-gpt-5-3-codex/" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-gpt-5-3-codex/</a></p>
+            <p style="margin-top: 8px;">このインフォグラフィックは OpenAI の公式発表に基づいて作成されています。最新情報は公式サイトをご確認ください。</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'base',
+                themeVariables: {
+                    primaryColor: '#10A37F',
+                    primaryTextColor: '#FFFFFF',
+                    primaryBorderColor: '#0D8A6A',
+                    lineColor: '#565869',
+                    secondaryColor: '#343541',
+                    tertiaryColor: '#F7F7F8',
+                    fontFamily: 'Zen Maru Gothic, sans-serif'
+                }
+            });
+        });
+    </script>
+</body>
+</html>

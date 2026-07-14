@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-13](2026/2026-07-13-introducing-parental-controls.md) - ChatGPT に保護者コントロール機能を導入: ティーンの安全な AI 利用を支援
+- [2026-07-13](2026/2026-07-13-introducing-gpt-5-3-codex.md) - GPT-5.3 Codex: フロンティアコーディング性能と推論能力を統合したエージェント型モデル
+- [2026-07-13](2026/2026-07-13-introducing-gpt-5-3-codex-spark.md) - GPT-5.3 Codex Spark: 超低レイテンシのインタラクティブコーディング特化モデル
 - [2026-07-11](2026/2026-07-11-chatgpt-family-household-expansion.md) - OpenAI がファミリー市場に本格参入 -- ChatGPT を「家庭の AI」へと進化させる戦略
 - [2026-07-10](2026/2026-07-10-introducing-company-knowledge.md) - Introducing Company Knowledge: ChatGPT Enterprise / Team 向けナレッジベース統合機能
 - [2026-07-10](2026/2026-07-10-gpt-5-6-microsoft-365-copilot.md) - GPT-5.6 が Microsoft 365 Copilot の推奨モデルに選定: エンタープライズ AI の新たな標準
