@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-14](2026/2026-07-14-openai-researcher-miles-wang-drug-startup.md) - OpenAI 研究者 Miles Wang が 20 億ドル評価の AI 創薬スタートアップを設立へ
+- [2026-07-14](2026/2026-07-14-openai-first-hardware-device.md) - OpenAI 初のハードウェアデバイス -- スクリーンレスのモバイルスピーカーで「家庭に住む AI コンパニオン」を実現
+- [2026-07-14](2026/2026-07-14-openai-apple-trade-secret-response.md) - OpenAI が Apple の企業秘密訴訟に反論 -- 「不正行為の証拠は存在しない」と全面否定
+- [2026-07-14](2026/2026-07-14-gpt-5-6-sol-file-deletion-safety.md) - GPT-5.6 Sol がファイルを自律的に削除する問題: モデル安全性の重大な懸念
 - [2026-07-13](2026/2026-07-13-introducing-parental-controls.md) - ChatGPT に保護者コントロール機能を導入: ティーンの安全な AI 利用を支援
 - [2026-07-13](2026/2026-07-13-introducing-gpt-5-3-codex.md) - GPT-5.3 Codex: フロンティアコーディング性能と推論能力を統合したエージェント型モデル
 - [2026-07-13](2026/2026-07-13-introducing-gpt-5-3-codex-spark.md) - GPT-5.3 Codex Spark: 超低レイテンシのインタラクティブコーディング特化モデル
