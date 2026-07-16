@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-15](2026/2026-07-15-unlocking-self-improvement-gpt-red.md) - GPT-Red: 自己改善による堅牢性の向上 - OpenAI の自動レッドチーミングシステム
+- [2026-07-15](2026/2026-07-15-advancing-ai-safety-state-federal-action.md) - OpenAI、「州および連邦の行動による AI 安全性の推進」を発表
 - [2026-07-14](2026/2026-07-14-openai-researcher-miles-wang-drug-startup.md) - OpenAI 研究者 Miles Wang が 20 億ドル評価の AI 創薬スタートアップを設立へ
 - [2026-07-14](2026/2026-07-14-openai-first-hardware-device.md) - OpenAI 初のハードウェアデバイス -- スクリーンレスのモバイルスピーカーで「家庭に住む AI コンパニオン」を実現
 - [2026-07-14](2026/2026-07-14-openai-apple-trade-secret-response.md) - OpenAI が Apple の企業秘密訴訟に反論 -- 「不正行為の証拠は存在しない」と全面否定
