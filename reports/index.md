@@ -5,7 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-16](2026/2026-07-16-introducing-the-teen-safety-blueprint.md) - OpenAI「Teen Safety Blueprint」を更新: ティーンの安全な AI 利用に向けた包括的フレームワーク
+- [2026-07-16](2026/2026-07-16-chatgpt-basketball-merchandise.md) - OpenAI が ChatGPT ブランドのバスケットボールとマーチャンダイズラインを発売
 - [2026-07-15](2026/2026-07-15-unlocking-self-improvement-gpt-red.md) - GPT-Red: 自己改善による堅牢性の向上 - OpenAI の自動レッドチーミングシステム
+- [2026-07-15](2026/2026-07-15-openai-south-korea-economic-blueprint.md) - OpenAI の韓国経済ブループリント: AI による経済発展への投資計画
+- [2026-07-15](2026/2026-07-15-openai-codex-micro-keyboard.md) - OpenAI Codex Micro - AI コーディングエージェント専用キーボードの発表
+- [2026-07-15](2026/2026-07-15-microsoft-sales-training-against-openai.md) - Microsoft がセールスチームに OpenAI・Anthropic への対抗トレーニングを実施
 - [2026-07-15](2026/2026-07-15-advancing-ai-safety-state-federal-action.md) - OpenAI、「州および連邦の行動による AI 安全性の推進」を発表
 - [2026-07-14](2026/2026-07-14-openai-researcher-miles-wang-drug-startup.md) - OpenAI 研究者 Miles Wang が 20 億ドル評価の AI 創薬スタートアップを設立へ
 - [2026-07-14](2026/2026-07-14-openai-first-hardware-device.md) - OpenAI 初のハードウェアデバイス -- スクリーンレスのモバイルスピーカーで「家庭に住む AI コンパニオン」を実現

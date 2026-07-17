@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Codex Micro - AI コーディングエージェント専用キーボード</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-dark-secondary: #444654;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: linear-gradient(180deg, #F7F7F8 0%, #ECECF1 100%);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .category-badge {
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .date-badge {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 16px;
+            border-left: 4px solid var(--openai-green);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .key-point:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.1);
+        }
+
+        .key-point-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .key-point-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .key-point-text strong {
+            color: var(--openai-green-dark);
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(16, 163, 127, 0.12);
+        }
+
+        .feature-card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .feature-card ul li {
+            font-size: 0.85rem;
+            color: #555;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--openai-dark);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--openai-green);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border: 2px solid var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .mermaid-container .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .usecase-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .usecase-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 16px;
+        }
+
+        .usecase-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--openai-green);
+            border-radius: 12px;
+        }
+
+        .usecase-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .usecase-content p {
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Impact Section */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .impact-item {
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .impact-item h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 8px;
+        }
+
+        .impact-item p {
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Background Section */
+        .background-content {
+            font-size: 0.92rem;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .background-content p {
+            margin-bottom: 16px;
+        }
+
+        .background-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-gray);
+            border-radius: 16px;
+            padding: 24px 32px;
+            text-align: center;
+        }
+
+        .footer-source {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .footer-source a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-source a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-credit {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .key-point {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-meta">
+                    <span class="category-badge">新製品 / ハードウェア</span>
+                    <span class="date-badge">2026-07-15</span>
+                </div>
+                <h1>OpenAI Codex Micro - AI コーディングエージェント専用キーボード</h1>
+                <p class="header-subtitle">Work Louder との限定コラボレーション製品 - エージェンティックワークのコマンドセンター</p>
+            </div>
+        </header>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x2328;&#xFE0F;</div>
+                    <div class="key-point-text">
+                        <strong>OpenAI 初の商用ハードウェア製品:</strong> スペシャルティキーボードメーカー Work Louder との限定コラボレーションとして発表。AI コーディングエージェントを物理デバイスから管理する「エージェンティックワークのコマンドセンター」
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4A1;</div>
+                    <div class="key-point-text">
+                        <strong>4 つの主要物理インターフェース:</strong> Agent Keys (ステータス LED)、Command Keys (カスタムショートカット)、Joystick (ワークフロー起動)、Reasoning Dial (推論レベル調整) を搭載
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-text">
+                        <strong>マルチエージェント管理:</strong> 複数の AI コーディングエージェントのフリート (艦隊) を同時に管理。キーボード上のライトアップキーで各エージェントの状態を一目で把握可能
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F5A5;&#xFE0F;</div>
+                    <div class="key-point-text">
+                        <strong>ChatGPT デスクトップアプリ連携:</strong> キーマッピング設定、エージェント割り当て、推論レベルのプリセット管理をソフトウェア側で一体的に制御
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3AF;</div>
+                    <div class="key-point-text">
+                        <strong>限定生産 $230:</strong> プロフェッショナル向けカスタムキーボード市場に参入。AI エージェント制御に特化した物理デバイスという新製品カテゴリを創出
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主要機能 -->
+        <section class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F7E2;</div>
+                    <h3>Agent Keys (エージェントキー)</h3>
+                    <p>ライトアップ機能を備えたキーで、AI コーディングエージェントのステータスをリアルタイムに表示</p>
+                    <ul>
+                        <li>各キーが個別のエージェントに対応</li>
+                        <li>色や点滅パターンで状態を視覚的に伝達</li>
+                        <li>タスク進行、完了、エラーを即座に把握</li>
+                        <li>複数エージェントのフリートを一目で監視</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x26A1;</div>
+                    <h3>Command Keys (コマンドキー)</h3>
+                    <p>頻繁に使用する Codex アクションにカスタマイズ可能なショートカットキー</p>
+                    <ul>
+                        <li>コードレビューの開始をワンタッチで起動</li>
+                        <li>テスト実行やデプロイを即座に操作</li>
+                        <li>ユーザーが自由にマッピングを設定可能</li>
+                        <li>一般的なワークフローを高速化</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F579;&#xFE0F;</div>
+                    <h3>Joystick (ジョイスティック)</h3>
+                    <p>一般的なワークフローを素早く起動するための物理コントローラー</p>
+                    <ul>
+                        <li>方向入力による直感的なナビゲーション</li>
+                        <li>エージェント間の切り替えを実現</li>
+                        <li>ワークフロー選択を素早く操作</li>
+                        <li>コンテキストスイッチのコスト削減</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">&#x1F504;</div>
+                    <h3>Reasoning Dial (推論ダイアル)</h3>
+                    <p>エージェントの推論レベルを物理ダイアルで直感的に調整</p>
+                    <ul>
+                        <li>推論トークン数や思考時間を制御</li>
+                        <li>簡単なタスクには低い推論レベルを設定</li>
+                        <li>複雑な問題には高い推論レベルを設定</li>
+                        <li>API コストとパフォーマンスの最適化</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 統計情報 -->
+        <section class="section">
+            <h2 class="section-title">統計情報</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">$230</div>
+                    <div class="stat-label">販売価格</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">限定生産</div>
+                    <div class="stat-label">Work Louder コラボレーション</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">初</div>
+                    <div class="stat-label">OpenAI 商用ハードウェア製品</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">主要物理インターフェース</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Hardware["Codex Micro キーボード"]
+        AgentKeys["Agent Keys&#10;(ステータス LED)"]
+        CommandKeys["Command Keys&#10;(カスタムショートカット)"]
+        Joystick["Joystick&#10;(ワークフロー起動)"]
+        Dial["Reasoning Dial&#10;(推論レベル調整)"]
+    end
+
+    subgraph Desktop["ChatGPT デスクトップアプリ"]
+        Driver["デバイスドライバ"]
+        Config["設定管理"]
+        AgentMgr["エージェント管理"]
+    end
+
+    subgraph Cloud["OpenAI クラウド"]
+        subgraph Codex["Codex エージェント"]
+            Agent1["Agent 1"]
+            Agent2["Agent 2"]
+            Agent3["Agent N"]
+        end
+        API["Codex API"]
+    end
+
+    AgentKeys --> Driver
+    CommandKeys --> Driver
+    Joystick --> Driver
+    Dial --> Driver
+    Driver --> Config
+    Config --> AgentMgr
+    AgentMgr --> API
+    API --> Agent1
+    API --> Agent2
+    API --> Agent3
+    Agent1 -.->|ステータス| AgentMgr
+    Agent2 -.->|ステータス| AgentMgr
+    Agent3 -.->|ステータス| AgentMgr
+    AgentMgr -.->|LED 制御| AgentKeys
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Agent1,Agent2,Agent3,API openai
+    class Driver,Config,AgentMgr dark
+    class AgentKeys,CommandKeys,Joystick,Dial light
+                </pre>
+            </div>
+        </section>
+
+        <!-- ユースケース -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="usecase-list">
+                <div class="usecase-item">
+                    <div class="usecase-icon">&#x1F468;&#x200D;&#x1F4BB;</div>
+                    <div class="usecase-content">
+                        <h4>マルチエージェント管理の効率化</h4>
+                        <p>複数の Codex エージェントを同時に運用する開発者が、各エージェントの状態を物理的なライトで一覧。コンテキストスイッチのコストを大幅に削減し、並行タスクの全体像を常に把握できる。</p>
+                    </div>
+                </div>
+                <div class="usecase-item">
+                    <div class="usecase-icon">&#x1F4B0;</div>
+                    <div class="usecase-content">
+                        <h4>推論コストの直感的制御</h4>
+                        <p>推論ダイアルにより、タスクの複雑さに応じた計算リソースの配分を瞬時に変更。API 使用コストの最適化に寄与し、簡単なタスクと複雑な問題で適切なリソース配分を実現。</p>
+                    </div>
+                </div>
+                <div class="usecase-item">
+                    <div class="usecase-icon">&#x1F680;</div>
+                    <div class="usecase-content">
+                        <h4>ワークフローの高速化</h4>
+                        <p>コマンドキーとジョイスティックによるワンタッチ操作で、コードレビュー開始、テスト実行、デプロイなど頻繁に行う操作の時間を短縮。モニター上のウィンドウ切り替え不要。</p>
+                    </div>
+                </div>
+                <div class="usecase-item">
+                    <div class="usecase-icon">&#x1F4CA;</div>
+                    <div class="usecase-content">
+                        <h4>エージェントステータスの常時監視</h4>
+                        <p>Agent Keys の LED 表示により、コーディング作業に集中しながらもエージェントの進捗状況をペリフェラルビジョンで確認。異常やエラーの即座の検知が可能。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-item">
+                    <h4>OpenAI ハードウェア戦略の示唆</h4>
+                    <p>限定コラボレーション製品ではあるが、OpenAI がソフトウェアだけでなくハードウェアインターフェースにも関心を示す。元 Apple エンジニアによるスクリーンレススマートスピーカーデバイスの開発と合わせ、ハードウェア戦略が具体化。</p>
+                </div>
+                <div class="impact-item">
+                    <h4>新しい製品カテゴリの創出</h4>
+                    <p>AI エージェントの制御に特化した物理デバイスという新しい製品カテゴリを確立。$230 という価格帯はプロフェッショナル向けカスタムキーボード市場に位置し、アーリーアダプター層を中心に普及が予想される。</p>
+                </div>
+                <div class="impact-item">
+                    <h4>推論ダイアルの技術的意義</h4>
+                    <p>API における reasoning_effort パラメータや思考トークンの予算設定に相当する概念を、ハードウェアレベルで直感的に操作可能に。開発者がリアルタイムでコストとパフォーマンスのトレードオフを制御できる。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 背景情報 -->
+        <section class="section">
+            <h2 class="section-title">背景情報</h2>
+            <div class="background-content">
+                <p>Codex Micro は OpenAI 初の商用ハードウェア製品 (限定コラボレーション) として位置づけられる。同時期に Bloomberg が報じた、元 Apple エンジニアが設計するスクリーンレススマートスピーカーデバイスのプロジェクトも進行中であり、OpenAI は AI インタラクションの新しい物理的形態を積極的に模索している。</p>
+                <p>また、本製品の発表は Apple が OpenAI を企業秘密の侵害で提訴した (2026 年 7 月 10 日頃) 直後のタイミングとなっている。OpenAI がハードウェア領域への進出を加速させる中で、Apple との競合関係が法的な紛争に発展している状況が注目される。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-source">
+                出典: <a href="https://openai.com/index/codex-micro-keyboard/" target="_blank" rel="noopener noreferrer">https://openai.com/index/codex-micro-keyboard/</a>
+            </p>
+            <p class="footer-credit">OpenAI News Summary - Generated on 2026-07-15</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+</body>
+</html>
