@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Codex Safely - OpenAI News Infographic</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .key-point {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-point h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .key-point p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 10px 0 10px 28px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .feature-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Impact Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .impact-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            background: #2d2d2d;
+            color: #ccc;
+            padding: 10px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            background: #1e1e1e;
+            overflow-x: auto;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .code-block pre code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        /* Mermaid Diagram */
+        .mermaid-container {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Note Box */
+        .note-box {
+            background: #FFF8E7;
+            border: 1px solid #F0D68A;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            color: #6B5A00;
+        }
+
+        .note-box strong {
+            color: #4A3D00;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gradient-header);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="category-badge">Safety</span>
+            <h1>Running Codex Safely</h1>
+            <p class="subtitle">一般提供に伴う Codex プラットフォームの安全性フレームワーク</p>
+            <p class="date">2026-07-16 | OpenAI News (Safety)</p>
+        </header>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9679;</span> 概要</h2>
+            <div class="note-box">
+                <strong>注記:</strong> 本レポートは公開情報および関連する製品発表の文脈に基づいて作成している。公式記事ページへの直接アクセスが制限されていたため、公開されている技術情報と製品の進化の軌跡から内容を構成している。正確な詳細については公式ページを参照されたい。
+            </div>
+            <p>OpenAI は 2026 年 7 月 16 日、Codex プラットフォームの一般提供 (GA) 移行に伴い、安全性フレームワークの最新設計を公開した。Codex が非開発者を含む幅広いユーザーに開放され、マルチエージェントオーケストレーションが本格化する中で、サンドボックス化された実行環境、ネットワーク隔離、リソース制限、出力モニタリング、リアルタイム悪用分類器、Programmatic Tool Calling (PTC) における隔離 V8 ランタイム、Zero Data Retention (ZDR) サポートなど、多層的な安全対策の全体像を体系的に解説している。</p>
+            <p>本記事は、2026 年 5 月に公開された内部運用版のセキュリティアーキテクチャを一般ユーザー向けに拡張・更新したものであり、Codex の利用範囲拡大に対応した新たな安全境界の設計思想を示している。</p>
+        </section>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9733;</span> 主要ポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <h4>サンドボックスによる隔離実行環境</h4>
+                    <p>すべてのコード実行は専用コンテナ内で動作し、ホストシステムや他ユーザーのタスクから完全に分離される。タスク完了後にコンテナは破棄される。</p>
+                </div>
+                <div class="key-point">
+                    <h4>デフォルトでのネットワークアクセス遮断</h4>
+                    <p>コード実行中はネットワークアクセスが完全に遮断され、明示的にホワイトリストに登録されたエンドポイントのみアクセス可能。</p>
+                </div>
+                <div class="key-point">
+                    <h4>リアルタイム悪用分類器と出力モニタリング</h4>
+                    <p>生成されたコードが悪意あるパターンに該当しないかをリアルタイムで分類・判定し、リスクスコアに基づいてエスカレーション。</p>
+                </div>
+                <div class="key-point">
+                    <h4>マルチエージェントの安全境界</h4>
+                    <p>複数エージェントが協調動作する場面での権限分離、タスクスコープの制約、エスカレーションチェーンが標準化。</p>
+                </div>
+                <div class="key-point">
+                    <h4>隔離 V8 ランタイム (PTC)</h4>
+                    <p>Programmatic Tool Calling は隔離された V8 ランタイムで実行され、ネットワーク・ファイルシステム・サブプロセスが構造的に遮断。</p>
+                </div>
+                <div class="key-point">
+                    <h4>ZDR と safety_identifier</h4>
+                    <p>Zero Data Retention によるデータ保持ゼロオプションと、エンドユーザー識別子による悪用パターン追跡を提供。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Details: Sandbox -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9632;</span> サンドボックスによる隔離実行環境</h2>
+            <p>Codex はすべてのコード実行をサンドボックス化されたクラウド環境で実行する。各タスクは専用のコンテナ内で動作し、ホストシステムや他のユーザーのタスクから完全に分離される。</p>
+            <ul class="feature-list">
+                <li><strong>コンテナ単位の隔離:</strong> 各 Codex タスクは独立したコンテナとして起動され、ファイルシステム、プロセス空間、ネットワークスタックが完全に分離される</li>
+                <li><strong>一時的な実行環境:</strong> タスク完了後にコンテナは破棄され、状態の永続化は明示的に許可された出力のみに限定される</li>
+                <li><strong>読み取り専用ベースイメージ:</strong> システムレベルの改竄を防止するため、ベースイメージは読み取り専用でマウントされる</li>
+                <li><strong>最小権限の原則:</strong> ルートアクセスや特権エスカレーションはデフォルトで禁止される</li>
+            </ul>
+        </section>
+
+        <!-- Feature Details: Network -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9632;</span> デフォルトでのネットワークアクセス遮断</h2>
+            <p>Codex のコード実行中は、デフォルトでネットワークアクセスが完全に遮断される。これは任意のコードが外部システムにアクセスすることを根本的に防止する設計である。</p>
+            <ul class="feature-list">
+                <li><strong>デフォルト拒否ポリシー:</strong> 明示的にホワイトリストに登録されたエンドポイントのみアクセス可能</li>
+                <li><strong>パッケージレジストリへの限定アクセス:</strong> 必要に応じて pypi.org、registry.npmjs.org 等の信頼されたレジストリのみ許可可能</li>
+                <li><strong>DNS フィルタリング:</strong> 未知のドメインへの名前解決を遮断</li>
+                <li><strong>送信データの検査:</strong> 機密情報 (API キー、認証トークン等) の外部流出を検知・防止</li>
+            </ul>
+        </section>
+
+        <!-- Feature Details: Resource Limits -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9632;</span> リソース制限</h2>
+            <p>各サンドボックスには厳格なリソースクォータが適用され、リソース枯渇攻撃やサービス拒否を防止する。</p>
+            <ul class="feature-list">
+                <li><strong>CPU 制限:</strong> コンテナあたりの CPU 使用量に上限を設定</li>
+                <li><strong>メモリ制限:</strong> メモリ使用量の上限を超過した場合はタスクが強制停止</li>
+                <li><strong>実行時間制限:</strong> 長時間実行を防止するタイムアウト設定</li>
+                <li><strong>ディスク I/O 制限:</strong> 一時ストレージの容量とスループットに制限を適用</li>
+            </ul>
+        </section>
+
+        <!-- Feature Details: Output Monitoring -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9632;</span> 出力モニタリングとフィルタリング</h2>
+            <p>Codex が生成するコードおよび出力に対して、リアルタイムの監視とフィルタリングが適用される。</p>
+            <ul class="feature-list">
+                <li><strong>リアルタイム悪用分類器 (Misuse Classifiers):</strong> 生成されたコードが悪意あるパターン (マルウェア、エクスプロイト、データ窃取コード等) に該当しないかをリアルタイムで分類・判定</li>
+                <li><strong>出力フィルタリング:</strong> 有害なコンテンツや機密情報が出力に含まれないようフィルタリング</li>
+                <li><strong>安全性スコアリング:</strong> 各出力に対してリスクスコアを算出し、閾値を超えた場合は人間によるレビューにエスカレーション</li>
+            </ul>
+        </section>
+
+        <!-- Feature Details: Multi-Agent -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9632;</span> マルチエージェントオーケストレーションの安全境界</h2>
+            <p>Codex の汎用エージェント化に伴い、複数エージェントが協調動作する場面での安全境界が新たに定義された。</p>
+            <ul class="feature-list">
+                <li><strong>エージェント間の権限分離:</strong> オーケストレーターエージェントとスペシャリストエージェント間で権限の伝搬を制限</li>
+                <li><strong>タスクスコープの制約:</strong> 各エージェントは割り当てられたタスク範囲外のリソースにアクセス不可</li>
+                <li><strong>エスカレーションチェーン:</strong> 権限昇格が必要な場合は明示的に人間の承認を要求</li>
+                <li><strong>相互監視:</strong> エージェント間の通信を監視し、異常なパターンを検知</li>
+            </ul>
+        </section>
+
+        <!-- Feature Details: PTC -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9632;</span> Programmatic Tool Calling (PTC) の隔離ランタイム</h2>
+            <p>Programmatic Tool Calling は「隔離された V8 ランタイム」で実行され、以下のアクセスが完全に遮断される。</p>
+            <ul class="feature-list">
+                <li><strong>Node.js API へのアクセス禁止:</strong> 標準ライブラリを含む Node.js 機能は利用不可</li>
+                <li><strong>ネットワークアクセス禁止:</strong> 外部との通信は一切不可能</li>
+                <li><strong>ファイルシステムアクセス禁止:</strong> ローカルファイルの読み書き不可</li>
+                <li><strong>サブプロセス起動禁止:</strong> 子プロセスの生成やシステムコマンドの実行不可</li>
+            </ul>
+            <p>この制約により、PTC 内のコードは純粋な計算処理とデータ変換のみに限定され、副作用を持つ操作が構造的に不可能となる。</p>
+        </section>
+
+        <!-- Feature Details: ZDR -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9632;</span> Zero Data Retention (ZDR) と safety_identifier</h2>
+            <p>エンタープライズ向けの安全機能として、以下が提供される。</p>
+            <ul class="feature-list">
+                <li><strong>Zero Data Retention (ZDR):</strong> API 経由の Codex 利用時にデータ保持をゼロにするオプション。ユーザーデータがモデルの学習に使用されないことを保証</li>
+                <li><strong>safety_identifier:</strong> ユーザー対面アプリケーションにおいて、エンドユーザーを一意に識別するための識別子。悪用パターンの追跡と、特定ユーザーからの不正利用の検知に使用</li>
+            </ul>
+        </section>
+
+        <!-- Technical Details: Code Samples -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9650;</span> 技術的な詳細 - コードサンプル</h2>
+
+            <h3 class="section-subtitle">安全な Codex タスク作成 (サンドボックスポリシー付き)</h3>
+            <div class="code-block">
+                <div class="code-block-header">Python - Codex Task with Sandbox Policy</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Codex タスクの安全な作成
+task = client.codex.tasks.create(
+    description="データ分析レポートの生成",
+    repository="org/analytics-service",
+    sandbox_policy={
+        "network_access": "none",  # デフォルトでネットワーク遮断
+        "resource_limits": {
+            "cpu": "2",
+            "memory": "4Gi",
+            "timeout_seconds": 300
+        },
+        "filesystem": {
+            "read_only_root": True,
+            "writable_paths": ["/tmp", "/workspace/output"]
+        }
+    },
+    safety_identifier="user-12345",  # エンドユーザー識別子
+    zero_data_retention=True  # ZDR 有効化
+)
+
+# タスク実行状態の確認
+result = client.codex.tasks.retrieve(task.id)
+print(f"ステータス: {result.status}")
+print(f"安全性スコア: {result.safety_score}")</code></pre>
+            </div>
+
+            <h3 class="section-subtitle">Programmatic Tool Calling (PTC) の安全な利用</h3>
+            <div class="code-block">
+                <div class="code-block-header">Python - PTC with Isolated V8 Runtime</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# PTC は隔離された V8 ランタイムで実行される
+response = client.responses.create(
+    model="gpt-5.3-codex",
+    input="売上データを四半期ごとに集計してください",
+    tools=[
+        {
+            "type": "code_interpreter",
+            "container": {
+                "image": "codex-sandbox:latest",
+                "network": "none"
+            }
+        }
+    ],
+    # safety_identifier でエンドユーザーを追跡
+    metadata={
+        "safety_identifier": "end-user-abc123"
+    }
+)</code></pre>
+            </div>
+
+            <h3 class="section-subtitle">マルチエージェントオーケストレーションの安全境界設定</h3>
+            <div class="code-block">
+                <div class="code-block-header">Python - Multi-Agent Safety Boundaries</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# マルチエージェント構成での安全境界定義
+orchestration = client.codex.orchestration.create(
+    agents=[
+        {
+            "role": "researcher",
+            "permissions": ["read_files", "web_search"],
+            "sandbox": {"network": "allowlist_only"}
+        },
+        {
+            "role": "coder",
+            "permissions": ["read_files", "write_files", "execute_code"],
+            "sandbox": {"network": "none"}
+        },
+        {
+            "role": "reviewer",
+            "permissions": ["read_files"],
+            "sandbox": {"network": "none"}
+        }
+    ],
+    safety_boundaries={
+        "inter_agent_communication": "monitored",
+        "privilege_escalation": "require_human_approval",
+        "data_sharing": "scoped_to_task"
+    }
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9670;</span> アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー"]
+        EndUser(["エンドユーザー"])
+        Developer(["開発者"])
+    end
+
+    subgraph CodexPlatform["Codex プラットフォーム"]
+        subgraph SafetyLayer["安全性レイヤー"]
+            MisuseClassifier["リアルタイム<br/>悪用分類器"]
+            OutputFilter["出力<br/>フィルタリング"]
+            SafetyID["safety_identifier<br/>追跡"]
+        end
+
+        subgraph Sandbox["サンドボックス環境"]
+            Agent["Codex<br/>エージェント"]
+            IsolatedFS["隔離<br/>ファイルシステム"]
+            ResourceLimiter["リソース<br/>リミッター"]
+        end
+
+        subgraph PTC["Programmatic Tool Calling"]
+            V8Runtime["隔離 V8<br/>ランタイム"]
+            NoNetwork["ネットワーク<br/>遮断"]
+            NoFS["ファイルシステム<br/>遮断"]
+        end
+
+        subgraph MultiAgent["マルチエージェント安全境界"]
+            Orchestrator["オーケストレーター"]
+            PermBoundary["権限境界"]
+            InterAgentMon["エージェント間<br/>監視"]
+        end
+
+        subgraph DataPolicy["データポリシー"]
+            ZDR["Zero Data<br/>Retention"]
+        end
+    end
+
+    subgraph Network["ネットワーク制御"]
+        DefaultDeny["デフォルト拒否"]
+        Allowlist["ホワイトリスト<br/>(PyPI, npm)"]
+        DNSFilter["DNS<br/>フィルタリング"]
+    end
+
+    EndUser -->|リクエスト| SafetyID
+    Developer -->|API 呼び出し| SafetyID
+    SafetyID --> MisuseClassifier
+    MisuseClassifier -->|安全| Agent
+    MisuseClassifier -->|危険| OutputFilter
+
+    Agent --> IsolatedFS
+    Agent --> ResourceLimiter
+    Agent -->|ネットワーク要求| DefaultDeny
+    DefaultDeny -->|許可| Allowlist
+    DefaultDeny -->|拒否| DNSFilter
+
+    Agent -->|ツール呼び出し| V8Runtime
+    V8Runtime --- NoNetwork
+    V8Runtime --- NoFS
+
+    Agent -->|マルチエージェント| Orchestrator
+    Orchestrator --> PermBoundary
+    Orchestrator --> InterAgentMon
+
+    Agent -->|出力| OutputFilter
+    OutputFilter -->|フィルタ済み| EndUser
+
+    Agent -.->|ZDR 有効時| ZDR
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef blocked fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class Agent,MisuseClassifier,SafetyID,Orchestrator openai
+    class V8Runtime,OutputFilter,ResourceLimiter,ZDR dark
+    class EndUser,Developer,IsolatedFS light
+    class Allowlist,PermBoundary,InterAgentMon accent
+    class DefaultDeny,DNSFilter,NoNetwork,NoFS blocked
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9654;</span> 開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h4>GA 移行に伴う安全性の標準化</h4>
+                    <p>すべてのユーザーが標準的な安全性フレームワーク下で動作。開発者は個別のセキュリティ設計なしに安全なコード実行環境を利用可能。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>PTC の制約への対応</h4>
+                    <p>隔離 V8 ランタイムの制約を前提とした設計が必要。外部 API 呼び出しを含むツールは PTC 外で実行する必要がある。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>safety_identifier の実装</h4>
+                    <p>ユーザー対面アプリケーションを構築する開発者は safety_identifier を API リクエストに含めることで悪用検知の精度向上に寄与できる。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>ZDR 対応によるエンタープライズ採用の加速</h4>
+                    <p>医療、金融、法律など規制の厳しい業界でのデータ保持要件に対応可能。エンタープライズ向けアプリケーションの構築が容易に。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>マルチエージェント設計の安全パターン</h4>
+                    <p>オーケストレーションにおける権限境界の設計が標準化され、セキュリティベストプラクティスが明確化。</p>
+                </div>
+                <div class="impact-card">
+                    <h4>非開発者ユーザーへの拡大</h4>
+                    <p>安全性フレームワークはより広いユーザー基盤を想定した堅牢性を確保。エンドユーザーのリテラシーに依存しない安全設計を前提にできる。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9679;</span> まとめ</h2>
+            <p>OpenAI が 2026 年 7 月 16 日に公開した「Running Codex Safely」は、Codex プラットフォームの一般提供移行に伴い、安全性フレームワークの全体像を体系的に示した記事である。サンドボックス化された実行環境でのデフォルトのネットワーク遮断、CPU・メモリ・実行時間のリソース制限、リアルタイム悪用分類器による出力監視、Programmatic Tool Calling の隔離 V8 ランタイム、マルチエージェントオーケストレーションにおける権限境界、そして ZDR と safety_identifier によるエンタープライズ対応まで、多層防御アプローチが包括的に設計されている。</p>
+            <p>Codex が非開発者を含む広範なユーザーに開放される中で、任意コード実行の安全性を構造的に保証するこのフレームワークは、AI エージェントプラットフォームの安全設計における重要なリファレンスとなる。</p>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">&#9679;</span> 関連リンク</h2>
+            <ul class="feature-list">
+                <li><a href="https://openai.com/index/running-codex-safely/" target="_blank">Running Codex Safely (公式)</a></li>
+                <li><a href="https://openai.com/codex" target="_blank">OpenAI Codex</a></li>
+                <li><a href="https://openai.com/safety" target="_blank">OpenAI Safety</a></li>
+                <li><a href="https://developers.openai.com/codex/cloud/environments/" target="_blank">Codex Cloud Environments</a></li>
+                <li><a href="https://platform.openai.com/docs/guides/tools" target="_blank">Programmatic Tool Calling ドキュメント</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>OpenAI News Infographic</p>
+            <p><a href="https://openai.com/index/running-codex-safely/" target="_blank">https://openai.com/index/running-codex-safely/</a></p>
+            <p class="source-label">Source: OpenAI News (Safety) | 2026-07-16</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

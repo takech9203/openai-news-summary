@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>o3 および o4-mini 推論モデルの紹介</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            position: relative;
+        }
+        .header .date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .header .source-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h2 .icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .section h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+        .key-point {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--openai-green);
+        }
+        .key-point .number {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .key-point .content {
+            flex: 1;
+        }
+        .key-point .content strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .key-point .content span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+        table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+        table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+        table code {
+            background: var(--openai-gray);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .feature-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.15);
+        }
+        .feature-card h4 {
+            color: var(--openai-green);
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+        /* Model Comparison */
+        .model-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid var(--openai-gray);
+        }
+        .model-card.primary {
+            border-left: 4px solid var(--openai-green);
+        }
+        .model-card.secondary {
+            border-left: 4px solid var(--openai-dark);
+        }
+        .model-card h4 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .model-card .model-id {
+            display: inline-block;
+            background: var(--openai-dark);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            margin-bottom: 12px;
+        }
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--openai-green);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 16px;
+            width: 12px;
+            height: 12px;
+            background: var(--openai-green);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .timeline-item.highlight::before {
+            background: var(--openai-dark);
+            width: 14px;
+            height: 14px;
+            left: -27px;
+        }
+        .timeline-item .date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .timeline-item .event {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        /* Lists */
+        .section ul {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .section ul li {
+            padding: 8px 0 8px 24px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .section ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+        /* Code Blocks */
+        .code-block {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--openai-gray);
+        }
+        .code-block .code-header {
+            background: var(--openai-dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            background: #1e1e2e;
+            overflow-x: auto;
+        }
+        .code-block pre code {
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+        /* Mermaid */
+        .mermaid-wrapper {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+        .mermaid-wrapper .mermaid-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        /* Impact */
+        .impact-item {
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid var(--openai-gray);
+        }
+        .impact-item h4 {
+            color: var(--openai-green);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+        .impact-item p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-bottom: 0;
+        }
+        /* Note */
+        .note {
+            background: #FFF8E1;
+            border-left: 4px solid #FFC107;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 32px;
+        }
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .footer .links {
+            margin-top: 12px;
+        }
+        .footer .links a {
+            display: inline-block;
+            margin: 4px 8px;
+            font-size: 0.8rem;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+            .header {
+                padding: 32px 24px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .section {
+                padding: 24px 20px;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">新機能</span>
+            <h1>o3 および o4-mini 推論モデルの紹介: 数学・科学・コーディングの新基準</h1>
+            <div class="date">2026-07-16</div>
+            <span class="source-badge">OpenAI News (Product/Release)</span>
+        </header>
+
+        <!-- Note -->
+        <div class="note">
+            <strong>注記:</strong> 本レポートは、元記事が Cloudflare の保護により全文取得できなかったため (HTTP 403)、OpenAI API Changelog、Reasoning ガイド、Models ドキュメント、および関連する公開情報に基づいて作成している。正確な詳細については公式ページを参照されたい。
+        </div>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2><span class="icon">&#9733;</span>概要</h2>
+            <p>OpenAI は o3 および o4-mini という 2 つの推論特化モデルを提供している。これらのモデルは 2025 年 4 月 16 日に初回リリースされ、数学、科学、コーディング、視覚的推論、テクニカルライティングにおいて新たな基準を打ち立てた。2026 年 7 月 16 日の更新ページでは、これらのモデルの最新の位置付けと能力が紹介されている。</p>
+            <p>o シリーズは、内部的に「推論トークン」(thinking tokens) を使用して問題を段階的に分解し、複数のアプローチを検討した上で最終回答を生成する。これにより、複雑な多段階タスクにおいて汎用モデルを大きく上回る性能を発揮する。GPT-5.6 ファミリーが汎用的な推論能力を備える現在においても、推論負荷の高い特定タスクでは o シリーズが優位性を持つ。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="number">1</div>
+                    <div class="content">
+                        <strong>o3: フロンティア推論モデル</strong>
+                        <span>最も困難な問題に対して深い思考プロセスを適用する最高性能推論モデル</span>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="number">2</div>
+                    <div class="content">
+                        <strong>o4-mini: 高効率推論モデル</strong>
+                        <span>o3 と同等の推論能力をより小型・高速・低コストで提供</span>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="number">3</div>
+                    <div class="content">
+                        <strong>推論トークン</strong>
+                        <span>内部的な思考フェーズで問題を段階的に分解し、複数のアプローチを検討</span>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="number">4</div>
+                    <div class="content">
+                        <strong>推論中のツール呼び出し</strong>
+                        <span>推論の途中でファンクションを呼び出し、結果を次の思考ステップに統合</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features: o3 -->
+        <section class="section">
+            <h2><span class="icon">&#9889;</span>o3: フロンティア推論モデル</h2>
+            <div class="model-card primary">
+                <h4>o3</h4>
+                <span class="model-id">o3</span>
+                <p>OpenAI の最高性能推論モデルであり、最も困難な問題に対して深い思考プロセスを適用する。</p>
+                <div class="table-wrapper">
+                    <table>
+                        <tr><th>項目</th><th>詳細</th></tr>
+                        <tr><td>モデル ID</td><td><code>o3</code></td></tr>
+                        <tr><td>API</td><td>Chat Completions API (<code>v1/chat/completions</code>)、Responses API (<code>v1/responses</code>)</td></tr>
+                        <tr><td>強み</td><td>数学、科学、コーディング、視覚的推論、テクニカルライティング</td></tr>
+                        <tr><td>派生モデル</td><td><code>o3-pro</code> (拡張計算版)、<code>o3-deep-research</code> (深層分析版)</td></tr>
+                    </table>
+                </div>
+                <p>o3 は 2025 年 6 月 10 日に価格引き下げが実施され、同時に <code>o3-pro</code> が「より多くの計算リソースを使用して難問に対しより良い推論と一貫性を提供するバージョン」としてリリースされた。</p>
+            </div>
+        </section>
+
+        <!-- Features: o4-mini -->
+        <section class="section">
+            <h2><span class="icon">&#9889;</span>o4-mini: 高効率推論モデル</h2>
+            <div class="model-card secondary">
+                <h4>o4-mini</h4>
+                <span class="model-id">o4-mini</span>
+                <p>o3 と同等の推論能力をより小型・高速・低コストで提供するモデル。</p>
+                <div class="table-wrapper">
+                    <table>
+                        <tr><th>項目</th><th>詳細</th></tr>
+                        <tr><td>モデル ID</td><td><code>o4-mini</code></td></tr>
+                        <tr><td>API</td><td>Chat Completions API (<code>v1/chat/completions</code>)、Responses API (<code>v1/responses</code>)</td></tr>
+                        <tr><td>強み</td><td>数学、科学、コーディング、視覚的推論 (コスト効率重視)</td></tr>
+                        <tr><td>派生モデル</td><td><code>o4-mini-deep-research</code> (深層分析版)</td></tr>
+                        <tr><td>推論サマリー</td><td><code>detailed</code> 形式をサポート</td></tr>
+                    </table>
+                </div>
+                <p>コスト感度の高いワークロードや、レイテンシが重要な推論タスクにおいて、o4-mini は o3 の代替として最適な選択肢となる。</p>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="section">
+            <h2><span class="icon">&#128197;</span>o シリーズの進化タイムライン</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="date">2024-09-12</div>
+                    <div class="event">o1-preview、o1-mini リリース (初代推論モデル)</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2025-01-31</div>
+                    <div class="event">o3-mini リリース (小型推論モデル)</div>
+                </div>
+                <div class="timeline-item highlight">
+                    <div class="date">2025-04-16</div>
+                    <div class="event"><strong>o3、o4-mini リリース</strong> (本記事の主題)</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2025-06-10</div>
+                    <div class="event">o3-pro リリース、o3 価格引き下げ</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="date">2025-06-24</div>
+                    <div class="event">o3-deep-research、o4-mini-deep-research リリース</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reasoning Tokens -->
+        <section class="section">
+            <h2><span class="icon">&#128161;</span>推論トークンの仕組み</h2>
+            <p>o シリーズモデルは、応答生成前に内部的な「推論トークン」を使用して思考を行う。この仕組みにより以下が可能となる。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>計画立案</h4>
+                    <p>複雑なタスクを分解し、実行計画を策定</p>
+                </div>
+                <div class="feature-card">
+                    <h4>ツールの効果的な使用</h4>
+                    <p>推論の途中でツールを呼び出し、結果を思考に統合</p>
+                </div>
+                <div class="feature-card">
+                    <h4>代替案の検討</h4>
+                    <p>複数のアプローチを内部的に比較・評価</p>
+                </div>
+                <div class="feature-card">
+                    <h4>曖昧さの解消</h4>
+                    <p>不明確な指示に対して最適な解釈を選択</p>
+                </div>
+                <div class="feature-card">
+                    <h4>多段階問題の解決</h4>
+                    <p>連鎖的な推論ステップを段階的に実行</p>
+                </div>
+            </div>
+            <h3>推論トークンの特性</h3>
+            <ul>
+                <li>API 経由では直接参照不可 (サマリーとして取得可能)</li>
+                <li>コンテキストウィンドウ内のスペースを占有</li>
+                <li>出力トークンとして課金される</li>
+                <li>ツール呼び出しの間でも思考を継続可能</li>
+            </ul>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2><span class="icon">&#128736;</span>技術的な詳細</h2>
+
+            <h3>reasoning_effort パラメータ</h3>
+            <p>推論の深さを制御する <code>reasoning_effort</code> パラメータにより、品質とレイテンシのトレードオフを調整できる。</p>
+            <div class="table-wrapper">
+                <table>
+                    <tr><th>レベル</th><th>用途</th></tr>
+                    <tr><td><code>low</code></td><td>効率的な推論、適度なレイテンシ増加 (データ分析、文書作成)</td></tr>
+                    <tr><td><code>medium</code></td><td>品質と信頼性のバランス (エージェント型コーディング、リサーチ)</td></tr>
+                    <tr><td><code>high</code></td><td>難問への深い推論 (複雑なデバッグ、高価値タスク)</td></tr>
+                </table>
+            </div>
+
+            <h3>推論サマリー</h3>
+            <p>推論トークンの内容は直接公開されないが、サマリーとして取得可能である。</p>
+            <div class="table-wrapper">
+                <table>
+                    <tr><th>サマリータイプ</th><th>対応モデル</th><th>内容</th></tr>
+                    <tr><td><code>concise</code></td><td>コンピュータ使用モデル</td><td>簡潔な推論要約</td></tr>
+                    <tr><td><code>detailed</code></td><td>o4-mini、その他推論モデル</td><td>詳細な推論要約</td></tr>
+                    <tr><td><code>auto</code></td><td>全推論モデル</td><td>利用可能な最も詳細な形式を自動選択</td></tr>
+                </table>
+            </div>
+
+            <h3>ツール使用時の推論</h3>
+            <p>o3 および o4-mini は推論中にツールを呼び出すことが可能であり、これが汎用モデルとの大きな差別点の一つである。推論の途中でファンクションを呼び出し、その結果を次の思考ステップに組み込むことで、外部情報に基づいた高精度な判断を実現する。</p>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2><span class="icon">&#128187;</span>コードサンプル</h2>
+
+            <h3>Responses API での o3 使用</h3>
+            <div class="code-block">
+                <div class="code-header">Python - Responses API (o3)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# o3 による高度な推論タスク
+response = client.responses.create(
+    model="o3",
+    reasoning={"effort": "high", "summary": "detailed"},
+    input=[
+        {
+            "role": "user",
+            "content": (
+                "次の微分方程式を解いてください: "
+                "y'' + 4y' + 4y = e^(-2x) * ln(x), x > 0"
+            ),
+        }
+    ],
+)
+
+# 推論サマリーの確認
+for item in response.output:
+    if item.type == "reasoning":
+        print("=== 推論サマリー ===")
+        for summary in item.summary:
+            print(summary.text)
+    elif item.type == "message":
+        print("=== 最終回答 ===")
+        print(item.content[0].text)
+
+# トークン使用量の確認 (推論トークンを含む)
+print(f"\n入力トークン: {response.usage.input_tokens}")
+print(f"出力トークン: {response.usage.output_tokens}")
+print(f"  うち推論トークン: {response.usage.output_tokens_details.reasoning_tokens}")</code></pre>
+            </div>
+
+            <h3>o4-mini によるコスト効率の高い推論</h3>
+            <div class="code-block">
+                <div class="code-header">Python - Responses API (o4-mini)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# o4-mini による効率的な推論
+response = client.responses.create(
+    model="o4-mini",
+    reasoning={"effort": "medium", "summary": "detailed"},
+    input=[
+        {
+            "role": "user",
+            "content": "Python で二分探索木のバランシングアルゴリズムを実装してください。",
+        }
+    ],
+)
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <h3>ツール使用を伴う推論</h3>
+            <div class="code-block">
+                <div class="code-header">Python - Tool Use with o3</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_stock_price",
+            "description": "指定された銘柄の現在の株価を取得する",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "symbol": {
+                        "type": "string",
+                        "description": "株式銘柄コード (例: AAPL)",
+                    }
+                },
+                "required": ["symbol"],
+            },
+        },
+    }
+]
+
+# o3 は推論中にツールを呼び出し、結果を思考に統合する
+response = client.responses.create(
+    model="o3",
+    reasoning={"effort": "high"},
+    input=[
+        {
+            "role": "user",
+            "content": (
+                "AAPL と MSFT の株価を比較し、"
+                "投資判断の観点から分析してください。"
+            ),
+        }
+    ],
+    tools=tools,
+)
+
+# ツール呼び出し結果を含むレスポンスの処理
+for item in response.output:
+    if item.type == "function_call":
+        print(f"ツール呼び出し: {item.name}({item.arguments})")
+    elif item.type == "message":
+        print(f"回答: {item.content[0].text}")</code></pre>
+            </div>
+
+            <h3>Chat Completions API での使用</h3>
+            <div class="code-block">
+                <div class="code-header">Python - Chat Completions API (o3)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Chat Completions API でも利用可能
+response = client.chat.completions.create(
+    model="o3",
+    messages=[
+        {
+            "role": "developer",
+            "content": "あなたは数学の専門家です。証明を厳密に行ってください。",
+        },
+        {
+            "role": "user",
+            "content": "フェルマーの小定理を証明してください。",
+        },
+    ],
+    reasoning_effort="high",
+)
+
+print(response.choices[0].message.content)
+print(f"推論トークン: {response.usage.completion_tokens_details.reasoning_tokens}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagrams -->
+        <section class="section">
+            <h2><span class="icon">&#128202;</span>アーキテクチャ</h2>
+
+            <div class="mermaid-wrapper">
+                <div class="mermaid-title">o シリーズと GPT-5.x の推論アーキテクチャ比較</div>
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["ユーザー入力"]
+        UserQuery(["クエリ"])
+    end
+
+    subgraph OSeries["o シリーズ (o3 / o4-mini)"]
+        direction TB
+        OThinking["推論トークン生成\n(専用思考フェーズ)"]
+        OToolUse["ツール呼び出し\n(推論中)"]
+        OMore["追加推論\n(結果統合)"]
+        OAnswer["最終回答生成"]
+
+        OThinking --> OToolUse
+        OToolUse --> OMore
+        OMore --> OAnswer
+    end
+
+    subgraph GPT5x["GPT-5.6 ファミリー"]
+        direction TB
+        GEffort["reasoning.effort 設定\n(none / low / medium / high / max)"]
+        GThinking["内蔵推論\n(努力レベルに応じた思考)"]
+        GInterleave["インターリーブ思考\n(出力と思考の交互生成)"]
+        GAnswer2["最終回答生成"]
+
+        GEffort --> GThinking
+        GThinking --> GInterleave
+        GInterleave --> GAnswer2
+    end
+
+    UserQuery --> OSeries
+    UserQuery --> GPT5x
+
+    subgraph Comparison["選択基準"]
+        Heavy["推論負荷が高いタスク\n→ o シリーズ"]
+        General["汎用タスク + 推論\n→ GPT-5.6"]
+        Cost["コスト最適化\n→ o4-mini / GPT-5.6 Luna"]
+    end
+
+    OAnswer --> Heavy
+    GAnswer2 --> General
+    OAnswer --> Cost
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#343541,stroke-width:2px,color:#343541
+
+    class OThinking,OToolUse,OMore,OAnswer openai
+    class GEffort,GThinking,GInterleave,GAnswer2 dark
+    class Heavy,General,Cost accent
+    class UserQuery light
+                </pre>
+            </div>
+
+            <div class="mermaid-wrapper">
+                <div class="mermaid-title">o シリーズの推論フロー詳細</div>
+                <pre class="mermaid">
+flowchart LR
+    subgraph Request["API リクエスト"]
+        Model["model: o3 / o4-mini"]
+        Effort["reasoning_effort:\nhigh"]
+        Tools["tools: [functions]"]
+    end
+
+    subgraph Processing["推論処理"]
+        direction TB
+        Parse["入力解析"]
+        Think1["推論フェーズ 1\n(問題分解)"]
+        ToolCall["ツール呼び出し\n(必要に応じて)"]
+        Think2["推論フェーズ 2\n(結果統合)"]
+        Generate["回答生成"]
+
+        Parse --> Think1
+        Think1 --> ToolCall
+        ToolCall --> Think2
+        Think2 --> Generate
+    end
+
+    subgraph Response["API レスポンス"]
+        Summary["reasoning_summary\n(推論サマリー)"]
+        Output["output_text\n(最終回答)"]
+        Usage["usage.reasoning_tokens\n(推論トークン数)"]
+    end
+
+    Model --> Parse
+    Effort --> Think1
+    Tools --> ToolCall
+    Generate --> Summary
+    Generate --> Output
+    Generate --> Usage
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Parse,Think1,ToolCall,Think2,Generate openai
+    class Model,Effort,Tools dark
+    class Summary,Output,Usage light
+                </pre>
+            </div>
+
+            <div class="mermaid-wrapper">
+                <div class="mermaid-title">モデル選択ガイド</div>
+                <pre class="mermaid">
+flowchart TD
+    Start(["タスクの種類は?"])
+
+    Start -->|"数学証明・科学分析\n競技プログラミング"| O3["o3\n(最高推論性能)"]
+    Start -->|"コーディング・分析\n(コスト重視)"| O4Mini["o4-mini\n(高効率推論)"]
+    Start -->|"汎用タスク +\n適度な推論"| GPT56["GPT-5.6\n(effort: medium)"]
+    Start -->|"最高難度の汎用タスク"| Sol["GPT-5.6 Sol\n(effort: high)"]
+    Start -->|"レイテンシ最優先\n簡易な推論"| Luna["GPT-5.6 Luna\n(effort: low)"]
+
+    O3 -->|"さらに困難な問題"| O3Pro["o3-pro\n(拡張計算)"]
+    O3 -->|"深層リサーチ"| O3DR["o3-deep-research"]
+    O4Mini -->|"深層リサーチ"| O4DR["o4-mini-deep-research"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class O3,O4Mini openai
+    class GPT56,Sol,Luna dark
+    class O3Pro,O3DR,O4DR light
+    class Start light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2><span class="icon">&#128640;</span>開発者への影響</h2>
+
+            <h3>推論特化タスクでの最適なモデル選択</h3>
+            <div class="impact-item">
+                <h4>o3 を選ぶべき場面</h4>
+                <p>数学的証明、科学論文の分析、競技プログラミング、複雑なアルゴリズム設計など、深い推論が品質に直結するタスク</p>
+            </div>
+            <div class="impact-item">
+                <h4>o4-mini を選ぶべき場面</h4>
+                <p>o3 と同等の推論能力が必要だが、コストやレイテンシの制約がある場合。バッチ処理や大量の推論タスクに最適</p>
+            </div>
+            <div class="impact-item">
+                <h4>GPT-5.6 を選ぶべき場面</h4>
+                <p>推論と生成のバランスが求められる汎用タスク。reasoning.effort パラメータで柔軟に調整可能</p>
+            </div>
+
+            <h3>API 利用における注意点</h3>
+            <ul>
+                <li><strong>Responses API 推奨:</strong> OpenAI は推論モデルに対して Responses API の使用を推奨しており、Chat Completions API よりも高い性能が得られる</li>
+                <li><strong>トークン予算の確保:</strong> 推論トークンがコンテキストウィンドウを占有するため、最低 25,000 トークンを推論と出力に確保することが推奨される</li>
+                <li><strong>ツール呼び出しの連携:</strong> 推論中のツール呼び出し結果を次のリクエストに渡す際は、すべての推論アイテム、ファンクション呼び出し、出力をまとめて渡す必要がある</li>
+            </ul>
+
+            <h3>コスト最適化戦略</h3>
+            <ul>
+                <li>o3 は 2025 年 6 月に価格引き下げが実施されており、以前よりコスト効率が向上</li>
+                <li>o4-mini は低コストで高品質な推論を提供し、大規模なパイプラインに適合</li>
+                <li>バッチ処理 (<code>v1/batch</code>) やフレックス処理を活用することでさらなるコスト削減が可能</li>
+            </ul>
+
+            <h3>GPT-5.6 との使い分け</h3>
+            <p>2026 年 7 月時点で、OpenAI のモデルラインナップは GPT-5.6 ファミリー (Sol / Terra / Luna) を中心に再構成されている。GPT-5.6 は <code>reasoning.effort</code> パラメータにより推論能力を内蔵しているが、o シリーズは以下の場面で依然として優位性を持つ。</p>
+            <ul>
+                <li>推論トークンの専用フェーズによる深い思考が必要な場合</li>
+                <li>推論中のツール呼び出しが不可欠なワークフロー</li>
+                <li>推論サマリーによる思考過程の可視化が求められる場合</li>
+                <li>ベンチマーク上で最高の推論精度が要求される場合</li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2><span class="icon">&#128221;</span>まとめ</h2>
+            <p>o3 および o4-mini は、OpenAI の推論特化モデルラインとして、数学、科学、コーディング、視覚的推論において最高水準の性能を提供する。内部的な推論トークンによる深い思考プロセス、推論中のツール呼び出し、推論サマリーによる可視化という独自の特徴を備え、GPT-5.6 ファミリーが汎用推論を内蔵した現在においても、推論負荷の高い専門タスクでは代替不可能な位置付けにある。</p>
+            <p>開発者は、タスクの推論要件、コスト制約、レイテンシ要件に基づいて o シリーズと GPT-5.6 ファミリーを適切に使い分けることで、最適な結果を得ることができる。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div>OpenAI News Summary - Infographic</div>
+            <div style="margin-top: 8px;">
+                Source: <a href="https://openai.com/index/introducing-o3-and-o4-mini/" target="_blank" rel="noopener">https://openai.com/index/introducing-o3-and-o4-mini/</a>
+            </div>
+            <div class="links">
+                <a href="https://platform.openai.com/docs/changelog" target="_blank" rel="noopener">API Changelog</a>
+                <a href="https://platform.openai.com/docs/guides/reasoning" target="_blank" rel="noopener">Reasoning ガイド</a>
+                <a href="https://platform.openai.com/docs/models" target="_blank" rel="noopener">Models ドキュメント</a>
+                <a href="https://platform.openai.com/docs/changelog#2025-06-10" target="_blank" rel="noopener">o3-pro リリース</a>
+                <a href="https://platform.openai.com/docs/changelog#2025-06-24" target="_blank" rel="noopener">o3-deep-research / o4-mini-deep-research</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

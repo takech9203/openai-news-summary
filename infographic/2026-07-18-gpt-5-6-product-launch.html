@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.6 正式リリース: Sol / Terra / Luna の 3 層構成で一般提供開始</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header .date {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.7);
+            position: relative;
+        }
+
+        .header .source-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .section h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .section ul, .section ol {
+            padding-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .section li {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .section li strong {
+            color: var(--text-primary);
+        }
+
+        /* Key Points */
+        .key-points {
+            background: linear-gradient(135deg, #f0fdf9 0%, #f7f7f8 100%);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-points .point {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .key-points .point:last-child {
+            margin-bottom: 0;
+        }
+
+        .key-points .point-icon {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 14px;
+            margin-top: 2px;
+        }
+
+        .key-points .point-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .feature-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        thead {
+            background: var(--openai-dark);
+            color: white;
+        }
+
+        thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        tbody tr:hover {
+            background: var(--openai-light);
+        }
+
+        tbody td {
+            padding: 10px 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Code */
+        .code-block {
+            margin: 16px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .code-block .code-header {
+            background: #2d2d2d;
+            color: #ccc;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            background: #1e1e1e;
+            overflow-x: auto;
+        }
+
+        .code-block pre code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        /* Mermaid */
+        .mermaid-wrapper {
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 10px;
+            padding: 24px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Impact */
+        .impact-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .impact-item:last-child {
+            border-bottom: none;
+        }
+
+        .impact-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .impact-item p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Spec List */
+        .spec-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        @media (max-width: 600px) {
+            .spec-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .spec-item {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+
+        .spec-item .label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .spec-item .value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 4px;
+        }
+
+        /* Migration Notice */
+        .notice {
+            background: #FFF8E1;
+            border: 1px solid #FFE082;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .notice h4 {
+            color: #F57F17;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .notice ul {
+            padding-left: 20px;
+        }
+
+        .notice li {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-bottom: 6px;
+        }
+
+        /* Summary */
+        .summary {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .summary h2 {
+            color: white;
+            border-bottom-color: var(--openai-green);
+        }
+
+        .summary p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.95rem;
+            line-height: 1.9;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .divider {
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-accent);
+            margin: 0 auto 16px;
+            border-radius: 2px;
+        }
+
+        /* Links */
+        .links-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 10px;
+        }
+
+        .links-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .links-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+            .header {
+                padding: 32px 24px;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .section {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">新機能</span>
+            <h1>GPT-5.6 正式リリース: Sol / Terra / Luna の 3 層構成で一般提供開始</h1>
+            <div class="date">
+                2026-07-18
+                <span class="source-badge">OpenAI News (Product)</span>
+            </div>
+        </header>
+
+        <!-- Key Points / Overview -->
+        <section class="section key-points">
+            <h2>概要</h2>
+            <div class="point">
+                <div class="point-icon">1</div>
+                <div class="point-text">OpenAI は 2026 年 7 月 18 日、次世代フロンティアモデル「GPT-5.6」の一般提供 (GA) を正式に開始。6 月 27 日のプレビュー発表、7 月 9 日のモデルファミリー詳細公開を経て、すべての開発者に利用可能となった。</div>
+            </div>
+            <div class="point">
+                <div class="point-icon">2</div>
+                <div class="point-text">OpenAI 初の本格的な 3 層命名体系を導入: フラッグシップの Sol、バランス型の Terra、効率型の Luna という 3 つのバリエーションを提供。</div>
+            </div>
+            <div class="point">
+                <div class="point-icon">3</div>
+                <div class="point-text">1.05M トークンのコンテキストウィンドウ、128K トークンの最大出力に加え、Programmatic Tool Calling (PTC)、Explicit Prompt Caching、Persisted Reasoning、Pro モード、Multi-Agent Orchestration を搭載。</div>
+            </div>
+        </section>
+
+        <!-- 3-Tier Model Table -->
+        <section class="section">
+            <h2>3 層命名体系の導入</h2>
+            <p>GPT-5.6 では、従来の単一モデル提供から脱却し、用途とコスト要件に応じた 3 つのティアを新たに導入した。</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>モデル</th>
+                            <th>モデル ID</th>
+                            <th>エイリアス</th>
+                            <th>特徴</th>
+                            <th>入力料金</th>
+                            <th>出力料金</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GPT-5.6-Sol</strong></td>
+                            <td><code>gpt-5.6-sol</code></td>
+                            <td><code>gpt-5.6</code></td>
+                            <td>フロンティアフラッグシップ</td>
+                            <td>$5/M tokens</td>
+                            <td>$30/M tokens</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPT-5.6-Terra</strong></td>
+                            <td><code>gpt-5.6-terra</code></td>
+                            <td>-</td>
+                            <td>知能とコストのバランス</td>
+                            <td>$2.50/M tokens</td>
+                            <td>$15/M tokens</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPT-5.6-Luna</strong></td>
+                            <td><code>gpt-5.6-luna</code></td>
+                            <td>-</td>
+                            <td>効率的な大量ワークロード</td>
+                            <td>$1/M tokens</td>
+                            <td>$6/M tokens</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Common Specs -->
+        <section class="section">
+            <h2>共通仕様</h2>
+            <p>すべてのバリエーションで以下の仕様が共通している。</p>
+            <div class="spec-list">
+                <div class="spec-item">
+                    <div class="label">コンテキストウィンドウ</div>
+                    <div class="value">1.05M トークン</div>
+                </div>
+                <div class="spec-item">
+                    <div class="label">最大出力</div>
+                    <div class="value">128K トークン</div>
+                </div>
+                <div class="spec-item">
+                    <div class="label">知識カットオフ</div>
+                    <div class="value">2026 年 2 月 16 日</div>
+                </div>
+                <div class="spec-item">
+                    <div class="label">推論レベル</div>
+                    <div class="value">none / low / medium / high / xhigh / max</div>
+                </div>
+                <div class="spec-item">
+                    <div class="label">ツール</div>
+                    <div class="value">Functions, Web search, File search, Computer use</div>
+                </div>
+                <div class="spec-item">
+                    <div class="label">入力</div>
+                    <div class="value">テキスト + 画像 (オリジナル解像度)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="label">エンドポイント</div>
+                    <div class="value">v1/responses, v1/chat/completions, v1/batch</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Features -->
+        <section class="section">
+            <h2>革新的な新機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Programmatic Tool Calling (PTC)</h4>
+                    <p>モデルが JavaScript コードを生成し、隔離された V8 ランタイム内でツール呼び出しを自律的にオーケストレーション。複数ツールの並列実行、ループ、条件分岐を単一リクエスト内で処理。ZDR 互換、コンテナコスト不要。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Explicit Prompt Caching</h4>
+                    <p>キャッシュ対象のプレフィックスを開発者が明示的に制御。prompt_cache_options.mode: "explicit" で有効化し、prompt_cache_breakpoint でキャッシュ境界を指定。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Persisted Reasoning</h4>
+                    <p>ターン間で推論アイテムを再利用し、マルチターン対話での推論の連続性を維持。reasoning.context パラメータで auto / all_turns / current_turn から選択。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Pro モード</h4>
+                    <p>通常より多くの計算リソースを投入し最終回答の精度を高める新モード。reasoning.mode: "pro" で有効化。困難な数学・コーディング・専門分析に最適。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Multi-Agent Orchestration (Beta)</h4>
+                    <p>Responses API を通じて複数のサブエージェントを並列に起動・協調。ルートエージェントがサブエージェントを spawn して並列処理を実現。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Original Image Detail</h4>
+                    <p>画像入力でネイティブ解像度をそのまま保持して処理。従来のリサイズ制限を撤廃し、高解像度画像の詳細な分析が可能に。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details: GPT-5.5 improvements -->
+        <section class="section">
+            <h2>技術的な詳細</h2>
+            <h3>GPT-5.5 からの主な改善点</h3>
+            <ul>
+                <li><strong>トークン効率:</strong> フロンティア性能をより少ないトークンで達成</li>
+                <li><strong>フロントエンドデザイン判断:</strong> UI/UX 関連タスクでの判断力が向上</li>
+                <li><strong>意図理解:</strong> ユーザーの意図をより正確に把握</li>
+                <li><strong>簡潔性:</strong> GPT-5.5 よりもデフォルトで簡潔な応答を生成</li>
+            </ul>
+
+            <h3>コードサンプル</h3>
+
+            <h3>Responses API での基本利用</h3>
+            <div class="code-block">
+                <div class="code-header">Python - GPT-5.6-Sol Responses API</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.6-Sol を使用した Responses API 呼び出し
+response = client.responses.create(
+    model="gpt-5.6-sol",
+    input=[
+        {
+            "role": "user",
+            "content": "マイクロサービスアーキテクチャの設計原則と、"
+                       "チームスケーリングにおけるトレードオフを説明してください。"
+        }
+    ],
+    reasoning={
+        "effort": "high",
+        "mode": "pro",
+        "context": "all_turns"
+    },
+    max_output_tokens=4096
+)
+
+print(response.output_text)
+
+# トークン使用状況の確認
+print(f"Input tokens: {response.usage.input_tokens}")
+print(f"Output tokens: {response.usage.output_tokens}")</code></pre>
+            </div>
+
+            <h3>Programmatic Tool Calling の利用</h3>
+            <div class="code-block">
+                <div class="code-header">Python - Programmatic Tool Calling</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Programmatic Tool Calling: モデルが JavaScript で
+# ツール呼び出しをオーケストレーションする
+response = client.responses.create(
+    model="gpt-5.6-sol",
+    input=[
+        {
+            "role": "user",
+            "content": "最新の Python セキュリティアドバイザリを 3 件検索し、"
+                       "それぞれの詳細を取得して表にまとめてください。"
+        }
+    ],
+    tools=[
+        {
+            "type": "function",
+            "name": "web_search",
+            "description": "Search the web for information",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"}
+                },
+                "required": ["query"]
+            }
+        },
+        {
+            "type": "function",
+            "name": "fetch_url",
+            "description": "Fetch content from a URL",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string"}
+                },
+                "required": ["url"]
+            }
+        }
+    ],
+    tool_choice="programmatic",
+    max_output_tokens=8192
+)
+
+# モデルは内部で以下のような JavaScript を生成・実行する:
+# const results = await tools.web_search({
+#     query: "Python security advisory 2026"
+# });
+# const details = await Promise.all(
+#     results.slice(0, 3).map(r => tools.fetch_url({ url: r.url }))
+# );
+# return formatAsTable(details);
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <h3>Explicit Prompt Caching の利用</h3>
+            <div class="code-block">
+                <div class="code-header">Python - Explicit Prompt Caching</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Explicit Prompt Caching: キャッシュ対象を明示的に制御
+response = client.responses.create(
+    model="gpt-5.6-terra",
+    input=[
+        {
+            "role": "system",
+            "content": "あなたは熟練したコードレビューアーです。"
+                       "セキュリティ、パフォーマンス、保守性の観点から"
+                       "コードを分析してください。",
+            "prompt_cache_breakpoint": True  # ここまでをキャッシュ
+        },
+        {
+            "role": "user",
+            "content": "以下のコードをレビューしてください: ..."
+        }
+    ],
+    prompt_cache_options={
+        "mode": "explicit"
+    },
+    max_output_tokens=4096
+)
+
+print(response.output_text)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2>アーキテクチャ</h2>
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアントアプリケーション"]
+        App["アプリケーション"]
+        SDK["OpenAI SDK\n(Python / Node.js / etc.)"]
+    end
+
+    subgraph API["OpenAI API エンドポイント"]
+        Responses["v1/responses"]
+        ChatComp["v1/chat/completions"]
+        Batch["v1/batch"]
+    end
+
+    subgraph GPT56["GPT-5.6 モデルファミリー"]
+        Sol["GPT-5.6-Sol\n$5 / $30 per MTok\nフラッグシップ"]
+        Terra["GPT-5.6-Terra\n$2.50 / $15 per MTok\nバランス型"]
+        Luna["GPT-5.6-Luna\n$1 / $6 per MTok\n効率型"]
+    end
+
+    subgraph Capabilities["新機能"]
+        PTC["Programmatic Tool Calling\n(V8 Runtime)"]
+        Caching["Explicit Prompt Caching"]
+        Reasoning["Persisted Reasoning\n+ Pro モード"]
+        MultiAgent["Multi-Agent\nOrchestration (Beta)"]
+        ImageDetail["Original Image Detail"]
+    end
+
+    subgraph Tools["ツールエコシステム"]
+        Functions["Functions"]
+        WebSearch["Web Search"]
+        FileSearch["File Search"]
+        ComputerUse["Computer Use"]
+    end
+
+    App --> SDK
+    SDK --> Responses
+    SDK --> ChatComp
+    SDK --> Batch
+    Responses --> Sol
+    Responses --> Terra
+    Responses --> Luna
+    ChatComp --> Sol
+    ChatComp --> Terra
+    ChatComp --> Luna
+
+    Sol --> PTC
+    Sol --> Caching
+    Sol --> Reasoning
+    Sol --> MultiAgent
+    Sol --> ImageDetail
+    Terra --> PTC
+    Terra --> Caching
+    Terra --> Reasoning
+    Terra --> ImageDetail
+    Luna --> PTC
+    Luna --> Caching
+    Luna --> ImageDetail
+
+    PTC --> Functions
+    PTC --> WebSearch
+    PTC --> FileSearch
+    PTC --> ComputerUse
+
+    MultiAgent -.->|"spawn subagents"| Sol
+    MultiAgent -.->|"spawn subagents"| Terra
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef feature fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Sol,Terra,Luna openai
+    class Responses,ChatComp,Batch dark
+    class App,SDK light
+    class PTC,Caching,Reasoning,MultiAgent,ImageDetail feature
+    class Functions,WebSearch,FileSearch,ComputerUse light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2>開発者への影響</h2>
+
+            <div class="impact-item">
+                <h4>モデル選択の最適化</h4>
+                <p>3 層構成により、開発者はユースケースに応じた最適なコスト/性能バランスを選択できる。</p>
+                <ul>
+                    <li><strong>Sol:</strong> 複雑なエージェントワークフロー、高度な推論、専門的分析。最高精度が必要な場面に</li>
+                    <li><strong>Terra:</strong> 一般的なアプリケーション、チャットボット、コンテンツ生成。多くのプロダクション用途に最適</li>
+                    <li><strong>Luna:</strong> 大量バッチ処理、分類、要約、リアルタイム応答。コスト効率重視の大規模ワークロードに</li>
+                </ul>
+            </div>
+
+            <div class="impact-item">
+                <h4>ツール呼び出しパターンの変革</h4>
+                <p>Programmatic Tool Calling により、従来複数のラウンドトリップが必要だったマルチツール協調が、単一リクエストで完結する。レイテンシの大幅削減、API 呼び出しコストの最適化、より複雑なオーケストレーションロジックの実現が期待される。</p>
+            </div>
+
+            <div class="impact-item">
+                <h4>キャッシュ戦略の精緻化</h4>
+                <p>Explicit Prompt Caching により、システムプロンプトや長大なコンテキストのキャッシュを開発者が精密に制御できる。繰り返しリクエストのコストとレイテンシを大幅に削減可能。</p>
+            </div>
+
+            <div class="impact-item">
+                <h4>マルチエージェント設計の標準化</h4>
+                <p>API レベルでのマルチエージェントサポートにより、複雑なワークフローを複数の専門エージェントに分割して並列処理するパターンが標準化された。</p>
+            </div>
+
+            <div class="notice">
+                <h4>移行時の注意事項</h4>
+                <ul>
+                    <li>GPT-5.5 からの移行では新しいモデル ID への変更が必要</li>
+                    <li><code>gpt-5.6</code> エイリアスは <code>gpt-5.6-sol</code> を参照する</li>
+                    <li>GPT-5.6 はデフォルトで GPT-5.5 より簡潔な応答を生成するため、出力長の期待値を調整すること</li>
+                    <li>Programmatic Tool Calling は <code>tool_choice: "programmatic"</code> の明示的な指定が必要</li>
+                    <li>Multi-Agent Orchestration はベータ機能のため、SLA の確認を推奨</li>
+                    <li>128K トークンの最大出力は従来モデルから大幅に増加しているため、コスト管理に注意</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2>関連リンク</h2>
+            <ul class="links-list">
+                <li><a href="https://openai.com/index/gpt-5-6/" target="_blank">GPT-5.6 公式発表ページ</a></li>
+                <li><a href="https://openai.com/index/previewing-gpt-5-6-sol/" target="_blank">GPT-5.6 Sol プレビュー発表</a></li>
+                <li><a href="https://platform.openai.com/docs" target="_blank">OpenAI API ドキュメント</a></li>
+                <li><a href="https://platform.openai.com/docs/models" target="_blank">OpenAI モデル一覧</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference/responses" target="_blank">Responses API リファレンス</a></li>
+                <li><a href="https://platform.openai.com/docs/changelog" target="_blank">OpenAI API Changelog</a></li>
+                <li><a href="https://openai.com/pricing" target="_blank">OpenAI Pricing</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="summary">
+            <h2>まとめ</h2>
+            <p>GPT-5.6 の正式リリースは、OpenAI のモデル提供戦略における重要な転換点である。Sol / Terra / Luna の 3 層命名体系により、フラッグシップ性能からコスト効率まで、あらゆるユースケースに対応する柔軟な選択肢が提供される。技術面では、Programmatic Tool Calling がツール呼び出しのパラダイムを根本的に変革し、Explicit Prompt Caching と Persisted Reasoning がコストとレイテンシの最適化を可能にする。Multi-Agent Orchestration のベータ提供は、API レベルでのマルチエージェント設計パターンの標準化に向けた重要な一歩である。GPT-5.5 からの改善として、トークン効率の向上、フロントエンドデザイン判断力の強化、意図理解の向上、より簡潔なデフォルト応答が実現されており、開発者はより少ないコストでより高品質な AI アプリケーションを構築できるようになった。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="divider"></div>
+            <p>Source: <a href="https://openai.com/index/gpt-5-6/" target="_blank">https://openai.com/index/gpt-5-6/</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - 2026-07-18</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

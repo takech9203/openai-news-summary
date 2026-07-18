@@ -5,12 +5,24 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-18](2026/2026-07-18-gpt-5-6-product-launch.md) - GPT-5.6 正式リリース: Sol / Terra / Luna の 3 層構成で一般提供開始
+- [2026-07-17](2026/2026-07-17-introducing-the-codex-app.md) - Codex App の紹介: GPT-5.6 搭載で進化した AI コーディングエージェントプラットフォーム
+- [2026-07-17](2026/2026-07-17-codex-for-almost-everything.md) - Codex for Almost Everything: コーディングを超えた汎用 AI エージェントへの進化
+- [2026-07-17](2026/2026-07-17-codex-flexible-pricing-for-teams.md) - Codex チーム向けフレキシブルプライシングの拡充: GA 後の新料金体系
+- [2026-07-16](2026/2026-07-16-running-codex-safely.md) - Running Codex Safely: 一般提供に伴う Codex プラットフォームの安全性フレームワーク
 - [2026-07-16](2026/2026-07-16-introducing-the-teen-safety-blueprint.md) - OpenAI「Teen Safety Blueprint」を更新: ティーンの安全な AI 利用に向けた包括的フレームワーク
+- [2026-07-16](2026/2026-07-16-introducing-o3-and-o4-mini.md) - o3 および o4-mini 推論モデルの紹介: 数学・科学・コーディングの新基準
+- [2026-07-16](2026/2026-07-16-introducing-new-capabilities-to-gpt-rosalind.md) - GPT-Rosalind に新たな能力を導入: ウェットラボ統合とリアルタイム科学推論の実現
+- [2026-07-16](2026/2026-07-16-introducing-life-sci-bench.md) - LifeSciBench: ライフサイエンス研究タスク向け AI 評価ベンチマークの導入
+- [2026-07-16](2026/2026-07-16-introducing-gpt-5-4.md) - GPT-5.4 の紹介: フロンティア推論・コーディング・エージェント機能を統合した次世代モデル
+- [2026-07-16](2026/2026-07-16-gpt-5-safe-completions.md) - GPT-5 Safe Completions: リアルタイム出力監視による安全性保証システム
+- [2026-07-16](2026/2026-07-16-deployment-simulation.md) - Deployment Simulation: 実環境デプロイ前の体系的安全性シミュレーション研究
 - [2026-07-16](2026/2026-07-16-chatgpt-basketball-merchandise.md) - OpenAI が ChatGPT ブランドのバスケットボールとマーチャンダイズラインを発売
 - [2026-07-15](2026/2026-07-15-unlocking-self-improvement-gpt-red.md) - GPT-Red: 自己改善による堅牢性の向上 - OpenAI の自動レッドチーミングシステム
 - [2026-07-15](2026/2026-07-15-openai-south-korea-economic-blueprint.md) - OpenAI の韓国経済ブループリント: AI による経済発展への投資計画
 - [2026-07-15](2026/2026-07-15-openai-codex-micro-keyboard.md) - OpenAI Codex Micro - AI コーディングエージェント専用キーボードの発表
 - [2026-07-15](2026/2026-07-15-microsoft-sales-training-against-openai.md) - Microsoft がセールスチームに OpenAI・Anthropic への対抗トレーニングを実施
+- [2026-07-15](2026/2026-07-15-evaluating-chain-of-thought-monitorability.md) - Chain of Thought モニタリング可能性の評価: GPT-5.6 時代における推論監督の体系的検証
 - [2026-07-15](2026/2026-07-15-advancing-ai-safety-state-federal-action.md) - OpenAI、「州および連邦の行動による AI 安全性の推進」を発表
 - [2026-07-14](2026/2026-07-14-openai-researcher-miles-wang-drug-startup.md) - OpenAI 研究者 Miles Wang が 20 億ドル評価の AI 創薬スタートアップを設立へ
 - [2026-07-14](2026/2026-07-14-openai-first-hardware-device.md) - OpenAI 初のハードウェアデバイス -- スクリーンレスのモバイルスピーカーで「家庭に住む AI コンパニオン」を実現

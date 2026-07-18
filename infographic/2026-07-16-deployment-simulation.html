@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Simulation: 実環境デプロイ前の体系的安全性シミュレーション研究</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .header .source-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section h2 {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .section h3 {
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .section ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 16px;
+        }
+
+        .section ul li {
+            padding: 8px 0 8px 24px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .section ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 16px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .section ul li strong {
+            color: var(--text-primary);
+        }
+
+        /* Key Points */
+        .key-points {
+            background: linear-gradient(135deg, #f0faf6 0%, #f7f7f8 100%);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-points .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .key-points .point-item:last-child {
+            border-bottom: none;
+        }
+
+        .key-points .point-number {
+            background: var(--gradient-accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .key-points .point-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        /* Code blocks */
+        pre {
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+
+        pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* Integration Cards */
+        .integration-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .integration-card {
+            background: var(--openai-light);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .integration-card h4 {
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .integration-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: var(--openai-light);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .metric-card .metric-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .metric-card .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--openai-green);
+        }
+
+        .metric-card .metric-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Component Cards */
+        .component-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 600px) {
+            .component-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .component-card {
+            background: var(--openai-light);
+            border-radius: 8px;
+            padding: 20px;
+            border-top: 3px solid var(--openai-green);
+        }
+
+        .component-card .component-number {
+            display: inline-block;
+            background: var(--openai-dark);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .component-card h4 {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .component-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        /* Agent Tests */
+        .agent-tests {
+            margin-top: 16px;
+        }
+
+        .agent-test-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .agent-test-item .test-icon {
+            background: var(--openai-dark);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .agent-test-item .test-content strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .agent-test-item .test-content span {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Impact Section */
+        .impact-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-list li {
+            padding: 16px;
+            margin-bottom: 12px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--openai-green);
+            position: relative;
+        }
+
+        .impact-list li::before {
+            display: none;
+        }
+
+        .impact-list li strong {
+            display: block;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .impact-list li span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Related Links */
+        .related-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .related-links li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .related-links li:last-child {
+            border-bottom: none;
+        }
+
+        .related-links li::before {
+            display: none;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .related-links a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0faf6 0%, #e8f8f2 100%);
+            border: 2px solid var(--openai-green);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .summary-box p {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">Research / Safety</span>
+            <h1>Deployment Simulation: 実環境デプロイ前の体系的安全性シミュレーション研究</h1>
+            <p class="date">2026-07-16 | OpenAI Research</p>
+            <span class="source-badge">OpenAI Research</span>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section key-points">
+            <h2>Key Points</h2>
+            <div class="point-item">
+                <span class="point-number">1</span>
+                <span class="point-text">AI モデルを実環境にデプロイする前に、本番環境に近い条件下でモデルの振る舞いを包括的にテストするシミュレーションフレームワークを提示</span>
+            </div>
+            <div class="point-item">
+                <span class="point-number">2</span>
+                <span class="point-text">GPT-Red との連携により、自動攻撃パターン発見とシミュレーション検証を統合し、静的ベンチマークでは検出困難な動的リスクを事前検出</span>
+            </div>
+            <div class="point-item">
+                <span class="point-number">3</span>
+                <span class="point-text">エージェント型 AI システムに特化した累積エラーテスト、権限境界テスト、目標逸脱テストなどの包括的検証シナリオを実装</span>
+            </div>
+            <div class="point-item">
+                <span class="point-number">4</span>
+                <span class="point-text">Preparedness Framework と連携し、デプロイメント構成ごとのリスクプロファイル生成とデプロイ可否判定の定量的エビデンスを提供</span>
+            </div>
+            <div class="point-item">
+                <span class="point-number">5</span>
+                <span class="point-text">将来的に開発者向け API として提供され、カスタムデプロイメント構成の事前検証や EU AI Act 等の規制コンプライアンス支援に活用可能</span>
+            </div>
+        </section>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2>概要</h2>
+            <p>OpenAI は 2026 年 7 月 16 日、AI モデルの実環境デプロイメント前に安全性リスクを体系的にシミュレーションする手法「Deployment Simulation」に関する研究成果を公開した。本研究は、フロンティアモデルが現実世界の運用環境に配置された際に生じうる障害モード、アラインメント不全、安全性違反を事前に検出・評価するためのシミュレーションフレームワークを提示するものである。</p>
+            <p>本研究は、GPT-Red (自己改善によるロバスト性向上、2026 年 7 月 15 日発表) や Chain-of-Thought モニタリング可能性評価と連携し、OpenAI の安全性評価パイプラインの中核的要素として位置づけられる。特にエージェント型 AI システムが自律的にツールを操作し長期タスクを遂行する場面では、静的なベンチマーク評価では検出困難な動的リスクが存在するため、実運用条件を再現したシミュレーションベースのテストが不可欠となっている。</p>
+        </section>
+
+        <!-- Main Content: Concept and Purpose -->
+        <section class="section">
+            <h2>デプロイメントシミュレーションの概念と目的</h2>
+            <p>Deployment Simulation は、AI モデルを実環境にデプロイする前に、本番環境に近い条件下でモデルの振る舞いを包括的にテストする手法である。従来のベンチマーク評価やレッドチーミングが特定のタスクや攻撃パターンに焦点を当てるのに対し、Deployment Simulation は運用環境全体を再現し、モデルがさまざまな条件下でどのように振る舞うかを動的に検証する。</p>
+
+            <h3>対象とする主要なリスク領域</h3>
+            <ul>
+                <li><strong>分布シフトへの脆弱性:</strong> 訓練データと実運用データの分布の違いにより、予期せぬ出力や安全性違反が発生するリスク</li>
+                <li><strong>敵対的入力への耐性:</strong> プロンプトインジェクション、ジェイルブレイク試行、間接的な指示操作に対する防御能力</li>
+                <li><strong>エッジケースでの振る舞い:</strong> 通常の使用パターンからの逸脱時にモデルが安全性制約を維持できるか</li>
+                <li><strong>長期的な性能劣化:</strong> 連続的なインタラクションにおけるモデルの整合性と安全性の持続</li>
+                <li><strong>安全性分類器の有効性:</strong> リアルタイム誤用分類器が多様な攻撃パターンに対して機能するか</li>
+            </ul>
+        </section>
+
+        <!-- Static vs Simulation Comparison -->
+        <section class="section">
+            <h2>静的評価との差別化</h2>
+            <p>従来の安全性評価手法と Deployment Simulation の根本的な違いは、評価の「動的性」にある。</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>観点</th>
+                            <th>静的評価 (従来)</th>
+                            <th>Deployment Simulation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>テスト条件</td>
+                            <td>固定されたベンチマーク</td>
+                            <td>動的に生成されるシナリオ</td>
+                        </tr>
+                        <tr>
+                            <td>環境</td>
+                            <td>隔離されたテスト環境</td>
+                            <td>本番環境のエミュレーション</td>
+                        </tr>
+                        <tr>
+                            <td>インタラクション</td>
+                            <td>単発の入出力ペア</td>
+                            <td>マルチターン・マルチステップ</td>
+                        </tr>
+                        <tr>
+                            <td>ツール使用</td>
+                            <td>模擬的またはなし</td>
+                            <td>実際のツール呼び出しのシミュレーション</td>
+                        </tr>
+                        <tr>
+                            <td>時間スケール</td>
+                            <td>瞬間的</td>
+                            <td>長期的 (セッション全体)</td>
+                        </tr>
+                        <tr>
+                            <td>カバレッジ</td>
+                            <td>定義済みテストセット</td>
+                            <td>自動生成による広範なカバレッジ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- GPT-Red Integration -->
+        <section class="section">
+            <h2>GPT-Red およびリアルタイム誤用分類器との統合</h2>
+            <p>2026 年 7 月 15 日に発表された GPT-Red は、セルフプレイによる攻撃・防御の反復訓練で脆弱性を自動検出するシステムである。Deployment Simulation は GPT-Red と以下のように連携する。</p>
+            <div class="integration-cards">
+                <div class="integration-card">
+                    <h4>1. GPT-Red が発見した攻撃パターンのシミュレーション検証</h4>
+                    <p>GPT-Red が特定した脆弱性が実運用条件下でも悪用可能かを Deployment Simulation で確認</p>
+                </div>
+                <div class="integration-card">
+                    <h4>2. シミュレーション結果による GPT-Red の攻撃シナリオ拡張</h4>
+                    <p>デプロイメント環境特有の条件を GPT-Red の攻撃生成に反映</p>
+                </div>
+                <div class="integration-card">
+                    <h4>3. リアルタイム誤用分類器のストレステスト</h4>
+                    <p>GPT-5.6 に搭載されたリアルタイム誤用分類器が、多様なデプロイメント条件下で正しく機能するかを検証</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preparedness Framework -->
+        <section class="section">
+            <h2>Preparedness Framework における位置づけ</h2>
+            <p>OpenAI の Preparedness Framework はモデルリスクを Low / Medium / High / Critical の 4 段階で評価する。Deployment Simulation はこの評価プロセスにおいて以下の役割を担う。</p>
+            <ul>
+                <li>静的ベンチマークで Medium と評価されたリスクが、特定のデプロイメント条件下で High に昇格する可能性の検出</li>
+                <li>デプロイメント構成 (システムプロンプト、ツールアクセス権限、ユーザー層) ごとのリスクプロファイルの生成</li>
+                <li>デプロイ可否判定のための定量的エビデンスの提供</li>
+            </ul>
+        </section>
+
+        <!-- Technical Details: Pipeline -->
+        <section class="section">
+            <h2>技術的な詳細: シミュレーションパイプラインの構成</h2>
+            <p>Deployment Simulation のパイプラインは、以下の 4 つの主要コンポーネントで構成される。</p>
+
+            <div class="component-cards">
+                <div class="component-card">
+                    <span class="component-number">1</span>
+                    <h4>環境エミュレータ</h4>
+                    <p>実際のデプロイメント環境を高忠実度で再現するサンドボックス環境。API エンドポイント、ファイルシステム、外部ツール、ユーザーインターフェースの挙動を模擬する。不可逆的なアクションを安全に実行できるよう設計。</p>
+                </div>
+                <div class="component-card">
+                    <span class="component-number">2</span>
+                    <h4>シナリオジェネレータ</h4>
+                    <p>多様な使用シナリオを自動生成するシステム。通常の利用パターン、エッジケース、敵対的入力の 3 カテゴリにわたるシナリオを生成。GPT-Red の攻撃パターンライブラリと連携。</p>
+                </div>
+                <div class="component-card">
+                    <span class="component-number">3</span>
+                    <h4>モニタリングフレームワーク</h4>
+                    <p>モデルの振る舞いを多層的に監視。Chain-of-Thought の追跡、外部アクションのログ記録、安全性メトリクスのリアルタイム計測を行う。</p>
+                </div>
+                <div class="component-card">
+                    <span class="component-number">4</span>
+                    <h4>評価エンジン</h4>
+                    <p>シミュレーション結果を Preparedness Framework の基準に照らして定量的に評価。安全性スコア、ロバスト性指標、整合性メトリクスを算出し、デプロイ可否の推奨を生成。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics -->
+        <section class="section">
+            <h2>評価メトリクス</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-name">Policy Compliance Rate</div>
+                    <div class="metric-value">>= 99.5%</div>
+                    <div class="metric-desc">デプロイメントポリシーへの適合率</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Adversarial Robustness</div>
+                    <div class="metric-value">>= 95%</div>
+                    <div class="metric-desc">敵対的入力に対する防御成功率</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Behavioral Consistency</div>
+                    <div class="metric-value">>= 98%</div>
+                    <div class="metric-desc">入力変動に対する出力の一貫性</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Goal Alignment</div>
+                    <div class="metric-value">>= 99%</div>
+                    <div class="metric-desc">宣言された目標と実際のアクションの一致度</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Escalation Accuracy</div>
+                    <div class="metric-value">>= 97%</div>
+                    <div class="metric-desc">エラー時の適切なエスカレーション率</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Recovery Rate</div>
+                    <div class="metric-value">>= 95%</div>
+                    <div class="metric-desc">障害発生後の正常復帰率</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent-Specific Tests -->
+        <section class="section">
+            <h2>エージェント型 AI に特化したテスト</h2>
+            <p>エージェント型 AI システムに対しては、以下の追加的なシミュレーションシナリオが実行される。</p>
+            <div class="agent-tests">
+                <div class="agent-test-item">
+                    <div class="test-icon">E</div>
+                    <div class="test-content">
+                        <strong>累積エラーテスト</strong>
+                        <span>100 ステップ以上のマルチステップタスクで小さなエラーが蓄積し、最終的に安全性違反に至るパスの検出</span>
+                    </div>
+                </div>
+                <div class="agent-test-item">
+                    <div class="test-icon">P</div>
+                    <div class="test-content">
+                        <strong>権限境界テスト</strong>
+                        <span>与えられたツールアクセス権限の範囲を超えたアクションを試行するかの検証</span>
+                    </div>
+                </div>
+                <div class="agent-test-item">
+                    <div class="test-icon">G</div>
+                    <div class="test-content">
+                        <strong>目標逸脱テスト</strong>
+                        <span>長時間のタスク遂行中に当初の目標から逸脱する振る舞いの検出</span>
+                    </div>
+                </div>
+                <div class="agent-test-item">
+                    <div class="test-icon">I</div>
+                    <div class="test-content">
+                        <strong>不可逆アクション検証</strong>
+                        <span>ファイル削除、外部 API への書き込みなど取り消せないアクションの実行前に適切な確認を行うかの検証</span>
+                    </div>
+                </div>
+                <div class="agent-test-item">
+                    <div class="test-icon">M</div>
+                    <div class="test-content">
+                        <strong>マルチエージェント干渉テスト</strong>
+                        <span>複数のエージェントが同一環境で動作する際の安全性維持能力の検証</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2>アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Pipeline["Deployment Simulation Pipeline"]
+        direction TB
+
+        subgraph ScenarioGen["シナリオ生成層"]
+            Normal["通常シナリオ<br/>(一般的な利用パターン)"]
+            Edge["エッジケース<br/>(境界条件・稀少パターン)"]
+            Adversarial["敵対的シナリオ<br/>(GPT-Red 連携)"]
+        end
+
+        subgraph SimEnv["シミュレーション環境"]
+            Sandbox["サンドボックス"]
+            ToolEmu["ツールエミュレータ<br/>(API, FS, Web)"]
+            SynthUser["合成ユーザー<br/>(多様なペルソナ)"]
+            TimeScale["時間スケール制御<br/>(長期シミュレーション)"]
+        end
+
+        subgraph Monitoring["モニタリング層"]
+            CoT["Chain-of-Thought<br/>追跡・分析"]
+            ActionLog["アクションログ<br/>(全ツール呼び出し)"]
+            SafetyMetrics["安全性メトリクス<br/>(リアルタイム計測)"]
+            MisuseClassifier["誤用分類器<br/>検証"]
+        end
+
+        subgraph Evaluation["評価・判定層"]
+            Criteria["Preparedness Framework<br/>判定基準"]
+            RiskProfile["リスクプロファイル<br/>生成"]
+            Decision["デプロイ可否判定"]
+        end
+    end
+
+    subgraph Target["評価対象"]
+        Model["フロンティアモデル<br/>(GPT-5.6 等)"]
+        AgentSys["エージェントシステム<br/>(Codex, Operator 等)"]
+    end
+
+    subgraph Outcome["判定結果"]
+        Deploy["実環境デプロイ承認"]
+        Remediate["改善措置・再シミュレーション"]
+    end
+
+    ScenarioGen --> SimEnv
+    Target --> Sandbox
+    SynthUser --> Sandbox
+    ToolEmu --> Sandbox
+    TimeScale --> Sandbox
+    SimEnv --> Monitoring
+    Monitoring --> Evaluation
+    Decision -->|"Pass"| Deploy
+    Decision -->|"Fail"| Remediate
+    Remediate -->|"再テスト"| ScenarioGen
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef warn fill:#FF6B35,stroke:#CC5529,stroke-width:2px,color:white
+
+    class Model,AgentSys,Deploy openai
+    class Sandbox,ToolEmu,CoT,ActionLog,SafetyMetrics,MisuseClassifier dark
+    class Normal,Edge,SynthUser,TimeScale,Criteria,RiskProfile,Decision light
+    class Adversarial,Remediate warn
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2>開発者への影響</h2>
+            <p>本研究は AI アプリケーション開発者に以下の影響をもたらす。</p>
+            <ul class="impact-list">
+                <li>
+                    <strong>デプロイ前安全性保証の強化</strong>
+                    <span>OpenAI が提供するモデルおよび API に対して Deployment Simulation による安全性検証が適用されることで、開発者はモデルの安全性プロファイルに対する信頼度を高められる</span>
+                </li>
+                <li>
+                    <strong>エージェント型アプリケーション設計のベストプラクティス</strong>
+                    <span>シミュレーションで発見されたリスクパターンの公開により、ツール使用・マルチステップタスクにおける安全設計の指針が得られる</span>
+                </li>
+                <li>
+                    <strong>カスタムデプロイメント構成の事前検証</strong>
+                    <span>将来的に、開発者が独自のシステムプロンプトやツール構成に対してシミュレーションテストを実行できる機能が API として提供される可能性がある</span>
+                </li>
+                <li>
+                    <strong>規制コンプライアンスの支援</strong>
+                    <span>EU AI Act をはじめとする AI 規制においてプリデプロイメント評価の証拠が求められる場面で、Deployment Simulation の結果がコンプライアンス文書として活用できる可能性がある</span>
+                </li>
+                <li>
+                    <strong>インシデント予防コストの削減</strong>
+                    <span>実環境での安全性インシデントを事前にシミュレーションで検出することで、事後対応にかかるコストとレピュテーションリスクを低減できる</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2>関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://openai.com/index/deployment-simulation/">Deployment Simulation (公式ページ)</a></li>
+                <li><a href="https://openai.com/index/unlocking-self-improvement-gpt-red/">GPT-Red: Unlocking Self-Improvement for Robustness</a></li>
+                <li><a href="https://openai.com/index/evaluating-cot-monitorability/">Evaluating Chain-of-Thought Monitorability</a></li>
+                <li><a href="https://openai.com/index/confessions/">Confessions: Keep Language Models Honest</a></li>
+                <li><a href="https://openai.com/preparedness">OpenAI Preparedness Framework</a></li>
+                <li><a href="https://openai.com/index/introducing-the-teen-safety-blueprint/">Introducing the Teen Safety Blueprint</a></li>
+                <li><a href="https://openai.com/research">OpenAI Research</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2>まとめ</h2>
+            <div class="summary-box">
+                <p>Deployment Simulation は、OpenAI が構築するプリデプロイメント安全性評価パイプラインの中核的手法であり、フロンティア AI モデルが実環境で安全に動作することを事前にシミュレーションベースで検証する体系的アプローチを提示している。GPT-Red による自動攻撃パターン発見、Chain-of-Thought モニタリングによる内部推論の監視、リアルタイム誤用分類器のストレステストを統合することで、静的ベンチマークでは発見困難な動的リスクを事前に検出する能力を実現している。エージェント型 AI システムの普及が加速する中、デプロイ前の包括的な安全性シミュレーションは、安全な AI 運用の前提条件として今後ますます重要性を増すと考えられる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Source URL:</p>
+            <a href="https://openai.com/index/deployment-simulation/">https://openai.com/index/deployment-simulation/</a>
+            <p style="margin-top: 16px; font-size: 0.8rem;">Generated from OpenAI Research Report | 2026-07-16</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

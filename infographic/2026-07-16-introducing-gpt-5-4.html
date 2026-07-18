@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.4 の紹介: フロンティア推論・コーディング・エージェント機能を統合した次世代モデル</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header .date {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+        }
+
+        .header .meta-table {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .header .meta-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header .meta-table td {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header .meta-table td:first-child {
+            font-weight: 700;
+            width: 100px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .header .meta-table a {
+            color: #1DB791;
+            text-decoration: none;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .section h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .section ul, .section ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        .section li {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .section li strong {
+            color: var(--text-primary);
+        }
+
+        /* Key Points */
+        .key-points {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.05) 0%, rgba(29, 183, 145, 0.08) 100%);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--openai-gray);
+            position: relative;
+            padding-left: 36px;
+        }
+
+        .key-points li::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        tbody tr:hover {
+            background: rgba(16, 163, 127, 0.04);
+        }
+
+        tbody tr td strong {
+            color: var(--openai-green);
+        }
+
+        /* Code */
+        .code-block {
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-block-title {
+            background: var(--openai-dark);
+            color: rgba(255,255,255,0.8);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        pre {
+            margin: 0;
+            border-radius: 0 0 8px 8px;
+        }
+
+        pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 16px !important;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Mermaid */
+        .mermaid-wrapper {
+            margin: 24px 0;
+            padding: 24px;
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 8px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid-wrapper h4 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .feature-card .feature-number {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Impact Section */
+        .impact-item {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .impact-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .impact-item ul {
+            margin-bottom: 0;
+        }
+
+        /* Reasoning Levels */
+        .reasoning-levels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .reasoning-level {
+            text-align: center;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .reasoning-level .level-name {
+            font-weight: 700;
+            color: var(--openai-green);
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .reasoning-level .level-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-label {
+            font-weight: 700;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Links Section */
+        .links-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .links-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .links-list li:last-child {
+            border-bottom: none;
+        }
+
+        .links-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .links-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(52, 53, 65, 0.05) 100%);
+            border: 2px solid var(--openai-green);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .summary-box p {
+            font-size: 0.95rem;
+            line-height: 2;
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .reasoning-levels {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">新機能</span>
+            <h1>GPT-5.4 の紹介: フロンティア推論・コーディング・エージェント機能を統合した次世代モデル</h1>
+            <div class="date">2026-07-16</div>
+            <div class="meta-table">
+                <table>
+                    <tr>
+                        <td>発表日</td>
+                        <td>2026-07-16</td>
+                    </tr>
+                    <tr>
+                        <td>ソース</td>
+                        <td>OpenAI News</td>
+                    </tr>
+                    <tr>
+                        <td>カテゴリ</td>
+                        <td>新機能</td>
+                    </tr>
+                    <tr>
+                        <td>公式リンク</td>
+                        <td><a href="https://openai.com/index/introducing-gpt-5-4/">openai.com</a></td>
+                    </tr>
+                </table>
+            </div>
+        </header>
+
+        <!-- Overview / Key Points -->
+        <section class="section key-points">
+            <h2>概要</h2>
+            <p>OpenAI は 2026 年 7 月 16 日、GPT-5.4 の紹介ページを更新し、同モデルの包括的な機能概要と最新の利用ガイドラインを公開した。GPT-5.4 は 2026 年 3 月 5 日に初回リリースされたフロンティアモデルであり、プロフェッショナルワーク向けに設計された OpenAI 史上最も高性能かつ効率的なモデルである。コーディング、Computer Use (コンピュータ操作)、ツール検索、1M トークンコンテキストウィンドウ、そして高度な推論能力 (Thinking) を統合した包括的なモデルとして位置づけられている。</p>
+            <p>GPT-5 シリーズにおいて、GPT-5.3 (Codex) と GPT-5.6 (Sol/Terra/Luna) の間に位置するミッドレンジフロンティアモデルとして、コスト効率と高い性能のバランスを実現している。v1/responses、v1/chat/completions、v1/batch の各エンドポイントから利用可能であり、推論エフォートレベルの制御、ツール呼び出し、画像入力をサポートしている。</p>
+            <ul>
+                <li>コーディング、Computer Use、ツール検索、1M トークンコンテキスト、Thinking の 5 つの中核機能を統合</li>
+                <li>GPT-5 シリーズのミッドレンジフロンティアモデルとしてコスト効率と高性能を両立</li>
+                <li>v1/responses、v1/chat/completions、v1/batch の各エンドポイントで利用可能</li>
+                <li>4 つのバリエーション (標準 / pro / mini / nano) による幅広い用途対応</li>
+                <li>$2.50/MTok の競争力ある入力料金とバッチ処理 50% 割引</li>
+            </ul>
+        </section>
+
+        <!-- GPT-5 Series Positioning -->
+        <section class="section">
+            <h2>GPT-5 シリーズにおける位置づけ</h2>
+            <p>GPT-5.4 は、GPT-5 シリーズの中核を担うフロンティアモデルである。以下の表はシリーズ全体の進化を示している。</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>モデル</th>
+                            <th>リリース時期</th>
+                            <th>特徴</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GPT-5.1</td>
+                            <td>2025 年後半</td>
+                            <td>初期フロンティアモデル</td>
+                        </tr>
+                        <tr>
+                            <td>GPT-5.2</td>
+                            <td>2025 年後半</td>
+                            <td>性能改善版</td>
+                        </tr>
+                        <tr>
+                            <td>GPT-5.3 (Codex)</td>
+                            <td>2026 年 3 月</td>
+                            <td>コーディング特化</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPT-5.4</strong></td>
+                            <td><strong>2026 年 3 月</strong></td>
+                            <td><strong>統合フロンティアモデル</strong></td>
+                        </tr>
+                        <tr>
+                            <td>GPT-5.5</td>
+                            <td>2026 年 4 月</td>
+                            <td>次世代推論強化</td>
+                        </tr>
+                        <tr>
+                            <td>GPT-5.6 (Sol/Terra/Luna)</td>
+                            <td>2026 年 7 月</td>
+                            <td>3 層構成の最新モデル</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mermaid: Series Evolution -->
+            <div class="mermaid-wrapper">
+                <h4>GPT-5 シリーズの進化</h4>
+                <div class="mermaid">
+flowchart LR
+    subgraph Series["GPT-5 シリーズの進化"]
+        direction LR
+        GPT51["GPT-5.1"]
+        GPT52["GPT-5.2"]
+        GPT53["GPT-5.3<br/>(Codex)"]
+        GPT54["GPT-5.4"]
+        GPT55["GPT-5.5"]
+        GPT56["GPT-5.6<br/>(Sol/Terra/Luna)"]
+    end
+
+    GPT51 --> GPT52
+    GPT52 --> GPT53
+    GPT53 --> GPT54
+    GPT54 --> GPT55
+    GPT55 --> GPT56
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:3px,color:white
+
+    class GPT51,GPT52,GPT53,GPT55,GPT56 dark
+    class GPT54 highlight
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Family -->
+        <section class="section">
+            <h2>モデルファミリー構成</h2>
+            <p>GPT-5.4 は 4 つのバリエーションで提供されている。</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>モデル ID</th>
+                            <th>用途</th>
+                            <th>入力料金 (/MTok)</th>
+                            <th>出力料金 (/MTok)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>gpt-5.4</code></td>
+                            <td>プロフェッショナルワーク全般</td>
+                            <td>$2.50</td>
+                            <td>$15.00</td>
+                        </tr>
+                        <tr>
+                            <td><code>gpt-5.4-pro</code></td>
+                            <td>高難度タスク (深い推論)</td>
+                            <td>$30.00</td>
+                            <td>$180.00</td>
+                        </tr>
+                        <tr>
+                            <td><code>gpt-5.4-mini</code></td>
+                            <td>高ボリュームワークロード</td>
+                            <td>$0.75</td>
+                            <td>$4.50</td>
+                        </tr>
+                        <tr>
+                            <td><code>gpt-5.4-nano</code></td>
+                            <td>大量処理・サブエージェント</td>
+                            <td>$0.20</td>
+                            <td>$1.25</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Core Features -->
+        <section class="section">
+            <h2>主要機能</h2>
+            <p>GPT-5.4 が提供する 5 つの中核機能は以下の通りである。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-number">1</span>
+                    <h4>最先端のコーディング能力</h4>
+                    <p>Python、JavaScript、TypeScript、Rust、Go、Java、C++ など主要言語に対応し、コード生成、デバッグ、リファクタリング、テスト自動生成で最先端の精度を実現</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">2</span>
+                    <h4>Computer Use (コンピュータ操作)</h4>
+                    <p>GUI を直接操作するツールとして computer タイプをサポートし、ブラウザ操作、デスクトップ操作、ワークフロー自動化が可能</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">3</span>
+                    <h4>ツール検索 (Tool Search)</h4>
+                    <p>タスクに最適なツールや API を自動選択・実行する機能を Responses API 内で提供</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">4</span>
+                    <h4>1M トークンコンテキストウィンドウ</h4>
+                    <p>大規模コードベース全体、長文ドキュメント、長時間の会話履歴を一度に処理可能</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">5</span>
+                    <h4>推論 (Thinking)</h4>
+                    <p>Chain-of-Thought による段階的推論を reasoning_effort パラメータ (low/medium/high/xhigh) で制御可能</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reasoning Details -->
+        <section class="section">
+            <h2>推論機能の詳細</h2>
+            <p>GPT-5.4 Thinking モデルは、複雑な問題に対して段階的な思考プロセスを内部的に実行する。推論の深さは reasoning_effort パラメータで制御でき、タスクの複雑さに応じた最適な設定を選択できる。</p>
+            <div class="reasoning-levels">
+                <div class="reasoning-level">
+                    <div class="level-name">low</div>
+                    <div class="level-desc">単純な質問応答や基本的なタスク</div>
+                </div>
+                <div class="reasoning-level">
+                    <div class="level-name">medium</div>
+                    <div class="level-desc">標準的な分析・処理タスク</div>
+                </div>
+                <div class="reasoning-level">
+                    <div class="level-name">high</div>
+                    <div class="level-desc">複雑な推論、コード分析、科学的問題解決</div>
+                </div>
+                <div class="reasoning-level">
+                    <div class="level-name">xhigh</div>
+                    <div class="level-desc">最も困難なマルチステップ推論タスク</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vision -->
+        <section class="section">
+            <h2>Vision (画像入力) と文書理解</h2>
+            <p>GPT-5.4 はマルチモーダル入力をサポートし、画像やドキュメントの理解・分析が可能である。</p>
+            <ul>
+                <li><strong>画像詳細度制御:</strong> input_image.detail パラメータで auto または original を指定</li>
+                <li><strong>出力冗長性制御:</strong> text.verbosity パラメータで転写の忠実度を調整</li>
+                <li><strong>Code Interpreter 連携:</strong> ズーム、クロップ、回転によるマルチパス視覚検査</li>
+            </ul>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2>技術的な詳細</h2>
+
+            <h3>API エンドポイント</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>エンドポイント</th>
+                            <th>対応モデル</th>
+                            <th>用途</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>v1/responses</code></td>
+                            <td>全バリエーション</td>
+                            <td>推奨。ツール使用、推論、ストリーミング対応</td>
+                        </tr>
+                        <tr>
+                            <td><code>v1/chat/completions</code></td>
+                            <td>全バリエーション</td>
+                            <td>後方互換。既存アプリケーションからの移行</td>
+                        </tr>
+                        <tr>
+                            <td><code>v1/batch</code></td>
+                            <td>全バリエーション</td>
+                            <td>大量処理。50% コスト削減</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>コンテキストと料金の詳細</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>仕様</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>コンテキストウィンドウ</td>
+                            <td>1,000,000 トークン</td>
+                        </tr>
+                        <tr>
+                            <td>短コンテキスト入力料金</td>
+                            <td>$2.50/MTok</td>
+                        </tr>
+                        <tr>
+                            <td>長コンテキスト入力料金</td>
+                            <td>$5.00/MTok</td>
+                        </tr>
+                        <tr>
+                            <td>キャッシュ入力料金</td>
+                            <td>$0.25/MTok (短) / $0.50/MTok (長)</td>
+                        </tr>
+                        <tr>
+                            <td>出力料金</td>
+                            <td>$15.00/MTok (短) / $22.50/MTok (長)</td>
+                        </tr>
+                        <tr>
+                            <td>バッチ割引</td>
+                            <td>50%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>コードサンプル</h3>
+
+            <div class="code-block">
+                <div class="code-block-title">Responses API による基本利用</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-5.4 を Responses API で呼び出し
+response = client.responses.create(
+    model="gpt-5.4",
+    input="Explain the architecture of a microservices system.",
+)
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-title">推論 (Thinking) 機能の利用</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 推論エフォートを指定して複雑な問題を解決
+response = client.responses.create(
+    model="gpt-5.4",
+    input="Prove that there are infinitely many prime numbers.",
+    reasoning={"effort": "high"},
+    max_output_tokens=16000,
+)
+
+print(response.output_text)
+
+# 推論トークンの使用量を確認
+print(f"入力トークン: {response.usage.input_tokens}")
+print(f"出力トークン: {response.usage.output_tokens}")</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-title">ツール呼び出しとコンピュータ操作</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Function Calling を使用したツール呼び出し
+response = client.responses.create(
+    model="gpt-5.4",
+    input="Search for the latest Python 3.14 release notes and summarize them.",
+    tools=[
+        {"type": "web_search_preview"},
+        {"type": "computer_use_preview"},
+    ],
+    max_output_tokens=4096,
+)
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-title">Chat Completions API (後方互換)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 既存の Chat Completions API での利用
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {"role": "system", "content": "You are a helpful coding assistant."},
+        {"role": "user", "content": "Write a Python function to detect cycles in a directed graph."},
+    ],
+    max_tokens=4096,
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-block-title">バッチ処理</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# バッチジョブの作成 (50% コスト削減)
+batch = client.batches.create(
+    input_file_id="file-abc123",
+    endpoint="/v1/chat/completions",
+    completion_window="24h",
+    metadata={"description": "GPT-5.4 batch processing job"},
+)
+
+print(f"バッチ ID: {batch.id}")
+print(f"ステータス: {batch.status}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2>アーキテクチャ</h2>
+
+            <div class="mermaid-wrapper">
+                <h4>GPT-5.4 アーキテクチャ</h4>
+                <div class="mermaid">
+flowchart TD
+    subgraph Client["クライアント環境"]
+        App["アプリケーション"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph Endpoints["API エンドポイント"]
+        Responses["v1/responses"]
+        ChatComp["v1/chat/completions"]
+        Batch["v1/batch"]
+    end
+
+    subgraph GPT54["GPT-5.4 モデル"]
+        Core["コアモデル<br/>(1M コンテキスト)"]
+        Thinking["推論エンジン<br/>(Thinking)"]
+        Coding["コーディングエンジン"]
+        CompUse["Computer Use"]
+        ToolSearch["ツール検索"]
+        Vision["Vision エンジン"]
+    end
+
+    subgraph External["外部リソース"]
+        Browser["Web ブラウザ"]
+        Tools["外部ツール / API"]
+        Desktop["デスクトップ環境"]
+    end
+
+    App --> SDK
+    SDK --> Responses
+    SDK --> ChatComp
+    SDK --> Batch
+    Responses --> Core
+    ChatComp --> Core
+    Batch --> Core
+    Core --> Thinking
+    Core --> Coding
+    Core --> CompUse
+    Core --> ToolSearch
+    Core --> Vision
+    CompUse --> Browser
+    CompUse --> Desktop
+    ToolSearch --> Tools
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Core,Thinking,Coding,CompUse,ToolSearch,Vision openai
+    class Responses,ChatComp,Batch dark
+    class App,SDK,Browser,Tools,Desktop light
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2>開発者への影響</h2>
+
+            <div class="impact-item">
+                <h4>コーディング生産性の向上</h4>
+                <ul>
+                    <li><strong>コードベース全体の把握:</strong> 1M トークンコンテキストにより、大規模リポジトリ全体を一度に分析可能</li>
+                    <li><strong>エンドツーエンドの開発支援:</strong> コード生成からテスト作成、デバッグ、リファクタリングまで一貫した支援</li>
+                    <li><strong>推論によるバグ検出:</strong> Thinking 機能により、論理的な欠陥やエッジケースの検出精度が向上</li>
+                </ul>
+            </div>
+
+            <div class="impact-item">
+                <h4>エージェントワークフローの構築</h4>
+                <ul>
+                    <li><strong>Computer Use:</strong> GUI 操作を含む RPA (ロボティック・プロセス・オートメーション) の AI 化が可能</li>
+                    <li><strong>ツール検索の自動化:</strong> 複数の API やサービスを横断するマルチステップタスクの自動実行</li>
+                    <li><strong>Compaction 対応:</strong> 長時間稼働するエージェントワークフローでのコンテキスト管理が効率化</li>
+                </ul>
+            </div>
+
+            <div class="impact-item">
+                <h4>コスト最適化の選択肢</h4>
+                <ul>
+                    <li><strong>用途に応じたモデル選択:</strong> gpt-5.4 (汎用)、gpt-5.4-mini (高ボリューム)、gpt-5.4-nano (大量処理) から最適なモデルを選択可能</li>
+                    <li><strong>バッチ処理の活用:</strong> 24 時間以内の完了で 50% のコスト削減</li>
+                    <li><strong>キャッシュの活用:</strong> 繰り返しの入力に対してキャッシュ料金 (90% 割引) を適用</li>
+                    <li><strong>推論エフォートの調整:</strong> タスクの複雑さに応じた推論レベル設定でトークン消費を最適化</li>
+                </ul>
+            </div>
+
+            <div class="impact-item">
+                <h4>GPT-5.6 への移行パス</h4>
+                <ul>
+                    <li>GPT-5.6 Terra ($2.50/MTok 入力、$15/MTok 出力) は GPT-5.4 と同等の料金帯で性能向上</li>
+                    <li>GPT-5.6 Luna ($1/MTok 入力、$6/MTok 出力) はコスト重視のワークロードに最適</li>
+                    <li>Programmatic Tool Calling やマルチエージェント機能は GPT-5.6 で新たに追加</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2>関連リンク</h2>
+            <ul class="links-list">
+                <li><a href="https://openai.com/index/introducing-gpt-5-4/">GPT-5.4 公式紹介ページ</a></li>
+                <li><a href="https://openai.com/index/gpt-5-4-thinking-system-card/">GPT-5.4 Thinking System Card</a></li>
+                <li><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano/">GPT-5.4 mini / nano の紹介</a></li>
+                <li><a href="https://platform.openai.com/docs">OpenAI API ドキュメント</a></li>
+                <li><a href="https://platform.openai.com/docs/models">OpenAI モデル一覧</a></li>
+                <li><a href="https://openai.com/api/pricing/">OpenAI 料金ページ</a></li>
+                <li><a href="https://platform.openai.com/docs/changelog">OpenAI API Changelog</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2>まとめ</h2>
+            <div class="summary-box">
+                <p>GPT-5.4 は、OpenAI の GPT-5 シリーズにおいてコーディング、推論、エージェント機能を高度に統合したフロンティアモデルである。1M トークンのコンテキストウィンドウ、Computer Use によるコンピュータ操作、高度なツール検索、そして Thinking による段階的推論という 4 つの柱を備え、プロフェッショナルワークの生産性を大幅に向上させる。$2.50/MTok (入力) という競争力のある料金設定と、mini / nano バリエーションによるコスト最適化オプションにより、幅広いユースケースとスケールに対応する。2026 年 7 月に GPT-5.6 ファミリーがリリースされた現在も、GPT-5.4 は信頼性とコストのバランスに優れた実績あるモデルとして、多くの開発者に活用され続けている。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><span class="source-label">Source:</span> <a href="https://openai.com/index/introducing-gpt-5-4/">https://openai.com/index/introducing-gpt-5-4/</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - Generated on 2026-07-18</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

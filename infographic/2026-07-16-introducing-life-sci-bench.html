@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeSciBench: ライフサイエンス研究タスク向け AI 評価ベンチマーク</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .section-subtitle {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        /* Key Points */
+        .key-points {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.05) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 20px;
+        }
+
+        .key-points p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.9;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Lists */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 28px;
+            position: relative;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 18px;
+            width: 10px;
+            height: 10px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        .feature-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Numbered List */
+        .numbered-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: item;
+        }
+
+        .numbered-list li {
+            padding: 14px 0 14px 48px;
+            position: relative;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+            counter-increment: item;
+        }
+
+        .numbered-list li:last-child {
+            border-bottom: none;
+        }
+
+        .numbered-list li::before {
+            content: counter(item);
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .numbered-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        thead {
+            background: var(--openai-dark);
+            color: white;
+        }
+
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        tbody tr:hover {
+            background: rgba(16, 163, 127, 0.03);
+        }
+
+        /* Mermaid */
+        .mermaid-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Domain Grid */
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .domain-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .domain-card h4 {
+            color: var(--openai-green);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .domain-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* Task Characteristics */
+        .task-char {
+            display: flex;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .task-char:last-child {
+            border-bottom: none;
+        }
+
+        .task-char .percentage {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            min-width: 80px;
+        }
+
+        .task-char .description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Weakness List */
+        .weakness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .weakness-item {
+            background: #FFF5F5;
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 4px solid #E53E3E;
+        }
+
+        .weakness-item .task-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .weakness-item .pass-rate {
+            color: #E53E3E;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Impact List */
+        .impact-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-list li {
+            padding: 16px;
+            margin-bottom: 12px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .impact-list li strong {
+            display: block;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        /* Limitations */
+        .limitations-box {
+            background: #FFFBEB;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #F6E05E;
+            margin: 20px 0;
+        }
+
+        .limitations-box ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+
+        .limitations-box li {
+            color: var(--text-secondary);
+            padding: 6px 0;
+            font-size: 0.95rem;
+        }
+
+        /* Validation Table Highlight */
+        .high-agreement {
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Links */
+        .related-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .related-links li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .related-links li:last-child {
+            border-bottom: none;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .related-links a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 32px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer .source-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border-radius: 12px;
+            padding: 28px;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            margin: 20px 0;
+        }
+
+        .summary-box p {
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .domain-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .weakness-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .task-char .percentage {
+                min-width: 60px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="category-badge">OpenAI Research</span>
+            <h1>LifeSciBench: ライフサイエンス研究タスク向け AI 評価ベンチマークの導入</h1>
+            <p class="date">2026-07-16</p>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <p>OpenAI は、AI システムが現実のライフサイエンス研究タスクをどの程度支援できるかを評価するための新しいベンチマーク「LifeSciBench」を発表した。従来の生物学に関する質問応答能力ではなく、実際の研究現場で求められる複雑な判断・分析・設計タスクへの対応力を測定することを目的としている。</p>
+            </div>
+            <p style="color: var(--text-secondary); margin-top: 16px;">LifeSciBench は 173 名の Ph.D. レベルの科学者が作成した 750 のタスクで構成され、7 つのワークフローと 7 つの生物学ドメインを網羅する。453 名の独立した専門家レビュアーによる検証を経ており、科学的妥当性と実用性の両面で高い品質基準を満たしている。本ベンチマークは、同日発表された GPT Rosalind や FrontierScience イニシアチブと連携し、OpenAI の科学 AI 戦略における重要な評価基盤として位置づけられる。</p>
+        </section>
+
+        <!-- Scale & Composition -->
+        <section class="section">
+            <h2 class="section-title">ベンチマークの規模と構成</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">750</span>
+                    <span class="stat-label">エキスパート作成タスク</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">1,062</span>
+                    <span class="stat-label">タスクアーティファクト</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">173</span>
+                    <span class="stat-label">科学者コントリビューター</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">19,020</span>
+                    <span class="stat-label">ルーブリック基準</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">453</span>
+                    <span class="stat-label">エキスパートレビュアー</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">97%</span>
+                    <span class="stat-label">Ph.D. 以上のレビュアー</span>
+                </div>
+            </div>
+            <ul class="feature-list" style="margin-top: 20px;">
+                <li><strong>750 のエキスパート作成タスク:</strong> 7 つのワークフローと 7 つの生物学ドメインにわたる</li>
+                <li><strong>1,062 のタスクアーティファクト:</strong> 図表、PDF、テーブル、配列ファイル、構造/化学ファイル、Web 参照を含む</li>
+                <li><strong>173 名の科学者コントリビューター:</strong> 全員が Ph.D. レベルでバイオテクノロジー/製薬業界の経験を持つ</li>
+                <li><strong>19,020 のルーブリック基準:</strong> タスクあたり平均 25 の評価基準</li>
+                <li><strong>453 名のエキスパートレビュアー:</strong> 97% が Ph.D. 以上、平均 12 年の経験、14 本の査読付き論文</li>
+            </ul>
+        </section>
+
+        <!-- 7 Workflows -->
+        <section class="section">
+            <h2 class="section-title">7 つのワークフロー</h2>
+            <ol class="numbered-list">
+                <li><strong>Evidence Handling (証拠処理):</strong> 論文、図表、テーブル、実験記録から科学的証拠を抽出・照合・監査する能力</li>
+                <li><strong>Analysis (分析):</strong> 定量的・定性的データ分析の実行能力</li>
+                <li><strong>Design, Optimization, &amp; Prediction (設計・最適化・予測):</strong> 実験デザインと最適化</li>
+                <li><strong>Scientific Reasoning (科学的推論):</strong> ドメインに根ざした判断と推論</li>
+                <li><strong>Validation &amp; Operations (検証・運用):</strong> 実験検証タスク</li>
+                <li><strong>Translation (トランスレーション):</strong> ベンチからベッドサイドへの創薬プロセス</li>
+                <li><strong>Scientific Communication (科学的コミュニケーション):</strong> 証拠の整理と専門家向け説明の作成</li>
+            </ol>
+        </section>
+
+        <!-- 7 Biology Domains -->
+        <section class="section">
+            <h2 class="section-title">7 つの生物学ドメイン</h2>
+            <div class="domain-grid">
+                <div class="domain-card">
+                    <h4>ゲノミクス・遺伝学</h4>
+                    <p>DNA/RNA 解析、遺伝子発現、変異解析</p>
+                </div>
+                <div class="domain-card">
+                    <h4>プロテオミクス・構造生物学</h4>
+                    <p>タンパク質構造予測、相互作用解析</p>
+                </div>
+                <div class="domain-card">
+                    <h4>創薬・薬理学</h4>
+                    <p>化合物スクリーニング、薬物動態、毒性予測</p>
+                </div>
+                <div class="domain-card">
+                    <h4>分子生物学・生化学</h4>
+                    <p>酵素反応、代謝経路、シグナル伝達</p>
+                </div>
+                <div class="domain-card">
+                    <h4>細胞生物学</h4>
+                    <p>細胞アッセイ、フローサイトメトリー解析</p>
+                </div>
+                <div class="domain-card">
+                    <h4>免疫学</h4>
+                    <p>抗体設計、免疫応答モデリング</p>
+                </div>
+                <div class="domain-card">
+                    <h4>臨床・トランスレーショナル研究</h4>
+                    <p>バイオマーカー同定、臨床試験設計</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Task Characteristics -->
+        <section class="section">
+            <h2 class="section-title">タスクの特性</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">LifeSciBench のタスクは、現実の研究業務の複雑さを反映するよう設計されている。</p>
+            <div class="task-char">
+                <span class="percentage">79%</span>
+                <span class="description">複数の推論/意思決定ステップを必要とする (タスクあたり平均 4 ステップ)</span>
+            </div>
+            <div class="task-char">
+                <span class="percentage">53%</span>
+                <span class="description">少なくとも 1 つのアーティファクトからの解釈・統合を必要とする</span>
+            </div>
+            <div class="task-char">
+                <span class="percentage">6 回</span>
+                <span class="description">平均自動レビューサイクル + 少なくとも 2 ラウンドの専門家レビュー</span>
+            </div>
+            <div class="task-char">
+                <span class="percentage">90%</span>
+                <span class="description">レビュアー間で必要な最低合意率</span>
+            </div>
+        </section>
+
+        <!-- Model Evaluation Results -->
+        <section class="section">
+            <h2 class="section-title">モデル評価結果</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">GPT-Rosalind と GPT-5.5 の比較結果</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>指標</th>
+                            <th>GPT-5.5</th>
+                            <th>GPT-Rosalind</th>
+                            <th>改善幅</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>全体パス率</td>
+                            <td>25.7%</td>
+                            <td><strong>36.1%</strong></td>
+                            <td style="color: var(--openai-green); font-weight: 700;">+10.4pp</td>
+                        </tr>
+                        <tr>
+                            <td>Scientific Communication パス率</td>
+                            <td>56.3%</td>
+                            <td><strong>71.1%</strong></td>
+                            <td style="color: var(--openai-green); font-weight: 700;">+14.8pp</td>
+                        </tr>
+                        <tr>
+                            <td>Translation パス率</td>
+                            <td>36.8%</td>
+                            <td><strong>57.7%</strong></td>
+                            <td style="color: var(--openai-green); font-weight: 700;">+20.9pp</td>
+                        </tr>
+                        <tr>
+                            <td>専門家に有用/実行可能な出力</td>
+                            <td>29.1%</td>
+                            <td><strong>44.7%</strong></td>
+                            <td style="color: var(--openai-green); font-weight: 700;">+15.6pp</td>
+                        </tr>
+                        <tr>
+                            <td>不確実性/注意事項の処理</td>
+                            <td>29.3%</td>
+                            <td><strong>44.8%</strong></td>
+                            <td style="color: var(--openai-green); font-weight: 700;">+15.5pp</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Weaknesses -->
+        <section class="section">
+            <h2 class="section-title">AI が苦手とする領域</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">GPT-Rosalind でも依然として困難なタスクが存在する。</p>
+            <div class="weakness-grid">
+                <div class="weakness-item">
+                    <div class="task-name">Design, Optimization &amp; Prediction</div>
+                    <div class="pass-rate">30.7%</div>
+                </div>
+                <div class="weakness-item">
+                    <div class="task-name">Analysis</div>
+                    <div class="pass-rate">30.3%</div>
+                </div>
+                <div class="weakness-item">
+                    <div class="task-name">アーティファクトを伴うタスク</div>
+                    <div class="pass-rate">28.1%</div>
+                </div>
+                <div class="weakness-item">
+                    <div class="task-name">数値タスク</div>
+                    <div class="pass-rate">14.8%</div>
+                </div>
+                <div class="weakness-item">
+                    <div class="task-name">配列/構造出力</div>
+                    <div class="pass-rate">24.0%</div>
+                </div>
+                <div class="weakness-item">
+                    <div class="task-name">コンストラクト生成</div>
+                    <div class="pass-rate">27.3%</div>
+                </div>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 12px;">* テキストのみのタスク (45.1%) に対し、アーティファクト付きタスク (28.1%) ではパス率が大幅に低下する</p>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+
+            <h3 class="section-subtitle">評価手法</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">LifeSciBench では 2 つのメトリクスを使用して AI モデルを評価する。</p>
+            <ul class="feature-list">
+                <li><strong>Pass Rate (パス率):</strong> 70% の成功閾値を満たすタスクの割合</li>
+                <li><strong>Score (スコア):</strong> 部分点を含む平均ルーブリック報酬</li>
+            </ul>
+            <p style="color: var(--text-secondary); margin-top: 16px;">19,020 の評価基準は、科学的正確性と実用性の両方を評価するよう設計されている。最終的な回答の正確さだけでなく、科学的に妥当かつ運用上有用な方法で回答に到達しているかどうかも評価対象となる。</p>
+
+            <h3 class="section-subtitle">検証プロセス</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">453 名の独立レビュアー (タスク作成に関与していない) による検証結果</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>カテゴリ</th>
+                            <th>合意率</th>
+                            <th>強い合意率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>現実世界の関連性</td>
+                            <td class="high-agreement">98.3%</td>
+                            <td>90.4%</td>
+                        </tr>
+                        <tr>
+                            <td>科学的推論/ドメインスキル</td>
+                            <td class="high-agreement">98.1%</td>
+                            <td>86.4%</td>
+                        </tr>
+                        <tr>
+                            <td>科学的根拠</td>
+                            <td class="high-agreement">96.5%</td>
+                            <td>77.1%</td>
+                        </tr>
+                        <tr>
+                            <td>全体的有用性</td>
+                            <td class="high-agreement">96.6%</td>
+                            <td>79.1%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 12px;">すべてのカテゴリで 96% を超える合意が得られている。</p>
+
+            <h3 class="section-subtitle">制限事項</h3>
+            <div class="limitations-box">
+                <ul>
+                    <li>実際の研究環境でのモデル研究の代替にはならない</li>
+                    <li>自己完結型タスクに焦点を当てており、実際の研究は反復的である</li>
+                    <li>高いパフォーマンスはタスクレベルの能力として解釈すべきで、研究インパクトの直接的な指標ではない</li>
+                    <li>次のステップ: ベンチマークの性能を実際のワークフローにおけるデプロイメント研究と接続する</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Domains["7 つの生物学ドメイン"]
+        D1["ゲノミクス・遺伝学"]
+        D2["プロテオミクス・構造生物学"]
+        D3["創薬・薬理学"]
+        D4["分子生物学・生化学"]
+        D5["細胞生物学"]
+        D6["免疫学"]
+        D7["臨床・トランスレーショナル"]
+    end
+
+    subgraph Workflows["7 つのワークフロー"]
+        W1["Evidence Handling<br/>(証拠処理)"]
+        W2["Analysis<br/>(分析)"]
+        W3["Design & Optimization<br/>(設計・最適化・予測)"]
+        W4["Scientific Reasoning<br/>(科学的推論)"]
+        W5["Validation & Operations<br/>(検証・運用)"]
+        W6["Translation<br/>(トランスレーション)"]
+        W7["Scientific Communication<br/>(科学的コミュニケーション)"]
+    end
+
+    subgraph Tasks["750 タスク"]
+        TaskSet["1,062 アーティファクト<br/>19,020 ルーブリック基準"]
+    end
+
+    subgraph Evaluation["モデル評価"]
+        GPT55["GPT-5.5<br/>全体パス率: 25.7%"]
+        Rosalind["GPT-Rosalind<br/>全体パス率: 36.1%"]
+    end
+
+    subgraph Context["OpenAI 科学 AI エコシステム"]
+        FS["FrontierScience<br/>(Jul 10)"]
+        WetLab["Wet Lab 研究加速<br/>(Jul 14)"]
+    end
+
+    D1 --> TaskSet
+    D2 --> TaskSet
+    D3 --> TaskSet
+    D4 --> TaskSet
+    D5 --> TaskSet
+    D6 --> TaskSet
+    D7 --> TaskSet
+
+    TaskSet --> W1
+    TaskSet --> W2
+    TaskSet --> W3
+    TaskSet --> W4
+    TaskSet --> W5
+    TaskSet --> W6
+    TaskSet --> W7
+
+    W1 --> GPT55
+    W2 --> GPT55
+    W3 --> GPT55
+    W4 --> GPT55
+    W5 --> GPT55
+    W6 --> GPT55
+    W7 --> GPT55
+
+    W1 --> Rosalind
+    W2 --> Rosalind
+    W3 --> Rosalind
+    W4 --> Rosalind
+    W5 --> Rosalind
+    W6 --> Rosalind
+    W7 --> Rosalind
+
+    FS -.-> TaskSet
+    WetLab -.-> Rosalind
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class W1,W2,W3,W4,W5,W6,W7 openai
+    class GPT55,Rosalind dark
+    class D1,D2,D3,D4,D5,D6,D7,TaskSet,FS,WetLab light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <ul class="impact-list">
+                <li><strong>ライフサイエンス AI アプリケーション開発者</strong>LifeSciBench の結果は、AI がどのタスクで実用レベルに達しているかを明確に示している。Scientific Communication や Translation 領域では GPT-Rosalind が比較的高いパフォーマンスを発揮する一方、数値計算や構造出力を伴うタスクには依然として人間の監督が必要</li>
+                <li><strong>創薬・バイオテクノロジー企業</strong>ベンチからベッドサイドへの Translation タスクで GPT-Rosalind が 57.7% のパス率を達成しており、創薬プロセスの一部を AI が支援できる可能性を示唆している</li>
+                <li><strong>研究者向けツール開発</strong>アーティファクトを伴うタスクでのパフォーマンス低下 (45.1% から 28.1% への低下) は、マルチモーダル入力処理の改善が今後の重要な開発課題であることを示している</li>
+                <li><strong>評価基盤の活用</strong>19,020 のルーブリック基準を持つ LifeSciBench は、ライフサイエンス領域での AI 能力を継続的に追跡するための業界標準ベンチマークとなる可能性がある</li>
+                <li><strong>GPT Rosalind の活用</strong>同日発表された科学特化モデル GPT Rosalind は LifeSciBench で GPT-5.5 を大幅に上回る性能を示しており、ライフサイエンス分野での AI 導入を検討する組織にとって有力な選択肢となる</li>
+            </ul>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://openai.com/index/introducing-life-sci-bench/" target="_blank">LifeSciBench 公式ページ</a></li>
+                <li><a href="https://openai.com/index/introducing-gpt-rosalind/" target="_blank">GPT-Rosalind の紹介</a></li>
+                <li><a href="https://openai.com/index/frontierscience/" target="_blank">FrontierScience</a></li>
+                <li><a href="https://openai.com/index/accelerating-biological-research-wet-lab/" target="_blank">Accelerating Biological Research in the Wet Lab</a></li>
+                <li><a href="https://openai.com/research" target="_blank">OpenAI Research</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>LifeSciBench は、AI のライフサイエンス研究支援能力を現実的なタスクで評価する初の大規模ベンチマークである。173 名の科学者が作成し、453 名のレビュアーが検証した 750 タスクにより、AI が得意とする領域 (科学的コミュニケーション、トランスレーション) と苦手とする領域 (数値計算、構造出力、アーティファクト処理) が明確に示された。GPT-Rosalind は GPT-5.5 に対して全体パス率で 10.4 ポイントの改善を達成したが、最も困難なタスクでは依然として 30% 前後のパス率にとどまっており、ライフサイエンス研究における AI 活用にはまだ大きな伸びしろがあることを示している。本ベンチマークは FrontierScience や Wet Lab 研究加速プロジェクトと併せて、OpenAI の科学 AI エコシステムの評価基盤として機能し、今後のモデル改善の方向性を示す指標となる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="source-label">Source</p>
+            <a href="https://openai.com/index/introducing-life-sci-bench/" target="_blank">https://openai.com/index/introducing-life-sci-bench/</a>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

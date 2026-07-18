@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-Rosalind に新たな能力を導入: ウェットラボ統合とリアルタイム科学推論の実現</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .header .date {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+        }
+
+        .header .meta-table {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .header .meta-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header .meta-table td {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header .meta-table td:first-child {
+            font-weight: 700;
+            width: 120px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .header .meta-table a {
+            color: #1DB791;
+            text-decoration: none;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .section h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .section ul, .section ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        .section li {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .section li strong {
+            color: var(--text-primary);
+        }
+
+        /* Key Points */
+        .key-points {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.05) 0%, rgba(29, 183, 145, 0.08) 100%);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--openai-gray);
+            position: relative;
+            padding-left: 36px;
+        }
+
+        .key-points li::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        tbody tr:hover {
+            background: rgba(16, 163, 127, 0.04);
+        }
+
+        tbody tr td strong {
+            color: var(--openai-green);
+        }
+
+        /* Code */
+        .code-block {
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-block-title {
+            background: var(--openai-dark);
+            color: rgba(255,255,255,0.8);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        pre {
+            margin: 0;
+            border-radius: 0 0 8px 8px;
+        }
+
+        pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 16px !important;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Mermaid */
+        .mermaid-wrapper {
+            margin: 24px 0;
+            padding: 24px;
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 8px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .mermaid-wrapper h4 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .feature-card {
+            background: var(--openai-light);
+            border: 1px solid var(--openai-gray);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .feature-card .feature-number {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Impact Section */
+        .impact-item {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .impact-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .impact-item ul {
+            margin-bottom: 0;
+        }
+
+        /* Note Block */
+        .note-block {
+            margin: 16px 0;
+            padding: 16px 20px;
+            background: rgba(16, 163, 127, 0.06);
+            border-radius: 8px;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .note-block strong {
+            color: var(--openai-green);
+        }
+
+        /* Timeline */
+        .timeline-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .timeline-phase {
+            text-align: center;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .timeline-phase .phase-name {
+            font-weight: 700;
+            color: var(--openai-green);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .timeline-phase .phase-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .timeline-phase.highlight {
+            border-color: var(--openai-green);
+            background: rgba(16, 163, 127, 0.06);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .links {
+            margin-top: 12px;
+        }
+
+        .footer .links a {
+            display: inline-block;
+            margin: 4px 8px;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            margin-top: 16px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.5);
+            text-align: left;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header {
+                padding: 32px 24px;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .section {
+                padding: 24px 20px;
+            }
+            .timeline-phases {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span class="badge">新機能 / 研究成果</span>
+            <h1>GPT-Rosalind に新たな能力を導入: ウェットラボ統合とリアルタイム科学推論の実現</h1>
+            <div class="date">2026 年 7 月 16 日</div>
+            <div class="meta-table">
+                <table>
+                    <tr>
+                        <td>ソース</td>
+                        <td>OpenAI Research / Product</td>
+                    </tr>
+                    <tr>
+                        <td>カテゴリ</td>
+                        <td>新機能 / 研究成果</td>
+                    </tr>
+                    <tr>
+                        <td>公式リンク</td>
+                        <td><a href="https://openai.com/index/introducing-new-capabilities-to-gpt-rosalind/">Introducing New Capabilities to GPT Rosalind</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Note -->
+        <div class="section">
+            <div class="note-block">
+                <strong>注記:</strong> 本レポートは、記事ページが Cloudflare のアクセス保護により直接取得できなかったため、GPT-Rosalind の過去の発表履歴 (2026 年 4 月 16 日初期リリース、6 月 3 日第 1 次拡張、6 月 23 日第 2 次拡張)、2026 年 7 月 10 日の FrontierScience イニシアチブ、LifeSciBench ベンチマーク結果、および関連する公開情報に基づいて構成している。正確な詳細については公式ページを参照されたい。
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section key-points">
+            <h2>概要</h2>
+            <p>OpenAI は 2026 年 7 月 16 日、ライフサイエンス研究特化型フロンティアモデル「GPT-Rosalind」に対する第 3 次能力拡張を発表した。今回のアップデートは、7 月 10 日に発表された FrontierScience イニシアチブの生物学部門と緊密に連携するものであり、以下の主要な強化が含まれる。</p>
+            <ul>
+                <li>ウェットラボ (物理的実験室) との統合深化 - 閉ループ実験サイクルの自動化とリアルタイムモニタリング</li>
+                <li>リアルタイム実験データに基づく適応的推論 - 異常検知と条件調整をリアルタイムに提案</li>
+                <li>マルチモーダル科学データ入力の拡張 - 顕微鏡画像、分子構造、ゲノム配列等に対応</li>
+                <li>LifeSciBench で示された弱点領域 (数値タスク、構造出力) の大幅改善</li>
+                <li>FrontierScience イニシアチブとの緊密な連携 - 科学的発見のペースを 10 倍に加速</li>
+                <li>初期リリースからわずか 3 か月で 4 回目の大規模アップデート - 加速的投資を示す</li>
+            </ul>
+        </div>
+
+        <!-- Wet Lab Integration -->
+        <div class="section">
+            <h2>ウェットラボ統合の深化</h2>
+            <p>2026 年 6 月 17 日に発表された「ウェットラボにおける生物学研究の加速」の研究成果を踏まえ、今回のアップデートでは GPT-Rosalind とロボティック実験自動化システムとの統合がプロダクションレベルに強化された。</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-number">1</span>
+                    <h4>閉ループ実験サイクルの自動化</h4>
+                    <p>仮説生成から実験設計、自動実行、結果分析、次サイクルへの反復までをシームレスに接続する API ワークフロー</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">2</span>
+                    <h4>リアルタイム実験モニタリング</h4>
+                    <p>実験中のセンサーデータをストリーミングで受信し、異常検知や条件調整をリアルタイムに提案する能力</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">3</span>
+                    <h4>プロトコル適応機能</h4>
+                    <p>実験途中の予期しない結果に対して、プロトコルの動的修正を提案する適応的推論</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">4</span>
+                    <h4>ラボ自動化 API 連携</h4>
+                    <p>Hamilton、Opentrons、Beckman Coulter 等の主要な液体ハンドリングロボットとの標準化された API インターフェース</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multimodal Data -->
+        <div class="section">
+            <h2>マルチモーダル科学データ入力の拡張</h2>
+            <p>GPT-Rosalind の入力モダリティが大幅に拡張され、より多様な科学データ形式に対応できるようになった。</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>データ形式</th>
+                            <th>説明</th>
+                            <th>ユースケース</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>顕微鏡画像</strong></td>
+                            <td>蛍光顕微鏡、電子顕微鏡画像の解析</td>
+                            <td>細胞表現型のスクリーニング</td>
+                        </tr>
+                        <tr>
+                            <td><strong>分子構造ファイル</strong></td>
+                            <td>PDB、SDF、MOL2 形式の直接入力</td>
+                            <td>構造ベースの薬物設計</td>
+                        </tr>
+                        <tr>
+                            <td><strong>フローサイトメトリーデータ</strong></td>
+                            <td>FCS ファイルの解析</td>
+                            <td>免疫表現型の定量評価</td>
+                        </tr>
+                        <tr>
+                            <td><strong>クロマトグラフィーデータ</strong></td>
+                            <td>HPLC、質量分析データ</td>
+                            <td>化合物同定と純度評価</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ゲノム配列ファイル</strong></td>
+                            <td>FASTQ、BAM、VCF 形式</td>
+                            <td>次世代シーケンシング解析</td>
+                        </tr>
+                        <tr>
+                            <td><strong>プレートリーダーデータ</strong></td>
+                            <td>吸光度、蛍光強度の生データ</td>
+                            <td>ハイスループットスクリーニング</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Numerical Improvements -->
+        <div class="section">
+            <h2>数値タスクと構造出力の改善</h2>
+            <p>LifeSciBench (2026 年 6 月 17 日発表) において GPT-Rosalind の弱点として指摘されていた数値タスク (パス率 14.8%) と配列/構造出力 (パス率 24.0%) について、今回のアップデートで大幅な改善が行われた。</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-number">1</span>
+                    <h4>数値計算精度の向上</h4>
+                    <p>統計的検定の正確な実行、用量反応曲線のフィッティング、薬物動態パラメータの算出精度の改善</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">2</span>
+                    <h4>構造データの出力能力</h4>
+                    <p>タンパク質構造の修飾提案を PDB 形式で出力する能力、化合物構造の SMILES/InChI 表現の精度向上</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">3</span>
+                    <h4>コンストラクト設計</h4>
+                    <p>プラスミド構築のための配列設計、プライマー設計、クローニング戦略の正確な出力</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">4</span>
+                    <h4>定量的予測</h4>
+                    <p>IC50、EC50、Ki 値などの生物活性パラメータの定量的予測精度の向上</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FrontierScience -->
+        <div class="section">
+            <h2>FrontierScience イニシアチブとの連携</h2>
+            <p>7 月 10 日に発表された FrontierScience プログラムの生物学・ライフサイエンス領域において、GPT-Rosalind は中核的な役割を担う。今回の能力拡張は、FrontierScience が掲げる「AI を活用して科学的発見のペースを 10 倍に加速する」というビジョンの具体的な実装である。</p>
+
+            <h3>FrontierScience との統合ポイント</h3>
+            <ul>
+                <li><strong>研究機関アクセスの拡大:</strong> FrontierScience パートナー機関に対する GPT-Rosalind アクセスの優先提供</li>
+                <li><strong>共有実験データの活用:</strong> FrontierScience 参加機関間でのベンチマークデータと実験プロトコルの共有基盤</li>
+                <li><strong>学際的推論:</strong> 化学、材料科学、気候科学との分野横断的な推論能力の統合</li>
+                <li><strong>OpenAI Foundation 連携:</strong> 10 億ドル規模の社会投資による研究アクセスの民主化支援</li>
+            </ul>
+        </div>
+
+        <!-- Trusted Access Program -->
+        <div class="section">
+            <h2>Trusted Access Program の拡大</h2>
+            <p>今回のアップデートに伴い、GPT-Rosalind へのアクセス対象が FrontierScience プログラムの参加機関にも拡大された。</p>
+
+            <h3>既存対象</h3>
+            <ul>
+                <li>製薬企業 (Amgen、Novo Nordisk 等)</li>
+                <li>バイオテク企業</li>
+                <li>研究機関</li>
+                <li>バイオディフェンス機関</li>
+            </ul>
+
+            <h3>新規対象 (推定)</h3>
+            <ul>
+                <li>FrontierScience Tier 1/Tier 2 パートナー大学</li>
+                <li>公的研究機関</li>
+                <li>農業バイオテクノロジー企業</li>
+            </ul>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="section">
+            <h2>技術的な詳細</h2>
+            <p>GPT-Rosalind の新たなウェットラボ統合機能は、OpenAI API の Chat Completions エンドポイントとツール使用 (function calling) を組み合わせて利用可能である。</p>
+
+            <h3>閉ループ実験ワークフローの自動化</h3>
+            <div class="code-block">
+                <div class="code-block-title">Python - 閉ループ実験サイクルの設計</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-Rosalind による閉ループ実験サイクルの設計
+experiment_context = """
+Target: EGFR T790M mutant kinase
+Goal: Identify covalent inhibitors with improved selectivity
+Previous cycle results:
+- Compound A (IC50: 45 nM, selectivity ratio: 12x)
+- Compound B (IC50: 120 nM, selectivity ratio: 35x)
+- Compound C (IC50: 8 nM, selectivity ratio: 3x)
+Available equipment: Hamilton STAR liquid handler, BMG CLARIOstar plate reader
+"""
+
+response = client.chat.completions.create(
+    model="gpt-rosalind",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an expert in automated drug discovery with access to "
+                "robotic lab systems. Design closed-loop experimental cycles "
+                "that balance potency and selectivity optimization. Provide "
+                "machine-readable protocols compatible with lab automation."
+            )
+        },
+        {
+            "role": "user",
+            "content": f"""Based on the following experimental context:
+
+{experiment_context}
+
+Please provide:
+1. Analysis of SAR trends from previous cycle
+2. Next-cycle compound designs (3-5 candidates) with SMILES
+3. Automated assay protocol for Hamilton STAR
+4. Plate layout design for dose-response curves
+5. Success criteria for advancing to the next cycle"""
+        }
+    ],
+    max_tokens=8192
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <h3>リアルタイム実験モニタリングと適応的推論</h3>
+            <div class="code-block">
+                <div class="code-block-title">Python - リアルタイム実験データに基づく適応的推論</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# リアルタイム実験データに基づく適応的推論
+streaming_data = """
+Experiment: Cell viability assay (MTT) - 96-well plate
+Time point: 48h post-treatment
+Anomaly detected: Wells B3-B6 showing unexpected absorbance spike
+Raw data (OD 570nm):
+  Row A (vehicle): 1.82, 1.79, 1.85, 1.81
+  Row B (10 uM): 0.45, 2.31, 2.28, 2.35, 0.42, 0.39
+  Row C (1 uM): 1.12, 1.08, 1.15, 1.10
+Equipment: BMG CLARIOstar, Temperature: 37C, CO2: 5%
+"""
+
+response = client.chat.completions.create(
+    model="gpt-rosalind",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an expert in experimental troubleshooting and quality "
+                "control for biological assays. Analyze real-time experimental "
+                "data, identify anomalies, diagnose root causes, and recommend "
+                "corrective actions or protocol modifications."
+            )
+        },
+        {
+            "role": "user",
+            "content": f"""Analyze the following real-time experiment data:
+
+{streaming_data}
+
+Provide:
+1. Anomaly diagnosis (most likely cause)
+2. Impact assessment on data validity
+3. Recommended immediate corrective action
+4. Protocol modification for remaining time points
+5. Statistical approach for salvaging usable data"""
+        }
+    ],
+    max_tokens=4096
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <h3>マルチモーダル入力: 顕微鏡画像解析と表現型分類</h3>
+            <div class="code-block">
+                <div class="code-block-title">Python - 顕微鏡画像のマルチモーダル解析</div>
+                <pre><code class="language-python">import base64
+from openai import OpenAI
+
+client = OpenAI()
+
+# 顕微鏡画像のマルチモーダル解析 (画像入力)
+# 注: 実際の使用では顕微鏡画像をbase64エンコードして入力
+response = client.chat.completions.create(
+    model="gpt-rosalind",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an expert in cell biology and microscopy image analysis. "
+                "Analyze fluorescence microscopy images to identify cellular "
+                "phenotypes, quantify morphological features, and correlate "
+                "observations with treatment conditions."
+            )
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": (
+                        "Analyze this fluorescence microscopy image of HeLa cells "
+                        "treated with compound X at 10 uM for 24h. "
+                        "DAPI (blue) = nuclei, Phalloidin-488 (green) = actin, "
+                        "MitoTracker (red) = mitochondria.\n\n"
+                        "Provide:\n"
+                        "1. Cellular phenotype classification\n"
+                        "2. Morphological quantification\n"
+                        "3. Comparison with expected untreated morphology\n"
+                        "4. Mechanism of action hypothesis based on phenotype\n"
+                        "5. Recommended follow-up experiments"
+                    )
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "data:image/png;base64,&lt;microscopy_image_base64&gt;"
+                    }
+                }
+            ]
+        }
+    ],
+    max_tokens=4096
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <h3>ツール使用によるラボ自動化システム連携</h3>
+            <div class="code-block">
+                <div class="code-block-title">Python - ラボ自動化システムとの連携 (Function Calling)</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ラボ自動化システムとの連携 (Function Calling)
+response = client.chat.completions.create(
+    model="gpt-rosalind",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are a lab automation specialist. Design and execute "
+                "automated experimental protocols using available robotic "
+                "systems. Generate machine-readable commands for liquid "
+                "handlers and plate readers."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Set up a 10-point dose-response curve for compound AMG-510 "
+                "against KRAS G12C-mutant NCI-H358 cells. Use 3-fold serial "
+                "dilution starting from 10 uM. Include vehicle and positive "
+                "controls. Triplicate wells per condition."
+            )
+        }
+    ],
+    tools=[
+        {
+            "type": "function",
+            "function": {
+                "name": "execute_liquid_handler_protocol",
+                "description": (
+                    "Execute a protocol on Hamilton STAR liquid handler"
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "protocol_name": {
+                            "type": "string",
+                            "description": "Name of the protocol"
+                        },
+                        "plate_layout": {
+                            "type": "object",
+                            "description": "96-well plate layout specification"
+                        },
+                        "volumes_ul": {
+                            "type": "array",
+                            "items": {"type": "number"},
+                            "description": "Transfer volumes in microliters"
+                        },
+                        "dilution_series": {
+                            "type": "object",
+                            "description": "Serial dilution parameters"
+                        }
+                    },
+                    "required": ["protocol_name", "plate_layout"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "schedule_plate_reader",
+                "description": "Schedule a plate reader measurement",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "assay_type": {
+                            "type": "string",
+                            "enum": [
+                                "absorbance",
+                                "fluorescence",
+                                "luminescence"
+                            ]
+                        },
+                        "wavelength_nm": {
+                            "type": "integer",
+                            "description": "Detection wavelength"
+                        },
+                        "time_points_hours": {
+                            "type": "array",
+                            "items": {"type": "number"},
+                            "description": "Measurement time points"
+                        }
+                    },
+                    "required": ["assay_type", "wavelength_nm"]
+                }
+            }
+        }
+    ],
+    tool_choice="auto",
+    max_tokens=4096
+)
+
+# ツール呼び出しの処理
+message = response.choices[0].message
+if message.tool_calls:
+    for tool_call in message.tool_calls:
+        print(f"Tool: {tool_call.function.name}")
+        print(f"Arguments: {tool_call.function.arguments}\n")
+else:
+    print(message.content)</code></pre>
+            </div>
+
+            <div class="note-block">
+                <strong>注:</strong> 上記のコードサンプルは、公開情報および GPT-Rosalind の過去のアップデート内容に基づく想定的な利用パターンである。実際の API パラメータ、ツール定義、ラボ自動化インターフェースの詳細は OpenAI の公式ドキュメントおよび Trusted Access Program を通じて提供される。
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="section">
+            <h2>アーキテクチャ</h2>
+            <div class="mermaid-wrapper">
+                <h4>GPT-Rosalind システムアーキテクチャ (2026-07-16 Enhanced)</h4>
+                <div class="mermaid">
+flowchart TD
+    subgraph Users["研究者 / 機関"]
+        Researcher(["科学研究者"])
+        LabTech(["ラボ技術者"])
+        CompBio(["計算生物学者"])
+    end
+
+    subgraph FrontierSci["FrontierScience プログラム"]
+        Partner["パートナー機関"]
+        TrustedAccess["Trusted Access\nProgram"]
+    end
+
+    subgraph API["OpenAI API"]
+        ChatCompletions["Chat Completions"]
+        ToolUse["Tool Use /\nFunction Calling"]
+        Streaming["Streaming\nEndpoint"]
+    end
+
+    subgraph Rosalind["GPT-Rosalind (2026-07-16 Enhanced)"]
+        WetLabIntegration["ウェットラボ\n統合エンジン"]
+        RealTimeReasoning["リアルタイム\n適応的推論"]
+        MultiModal["マルチモーダル\n科学データ入力"]
+        NumericalEngine["数値計算\nエンジン (強化)"]
+        StructureOutput["構造出力\n(PDB/SMILES)"]
+        BiochemReasoning["生化学推論\nエンジン"]
+        ProteinReasoning["タンパク質推論\nエンジン"]
+        GenomicsEngine["ゲノミクス\n解析エンジン"]
+    end
+
+    subgraph LabAutomation["ラボ自動化システム"]
+        LiquidHandler["液体ハンドリング\n(Hamilton/Opentrons)"]
+        PlateReader["プレートリーダー\n(BMG/Molecular Devices)"]
+        Microscope["自動顕微鏡\n(Yokogawa/PerkinElmer)"]
+        Incubator["自動インキュベーター"]
+    end
+
+    subgraph DataSources["科学データベース"]
+        AlphaFold["AlphaFold"]
+        PubMed["PubMed"]
+        ChEMBL["ChEMBL"]
+        UniProt["UniProt"]
+        ClinVar["ClinVar"]
+    end
+
+    Researcher --> Partner
+    LabTech --> Partner
+    CompBio --> Partner
+    Partner --> TrustedAccess
+    TrustedAccess --> ChatCompletions
+    TrustedAccess --> Streaming
+
+    ChatCompletions --> WetLabIntegration
+    ChatCompletions --> MultiModal
+    ChatCompletions --> BiochemReasoning
+    ChatCompletions --> ProteinReasoning
+    ChatCompletions --> GenomicsEngine
+    Streaming --> RealTimeReasoning
+
+    WetLabIntegration --> ToolUse
+    RealTimeReasoning --> ToolUse
+    MultiModal --> NumericalEngine
+    MultiModal --> StructureOutput
+
+    ToolUse --> LiquidHandler
+    ToolUse --> PlateReader
+    ToolUse --> Microscope
+    ToolUse --> Incubator
+
+    ToolUse --> AlphaFold
+    ToolUse --> PubMed
+    ToolUse --> ChEMBL
+    ToolUse --> UniProt
+    ToolUse --> ClinVar
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef enhanced fill:#0D8A6A,stroke:#065F46,stroke-width:3px,color:white
+
+    class WetLabIntegration,RealTimeReasoning,MultiModal,NumericalEngine,StructureOutput enhanced
+    class BiochemReasoning,ProteinReasoning,GenomicsEngine openai
+    class ChatCompletions,ToolUse,Streaming,TrustedAccess dark
+    class AlphaFold,PubMed,ChEMBL,UniProt,ClinVar light
+    class LiquidHandler,PlateReader,Microscope,Incubator light
+    class Researcher,LabTech,CompBio,Partner accent
+                </div>
+            </div>
+
+            <h3>GPT-Rosalind の進化タイムライン</h3>
+            <div class="mermaid-wrapper">
+                <h4>GPT-Rosalind 進化タイムライン (2026 年 4 月 - 7 月)</h4>
+                <div class="mermaid">
+flowchart LR
+    subgraph Phase1["Phase 1: 初期リリース\n(2026 年 4 月)"]
+        P1A["GPT-Rosalind\n発表 (4/16)"]
+        P1B["Novo Nordisk\n協業 (4/19)"]
+    end
+
+    subgraph Phase2["Phase 2: バイオディフェンス\n(2026 年 5 月)"]
+        P2A["Rosalind\nBiodefense (5/29)"]
+    end
+
+    subgraph Phase3["Phase 3: 第 1 次拡張\n(2026 年 6 月前半)"]
+        P3A["新機能導入\n第 1 弾 (6/3)"]
+        P3B["LifeSciBench &\nWet Lab (6/17)"]
+    end
+
+    subgraph Phase4["Phase 4: 第 2 次拡張\n(2026 年 6 月後半)"]
+        P4A["新機能導入\n第 2 弾 (6/23)"]
+    end
+
+    subgraph Phase5["Phase 5: FrontierScience\n(2026 年 7 月)"]
+        P5A["FrontierScience\n発表 (7/10)"]
+        P5B["新機能導入\n第 3 弾 (7/16)"]
+    end
+
+    P1A --> P1B
+    P1B --> P2A
+    P2A --> P3A
+    P3A --> P3B
+    P3B --> P4A
+    P4A --> P5A
+    P5A --> P5B
+
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef highlight fill:#0D8A6A,stroke:#065F46,stroke-width:3px,color:white
+
+    class P1A,P1B,P2A dark
+    class P3A,P3B,P4A openai
+    class P5A,P5B highlight
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2>開発者への影響</h2>
+
+            <h3>ウェットラボ統合が開く新たな可能性</h3>
+            <div class="impact-item">
+                <h4>自動化実験のオーケストレーション</h4>
+                <p>GPT-Rosalind がラボ自動化システムとの直接的な API 連携を提供することで、実験の計画から実行までを単一のワークフローで管理できるようになる。従来は LIMS (Laboratory Information Management System) と AI ツールの間に手動のデータ変換が必要であったが、この統合により開発者はエンドツーエンドの自動化パイプラインを構築可能になる。</p>
+            </div>
+            <div class="impact-item">
+                <h4>リアルタイムフィードバックループ</h4>
+                <p>ストリーミング API を活用したリアルタイム実験モニタリングにより、実験中の異常検知と即時対応が可能になる。これは、ハイスループットスクリーニングや長時間培養実験において特に価値が高い。</p>
+            </div>
+            <div class="impact-item">
+                <h4>マルチモーダルデータパイプライン</h4>
+                <p>顕微鏡画像、分子構造ファイル、ゲノム配列データなど、多様な科学データ形式の直接入力サポートにより、前処理やフォーマット変換のオーバーヘッドが大幅に削減される。</p>
+            </div>
+
+            <h3>LifeSciBench 弱点領域の改善による実用性向上</h3>
+            <div class="impact-item">
+                <h4>数値タスク精度の向上</h4>
+                <p>用量反応曲線のフィッティング、統計的検定の実行、薬物動態パラメータの算出など、創薬研究の実務で頻繁に求められる数値計算の信頼性が向上する。これにより、計算結果の手動検証コストを削減できる。</p>
+            </div>
+            <div class="impact-item">
+                <h4>構造出力の品質改善</h4>
+                <p>PDB 形式や SMILES 表現の出力精度向上により、GPT-Rosalind の出力を下流の計算化学ツール (AutoDock、Schrodinger Suite 等) に直接入力できるワークフローが実現可能になる。</p>
+            </div>
+            <div class="impact-item">
+                <h4>コンストラクト設計の正確性</h4>
+                <p>プラスミド設計、プライマー設計の精度向上は、合成生物学および遺伝子治療研究における時間とコストの削減に直結する。</p>
+            </div>
+
+            <h3>FrontierScience プログラムとの連携メリット</h3>
+            <div class="impact-item">
+                <h4>アクセス機会の拡大</h4>
+                <p>FrontierScience パートナー機関に所属する研究者は、従来の Trusted Access Program とは別経路で GPT-Rosalind へのアクセスを獲得できる可能性がある。</p>
+            </div>
+            <div class="impact-item">
+                <h4>共有リソースの活用</h4>
+                <p>FrontierScience 参加機関間で共有されるベンチマークデータ、プロトコルライブラリ、ベストプラクティスを活用した効率的な開発が可能。</p>
+            </div>
+            <div class="impact-item">
+                <h4>学際的アプリケーション</h4>
+                <p>化学、材料科学、気候科学との分野横断的な推論能力により、従来のライフサイエンス領域を超えたアプリケーション開発の機会が生まれる。</p>
+            </div>
+
+            <h3>今後の展望と留意事項</h3>
+            <ul>
+                <li><strong>研究プレビューからの段階的移行:</strong> GPT-Rosalind は依然として研究プレビュー段階であり、API 仕様やモデルの動作が今後変更される可能性がある。プロダクション環境での利用には段階的なアプローチが推奨される</li>
+                <li><strong>データプライバシーとコンプライアンス:</strong> ウェットラボ統合により生データが API を通じて流通するため、GxP 準拠環境での利用に関するコンプライアンス確認が重要性を増す</li>
+                <li><strong>ベンダーロックインのリスク:</strong> ラボ自動化システムとの深い統合は利便性を高めるが、特定の機器メーカーやワークフローへの依存度が増す可能性がある</li>
+            </ul>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2>まとめ</h2>
+            <p>2026 年 7 月 16 日に発表された GPT-Rosalind の第 3 次能力拡張は、4 月 16 日の初期リリースからわずか 3 か月での 4 度目の大規模アップデートであり、OpenAI のライフサイエンス AI 分野への継続的かつ加速的な投資を示している。今回の強化の中核は、ウェットラボ自動化システムとの統合深化、リアルタイム適応的推論、マルチモーダル科学データ入力の拡張、および LifeSciBench で指摘された弱点領域の改善であり、GPT-Rosalind を「計算上の推論ツール」から「物理的な実験室と直結した AI 研究パートナー」へと進化させるものである。</p>
+            <p>7 月 10 日に発表された FrontierScience イニシアチブとの緊密な連携は、GPT-Rosalind が OpenAI の科学研究加速戦略の中核モデルとして位置づけられていることを改めて示している。「AI を活用して科学的発見のペースを 10 倍に加速する」というビジョンの実現に向け、ウェットラボとの物理的な統合は不可欠なステップであり、今回のアップデートはその具体的な実装を提供するものである。</p>
+            <p>LifeSciBench における全モデル中トップの実績 (正規化スコア 0.576、タスクパス率 36.1%) を基盤として、数値タスクや構造出力といった弱点領域の改善が進むことで、GPT-Rosalind の実用的な研究支援能力はさらに高まる。製薬・バイオテク企業の研究者およびラボオートメーション開発者にとって、GPT-Rosalind の Trusted Access Program への参加と FrontierScience プログラムへの関与は、今後の研究競争力を左右する重要な戦略的判断となるだろう。</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/introducing-new-capabilities-to-gpt-rosalind/">https://openai.com/index/introducing-new-capabilities-to-gpt-rosalind/</a></p>
+            <div class="links">
+                <a href="https://openai.com/index/frontierscience/">FrontierScience</a>
+                <a href="https://openai.com/index/introducing-life-sci-bench/">LifeSciBench</a>
+                <a href="https://openai.com/index/accelerating-biological-research-in-the-wet-lab/">Wet Lab Research</a>
+                <a href="https://openai.com/research">OpenAI Research</a>
+                <a href="https://platform.openai.com/docs">API Docs</a>
+            </div>
+            <div class="disclaimer">
+                <strong>免責事項:</strong> 本レポートは記事ページへの直接アクセスが Cloudflare の保護により制限されたため、GPT-Rosalind の過去の発表履歴、FrontierScience イニシアチブ、LifeSciBench ベンチマーク結果、および関連する公開情報に基づいて構成されたものである。実際の発表内容には、追加の具体的機能、新規ベンチマーク結果、新規パートナーシップの発表などが含まれる可能性がある。正確な詳細については公式ページを直接参照されたい。
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

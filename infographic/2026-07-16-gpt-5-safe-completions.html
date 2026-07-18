@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5 Safe Completions: リアルタイム出力監視による安全性保証システム</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            border-radius: 16px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.9rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .header .source-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .section h2 {
+            color: var(--openai-dark);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: inline-block;
+        }
+
+        .section h3 {
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            background: linear-gradient(135deg, #f0faf6 0%, #e8f8f2 100%);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 24px 28px;
+            margin-bottom: 24px;
+        }
+
+        .key-points h2 {
+            color: var(--openai-green);
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 16px;
+        }
+
+        .key-points p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.9;
+        }
+
+        /* Numbered List */
+        .numbered-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .numbered-list li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: 8px;
+        }
+
+        .numbered-list li .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 12px;
+            margin-top: 2px;
+        }
+
+        .numbered-list li .content {
+            flex: 1;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .numbered-list li .content strong {
+            color: var(--text-primary);
+        }
+
+        /* Feature Table */
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.9rem;
+        }
+
+        .feature-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .feature-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .feature-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .feature-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .feature-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .feature-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .feature-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-block .code-header {
+            background: #1e1e2e;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #2d2d3d;
+        }
+
+        .code-block pre {
+            margin: 0;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .code-block pre code {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 16px !important;
+        }
+
+        /* Mermaid Diagrams */
+        .mermaid-container {
+            background: white;
+            border: 1px solid var(--openai-gray);
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .mermaid-container h4 {
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* Impact Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .impact-card {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card h4 {
+            color: var(--openai-green);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .impact-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.85rem;
+        }
+
+        .comparison-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .comparison-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .comparison-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .comparison-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        /* Latency Section */
+        .latency-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .latency-list li {
+            padding: 10px 16px;
+            margin-bottom: 8px;
+            background: var(--openai-light);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .latency-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Multi-layer defense */
+        .defense-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .defense-layer {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .defense-layer .layer-num {
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin-right: 14px;
+            font-weight: 700;
+        }
+
+        .defense-layer:nth-child(1) {
+            background: var(--gradient-accent);
+        }
+
+        .defense-layer:nth-child(2) {
+            background: linear-gradient(135deg, #444654 0%, #565869 100%);
+        }
+
+        .defense-layer:nth-child(3) {
+            background: linear-gradient(135deg, #0D8A6A 0%, #10A37F 100%);
+        }
+
+        /* Links Section */
+        .links-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 8px;
+        }
+
+        .links-list li a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .links-list li a:hover {
+            color: #0D8A6A;
+            text-decoration: underline;
+        }
+
+        /* Summary Section */
+        .summary-box {
+            background: linear-gradient(135deg, #f0faf6 0%, #e8f8f2 100%);
+            border-radius: 12px;
+            padding: 28px;
+            margin-top: 16px;
+            border: 1px solid rgba(16, 163, 127, 0.2);
+        }
+
+        .summary-box p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 2;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .feature-table,
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+
+            .feature-table th,
+            .feature-table td,
+            .comparison-table th,
+            .comparison-table td {
+                padding: 8px 10px;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="badge">Safety / 安全性</span>
+            <h1>GPT-5 Safe Completions: リアルタイム出力監視による安全性保証システム</h1>
+            <p class="date">2026-07-16</p>
+            <p class="source-label">OpenAI News (Safety)</p>
+        </header>
+
+        <!-- Key Points / Overview -->
+        <div class="key-points">
+            <h2>概要</h2>
+            <p>
+                OpenAI は 2026 年 7 月 16 日、GPT-5 モデルファミリー向けの新しい安全性機能「Safe Completions」を発表した。この機能は、モデルが出力を生成する過程でリアルタイムに内容を監視し、有害なコンテンツを検出した場合に生成を一時停止またはブロックするシステムである。
+            </p>
+            <p>
+                Safe Completions は、サイバー攻撃や生物兵器に関する悪用を検出する専用の分類器をリアルタイムで実行し、出力がストリーミングされる最中に安全性チェックを行う。一部のリクエストはブロックされるか、数秒間一時停止される場合がある。エンドユーザー向けアプリケーションを提供する開発者は、<code>safety_identifier</code> パラメータを使用してユーザーを識別し、安全性ポリシーの適用を最適化できる。
+            </p>
+            <p>
+                同日に発表された「Running Codex Safely」と連携する安全性インフラストラクチャの一部として位置づけられており、GPT-5 シリーズ全体の安全な運用を支える基盤技術である。
+            </p>
+        </div>
+
+        <!-- Safe Completions の目的 -->
+        <div class="section">
+            <h2>Safe Completions の目的</h2>
+            <p>GPT-5 シリーズのモデルは、高度な推論能力とコード生成能力を持つため、悪意ある利用に対する防御が従来以上に重要となっている。Safe Completions は以下の課題を解決する。</p>
+            <ol class="numbered-list">
+                <li>
+                    <span class="num">1</span>
+                    <span class="content"><strong>リアルタイム検出:</strong> 従来の入力フィルタリングだけでなく、出力生成中にも有害コンテンツを検出</span>
+                </li>
+                <li>
+                    <span class="num">2</span>
+                    <span class="content"><strong>ミッドストリーム介入:</strong> 有害な出力が完全に生成される前に介入し、配信を防止</span>
+                </li>
+                <li>
+                    <span class="num">3</span>
+                    <span class="content"><strong>専門分類器の活用:</strong> サイバー攻撃と生物学的悪用に特化した高精度の分類器を採用</span>
+                </li>
+                <li>
+                    <span class="num">4</span>
+                    <span class="content"><strong>開発者向け統合:</strong> <code>safety_identifier</code> パラメータによりアプリケーション単位での安全性管理を実現</span>
+                </li>
+            </ol>
+        </div>
+
+        <!-- 主要機能 -->
+        <div class="section">
+            <h2>主要機能</h2>
+            <table class="feature-table">
+                <thead>
+                    <tr>
+                        <th>機能</th>
+                        <th>説明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>リアルタイム出力監視</td>
+                        <td>生成中のトークンをストリームで監視</td>
+                    </tr>
+                    <tr>
+                        <td>サイバー悪用分類器</td>
+                        <td>マルウェア、エクスプロイト、攻撃コードの検出</td>
+                    </tr>
+                    <tr>
+                        <td>生物学的悪用分類器</td>
+                        <td>生物兵器関連の危険情報の検出</td>
+                    </tr>
+                    <tr>
+                        <td>ミッドストリーム一時停止</td>
+                        <td>疑わしい出力の生成を数秒間停止して判定</td>
+                    </tr>
+                    <tr>
+                        <td>ブロック機能</td>
+                        <td>明確に有害な出力の生成を完全に停止</td>
+                    </tr>
+                    <tr>
+                        <td>safety_identifier</td>
+                        <td>エンドユーザー識別による安全性ポリシー最適化</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 従来のコンテンツモデレーションとの違い -->
+        <div class="section">
+            <h2>従来のコンテンツモデレーションとの違い</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>従来の方式</th>
+                        <th>Safe Completions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>検査タイミング</td>
+                        <td>入力時のみ / 出力完了後</td>
+                        <td>生成中リアルタイム</td>
+                    </tr>
+                    <tr>
+                        <td>介入方式</td>
+                        <td>リクエスト全体の拒否</td>
+                        <td>ミッドストリーム停止・部分ブロック</td>
+                    </tr>
+                    <tr>
+                        <td>分類器</td>
+                        <td>汎用分類器</td>
+                        <td>ドメイン特化型 (サイバー・生物学)</td>
+                    </tr>
+                    <tr>
+                        <td>レイテンシ影響</td>
+                        <td>なし (事前チェック)</td>
+                        <td>最大数秒の一時停止</td>
+                    </tr>
+                    <tr>
+                        <td>開発者統合</td>
+                        <td>なし</td>
+                        <td>safety_identifier による制御</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 技術的な詳細 -->
+        <div class="section">
+            <h2>技術的な詳細</h2>
+
+            <h3>リアルタイム分類器の動作原理</h3>
+            <p>Safe Completions のリアルタイム分類器は、出力トークンが生成されるたびに累積的なコンテキストを評価する。分類器は以下の 2 つのカテゴリに特化している。</p>
+            <ol class="numbered-list">
+                <li>
+                    <span class="num">1</span>
+                    <span class="content"><strong>サイバー悪用分類器:</strong> マルウェアのソースコード、脆弱性のエクスプロイト手法、ネットワーク攻撃のペイロード生成を検出</span>
+                </li>
+                <li>
+                    <span class="num">2</span>
+                    <span class="content"><strong>生物学的悪用分類器:</strong> 危険な病原体の合成手順、生物兵器に転用可能な情報、規制物質の製造方法を検出</span>
+                </li>
+            </ol>
+
+            <h3>safety_identifier パラメータ</h3>
+            <p><code>safety_identifier</code> は、エンドユーザー向けアプリケーションを構築する開発者がリクエストに付与するパラメータである。これにより、OpenAI の安全性システムは以下を実現する。</p>
+            <ul class="latency-list">
+                <li>ユーザー単位での悪用パターンの検出</li>
+                <li>レート制限と安全性ポリシーの適切な適用</li>
+                <li>悪意あるユーザーの識別と対応の迅速化</li>
+            </ul>
+
+            <h3>コードサンプル</h3>
+
+            <h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-primary); font-size: 1rem;">safety_identifier を使用した基本的なリクエスト</h4>
+            <div class="code-block">
+                <div class="code-header">Python - Responses API</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# エンドユーザー向けアプリケーションでの safety_identifier 使用例
+response = client.responses.create(
+    model="gpt-5.6-sol",
+    input="Explain how encryption algorithms work.",
+    safety_identifier="user_abc123",  # エンドユーザーの識別子
+)
+
+print(response.output_text)</code></pre>
+            </div>
+
+            <h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-primary); font-size: 1rem;">Chat Completions API での safety_identifier 使用</h4>
+            <div class="code-block">
+                <div class="code-header">Python - Chat Completions API</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Chat Completions API での safety_identifier 指定
+response = client.chat.completions.create(
+    model="gpt-5.6-terra",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Describe common cybersecurity best practices."},
+    ],
+    safety_identifier="user_abc123",  # エンドユーザー識別子
+)
+
+print(response.choices[0].message.content)</code></pre>
+            </div>
+
+            <h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-primary); font-size: 1rem;">ストリーミング時のミッドストリーム一時停止への対応</h4>
+            <div class="code-block">
+                <div class="code-header">Python - Streaming with Safe Completions</div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ストリーミングレスポンスでの Safe Completions 対応
+stream = client.responses.create(
+    model="gpt-5.6-sol",
+    input="Explain network security fundamentals.",
+    safety_identifier="user_abc123",
+    stream=True,
+)
+
+for event in stream:
+    # Safe Completions によりストリームが一時停止される場合がある
+    # (数秒の遅延が発生する可能性)
+    if hasattr(event, "type"):
+        if event.type == "response.output_text.delta":
+            print(event.delta, end="", flush=True)
+        elif event.type == "response.safety.paused":
+            # 安全性チェックのため一時停止中
+            print("\n[安全性チェック実行中...]", flush=True)
+        elif event.type == "response.safety.blocked":
+            # 出力がブロックされた場合
+            print("\n[安全性ポリシーにより出力がブロックされました]")
+            break
+
+print()  # 改行</code></pre>
+            </div>
+
+            <h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-primary); font-size: 1rem;">エラーハンドリング: 安全性ブロック時の対応</h4>
+            <div class="code-block">
+                <div class="code-header">Python - Error Handling</div>
+                <pre><code class="language-python">from openai import OpenAI
+from openai import SafetyBlockError
+
+client = OpenAI()
+
+try:
+    response = client.responses.create(
+        model="gpt-5.6-sol",
+        input="User request here",
+        safety_identifier="user_abc123",
+    )
+    print(response.output_text)
+except SafetyBlockError as e:
+    # Safe Completions により出力がブロックされた場合
+    print(f"安全性ブロック: {e.message}")
+    print(f"ブロック理由: {e.category}")  # "cyber" or "biology"
+    # アプリケーション側で適切なフォールバック処理を実行</code></pre>
+            </div>
+        </div>
+
+        <!-- アーキテクチャ -->
+        <div class="section">
+            <h2>アーキテクチャ</h2>
+
+            <div class="mermaid-container">
+                <h4>Safe Completions パイプライン</h4>
+                <div class="mermaid">
+flowchart TD
+    subgraph Client["クライアント"]
+        App["アプリケーション"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph API["OpenAI API"]
+        Gateway["API Gateway"]
+        Auth["認証 & safety_identifier<br/>検証"]
+    end
+
+    subgraph Generation["生成パイプライン"]
+        Model["GPT-5 モデル"]
+        TokenStream["トークンストリーム"]
+    end
+
+    subgraph SafeCompletions["Safe Completions エンジン"]
+        Monitor["リアルタイムモニター"]
+        CyberClassifier["サイバー悪用<br/>分類器"]
+        BioClassifier["生物学的悪用<br/>分類器"]
+        Decision["判定エンジン"]
+    end
+
+    subgraph Actions["アクション"]
+        Pass["通過"]
+        Pause["一時停止<br/>(数秒)"]
+        Block["ブロック"]
+    end
+
+    App --> SDK
+    SDK -->|"safety_identifier 付き<br/>リクエスト"| Gateway
+    Gateway --> Auth
+    Auth --> Model
+    Model --> TokenStream
+    TokenStream --> Monitor
+    Monitor --> CyberClassifier
+    Monitor --> BioClassifier
+    CyberClassifier --> Decision
+    BioClassifier --> Decision
+    Decision -->|"安全"| Pass
+    Decision -->|"要確認"| Pause
+    Decision -->|"有害"| Block
+    Pass -->|"トークン配信"| SDK
+    Pause -->|"再評価後配信"| SDK
+    Block -->|"エラー返却"| SDK
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef warning fill:#FF6B35,stroke:#CC5529,stroke-width:2px,color:white
+
+    class Model,CyberClassifier,BioClassifier,Monitor openai
+    class Gateway,Auth,TokenStream,Decision dark
+    class App,SDK,Pass light
+    class Pause,Block warning
+                </div>
+            </div>
+
+            <div class="mermaid-container">
+                <h4>既存のコンテンツモデレーションとの統合</h4>
+                <div class="mermaid">
+flowchart LR
+    subgraph Input["入力段階"]
+        InputFilter["入力フィルター<br/>(従来方式)"]
+    end
+
+    subgraph Generation["生成段階"]
+        SafeComp["Safe Completions<br/>(リアルタイム)"]
+    end
+
+    subgraph Output["出力段階"]
+        OutputMod["出力モデレーション<br/>(最終チェック)"]
+    end
+
+    Request["リクエスト"] --> InputFilter
+    InputFilter -->|"通過"| SafeComp
+    InputFilter -->|"拒否"| Reject1["リクエスト拒否"]
+    SafeComp -->|"通過"| OutputMod
+    SafeComp -->|"ブロック"| Reject2["生成停止"]
+    OutputMod -->|"通過"| Response["レスポンス"]
+    OutputMod -->|"フラグ"| Reject3["出力除去"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef warning fill:#FF6B35,stroke:#CC5529,stroke-width:2px,color:white
+
+    class SafeComp openai
+    class InputFilter,OutputMod dark
+    class Request,Response light
+    class Reject1,Reject2,Reject3 warning
+                </div>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 -->
+        <div class="section">
+            <h2>開発者への影響</h2>
+
+            <h3>レイテンシへの影響</h3>
+            <p>Safe Completions はリアルタイムで動作するため、一部のリクエストにおいてレイテンシが増加する可能性がある。</p>
+            <ul class="latency-list">
+                <li><strong>通常時:</strong> 追加レイテンシはほぼゼロ (分類器は並列実行)</li>
+                <li><strong>一時停止時:</strong> 最大数秒間の遅延が発生</li>
+                <li><strong>ブロック時:</strong> 生成が即座に停止し、エラーレスポンスを返却</li>
+            </ul>
+            <p>開発者はストリーミング利用時に一時停止イベントを適切にハンドリングする必要がある。</p>
+
+            <h3>safety_identifier の実装要件</h3>
+            <p>エンドユーザー向けアプリケーションを構築する開発者は、以下の対応が推奨される。</p>
+            <ol class="numbered-list">
+                <li>
+                    <span class="num">1</span>
+                    <span class="content"><strong>safety_identifier の付与:</strong> 各リクエストにエンドユーザーを識別する一意の ID を付与</span>
+                </li>
+                <li>
+                    <span class="num">2</span>
+                    <span class="content"><strong>プライバシーへの配慮:</strong> ハッシュ化された ID やセッション ID を使用し、個人情報を直接送信しない</span>
+                </li>
+                <li>
+                    <span class="num">3</span>
+                    <span class="content"><strong>エラーハンドリング:</strong> 安全性ブロック時のフォールバック処理を実装</span>
+                </li>
+                <li>
+                    <span class="num">4</span>
+                    <span class="content"><strong>ユーザー通知:</strong> 一時停止やブロックが発生した場合のユーザーへの適切な通知メカニズムを設計</span>
+                </li>
+            </ol>
+
+            <h3>アプリケーション設計上の考慮事項</h3>
+            <table class="feature-table">
+                <thead>
+                    <tr>
+                        <th>考慮事項</th>
+                        <th>推奨対応</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ストリーミング一時停止</td>
+                        <td>タイムアウトを長めに設定 (30 秒以上)</td>
+                    </tr>
+                    <tr>
+                        <td>ブロックエラー</td>
+                        <td>ユーザーフレンドリーなエラーメッセージを表示</td>
+                    </tr>
+                    <tr>
+                        <td>リトライロジック</td>
+                        <td>安全性ブロックはリトライしない設計に</td>
+                    </tr>
+                    <tr>
+                        <td>ログ記録</td>
+                        <td>ブロック頻度を監視し、正当な利用への影響を確認</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Running Codex Safely との連携</h3>
+            <p>同日発表の「Running Codex Safely」は、Codex エージェントがコードを安全に実行するためのサンドボックスインフラストラクチャである。Safe Completions と組み合わせることで、以下の多層防御が実現される。</p>
+            <div class="defense-layers">
+                <div class="defense-layer">
+                    <span class="layer-num">1</span>
+                    <span><strong>Safe Completions:</strong> モデルの出力テキスト・コードの安全性を保証</span>
+                </div>
+                <div class="defense-layer">
+                    <span class="layer-num">2</span>
+                    <span><strong>Running Codex Safely:</strong> 生成されたコードの実行環境を隔離・保護</span>
+                </div>
+                <div class="defense-layer">
+                    <span class="layer-num">3</span>
+                    <span><strong>統合安全性:</strong> 生成から実行まで一貫した安全性を確保</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 関連リンク -->
+        <div class="section">
+            <h2>関連リンク</h2>
+            <ul class="links-list">
+                <li><a href="https://openai.com/index/gpt-5-safe-completions/">GPT-5 Safe Completions</a></li>
+                <li><a href="https://openai.com/index/running-codex-safely/">Running Codex Safely</a></li>
+                <li><a href="https://platform.openai.com/docs/models">GPT-5.6 モデルドキュメント</a></li>
+                <li><a href="https://openai.com/safety">OpenAI Safety</a></li>
+                <li><a href="https://openai.com/policies/usage-policies/">OpenAI Usage Policies</a></li>
+                <li><a href="https://platform.openai.com/docs">OpenAI API ドキュメント</a></li>
+            </ul>
+        </div>
+
+        <!-- まとめ -->
+        <div class="section">
+            <h2>まとめ</h2>
+            <div class="summary-box">
+                <p>
+                    GPT-5 Safe Completions は、OpenAI が GPT-5 シリーズの高度な能力に伴うリスクに対処するために導入したリアルタイム安全性保証システムである。従来の入力フィルタリングに加え、出力生成中にサイバー攻撃と生物学的悪用に特化した分類器がリアルタイムで動作し、有害なコンテンツを検出した場合にミッドストリームで介入する。開発者は <code>safety_identifier</code> パラメータを活用することで、エンドユーザー単位での安全性管理を実現できる。同日発表の「Running Codex Safely」と組み合わせることで、生成から実行までの一貫した多層防御アーキテクチャが構築されており、GPT-5 シリーズの安全な普及を支える重要な基盤技術となっている。
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Source:</p>
+            <a href="https://openai.com/index/gpt-5-safe-completions/" target="_blank" rel="noopener noreferrer">https://openai.com/index/gpt-5-safe-completions/</a>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
