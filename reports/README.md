@@ -9,6 +9,8 @@ OpenAI の最新ニュースレポート一覧
 - [2026-07-17](2026/2026-07-17-introducing-the-codex-app.md) - Codex App の紹介: GPT-5.6 搭載で進化した AI コーディングエージェントプラットフォーム
 - [2026-07-17](2026/2026-07-17-codex-for-almost-everything.md) - Codex for Almost Everything: コーディングを超えた汎用 AI エージェントへの進化
 - [2026-07-17](2026/2026-07-17-codex-flexible-pricing-for-teams.md) - Codex チーム向けフレキシブルプライシングの拡充: GA 後の新料金体系
+- [2026-07-17](2026/2026-07-17-ai-scorecard-for-the-ai-age.md) - A Scorecard for the AI Age: AI 投資の ROI を測定する実践的フレームワーク
+- [2026-07-16](2026/2026-07-16-why-teens-deserve-access-safe-ai.md) - Why Teens Deserve Access to Safe AI: ティーンの安全な AI アクセスを擁護する OpenAI の主張
 - [2026-07-16](2026/2026-07-16-running-codex-safely.md) - Running Codex Safely: 一般提供に伴う Codex プラットフォームの安全性フレームワーク
 - [2026-07-16](2026/2026-07-16-introducing-the-teen-safety-blueprint.md) - OpenAI「Teen Safety Blueprint」を更新: ティーンの安全な AI 利用に向けた包括的フレームワーク
 - [2026-07-16](2026/2026-07-16-introducing-o3-and-o4-mini.md) - o3 および o4-mini 推論モデルの紹介: 数学・科学・コーディングの新基準
@@ -18,6 +20,7 @@ OpenAI の最新ニュースレポート一覧
 - [2026-07-16](2026/2026-07-16-gpt-5-safe-completions.md) - GPT-5 Safe Completions: リアルタイム出力監視による安全性保証システム
 - [2026-07-16](2026/2026-07-16-deployment-simulation.md) - Deployment Simulation: 実環境デプロイ前の体系的安全性シミュレーション研究
 - [2026-07-16](2026/2026-07-16-chatgpt-basketball-merchandise.md) - OpenAI が ChatGPT ブランドのバスケットボールとマーチャンダイズラインを発売
+- [2026-07-16](2026/2026-07-16-cars24-scales-conversations-openai.md) - Cars24 が OpenAI を活用して会話をスケールし開発を加速する方法
 - [2026-07-15](2026/2026-07-15-unlocking-self-improvement-gpt-red.md) - GPT-Red: 自己改善による堅牢性の向上 - OpenAI の自動レッドチーミングシステム
 - [2026-07-15](2026/2026-07-15-openai-south-korea-economic-blueprint.md) - OpenAI の韓国経済ブループリント: AI による経済発展への投資計画
 - [2026-07-15](2026/2026-07-15-openai-codex-micro-keyboard.md) - OpenAI Codex Micro - AI コーディングエージェント専用キーボードの発表

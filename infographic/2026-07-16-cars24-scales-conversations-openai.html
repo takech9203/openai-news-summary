@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cars24 が OpenAI を活用して会話をスケールし開発を加速する方法</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content { position: relative; z-index: 1; }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #343541;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #10A37F;
+            border-radius: 2px;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: #ECECF1;
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #10A37F;
+            margin-bottom: 8px;
+        }
+
+        .stat-label { font-size: 14px; opacity: 0.9; }
+
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang { color: #10A37F; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+
+        .code-block pre { margin: 0; padding: 0; }
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%);
+            border-left: 4px solid #10A37F;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid { display: flex; justify-content: center; }
+
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .api-table th {
+            background: #343541;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .api-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .api-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .api-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #ECECF1;
+            font-size: 14px;
+        }
+
+        .api-table tr:hover td {
+            background: #F7F7F8;
+        }
+
+        .api-table .api-name {
+            color: #10A37F;
+            font-weight: 700;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: #ECECF1;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #8E8EA0;
+        }
+
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">CUSTOMER STORY</span>
+                <h1>Cars24 が OpenAI を活用して会話をスケールし開発を加速する方法</h1>
+                <p class="date">2026-07-16 | カスタマーストーリー</p>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="section">
+            <h2 class="section-title">主要指標</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1M+</div>
+                    <div class="stat-label">月間会話処理分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12%</div>
+                    <div class="stat-label">リード回復率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">全社</div>
+                    <div class="stat-label">エージェンティックワークフロー展開</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F697;</div>
+                    <div class="key-point-content">
+                        <h3>インド発オンライン中古車マーケットプレイス</h3>
+                        <p>Cars24 はインド最大級のオンライン中古車プラットフォームとして、AI を活用した顧客体験の革新に取り組んでいます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4DE;</div>
+                    <div class="key-point-content">
+                        <h3>月間 100 万分以上の会話を処理</h3>
+                        <p>OpenAI の音声・チャットエージェントを活用し、膨大な顧客問い合わせを自動で処理しています。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4C8;</div>
+                    <div class="key-point-content">
+                        <h3>失われたリードの 12% を AI フォローアップで回復</h3>
+                        <p>AI エージェントによる自動フォローアップで、従来は失われていた見込み顧客を効果的に回復しています。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F3E2;</div>
+                    <div class="key-point-content">
+                        <h3>全社的にエージェンティックワークフローを展開</h3>
+                        <p>営業、オペレーション、カスタマーサクセスなど、全部門で AI エージェントを活用しています。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4DE; 音声エージェント</h3>
+                    <p>Realtime API を活用した顧客問い合わせ対応。リード資格認定やフォローアップ通話を自動化し、24 時間対応を実現。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4AC; チャットエージェント</h3>
+                    <p>24/365 リアルタイムサポート。ヒンディー語/英語の多言語対応でコンテキストを維持した自然な会話を提供。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F916; エージェンティックワークフロー</h3>
+                    <p>営業 (リードスコアリング)、オペレーション (車両検査)、カスタマーサクセスなど全社展開。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F517; システム連携</h3>
+                    <p>CRM 連携、在庫管理、分析基盤との統合。フォールバック機構による高い可用性を確保。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Table -->
+        <div class="section">
+            <h2 class="section-title">使用 API</h2>
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th>API</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="api-name">Realtime API</td>
+                        <td>音声エージェントによるリアルタイム音声会話</td>
+                    </tr>
+                    <tr>
+                        <td class="api-name">Chat Completions API</td>
+                        <td>チャットエージェントによるテキスト対話</td>
+                    </tr>
+                    <tr>
+                        <td class="api-name">GPT-4o</td>
+                        <td>高精度な自然言語理解と生成</td>
+                    </tr>
+                    <tr>
+                        <td class="api-name">Function Calling</td>
+                        <td>外部システム (CRM、在庫管理) との連携</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="section">
+            <h2 class="section-title">システムアーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Customers["顧客チャネル"]
+        Voice["&#x1F4DE; 音声通話"]
+        Chat["&#x1F4AC; チャット"]
+        SMS["&#x1F4F1; SMS"]
+    end
+
+    subgraph OpenAI_Platform["OpenAI Platform"]
+        RealtimeAPI["Realtime API&lt;br/&gt;(音声エージェント)"]
+        ChatAPI["Chat Completions API&lt;br/&gt;(チャットエージェント)"]
+        GPT4o["GPT-4o"]
+    end
+
+    subgraph Cars24_Backend["Cars24 バックエンド"]
+        Orchestrator["エージェント&lt;br/&gt;オーケストレーター"]
+        LeadRecovery["リード回復&lt;br/&gt;ワークフロー"]
+        QualificationEngine["リード資格認定&lt;br/&gt;エンジン"]
+    end
+
+    subgraph Internal_Systems["社内システム"]
+        CRM["CRM"]
+        Inventory["在庫管理"]
+        Analytics["分析基盤"]
+    end
+
+    Voice --> RealtimeAPI
+    Chat --> ChatAPI
+    SMS --> ChatAPI
+    RealtimeAPI --> GPT4o
+    ChatAPI --> GPT4o
+    GPT4o --> Orchestrator
+    Orchestrator --> LeadRecovery
+    Orchestrator --> QualificationEngine
+    LeadRecovery --> CRM
+    QualificationEngine --> CRM
+    Orchestrator --> Inventory
+    Orchestrator --> Analytics
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef customer fill:#ECECF1,stroke:#343541,stroke-width:2px,color:#343541
+
+    class RealtimeAPI,ChatAPI,GPT4o openai
+    class Orchestrator,LeadRecovery,QualificationEngine dark
+    class CRM,Inventory,Analytics light
+    class Voice,Chat,SMS customer
+                </pre>
+            </div>
+        </div>
+
+        <!-- Code Sample -->
+        <div class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Cars24 チャットエージェント応答生成例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+def handle_customer_chat(customer_message: str, conversation_history: list):
+    """Cars24 チャットエージェントの応答生成例"""
+    system_prompt = """You are a Cars24 customer support agent.
+    Help customers with vehicle inquiries, pricing, documentation,
+    and after-sales support. Be helpful, concise, and professional.
+    Support Hindi and English languages."""
+
+    messages = [
+        {"role": "system", "content": system_prompt},
+        *conversation_history,
+        {"role": "user", "content": customer_message}
+    ]
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=messages,
+        tools=[
+            {
+                "type": "function",
+                "function": {
+                    "name": "search_vehicles",
+                    "description": "Search Cars24 inventory for vehicles",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "make": {"type": "string"},
+                            "model": {"type": "string"},
+                            "price_max": {"type": "number"},
+                            "city": {"type": "string"}
+                        }
+                    }
+                }
+            }
+        ]
+    )
+    return response.choices[0].message</code></pre>
+            </div>
+        </div>
+
+        <!-- Developer Impact -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>音声エージェントの実用性実証</h4>
+                <p>月間 100 万分以上の会話処理を実現し、音声 AI エージェントのエンタープライズ規模での実用性を証明しました。</p>
+            </div>
+            <div class="use-case">
+                <h4>リード回復への AI 活用</h4>
+                <p>失われたリードの 12% を AI フォローアップで回復。自動化による営業効率の大幅な改善を実証しています。</p>
+            </div>
+            <div class="use-case">
+                <h4>エンタープライズ展開のベストプラクティス</h4>
+                <p>全社的な AI エージェント導入の成功モデルとして、段階的な展開戦略とフォールバック機構の重要性を示しています。</p>
+            </div>
+            <div class="use-case">
+                <h4>多言語音声対応の実証</h4>
+                <p>ヒンディー語と英語のバイリンガル対応により、多言語環境での音声 AI の有効性を実証しました。</p>
+            </div>
+            <div class="use-case">
+                <h4>Function Calling の実践例</h4>
+                <p>CRM や在庫管理システムとの連携に Function Calling を活用し、外部システム統合のベストプラクティスを提示しています。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Source: <a href="https://openai.com/index/cars24" target="_blank" rel="noopener noreferrer">https://openai.com/index/cars24</a></p>
+            <p style="margin-top: 8px;">Generated: 2026-07-16 | OpenAI News Summary Infographic</p>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
