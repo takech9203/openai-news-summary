@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-21](2026/2026-07-21-understanding-neural-networks-sparse-circuits.md) - スパース回路によるニューラルネットワークの理解
+- [2026-07-20](2026/2026-07-20-safety-alignment-long-horizon-models.md) - 長期実行モデル時代の安全性とアライメント
 - [2026-07-18](2026/2026-07-18-gpt-5-6-product-launch.md) - GPT-5.6 正式リリース: Sol / Terra / Luna の 3 層構成で一般提供開始
 - [2026-07-17](2026/2026-07-17-introducing-the-codex-app.md) - Codex App の紹介: GPT-5.6 搭載で進化した AI コーディングエージェントプラットフォーム
 - [2026-07-17](2026/2026-07-17-codex-for-almost-everything.md) - Codex for Almost Everything: コーディングを超えた汎用 AI エージェントへの進化

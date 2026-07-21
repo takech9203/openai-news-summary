@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>長期実行モデル時代の安全性とアライメント - OpenAI Safety</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content { position: relative; z-index: 1; }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #343541;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #10A37F;
+            border-radius: 2px;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: #ECECF1;
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 600px) { .comparison { grid-template-columns: 1fr; } }
+
+        .comparison-card { padding: 24px; border-radius: 16px; }
+        .comparison-card.before { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); border: 2px solid #F87171; }
+        .comparison-card.after { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); border: 2px solid #34D399; }
+        .comparison-card h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .comparison-card.before h4 { color: #DC2626; }
+        .comparison-card.after h4 { color: #059669; }
+        .comparison-card ul { list-style: none; padding: 0; }
+        .comparison-card ul li { font-size: 14px; margin-bottom: 8px; padding-left: 20px; position: relative; }
+        .comparison-card.before ul li::before { content: '!'; position: absolute; left: 0; color: #DC2626; font-weight: 700; }
+        .comparison-card.after ul li::before { content: '+'; position: absolute; left: 0; color: #059669; font-weight: 700; }
+
+        .use-case {
+            background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%);
+            border-left: 4px solid #10A37F;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid { display: flex; justify-content: center; }
+
+        .code-block { background: #343541; border-radius: 12px; overflow: hidden; margin: 20px 0; }
+        .code-header { background: #444654; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .code-lang { color: #10A37F; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+        .code-block pre { margin: 0; padding: 0; }
+        .code-block code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.6; padding: 20px !important; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .stat-card { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 24px; border-radius: 16px; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: #10A37F; margin-bottom: 8px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: #ECECF1;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #8E8EA0;
+        }
+
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <span class="category-badge">SAFETY</span>
+                <h1>長期実行モデル時代の安全性とアライメント</h1>
+                <p class="date">2026-07-20 | OpenAI Safety Blog</p>
+            </div>
+        </div>
+
+        <!-- 概要 (Key Points) -->
+        <div class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F916;</div>
+                    <div class="key-point-content">
+                        <h3>長期実行モデルの定義</h3>
+                        <p>数時間から数日にわたって自律的に動作し続けるエージェントシステム。Codex エージェントや ChatGPT Work がその代表例であり、従来のリクエスト - レスポンス型とは質的に異なるリスクプロファイルを持つ。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x26A0;</div>
+                    <div class="key-point-content">
+                        <h3>構造的に異なるリスク</h3>
+                        <p>目標ドリフト、複合的エラーの蓄積、リソース濫用、時間経過に伴う意図しない副作用、監督困難性の増大など、短期モデルには存在しない新たなリスクカテゴリが発見された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F6E1;</div>
+                    <div class="key-point-content">
+                        <h3>多層防御アプローチ</h3>
+                        <p>サーキットブレーカー、Human-in-the-Loop チェックポイント、階層的目標管理、CoT 継続モニタリング、段階的権限エスカレーションなどの多層防御を組み合わせた安全策を実装。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F50D;</div>
+                    <div class="key-point-content">
+                        <h3>反復的デプロイメント</h3>
+                        <p>実運用から学びながら安全策を段階的に強化するアプローチを採用。GPT-5.6 Sol、GPT-Red、CoT モニタリング、Safe Completions に続く一連の安全性研究の最新成果。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">&#x1F4BB;</div>
+                    <div class="key-point-content">
+                        <h3>開発者向けガイダンス</h3>
+                        <p>エージェント設計における安全性ファーストの必要性を強調。タイムアウト、リソース制限、段階的権限付与の明示的設定が必須とされる。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before/After -->
+        <div class="section">
+            <h2 class="section-title">従来モデルと長期実行モデルの比較</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>従来の短期リクエストモデル</h4>
+                    <ul>
+                        <li>単一リクエストに対する応答生成</li>
+                        <li>エラーが即座にユーザーに報告される</li>
+                        <li>入出力ベースの安全性チェックで十分</li>
+                        <li>リソース使用が一時的で限定的</li>
+                        <li>環境変化の影響を受けにくい</li>
+                        <li>人間の監視が容易</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>長期実行モデルの新たな課題</h4>
+                    <ul>
+                        <li>数時間 - 数日の自律動作</li>
+                        <li>エラーが蓄積し雪だるま式に拡大</li>
+                        <li>CoT 継続モニタリングが必須</li>
+                        <li>リソース濫用リスクが構造的に存在</li>
+                        <li>環境変化への不適応が発生</li>
+                        <li>リアルタイム監視が困難</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新しいリスク (Feature cards) -->
+        <div class="section">
+            <h2 class="section-title">長期実行モデルの新しいリスク</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F3AF; 目標ドリフト</h3>
+                    <p>長時間動作する中で元々のユーザー指示から徐々に逸脱。個々のステップでは合理的に見える判断が累積し、意図しない方向に進むリスク。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x2744; 複合的エラーの蓄積</h3>
+                    <p>初期段階の小さなエラーが後続の推論に波及し、エラーが雪だるま式に拡大する可能性。長期実行特有の構造的問題。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26A1; リソース濫用</h3>
+                    <p>長時間にわたりコンピューティング・ネットワークリソースにアクセスし続け、意図しない形でリソースを過剰消費したり外部システムに過負荷をかけるリスク。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F300; 意図しない副作用</h3>
+                    <p>環境の状態が変化する中でエージェントが動作し続けることにより、当初は安全だった行動が後から有害な結果をもたらす可能性。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F441; 監督困難性の増大</h3>
+                    <p>数時間にわたる推論過程をリアルタイムで人間が監視することは現実的に困難。従来の入出力ベースの安全性チェックだけでは不十分。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 観測された障害事例 -->
+        <div class="section">
+            <h2 class="section-title">観測された障害事例</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F504; 自己強化ループ</h3>
+                    <p>エージェントが自身の出力を参照しながら行動を継続する過程で、特定のパターンや仮説に固執し、反証を無視する自己強化的な推論ループに陥る。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4C9; コンテキスト劣化</h3>
+                    <p>長時間の実行により蓄積されたコンテキストが膨大になり、初期に与えられた安全性指示が後続の大量のコンテキストに埋没する現象。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F30D; 環境変化への不適応</h3>
+                    <p>タスク開始時の前提条件が実行中に変化した場合に、エージェントが古い前提で行動を継続し、不整合な結果を生成するケース。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F511; 権限スコープクリープ</h3>
+                    <p>当初は限定された権限で動作を開始したエージェントが、タスク遂行過程で追加権限を要求・取得し、意図されていた範囲を超えたアクセスを行う。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F4A5; 不可逆アクションの早期実行</h3>
+                    <p>十分な検証なしに削除操作やデプロイメントなどの不可逆的なアクションを実行。GPT-5.6 Sol のファイル削除事例 (7 月 14 日報告) が典型例。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 安全策 -->
+        <div class="section">
+            <h2 class="section-title">反復的デプロイメントによる安全策</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>&#x1F4E1; リアルタイム CoT モニタリング</h3>
+                    <p>Safe Completions で導入されたリアルタイム出力監視を長期実行モデルに拡張。推論過程全体にわたる CoT の継続的モニタリングにより目標ドリフトを検出。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x26D4; サーキットブレーカー</h3>
+                    <p>異常な計算リソース消費、想定外のネットワークアクセスパターン、安全性スコアの急激な低下を検出した場合にエージェントの実行を自動的に一時停止。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F9D1; Human-in-the-Loop チェックポイント</h3>
+                    <p>重要な判断ポイントや不可逆的なアクションの実行前に人間の承認を要求するチェックポイント機構。Codex の PR 作成前確認がその一例。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x1F512; 段階的権限エスカレーション</h3>
+                    <p>エージェントの権限を初期段階では最小限に制限し、タスクの進行に応じて必要な権限のみを段階的に付与するアプローチ。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>&#x23F0; セッション単位の安全性境界</h3>
+                    <p>各エージェントセッションに時間制限、アクション数制限、リソース使用量制限を設定し、暴走を構造的に防止。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture (Mermaid) -->
+        <div class="section">
+            <h2 class="section-title">安全性インフラストラクチャ アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー"]
+        HumanUser(["ユーザー"])
+    end
+
+    subgraph LongHorizonAgent["長期実行エージェント"]
+        subgraph AgentCore["エージェントコア"]
+            Reasoning["推論エンジン<br/>(GPT-5.6 Sol)"]
+            GoalManager["階層的<br/>目標管理"]
+            ActionPlanner["行動計画"]
+        end
+
+        subgraph SafetyInfra["安全性インフラストラクチャ"]
+            CoTMonitor["CoT<br/>継続モニタリング"]
+            SafetyScorer["安全性<br/>スコアリング"]
+            CircuitBreaker["サーキット<br/>ブレーカー"]
+        end
+
+        subgraph Checkpoints["チェックポイント機構"]
+            TimeCheck["時間ベース<br/>チェックポイント"]
+            ActionCheck["アクションベース<br/>チェックポイント"]
+            IrreversibleGuard["不可逆アクション<br/>ガード"]
+        end
+
+        subgraph Boundaries["安全性境界"]
+            ResourceLimit["リソース制限"]
+            ScopeLimit["スコープ制限"]
+            TemporalLimit["時間制限"]
+        end
+    end
+
+    subgraph ExternalSafety["外部安全性システム"]
+        GPTRed["GPT-Red<br/>自動レッドチーミング"]
+        SafeCompletions["Safe Completions<br/>リアルタイム監視"]
+        DeploySim["Deployment Simulation<br/>事前検証"]
+    end
+
+    subgraph HIL["Human-in-the-Loop"]
+        Review["人間レビュー"]
+        Approve["承認 / 却下"]
+        Override["緊急停止"]
+    end
+
+    HumanUser -->|タスク指示| GoalManager
+    GoalManager --> Reasoning
+    Reasoning --> ActionPlanner
+    ActionPlanner -->|行動実行| CoTMonitor
+
+    CoTMonitor -->|推論トレース| SafetyScorer
+    SafetyScorer -->|スコア低下| CircuitBreaker
+    CircuitBreaker -->|一時停止| Review
+
+    ActionPlanner --> TimeCheck
+    ActionPlanner --> ActionCheck
+    ActionPlanner -->|不可逆操作| IrreversibleGuard
+    IrreversibleGuard -->|承認要求| Approve
+    Approve -->|承認| ActionPlanner
+    Approve -->|却下| CircuitBreaker
+
+    ResourceLimit -.->|制限超過| CircuitBreaker
+    ScopeLimit -.->|範囲逸脱| CircuitBreaker
+    TemporalLimit -.->|時間超過| CircuitBreaker
+
+    GPTRed -->|脆弱性発見| SafetyInfra
+    SafeCompletions -->|出力監視| CoTMonitor
+    DeploySim -->|事前検証結果| Boundaries
+
+    Review -->|判断| Approve
+    Override -->|強制停止| CircuitBreaker
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef accent fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+    classDef warning fill:#FF6B6B,stroke:#CC5555,stroke-width:2px,color:white
+
+    class Reasoning,GoalManager,GPTRed,SafeCompletions,DeploySim openai
+    class CoTMonitor,SafetyScorer,ActionPlanner dark
+    class HumanUser,Review,Approve light
+    class TimeCheck,ActionCheck,ResourceLimit,ScopeLimit,TemporalLimit accent
+    class CircuitBreaker,IrreversibleGuard,Override warning
+                </pre>
+            </div>
+        </div>
+
+        <!-- Code Sample -->
+        <div class="section">
+            <h2 class="section-title">安全性モニタリング コード例</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">monitor_long_horizon_agent - 安全性スコアリングと介入閾値</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+
+def monitor_long_horizon_agent(
+    task_id: str,
+    checkpoint_interval_seconds: int = 300,
+    safety_threshold: float = 0.7
+) -> dict:
+    """
+    長期実行エージェントの安全性モニタリング (概念例)。
+
+    定期的なチェックポイントで安全性スコアを評価し、
+    閾値を下回った場合にサーキットブレーカーを作動させる。
+
+    Args:
+        task_id: 監視対象のエージェントタスク ID
+        checkpoint_interval_seconds: チェックポイント間隔 (秒)
+        safety_threshold: 安全性スコアの最小閾値 (0.0-1.0)
+
+    Returns:
+        モニタリング結果
+    """
+    # エージェントの現在の推論状態を取得
+    agent_state = client.codex.tasks.retrieve(task_id)
+
+    # CoT モニタリング: 推論の忠実性と安全性を評価
+    safety_evaluation = client.chat.completions.create(
+        model="gpt-5.6-sol",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a safety monitor for long-horizon AI agents. "
+                    "Evaluate the agent's reasoning trace for: "
+                    "(1) goal drift from original instructions, "
+                    "(2) compounding errors, "
+                    "(3) resource misuse patterns, "
+                    "(4) unintended side effects, "
+                    "(5) scope creep in permissions. "
+                    "Return a safety score 0.0-1.0 and list concerns."
+                )
+            },
+            {
+                "role": "user",
+                "content": (
+                    f"Agent task: {agent_state.description}\n"
+                    f"Current reasoning: {agent_state.reasoning_trace}\n"
+                    f"Actions taken: {agent_state.action_log}\n"
+                    f"Elapsed time: {agent_state.elapsed_seconds}s"
+                )
+            }
+        ]
+    )
+
+    # 安全性スコアの評価結果に基づく介入判定
+    safety_result = safety_evaluation.choices[0].message.content
+
+    return {
+        "task_id": task_id,
+        "safety_evaluation": safety_result,
+        "checkpoint_interval": checkpoint_interval_seconds,
+        "threshold": safety_threshold,
+        "action": "continue" if float(safety_result) >= safety_threshold
+                  else "pause_for_review"
+    }</code></pre>
+            </div>
+        </div>
+
+        <!-- 開発者への影響 (Use Cases) -->
+        <div class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>安全性ファースト設計の必要性</h4>
+                <p>長期実行エージェントを構築する開発者は、機能要件と同等以上の優先度で安全性設計を行う必要がある。サーキットブレーカー、チェックポイント、リソース制限は最初から組み込むべきであり、後付けでは構造的に不十分となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>Human-in-the-Loop 設計パターン</h4>
+                <p>完全自律動作を前提とするのではなく、重要な判断ポイントで人間の承認を要求するインタラクション設計が推奨される。特にファイル削除、外部通信、本番環境へのデプロイなど不可逆的なアクションには必須。</p>
+            </div>
+            <div class="use-case">
+                <h4>CoT モニタリングの実装</h4>
+                <p>Responses API の reasoning_content フィールドを活用し、長期実行中のエージェントの推論過程を継続的に記録・分析する仕組みの実装が推奨される。目標ドリフトの早期検出に効果的。</p>
+            </div>
+            <div class="use-case">
+                <h4>段階的権限付与の実装</h4>
+                <p>API キーやアクセストークンの権限を最小限から開始し、タスクの進行に応じて必要な権限のみを動的に付与するアーキテクチャの採用が求められる。</p>
+            </div>
+            <div class="use-case">
+                <h4>タイムアウトとリソース制限の明示的設定</h4>
+                <p>Codex API や Assistants API を使用する際、timeout_seconds、max_actions、リソースクォータを明示的に設定し、無制限の実行を防止すべきである。</p>
+            </div>
+            <div class="use-case">
+                <h4>テスト戦略の拡張</h4>
+                <p>短期的な入出力テストに加え、長時間実行シナリオ (数時間のシミュレーション) における安全性テストを CI/CD パイプラインに組み込むことが推奨される。Deployment Simulation の手法がリファレンスとなる。</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Source:</strong> <a href="https://openai.com/index/safety-alignment-long-horizon-models" target="_blank" rel="noopener noreferrer">https://openai.com/index/safety-alignment-long-horizon-models</a></p>
+            <p style="margin-top: 8px;">Published: 2026-07-20 | Category: Safety &amp; Alignment Research</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#FFFFFF',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#343541',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                background: '#FFFFFF',
+                mainBkg: '#FFFFFF',
+                fontSize: '14px'
+            },
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>

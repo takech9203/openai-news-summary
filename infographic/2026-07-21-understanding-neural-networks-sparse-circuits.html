@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スパース回路によるニューラルネットワークの理解 - OpenAI Research</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: #F7F7F8;
+            color: #343541;
+            line-height: 1.7;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+        .header {
+            background: linear-gradient(135deg, #343541 0%, #444654 100%);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content { position: relative; z-index: 1; }
+
+        .category-badge {
+            display: inline-block;
+            background: #10A37F;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .header .date { font-size: 14px; opacity: 0.8; }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #343541;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #10A37F;
+            border-radius: 2px;
+        }
+
+        .key-points { display: grid; gap: 16px; }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: #ECECF1;
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+        .key-point-content p { font-size: 14px; color: #565869; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #ECECF1 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature-card p { font-size: 14px; color: #565869; line-height: 1.6; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .stat-card { background: linear-gradient(135deg, #343541 0%, #444654 100%); color: white; padding: 24px; border-radius: 16px; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: #10A37F; margin-bottom: 8px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+
+        .use-case {
+            background: linear-gradient(135deg, #ECECF1 0%, #F7F7F8 100%);
+            border-left: 4px solid #10A37F;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #343541; }
+        .use-case p { font-size: 14px; color: #565869; }
+
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid { display: flex; justify-content: center; }
+
+        .code-block { background: #343541; border-radius: 12px; overflow: hidden; margin: 20px 0; }
+        .code-header { background: #444654; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .code-lang { color: #10A37F; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .code-title { color: #a0a0b0; font-size: 12px; }
+        .code-block pre { margin: 0; padding: 0; }
+        .code-block code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.6; padding: 20px !important; }
+
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: #ECECF1;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #8E8EA0;
+        }
+
+        .footer a { color: #10A37F; text-decoration: none; word-break: break-all; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .header { padding: 32px 24px; }
+            .header h1 { font-size: 1.5rem; }
+            .section { padding: 24px; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">RESEARCH</span>
+                <h1>スパース回路によるニューラルネットワークの理解</h1>
+                <p class="date">2026-07-21 | OpenAI Research - Mechanistic Interpretability</p>
+            </div>
+        </header>
+
+        <!-- 概要 (Key Points) -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-content">
+                        <h3>スパース回路の発見</h3>
+                        <p>大規模言語モデル内部で特定の計算や振る舞いを担う最小限のコンポーネント群 (スパース回路) を特定・分析する新手法を提案。メカニスティック・インタープリタビリティの重要な進展を示す。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>ネットワークの「配線図」を読み解く</h3>
+                        <p>モデル全体の重みを解析するのではなく、特定の振る舞いに関与する少数のニューロン、アテンションヘッド、MLP 層のサブセットを特定し、内部構造を理解可能にする。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>AI 安全性研究の中核</h3>
+                        <p>OpenAI が推進する AI 安全性研究プログラムの中核に位置し、モデルの内部状態を監視・理解するための技術的基盤を提供する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>極めてスパースな回路構造</h3>
+                        <p>個々のタスクや振る舞いに実際に関与するのは全パラメータのごく一部 (0.1% ~ 10%) であり、ネットワークは高度にモジュール化された構造を持つ。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔗</div>
+                    <div class="key-point-content">
+                        <h3>スケーラブルな手法</h3>
+                        <p>小規模モデルから GPT-5.x シリーズまで適用可能な階層的探索手法を採用し、大規模モデルでも効率的に回路を発見する。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- スパース回路とは (Feature Cards) -->
+        <section class="section">
+            <h2 class="section-title">スパース回路とは</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🎯 最小性</h3>
+                    <p>特定の振る舞いを再現するために必要最小限のコンポーネントで構成される。例: 間接オブジェクト識別回路 -「Mary told John that ___」の空欄に she を生成する最小構成。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔀 機能的独立性</h3>
+                    <p>回路は他のネットワーク部分とある程度独立して機能し、切り離しても対象の計算が保持される。例: 事実想起回路 -「東京は日本の首都」を検索・出力する独立した回路。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 構成性</h3>
+                    <p>複数のスパース回路が組み合わさって、より複雑な振る舞いを実現する。例: 算術演算回路 - 数値の加減算を行う際に活性化するニューロン群の組み合わせ。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👁️ 解釈可能性</h3>
+                    <p>回路の各コンポーネントに人間が理解可能な意味的役割を割り当てられる。例: 構文解析回路 - 文法構造を追跡し、正しい閉じ括弧や動詞活用を生成する回路。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 研究手法 (Feature Cards) -->
+        <section class="section">
+            <h2 class="section-title">研究手法</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⚡ 活性化パッチング</h3>
+                    <p>ネットワーク内の特定コンポーネントの活性化値を別の入力に対する値で置き換え、出力への影響を測定。影響が大きいコンポーネントが回路の一部であると特定する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 回路発見アルゴリズム</h3>
+                    <p>エッジレベル探索、属性スコアリング (勾配ベース)、L1 正則化やマスク学習によるスパース最適化を組み合わせて最小限の回路を発見する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏗️ スパースオートエンコーダ</h3>
+                    <p>OpenAI の先行研究である SAE を用いてモデルの中間表現を解釈可能な特徴量に分解し、回路の構成要素をより高いレベルの概念として理解する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 スケーラブルな発見手法</h3>
+                    <p>階層的な探索手法を採用: まず層レベルで重要な範囲を絞り込み、次にアテンションヘッドや MLP ニューロンレベルで精密な回路を特定する段階的アプローチ。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="section">
+            <h2 class="section-title">回路の分類とスパース度</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">~0.1%</div>
+                    <div class="stat-label">構文回路<br>括弧マッチング<br>主語-動詞一致</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~0.5%</div>
+                    <div class="stat-label">知識回路<br>事実想起<br>エンティティ属性</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~1-2%</div>
+                    <div class="stat-label">推論回路<br>論理的推論<br>算術演算</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~2-5%</div>
+                    <div class="stat-label">安全性回路<br>拒否判定<br>有害性検出</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">~5-10%</div>
+                    <div class="stat-label">メタ認知回路<br>不確実性推定<br>CoT 生成</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">スパース回路発見パイプライン</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["入力"]
+        Model(["対象モデル\n(Transformer)"])
+        Behavior["対象振る舞い\n定義"]
+        Data["評価\nデータセット"]
+    end
+
+    subgraph Discovery["回路発見プロセス"]
+        subgraph Phase1["Phase 1: 粗い探索"]
+            LayerScan["層レベル\n重要度推定"]
+        end
+        subgraph Phase2["Phase 2: 精密探索"]
+            ActPatch["活性化\nパッチング"]
+            GradAttr["勾配ベース\n属性計算"]
+        end
+        subgraph Phase3["Phase 3: 最適化"]
+            SparseMask["スパースマスク\n最適化"]
+            L1Reg["L1 正則化\nによる刈り込み"]
+        end
+    end
+
+    subgraph Validation["検証"]
+        Faith["忠実性\n評価"]
+        Minimal["最小性\n確認"]
+        Semantic["意味的\n解釈"]
+    end
+
+    subgraph Output["出力"]
+        Circuit(["スパース回路"])
+        Diagram["回路ダイアグラム"]
+        Roles["コンポーネント\n役割マップ"]
+    end
+
+    Model --> LayerScan
+    Behavior --> LayerScan
+    Data --> LayerScan
+
+    LayerScan --> ActPatch
+    LayerScan --> GradAttr
+    ActPatch --> SparseMask
+    GradAttr --> SparseMask
+    SparseMask --> L1Reg
+
+    L1Reg --> Faith
+    L1Reg --> Minimal
+    Faith --> Circuit
+    Minimal --> Circuit
+    Circuit --> Semantic
+    Semantic --> Diagram
+    Semantic --> Roles
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class LayerScan,ActPatch,GradAttr openai
+    class SparseMask,L1Reg dark
+    class Faith,Minimal,Semantic light
+    class Circuit,Diagram,Roles gray
+                </pre>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 32px;">Transformer 内部のスパース回路構造</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    subgraph TransformerLayers["Transformer モデル (全 N 層)"]
+        subgraph L1["Layer 1"]
+            A1["Attention\nHead 3"]
+            M1["MLP\nNeuron 42"]
+        end
+        subgraph L5["Layer 5"]
+            A5["Attention\nHead 7"]
+        end
+        subgraph L12["Layer 12"]
+            A12["Attention\nHead 1"]
+            M12["MLP\nNeuron 891"]
+        end
+        subgraph L20["Layer 20"]
+            M20["MLP\nNeuron 256"]
+        end
+    end
+
+    Input(["入力トークン"]) --> A1
+    Input --> M1
+    A1 -->|"残差接続"| A5
+    M1 -->|"残差接続"| A5
+    A5 -->|"注意パターン"| A12
+    A5 --> M12
+    A12 --> M20
+    M12 --> M20
+    M20 --> Output(["出力ロジット"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef gray fill:#ECECF1,stroke:#D1D1D6,stroke-width:2px,color:#343541
+
+    class A1,A5,A12 openai
+    class M1,M12,M20 dark
+    class Input,Output gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">回路発見パイプライン - コード例</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">discover_circuit - スパース回路発見関数</span>
+                </div>
+                <pre><code class="language-python">def discover_circuit(
+    model: torch.nn.Module,
+    target_behavior: callable,
+    dataset: list[dict],
+    sparsity_target: float = 0.01,  # 全パラメータの 1% 以下
+) -> SparseCircuit:
+    """
+    対象の振る舞いを担うスパース回路を発見する。
+
+    Args:
+        model: 解析対象の Transformer モデル
+        target_behavior: 対象の振る舞いを定義する関数
+        dataset: 振る舞いを観察するためのデータセット
+        sparsity_target: 目標スパース度 (低いほど少ないコンポーネント)
+
+    Returns:
+        SparseCircuit: 発見された回路
+    """
+    # Phase 1: 粗い探索 - 層レベルの重要度推定
+    layer_importance = estimate_layer_importance(
+        model, target_behavior, dataset
+    )
+
+    # Phase 2: コンポーネントレベルの活性化パッチング
+    component_scores = activation_patching(
+        model, target_behavior, dataset,
+        target_layers=get_important_layers(layer_importance)
+    )
+
+    # Phase 3: スパース最適化による回路の精緻化
+    circuit_mask = optimize_sparse_mask(
+        model, target_behavior, dataset,
+        initial_scores=component_scores,
+        sparsity_target=sparsity_target
+    )
+
+    # Phase 4: 回路の検証と忠実性評価
+    faithfulness = evaluate_circuit_faithfulness(
+        model, circuit_mask, target_behavior, dataset
+    )
+
+    return SparseCircuit(
+        name=f"circuit_{target_behavior.__name__}",
+        components=mask_to_components(circuit_mask, component_scores),
+        faithfulness_score=faithfulness,
+        sparsity=circuit_mask.sum() / circuit_mask.numel()
+    )</code></pre>
+            </div>
+        </section>
+
+        <!-- 主要な発見 (Feature Cards) -->
+        <section class="section">
+            <h2 class="section-title">主要な発見</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧱 回路のモジュール性</h3>
+                    <p>大規模言語モデル内部の計算は高度にモジュール化されたスパース回路によって組織されている。ネットワークが「スープ状」に情報を分散処理しているのではなく、特定の機能単位が存在することを示唆する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 回路の普遍性</h3>
+                    <p>異なるスケールのモデル (数十億から数百億パラメータ) において、類似の機能を担う回路が類似の構造を持つ。ネットワークアーキテクチャに依存しない「計算の普遍的パターン」の存在を示唆する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 スーパーポジションとの関係</h3>
+                    <p>一つのニューロンが複数の特徴を同時にエンコードする「スーパーポジション」は、スパース回路の視点から見ると、複数の回路が同一のコンポーネントを共有する形で実現されている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ 安全性回路の特定</h3>
+                    <p>モデルが有害な出力を拒否する際に活性化する「安全性回路」や、指示に従う際に活性化する「指示追従回路」が特定された。AI 安全性のモニタリングに直接応用可能な知見。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 (Use Cases) -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>🛡️ AI 安全性への直接的貢献</h4>
+                <p>特定の入力に対してどの回路が活性化するかを理解することで、モデルが予期しない出力を生成する原因を事前に特定し防止策を講じることが可能になる。安全性回路を特定・分析し、バイパスされにくい設計への改善や、抽象的なアライメント概念を回路レベルの検証に落とし込むことが可能になる。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>🔧 モデルのデバッグと改善</h4>
+                <p>モデルが誤った回答を生成する際に誤作動している回路を特定してターゲットを絞った修正が可能になる。バイアスがどの回路に起因するかを特定し、そのコンポーネントを修正・再訓練することで、よりフェアなモデルを構築できる。対象タスクに関連する回路のみを効率的にファインチューニングする手法への応用も期待される。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>🔮 今後の研究方向性</h4>
+                <p>推論時にどの回路が活性化しているかをリアルタイムで監視するシステムの構築、特定の回路を選択的に活性化・抑制してモデルの振る舞いを精密に制御する技術、安全性上の問題を引き起こす回路を自動的に検出・修正するメカニズムの開発が見込まれる。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>🏛️ 安全性研究スタック内の位置づけ</h4>
+                <p>CoT モニタリングや Confessions メカニズムと相補的に機能し、モデルの内部状態を多角的に理解・監視するための技術的基盤を構成する。モデルの能力が急速に向上する現在、その内部動作を理解し制御する能力を維持することが安全な AI 開発の根幹である。</p>
+            </div>
+        </section>
+
+        <!-- 解釈可能性研究の位置づけ (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">OpenAI 安全性研究スタックにおける位置づけ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph SafetyStack["OpenAI 安全性研究スタック"]
+        subgraph Monitoring["モニタリング層"]
+            CoT["CoT モニタリング\n可能性評価"]
+            Confessions["Confessions\nメカニズム"]
+        end
+        subgraph Interpretability["解釈可能性層"]
+            SAE["スパース\nオートエンコーダ"]
+            Circuits["スパース回路\n(本研究)"]
+            Superposition["スーパーポジション\n研究"]
+        end
+        subgraph Alignment["アライメント層"]
+            RLHF["RLHF /\nConstitutional AI"]
+            ModelSpec["Model Spec"]
+            SafeComp["Safe Completions"]
+        end
+    end
+
+    CoT --> Circuits
+    Confessions --> Circuits
+    SAE --> Circuits
+    Superposition --> Circuits
+    Circuits --> RLHF
+    Circuits --> ModelSpec
+    Circuits --> SafeComp
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef highlight fill:#10A37F,stroke:#0D8A6A,stroke-width:3px,color:white
+
+    class CoT,Confessions dark
+    class SAE,Superposition dark
+    class Circuits highlight
+    class RLHF,ModelSpec,SafeComp openai
+                </pre>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/understanding-neural-networks-through-sparse-circuits/">https://openai.com/index/understanding-neural-networks-through-sparse-circuits/</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-07-21 | カテゴリ: 研究・解釈可能性 (Mechanistic Interpretability)</p>
+            <p style="margin-top: 8px;">本インフォグラフィックは OpenAI Research の公開情報に基づいて作成されています。</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#0D8A6A',
+                lineColor: '#565869',
+                secondaryColor: '#ECECF1',
+                tertiaryColor: '#F7F7F8',
+                background: '#FFFFFF',
+                mainBkg: '#FFFFFF'
+            }
+        });
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
