@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTT データ × OpenAI パートナーシップ - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-light: #1DBE96;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --ntt-blue: #0072C6;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: linear-gradient(135deg, #f8fffe 0%, var(--openai-light) 50%, #f0f8ff 100%);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #1e1f2a 60%, var(--openai-green-dark) 100%);
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(16,163,127,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--openai-green), var(--ntt-blue), var(--openai-green));
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .date-badge {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.9);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .category-badge {
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 .highlight {
+            color: var(--openai-green-light);
+        }
+
+        .header-subtitle {
+            color: rgba(255,255,255,0.75);
+            font-size: 1rem;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.5rem;
+        }
+
+        /* Overview */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .overview-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--openai-green);
+        }
+
+        .overview-item .item-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .overview-item .item-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 4px;
+        }
+
+        .overview-item .item-content p {
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 28px 20px;
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stat-card:nth-child(1) {
+            background: linear-gradient(135deg, #e8faf5 0%, #d4f5ec 100%);
+        }
+        .stat-card:nth-child(1)::before {
+            background: var(--openai-green);
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #e8f4fd 0%, #d4ecfa 100%);
+        }
+        .stat-card:nth-child(2)::before {
+            background: var(--ntt-blue);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #fef3e8 0%, #fde8d4 100%);
+        }
+        .stat-card:nth-child(3)::before {
+            background: #E67E22;
+        }
+
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #f3e8fe 0%, #e8d4fd 100%);
+        }
+        .stat-card:nth-child(4)::before {
+            background: #8E44AD;
+        }
+
+        .stat-number {
+            font-size: 2.4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .stat-card:nth-child(1) .stat-number { color: var(--openai-green-dark); }
+        .stat-card:nth-child(2) .stat-number { color: var(--ntt-blue); }
+        .stat-card:nth-child(3) .stat-number { color: #D35400; }
+        .stat-card:nth-child(4) .stat-number { color: #7D3C98; }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        /* Product Cards */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            border: 2px solid var(--openai-gray);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            border-color: var(--openai-green);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .product-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .product-card-header .product-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--openai-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .product-card-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        .product-card p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .product-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .product-features li {
+            font-size: 0.85rem;
+            color: #666;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .product-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Code Section */
+        .code-section {
+            background: var(--openai-dark);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .code-section .section-title {
+            color: white;
+            border-bottom-color: var(--openai-green);
+        }
+
+        .code-description {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .code-section pre {
+            border-radius: var(--radius);
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .code-section pre code {
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        /* Architecture */
+        .mermaid-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Developer Impact */
+        .impact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .impact-item {
+            display: flex;
+            gap: 14px;
+            padding: 20px;
+            background: var(--openai-light);
+            border-radius: var(--radius);
+            border: 1px solid var(--openai-gray);
+            transition: all 0.2s ease;
+        }
+
+        .impact-item:hover {
+            border-color: var(--openai-green);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .impact-item .impact-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .impact-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .impact-item p {
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Security Section */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--openai-light);
+            border-radius: var(--radius);
+        }
+
+        .security-item .sec-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .security-item h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .security-item p {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, #e8faf5 0%, #f0fdf9 100%);
+            border: 2px solid var(--openai-green);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 8px;
+        }
+
+        .summary-box p {
+            font-size: 0.95rem;
+            color: var(--openai-dark);
+            line-height: 1.9;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 20px;
+            margin-top: 8px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-link {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 24px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .footer .source-link:hover {
+            background: var(--openai-green-dark);
+            text-decoration: none;
+        }
+
+        /* Table */
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.88rem;
+        }
+
+        .feature-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .feature-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .feature-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .feature-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .feature-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .feature-table tr:last-child td:first-child {
+            border-radius: 0 0 0 8px;
+        }
+
+        .feature-table tr:last-child td:last-child {
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Partnership Badge */
+        .partnership-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .partnership-badge .brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .partnership-badge .x-mark {
+            font-size: 1.5rem;
+            color: var(--openai-green-light);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px 12px;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="date-badge">2026-07-22</span>
+                <span class="category-badge">パートナーシップ・企業事例</span>
+            </div>
+            <h1>NTT データ、<span class="highlight">OpenAI</span> とのグローバル戦略的提携を拡大</h1>
+            <p class="header-subtitle">日本初・世界 2 社目の ChatGPT Enterprise 公式販売代理店権を取得</p>
+            <div class="partnership-badge">
+                <span class="brand">NTT DATA</span>
+                <span class="x-mark">×</span>
+                <span class="brand" style="color: var(--openai-green-light);">OpenAI</span>
+            </div>
+        </header>
+
+        <!-- Overview -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">📋</span> 概要</h2>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <span class="item-icon">🤝</span>
+                    <div class="item-content">
+                        <h4>グローバル戦略的提携</h4>
+                        <p>NTT DATA Group が OpenAI と包括的アライアンスを締結。販売代理権を含む戦略的パートナーシップ</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <span class="item-icon">🏆</span>
+                    <div class="item-content">
+                        <h4>日本初の公式販売代理店</h4>
+                        <p>PwC に次ぐ世界 2 社目、日本市場で唯一の ChatGPT Enterprise ディストリビューター</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <span class="item-icon">🔧</span>
+                    <div class="item-content">
+                        <h4>SI 専門知識と AI の融合</h4>
+                        <p>NTT データのシステム設計・構築・運用の実績と OpenAI の最先端 AI 技術を統合</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <span class="item-icon">🌏</span>
+                    <div class="item-content">
+                        <h4>グローバル展開</h4>
+                        <p>日本市場にとどまらず、世界規模での AI ソリューション提供を計画</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">📊</span> 主要数値</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number">9,000 名</div>
+                    <div class="stat-label">社内利用者数<br>(ChatGPT Enterprise + Codex)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-number">1,000 億円</div>
+                    <div class="stat-label">2027 年度末<br>売上目標 (約 7 億ドル)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-number">30 分</div>
+                    <div class="stat-label">インシデント分析<br>所要時間 (Codex 活用)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🥈</div>
+                    <div class="stat-number">世界 2 社目</div>
+                    <div class="stat-label">グローバル販売代理店<br>(PwC に次ぐ)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🚀</span> 利用製品と技術スタック</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-card-header">
+                        <div class="product-icon">💬</div>
+                        <h3>ChatGPT Enterprise</h3>
+                    </div>
+                    <p>GPT-4o 等の最新モデルへの無制限アクセス。大規模コンテキストウィンドウで長大なドキュメント処理が可能。</p>
+                    <ul class="product-features">
+                        <li>最新モデルへのレート制限なしアクセス</li>
+                        <li>ビジネスデータのトレーニング非使用保証</li>
+                        <li>管理者コンソールによる一元管理</li>
+                        <li>SSO/SCIM 統合</li>
+                        <li>カスタム GPTs の構築</li>
+                    </ul>
+                </div>
+                <div class="product-card">
+                    <div class="product-card-header">
+                        <div class="product-icon">🔮</div>
+                        <h3>Codex</h3>
+                    </div>
+                    <p>コーディングエージェントとして、インシデント分析や開発効率化に活用。30 分でのインシデント分析を実現。</p>
+                    <ul class="product-features">
+                        <li>インシデント分析の自動化</li>
+                        <li>ログファイル・スタックトレース解析</li>
+                        <li>根本原因の特定と修復提案</li>
+                        <li>開発効率の大幅向上</li>
+                    </ul>
+                </div>
+                <div class="product-card">
+                    <div class="product-card-header">
+                        <div class="product-icon">🤖</div>
+                        <h3>カスタム Gen AI エージェント</h3>
+                    </div>
+                    <p>業務特化型 AI エージェントで顧客固有の業務プロセスを自動化。SI 企業としての業務分析力を活かす。</p>
+                    <ul class="product-features">
+                        <li>業務プロセス自動化エージェント</li>
+                        <li>ナレッジマネジメントエージェント</li>
+                        <li>カスタマーサポートエージェント</li>
+                        <li>顧客固有のワークフロー自動実行</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ChatGPT Enterprise Feature Table -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">⚙️</span> ChatGPT Enterprise の主要機能</h2>
+            <table class="feature-table">
+                <thead>
+                    <tr>
+                        <th>機能</th>
+                        <th>詳細</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>最新モデルへの無制限アクセス</strong></td>
+                        <td>GPT-4o をはじめとする最新モデルをレート制限なしで利用可能</td>
+                    </tr>
+                    <tr>
+                        <td><strong>大規模コンテキストウィンドウ</strong></td>
+                        <td>長大なドキュメントや複雑なコードベースの一括処理が可能</td>
+                    </tr>
+                    <tr>
+                        <td><strong>データプライバシー</strong></td>
+                        <td>ビジネスデータがモデルのトレーニングに使用されないことを保証</td>
+                    </tr>
+                    <tr>
+                        <td><strong>管理者コンソール</strong></td>
+                        <td>組織全体の利用状況を可視化し、ポリシー管理を一元化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SSO/SCIM 統合</strong></td>
+                        <td>既存の ID 管理基盤とのシームレスな連携</td>
+                    </tr>
+                    <tr>
+                        <td><strong>カスタム GPTs</strong></td>
+                        <td>業務ドメインに特化したカスタムエージェントの構築</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Security -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🔒</span> セキュリティとコンプライアンス</h2>
+            <div class="security-grid">
+                <div class="security-item">
+                    <span class="sec-icon">🛡️</span>
+                    <div>
+                        <h4>強化されたデータセキュリティ</h4>
+                        <p>企業のデータがモデルのトレーニングに使用されないことを保証</p>
+                    </div>
+                </div>
+                <div class="security-item">
+                    <span class="sec-icon">🏢</span>
+                    <div>
+                        <h4>大規模 AI 導入のセキュア化</h4>
+                        <p>金融、製造、官公庁など高いセキュリティ要件を持つ業界に対応</p>
+                    </div>
+                </div>
+                <div class="security-item">
+                    <span class="sec-icon">🔐</span>
+                    <div>
+                        <h4>SOC との統合</h4>
+                        <p>NTT データの既存セキュリティオペレーションセンターやマネージドセキュリティサービスとの連携</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="code-section">
+            <h2 class="section-title"><span class="icon">💻</span> コードサンプル: Codex によるインシデント分析</h2>
+            <p class="code-description">NTT データが Codex を活用してインシデント分析を 30 分に短縮したプロセスの実装例</p>
+            <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# NTT データのインシデント分析パターン: Codex を活用した障害原因特定
+response = client.chat.completions.create(
+    model="codex",
+    messages=[
+        {
+            "role": "system",
+            "content": (
+                "You are an incident analysis agent for enterprise systems. "
+                "Analyze log files, stack traces, and system metrics to identify "
+                "root causes and suggest remediation steps. "
+                "Focus on time-to-resolution optimization."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                "Analyze the following incident data including application logs, "
+                "infrastructure metrics, and recent deployment changes to identify "
+                "the root cause and recommend a fix."
+            )
+        }
+    ],
+    temperature=0.2,
+)</code></pre>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">🏗️</span> アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Enterprise["エンタープライズ顧客"]
+        Corp["企業システム"]
+        Users["業務ユーザー"]
+        DevTeam["開発チーム"]
+    end
+
+    subgraph NTTData["NTT DATA (販売代理店・SI)"]
+        subgraph SI["システムインテグレーション"]
+            Consulting["コンサルティング"]
+            Integration["システム統合"]
+            Security["セキュリティ運用"]
+        end
+        subgraph CustomAI["カスタム AI ソリューション"]
+            CustomAgent["カスタム Gen AI<br/>エージェント"]
+            BizAutomation["業務プロセス<br/>自動化"]
+        end
+    end
+
+    subgraph OpenAIPlatform["OpenAI プラットフォーム"]
+        ChatGPTEnt["ChatGPT<br/>Enterprise"]
+        Codex["Codex"]
+        subgraph Models["モデル基盤"]
+            GPT4o["GPT-4o"]
+            Latest["最新モデル"]
+        end
+        subgraph EntFeatures["エンタープライズ機能"]
+            Privacy["データプライバシー"]
+            Admin["管理者コンソール"]
+            SSO["SSO/SCIM"]
+        end
+    end
+
+    Users --> Corp
+    Corp --> Consulting
+    DevTeam --> Integration
+    Consulting --> CustomAgent
+    Integration --> BizAutomation
+    CustomAgent --> ChatGPTEnt
+    BizAutomation --> Codex
+    Security --> Privacy
+    ChatGPTEnt --> GPT4o
+    Codex --> Latest
+    GPT4o --> Privacy
+    Latest --> Privacy
+    Privacy --> Admin
+    Admin --> SSO
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class ChatGPTEnt,Codex,GPT4o,Latest openai
+    class Privacy,Admin,SSO dark
+    class Corp,Users,DevTeam,Consulting,Integration,Security,CustomAgent,BizAutomation light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">👨‍💻</span> 開発者への影響</h2>
+            <div class="impact-list">
+                <div class="impact-item">
+                    <span class="impact-icon">🚀</span>
+                    <div>
+                        <h4>SI 企業を通じた AI 導入の加速</h4>
+                        <p>NTT データのような SI 企業を介して AI を導入する新たなチャネルが確立。AI に関する専門知識が限られる企業でも、SI パートナーの支援を受けながら高度な AI 活用を実現できる。</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">🤖</span>
+                    <div>
+                        <h4>カスタムエージェント開発の需要拡大</h4>
+                        <p>エージェント開発に携わるエンジニアの需要が大幅に増加。OpenAI の API や Assistants API、Function Calling を活用したエージェント構築スキルの重要性が高まる。</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">⚡</span>
+                    <div>
+                        <h4>Codex のエンタープライズ運用モデル</h4>
+                        <p>インシデント分析を 30 分に短縮した事例は、Codex を運用 (Ops) 領域に適用する具体的モデル。SRE やプラットフォームエンジニアにとって、既存の監視・アラートシステムとの統合が新たな課題に。</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">🇯🇵</span>
+                    <div>
+                        <h4>日本市場での OpenAI エコシステム拡大</h4>
+                        <p>日本企業が ChatGPT Enterprise を導入するハードルが大幅に低下。日本語での技術サポート、導入支援、運用サービスが NTT データを通じて提供され、中堅・大企業の導入が加速。</p>
+                    </div>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">🌐</span>
+                    <div>
+                        <h4>グローバル SI パートナー連携のモデルケース</h4>
+                        <p>PwC に次ぐ 2 社目のグローバル販売代理店として、SI 企業と AI プラットフォーム企業の提携モデルが確立。今後、同様のパートナーシップが他の大手 SI 企業にも拡大する可能性がある。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title"><span class="icon">📝</span> まとめ</h2>
+            <div class="summary-box">
+                <p>NTT DATA Group が OpenAI とグローバル戦略的提携を締結し、日本初かつ世界で 2 社目となる ChatGPT Enterprise の公式販売代理店権を取得した。社内 9,000 名による先行導入で Codex によるインシデント分析の 30 分への短縮を実現し、2027 年度末までに 1,000 億円の売上目標を掲げている。NTT データの SI 専門知識と OpenAI の AI 技術の融合により、ChatGPT Enterprise、Codex、カスタム Gen AI エージェントを組み合わせたエンタープライズ向け AI ソリューションがグローバルに展開される。本提携は、SI 企業を通じた AI 導入という新たなチャネルを確立し、日本市場を含むグローバルでのエンタープライズ AI 普及を加速させる重要なマイルストーンとなる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <a href="https://openai.com/index/ntt-data/" class="source-link" target="_blank" rel="noopener">公式ソース: openai.com/index/ntt-data</a>
+            <p>OpenAI News Summary | 2026-07-22 | パートナーシップ・企業事例</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

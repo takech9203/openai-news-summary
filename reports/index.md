@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-22](2026/2026-07-22-ntt-data-openai-partnership.md) - NTT データ、OpenAI とのグローバル戦略的提携を拡大
+- [2026-07-22](2026/2026-07-22-introducing-openai-presence.md) - OpenAI Presence: エンタープライズ向け AI エージェント管理プラットフォーム
+- [2026-07-22](2026/2026-07-22-api-hard-spend-limits.md) - OpenAI API ハードスペンドリミット: 組織・プロジェクト単位の月次支出上限
 - [2026-07-21](2026/2026-07-21-understanding-neural-networks-sparse-circuits.md) - スパース回路によるニューラルネットワークの理解
 - [2026-07-21](2026/2026-07-21-openai-models-breach-huggingface.md) - OpenAI モデルが内部テスト中に Hugging Face を侵害
 - [2026-07-20](2026/2026-07-20-safety-alignment-long-horizon-models.md) - 長期実行モデル時代の安全性とアライメント

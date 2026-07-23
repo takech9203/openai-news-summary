@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API ハードスペンドリミット - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-light: #1BC89D;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --danger-red: #E74C3C;
+            --danger-red-light: #FADBD8;
+            --danger-red-dark: #C0392B;
+            --success-green-light: #D5F5E3;
+            --warning-orange: #FF6B35;
+            --font-main: 'Zen Maru Gothic', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #2C2D36 100%);
+            border-radius: 20px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .header-badge {
+            background: var(--openai-green);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.2em;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 span {
+            color: var(--openai-green-light);
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.05em;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        /* Overview Cards */
+        .overview-section {
+            margin-bottom: 36px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .overview-card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .overview-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .overview-card h3 {
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--openai-dark);
+        }
+
+        .overview-card p {
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Before/After Section */
+        .comparison-section {
+            margin-bottom: 36px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 0;
+            align-items: stretch;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .comparison-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        .comparison-card {
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FFF5F5 0%, var(--danger-red-light) 100%);
+            border: 2px solid var(--danger-red);
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #F0FFF4 0%, var(--success-green-light) 100%);
+            border: 2px solid var(--openai-green);
+        }
+
+        .comparison-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .before .comparison-label {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .after .comparison-label {
+            background: var(--openai-green);
+            color: white;
+        }
+
+        .comparison-card h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .before h3 {
+            color: var(--danger-red-dark);
+        }
+
+        .after h3 {
+            color: var(--openai-green-dark);
+        }
+
+        .comparison-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-list li {
+            padding: 8px 0;
+            font-size: 0.92em;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.6;
+        }
+
+        .comparison-list li .icon {
+            flex-shrink: 0;
+            font-size: 1.1em;
+        }
+
+        .comparison-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: var(--openai-green);
+        }
+
+        /* Feature Cards */
+        .feature-section {
+            margin-bottom: 36px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border-top: 4px solid var(--openai-green);
+        }
+
+        .feature-card h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88em;
+            margin-top: 12px;
+        }
+
+        .feature-card table th {
+            background: var(--openai-gray);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        .feature-card table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .feature-card .steps {
+            list-style: none;
+            padding: 0;
+            counter-reset: step;
+        }
+
+        .feature-card .steps li {
+            counter-increment: step;
+            padding: 10px 0;
+            padding-left: 36px;
+            position: relative;
+            font-size: 0.92em;
+            border-bottom: 1px dashed var(--openai-gray);
+        }
+
+        .feature-card .steps li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-card .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 24px;
+            height: 24px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        /* Code Section */
+        .code-section {
+            margin-bottom: 36px;
+        }
+
+        .code-wrapper {
+            background: #282c34;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .code-header {
+            background: #21252b;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #FF5F56; }
+        .code-dot.yellow { background: #FFBD2E; }
+        .code-dot.green { background: #27C93F; }
+
+        .code-title {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85em;
+            margin-left: 12px;
+        }
+
+        .code-wrapper pre {
+            margin: 0;
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .code-wrapper pre code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            line-height: 1.7;
+        }
+
+        /* Architecture Section */
+        .architecture-section {
+            margin-bottom: 36px;
+        }
+
+        .mermaid-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Best Practices Section */
+        .practices-section {
+            margin-bottom: 36px;
+        }
+
+        .practices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .practice-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .practice-card h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .practice-card h4 {
+            font-size: 0.95em;
+            font-weight: 700;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            color: var(--openai-green-dark);
+        }
+
+        .practice-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .practice-list li {
+            padding: 8px 0;
+            font-size: 0.9em;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.6;
+        }
+
+        .practice-list li .icon {
+            flex-shrink: 0;
+        }
+
+        .strategy-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88em;
+            margin-top: 12px;
+        }
+
+        .strategy-table th {
+            background: var(--openai-green);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .strategy-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .strategy-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .strategy-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .strategy-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .strategy-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Impact callout */
+        .impact-callout {
+            background: linear-gradient(135deg, #E8F8F5 0%, #D1F2EB 100%);
+            border: 1px solid var(--openai-green);
+            border-radius: 14px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .impact-callout h4 {
+            color: var(--openai-green-dark);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .impact-callout p {
+            font-size: 0.92em;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        /* Distinction Card */
+        .distinction-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            margin-top: 20px;
+        }
+
+        .distinction-card h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .distinction-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .distinction-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .distinction-item {
+            padding: 16px;
+            border-radius: 10px;
+        }
+
+        .distinction-item.rate-limit {
+            background: #FFF3CD;
+            border: 1px solid #FFC107;
+        }
+
+        .distinction-item.quota-limit {
+            background: var(--danger-red-light);
+            border: 1px solid var(--danger-red);
+        }
+
+        .distinction-item h4 {
+            font-size: 0.9em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .distinction-item p {
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 16px;
+            padding: 28px 32px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            font-size: 0.88em;
+        }
+
+        .footer a {
+            color: var(--openai-green-light);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 32px 24px;
+            }
+            .header h1 {
+                font-size: 1.6em;
+            }
+            .container {
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="header-date">2026-07-22</span>
+                <span class="header-badge">API 更新・コスト管理</span>
+            </div>
+            <h1><span>API ハードスペンドリミット:</span><br>組織・プロジェクト単位の月次支出上限</h1>
+            <p class="header-subtitle">予期しないコスト急増からチームを保護する強制的な支出制御機能がリリース</p>
+        </header>
+
+        <!-- Overview -->
+        <section class="overview-section">
+            <h2 class="section-title">概要</h2>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <span class="overview-icon">🛡️</span>
+                    <div>
+                        <h3>ハードスペンドリミット</h3>
+                        <p>月次支出上限に到達すると API リクエストが HTTP 429 エラーを返し、トラフィックを強制的に遮断する</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">🏢</span>
+                    <div>
+                        <h3>組織 / プロジェクト単位</h3>
+                        <p>Organization レベルと Project レベルの両方で個別に設定可能。複数プロジェクトの並行運用に対応</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">⚠️</span>
+                    <div>
+                        <h3>429 エラー (insufficient_quota)</h3>
+                        <p>通常のレートリミットとは異なるエラーコード。リトライでは解消されず、リミット引き上げか月次リセットが必要</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">📊</span>
+                    <div>
+                        <h3>段階的コスト管理</h3>
+                        <p>スペンドアラート (通知のみ) と組み合わせて 70% / 90% / 100% の段階的な管理戦略を構築可能</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section class="comparison-section">
+            <h2 class="section-title">Before / After 比較</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card before">
+                    <span class="comparison-label">BEFORE</span>
+                    <h3>😰 制御なし・予想外のコスト</h3>
+                    <ul class="comparison-list">
+                        <li><span class="icon">❌</span><span>スペンドアラートは通知のみで強制力がない</span></li>
+                        <li><span class="icon">❌</span><span>テスト環境の暴走でコストが急増するリスク</span></li>
+                        <li><span class="icon">❌</span><span>月末に想定外の請求が発生する可能性</span></li>
+                        <li><span class="icon">❌</span><span>プロジェクト単位での予算制御ができない</span></li>
+                        <li><span class="icon">❌</span><span>開発者が意図せず大量リクエストを送信</span></li>
+                    </ul>
+                </div>
+                <div class="comparison-arrow">→</div>
+                <div class="comparison-card after">
+                    <span class="comparison-label">AFTER</span>
+                    <h3>😊 予算管理の確実性</h3>
+                    <ul class="comparison-list">
+                        <li><span class="icon">✅</span><span>ハードリミットで強制的にトラフィックを遮断</span></li>
+                        <li><span class="icon">✅</span><span>組織・プロジェクト単位で個別に上限設定</span></li>
+                        <li><span class="icon">✅</span><span>月次予算の超過を確実に防止</span></li>
+                        <li><span class="icon">✅</span><span>スペンドアラートとの組み合わせで段階的制御</span></li>
+                        <li><span class="icon">✅</span><span>本番 / 開発で異なるリミット戦略を適用</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="feature-section">
+            <h2 class="section-title">スペンドコントロール詳細</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📋 Spend Alert vs Hard Limit</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>項目</th>
+                                <th>スペンドアラート</th>
+                                <th>ハードリミット</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>閾値到達時</td>
+                                <td>通知を送信</td>
+                                <td>429 エラー返却</td>
+                            </tr>
+                            <tr>
+                                <td>トラフィック</td>
+                                <td>継続</td>
+                                <td>遮断</td>
+                            </tr>
+                            <tr>
+                                <td>強制力</td>
+                                <td>なし</td>
+                                <td>あり</td>
+                            </tr>
+                            <tr>
+                                <td>用途</td>
+                                <td>支出の追跡・監視</td>
+                                <td>予算上限の強制</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="feature-card">
+                    <h3>🏢 組織レベルの設定手順</h3>
+                    <p style="font-size: 0.88em; color: #666; margin-bottom: 8px;">全プロジェクトにわたる API トラフィックに適用</p>
+                    <ol class="steps">
+                        <li>Organization limits に移動する</li>
+                        <li><strong>Spend</strong> セクションで <strong>Edit spend limit</strong> を選択</li>
+                        <li><strong>Monthly spend limit</strong> を入力する</li>
+                        <li><strong>Enforce a hard limit</strong> トグルを有効化</li>
+                        <li><strong>Save</strong> を選択して保存</li>
+                    </ol>
+                </div>
+                <div class="feature-card">
+                    <h3>📁 プロジェクトレベルの設定手順</h3>
+                    <p style="font-size: 0.88em; color: #666; margin-bottom: 8px;">対象プロジェクトの API トラフィックにのみ適用</p>
+                    <ol class="steps">
+                        <li>Project settings に移動する</li>
+                        <li><strong>Limits</strong> を選択する</li>
+                        <li><strong>Spend</strong> セクションで <strong>Edit spend limit</strong> を選択</li>
+                        <li><strong>Monthly spend limit</strong> を入力する</li>
+                        <li><strong>Enforce a hard limit</strong> トグルを有効化</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="code-section">
+            <h2 class="section-title">コードサンプル: エラーハンドリング</h2>
+            <div class="code-wrapper">
+                <div class="code-header">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                    <span class="code-title">quota_handling.py - insufficient_quota エラーのハンドリング例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+import openai
+
+client = OpenAI()
+
+
+def call_api_with_quota_handling(messages: list[dict]) -> str | None:
+    """ハードスペンドリミット到達時のエラーハンドリング例"""
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+        )
+        return response.choices[0].message.content
+
+    except openai.RateLimitError as e:
+        error_code = getattr(e, "code", None)
+
+        if error_code == "insufficient_quota":
+            # ハードスペンドリミットに到達
+            # レートリミットとは異なり、リトライしても解消されない
+            print("[QUOTA] ハードスペンドリミットに到達しました。")
+            print("  - 組織またはプロジェクトの支出上限を確認してください")
+            print("  - リミットの引き上げまたは月次リセットが必要です")
+            # アラート送信やフォールバック処理を実装
+            notify_ops_team(
+                "API quota exhausted - hard spend limit reached"
+            )
+            return None
+        else:
+            # 通常のレートリミット - リトライ可能
+            print(f"[RATE LIMIT] レートリミット到達: {e}")
+            print("  - 指数バックオフでリトライしてください")
+            raise
+
+
+def notify_ops_team(message: str) -> None:
+    """運用チームへの通知 (実装例)"""
+    # Slack、PagerDuty、メール等への通知を実装
+    print(f"[ALERT] {message}")
+
+
+# 使用例
+result = call_api_with_quota_handling(
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+if result is None:
+    print("フォールバック処理を実行します")</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="architecture-section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアントアプリケーション"]
+        App["アプリケーション"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph Platform["OpenAI API プラットフォーム"]
+        Gateway["API Gateway"]
+        SpendTracker["支出追跡システム"]
+
+        subgraph Controls["スペンドコントロール"]
+            OrgLimit["組織レベル<br>ハードリミット"]
+            ProjLimit["プロジェクトレベル<br>ハードリミット"]
+            Alert["スペンドアラート"]
+        end
+
+        subgraph Enforcement["エンフォースメント"]
+            Check{"リミット<br>チェック"}
+            Allow["リクエスト許可"]
+            Deny["429 エラー返却<br>insufficient_quota"]
+        end
+
+        subgraph Backend["バックエンド"]
+            Models["GPT-4o / GPT-5"]
+            Billing["課金システム"]
+        end
+    end
+
+    subgraph Notify["通知"]
+        AlertNotify["アラート通知<br>(メール等)"]
+    end
+
+    App --> SDK
+    SDK --> Gateway
+    Gateway --> SpendTracker
+    SpendTracker --> Check
+    Check -->|"リミット未到達"| Allow
+    Check -->|"リミット到達"| Deny
+    Allow --> Models
+    Models --> Billing
+    Billing --> SpendTracker
+
+    OrgLimit --> Check
+    ProjLimit --> Check
+    SpendTracker --> Alert
+    Alert --> AlertNotify
+
+    Deny -->|"HTTP 429"| SDK
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef warn fill:#FF6B35,stroke:#E55A2B,stroke-width:2px,color:white
+
+    class App,SDK light
+    class Gateway,SpendTracker,Models,Billing dark
+    class OrgLimit,ProjLimit,Alert,Allow openai
+    class Check light
+    class Deny warn
+    class AlertNotify light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Best Practices / Developer Impact -->
+        <section class="practices-section">
+            <h2 class="section-title">ベストプラクティス・開発者への影響</h2>
+            <div class="practices-grid">
+                <div class="practice-card">
+                    <h3>🔧 トラフィック復旧手順</h3>
+                    <ul class="practice-list">
+                        <li><span class="icon">1️⃣</span><span><strong>使用量の確認:</strong> 現在の使用量を組織・プロジェクトのスペンドリミットと比較する</span></li>
+                        <li><span class="icon">2️⃣</span><span><strong>リミットの引き上げ / 削除:</strong> 月次リセット前にトラフィック再開が必要な場合、リミットを調整する</span></li>
+                        <li><span class="icon">3️⃣</span><span><strong>プリペイドクレジットの確認:</strong> クレジット残高や承認済み利用上限を確認する</span></li>
+                        <li><span class="icon">4️⃣</span><span><strong>エラー種別の区別:</strong> insufficient_quota でなければレートリミットガイドを参照する</span></li>
+                    </ul>
+                </div>
+                <div class="practice-card">
+                    <h3>💰 コスト管理戦略</h3>
+                    <table class="strategy-table">
+                        <thead>
+                            <tr>
+                                <th>段階</th>
+                                <th>閾値</th>
+                                <th>アクション</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>🟡 第 1 アラート</td>
+                                <td>予算の 70-80%</td>
+                                <td>状況確認・調整の時間確保</td>
+                            </tr>
+                            <tr>
+                                <td>🟠 第 2 アラート</td>
+                                <td>予算の 90%</td>
+                                <td>緊急対応の準備</td>
+                            </tr>
+                            <tr>
+                                <td>🔴 ハードリミット</td>
+                                <td>予算 100% + バッファ</td>
+                                <td>トラフィック遮断・予算保護</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h4>マルチプロジェクト戦略</h4>
+                    <ul class="practice-list">
+                        <li><span class="icon">🚀</span><span><strong>本番:</strong> 高めのリミット + アラート監視で予期しない遮断を防止</span></li>
+                        <li><span class="icon">🧪</span><span><strong>開発・テスト:</strong> 厳格なハードリミットでコスト暴走を防止</span></li>
+                        <li><span class="icon">🏛️</span><span><strong>組織全体:</strong> ガードレールとして最大支出を設定</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Distinction Card -->
+            <div class="distinction-card">
+                <h3>⚡ レートリミット vs クォータリミットの区別</h3>
+                <div class="distinction-grid">
+                    <div class="distinction-item rate-limit">
+                        <h4>⏱️ レートリミット (Rate Limit)</h4>
+                        <p>一時的な制限。指数バックオフによるリトライで解消される。短時間の過負荷時に発生。</p>
+                    </div>
+                    <div class="distinction-item quota-limit">
+                        <h4>🚫 クォータリミット (insufficient_quota)</h4>
+                        <p>月次支出上限への到達。リトライでは解消されない。リミットの引き上げまたは月次リセットが必要。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Callout -->
+            <div class="impact-callout">
+                <h4>💡 本番環境における注意事項</h4>
+                <p>ハードスペンドリミットは本番トラフィックを中断する可能性がある。<strong>グレースフルデグラデーション</strong> (キャッシュ利用・代替サービス切り替え・適切なエラーメッセージ表示) の実装、<strong>オーバーシュートへの対応</strong> (伝播遅延による少額超過を許容するバッファ設定)、<strong>モニタリングの整備</strong> (アラートを活用した事前対応体制) が必須である。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>OpenAI News Summary - API ハードスペンドリミット (2026-07-22)</p>
+            <div class="footer-links">
+                <a href="https://developers.openai.com/api/docs/changelog" target="_blank">OpenAI API Changelog</a>
+                <a href="https://developers.openai.com/api/docs/guides/spend-limits" target="_blank">Spend Limits Guide</a>
+                <a href="https://platform.openai.com/docs/guides/rate-limits" target="_blank">Rate Limits Guide</a>
+                <a href="https://platform.openai.com/settings" target="_blank">Platform Settings</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

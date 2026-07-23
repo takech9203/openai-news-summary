@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Presence - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-light: #1BC39E;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-white: #FFFFFF;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: linear-gradient(135deg, #f8fffe 0%, var(--openai-light) 50%, #f0faf6 100%);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding: 48px 32px;
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #444654 100%);
+            border-radius: var(--radius-lg);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header-date {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Overview section */
+        .overview-section {
+            margin-bottom: 48px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .overview-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px;
+            background: var(--openai-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .overview-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .overview-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8f8f3 0%, #d4f4eb 100%);
+            border-radius: 10px;
+        }
+
+        .overview-text h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--openai-dark);
+        }
+
+        .overview-text p {
+            font-size: 0.87rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Feature cards */
+        .features-section {
+            margin-bottom: 48px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-white);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--openai-green), var(--openai-green-light));
+        }
+
+        .feature-card-icon {
+            font-size: 2rem;
+            margin-bottom: 14px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 12px;
+        }
+
+        .feature-card ul li {
+            font-size: 0.87rem;
+            color: #555;
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Architecture section */
+        .architecture-section {
+            margin-bottom: 48px;
+        }
+
+        .mermaid-wrapper {
+            background: var(--openai-white);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Developer impact section */
+        .impact-section {
+            margin-bottom: 48px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: var(--openai-white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--openai-green-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 0.87rem;
+            color: #555;
+            padding: 6px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Summary section */
+        .summary-section {
+            margin-bottom: 48px;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #f0faf6 0%, #e8f8f3 100%);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            border: 1px solid #c8ede2;
+        }
+
+        .summary-box p {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+
+        .summary-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .summary-highlight {
+            background: var(--openai-white);
+            border-radius: var(--radius);
+            padding: 18px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .summary-highlight h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .summary-highlight p {
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        /* Business model section */
+        .business-section {
+            margin-bottom: 48px;
+        }
+
+        .business-box {
+            background: var(--openai-white);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--openai-gray);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .business-icon {
+            font-size: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .business-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .business-content p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            background: var(--openai-dark);
+            border-radius: var(--radius-lg);
+            color: white;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .business-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">新製品・エンタープライズ</span>
+                <h1>OpenAI Presence</h1>
+                <p class="header-date">2026-07-22</p>
+                <p class="header-subtitle">エンタープライズ向け AI エージェント管理プラットフォーム - 構築・デプロイ・運用・継続的改善をガバナンス付きで実現</p>
+            </div>
+        </header>
+
+        <!-- Overview -->
+        <section class="overview-section">
+            <h2 class="section-title">概要</h2>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <div class="overview-icon">🎙️</div>
+                    <div class="overview-text">
+                        <h4>音声・チャットエージェント</h4>
+                        <p>リアルタイム音声エージェントとチャットボットのデプロイをサポート。電話、Web チャット、メッセージングプラットフォームに対応</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">📋</div>
+                    <div class="overview-text">
+                        <h4>ポリシーと権限管理</h4>
+                        <p>組織固有のポリシー定義、権限管理、ビジネスシステム接続、テスト環境を提供し、AI エージェントの動作範囲を制御</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">📊</div>
+                    <div class="overview-text">
+                        <h4>本番監視と継続的改善</h4>
+                        <p>応答品質、解決率、顧客満足度などの指標をリアルタイムで追跡し、エージェントの動作を継続的に最適化</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">🤝</div>
+                    <div class="overview-text">
+                        <h4>ヒューマンエスカレーション</h4>
+                        <p>AI が対応できない複雑なケースで、会話コンテキストと関連情報を共有しながら人間オペレーターにシームレスに引き継ぎ</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">🛡️</div>
+                    <div class="overview-text">
+                        <h4>ガードレールとコンプライアンス</h4>
+                        <p>業界固有の規制要件に準拠するフレームワーク、監査ログ、エスカレーションルールの統合を提供</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="features-section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🏗️</div>
+                    <h3>エージェント構築レイヤー</h3>
+                    <p>マルチモーダル対応のエージェントを統合的に構築</p>
+                    <ul>
+                        <li>テキスト (チャット) と音声 (リアルタイム) の両方をサポート</li>
+                        <li>企業固有のルールとガイドラインをポリシーエンジンに反映</li>
+                        <li>社内システム、ナレッジベース、API との統合インターフェース</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🚀</div>
+                    <h3>デプロイメントレイヤー</h3>
+                    <p>安全で段階的なエージェントのデプロイを実現</p>
+                    <ul>
+                        <li>本番デプロイ前のシミュレーション環境とポリシー準拠テスト</li>
+                        <li>トラフィックの段階的な移行をサポート</li>
+                        <li>大量のインタラクションに対応する水平スケーリング</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔍</div>
+                    <h3>運用・監視レイヤー</h3>
+                    <p>リアルタイムでエージェントのパフォーマンスを監視</p>
+                    <ul>
+                        <li>リアルタイムモニタリングとアラートシステム</li>
+                        <li>異常検知時の自動通知</li>
+                        <li>KPI の可視化と傾向分析ダッシュボード</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔗</div>
+                    <h3>エンタープライズ統合</h3>
+                    <p>既存の企業システムとシームレスに連携</p>
+                    <ul>
+                        <li>CRM (Salesforce, HubSpot)、チケット管理 (Zendesk, ServiceNow)</li>
+                        <li>SSO、RBAC による企業の ID 管理との連携</li>
+                        <li>電話、Web チャット、メッセージングアプリ等の通信チャネル</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔄</div>
+                    <h3>継続的改善サイクル</h3>
+                    <p>データ駆動型の最適化を自動化</p>
+                    <ul>
+                        <li>監視データに基づくエージェント動作の最適化</li>
+                        <li>パフォーマンス分析による改善ポイントの特定</li>
+                        <li>フィードバックループによる継続的な品質向上</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="architecture-section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Enterprise["企業環境"]
+        Data["社内データ・<br>ナレッジベース"]
+        Policy["ポリシー・<br>権限設定"]
+        Systems["既存システム<br>(CRM, ERP 等)"]
+    end
+
+    subgraph Presence["OpenAI Presence プラットフォーム"]
+        subgraph Build["構築"]
+            AgentBuilder["エージェント<br>ビルダー"]
+            PolicyEngine["ポリシー<br>エンジン"]
+            TestEnv["テスト・<br>検証環境"]
+        end
+
+        subgraph Deploy["デプロイ"]
+            Voice["音声<br>エージェント"]
+            Chat["チャット<br>エージェント"]
+        end
+
+        subgraph Operate["運用"]
+            Monitor["本番監視"]
+            Guardrails["ガードレール"]
+            Escalation["ヒューマン<br>エスカレーション"]
+        end
+
+        subgraph Improve["改善"]
+            Analytics["分析・<br>インサイト"]
+            Optimize["継続的<br>最適化"]
+        end
+    end
+
+    subgraph Channels["顧客チャネル"]
+        Phone(["電話"])
+        WebChat(["Web チャット"])
+        Messaging(["メッセージング"])
+    end
+
+    subgraph Human["人間オペレーター"]
+        Agent(["サポート<br>担当者"])
+    end
+
+    Data --> AgentBuilder
+    Policy --> PolicyEngine
+    Systems --> AgentBuilder
+    AgentBuilder --> TestEnv
+    PolicyEngine --> TestEnv
+    TestEnv --> Voice
+    TestEnv --> Chat
+    Voice --> Monitor
+    Chat --> Monitor
+    Monitor --> Guardrails
+    Guardrails --> Escalation
+    Escalation --> Agent
+    Monitor --> Analytics
+    Analytics --> Optimize
+    Optimize --> AgentBuilder
+
+    Phone --> Voice
+    WebChat --> Chat
+    Messaging --> Chat
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef channel fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class AgentBuilder,PolicyEngine,TestEnv openai
+    class Voice,Chat,Monitor,Guardrails,Escalation dark
+    class Analytics,Optimize openai
+    class Data,Policy,Systems light
+    class Phone,WebChat,Messaging,Agent channel
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section class="impact-section">
+            <h2 class="section-title">開発者への影響とユースケース</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h3>🎯 エンタープライズ AI エージェント開発の民主化</h3>
+                    <ul>
+                        <li>独自のオーケストレーション基盤構築が不要に</li>
+                        <li>ガバナンスとコンプライアンスフレームワークを標準提供</li>
+                        <li>監視・アラートシステムの設計が不要に</li>
+                        <li>エスカレーションワークフローを組み込み済み</li>
+                        <li>マルチチャネル対応のインフラを標準装備</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>⚡ 競合プラットフォームへの影響</h3>
+                    <ul>
+                        <li>コンタクトセンター AI: Five9、NICE、Genesys に影響</li>
+                        <li>エージェントオーケストレーション: LangChain、CrewAI、AutoGen に影響</li>
+                        <li>エンタープライズ AI: Microsoft Copilot Studio、Google Agent Builder に影響</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>🔧 API 開発者への示唆</h3>
+                    <ul>
+                        <li>音声エージェント機能は Realtime API を基盤としている可能性</li>
+                        <li>ポリシーエンジンは Assistants API の拡張として実装の可能性</li>
+                        <li>ガバナンス・監視・エスカレーション機能の実装パターンが参考になる</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>🏢 導入を検討する企業の条件</h3>
+                    <ul>
+                        <li>大量の顧客インタラクションを処理する必要がある</li>
+                        <li>高リスクなワークフローでガバナンスが不可欠</li>
+                        <li>既存の社内システムとの統合が求められる</li>
+                        <li>コンプライアンス要件が厳格である</li>
+                        <li>人間オペレーターとのハイブリッド運用を前提としている</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Business Model -->
+        <section class="business-section">
+            <h2 class="section-title">ビジネスモデル</h2>
+            <div class="business-box">
+                <div class="business-icon">💼</div>
+                <div class="business-content">
+                    <h3>現場支援型のコンサルティングアプローチ</h3>
+                    <p>The Register の報道によると、OpenAI は「エージェントをデプロイするために企業に対してブーツ・オン・ザ・グラウンド (現場支援型) の料金を課す」コンサルティング的なアプローチを採用している。これは従来の API 従量課金モデルとは異なり、エンタープライズ向けのマネージドサービスとしてのポジショニングを示している。OpenAI 自身もこのソフトウェアを使用して自社のコールセンターを運用しており、プラットフォームの実用性と信頼性を実証している。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="summary-section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI Presence は、OpenAI がエンタープライズ AI エージェント管理の領域に本格参入したことを示す重要な製品発表である。音声・チャットエージェントの構築からデプロイ、ポリシー管理、本番監視、ヒューマンエスカレーション、継続的改善までを一貫して管理できるマネージドプラットフォームとして、企業が AI エージェントを安全かつ効果的に本番運用するための基盤を提供する。</p>
+                <div class="summary-highlights">
+                    <div class="summary-highlight">
+                        <h4>1. 事業領域の拡大</h4>
+                        <p>OpenAI が API プロバイダーからエンタープライズソリューションプロバイダーへと事業領域を拡大</p>
+                    </div>
+                    <div class="summary-highlight">
+                        <h4>2. 現場密着型の支援</h4>
+                        <p>コンサルティング的なビジネスモデルを採用し、企業の現場に密着した支援を行う方針</p>
+                    </div>
+                    <div class="summary-highlight">
+                        <h4>3. 高リスクワークフロー対応</h4>
+                        <p>ガバナンス・コンプライアンス・ヒューマンエスカレーションを中核機能として位置づけ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>OpenAI News Summary - Infographic</p>
+            <p>ソース: <a href="https://openai.com/index/introducing-openai-presence/" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-openai-presence/</a></p>
+            <p class="source-label">現在、対象となるエンタープライズ向けに限定提供プログラムとして利用可能</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#ECECF1',
+                titleColor: '#343541',
+                edgeLabelBackground: '#FFFFFF'
+            },
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 15
+            }
+        });
+    </script>
+</body>
+</html>
