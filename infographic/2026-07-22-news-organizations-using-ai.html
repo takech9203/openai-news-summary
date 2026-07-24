@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ニュース組織が AI を活用して重要なミッションを推進する方法</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-green-light: #E6F7F2;
+            --openai-green-dark: #0D8A6A;
+            --accent-orange: #FF6B35;
+            --accent-blue: #4A90D9;
+            --accent-purple: #8B5CF6;
+            --accent-yellow: #F5A623;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #1a1a2e 100%);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--openai-green);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Summary Section */
+        .summary {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--openai-green);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary h2 {
+            font-size: 1.3rem;
+            color: var(--openai-green);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary p {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .key-point {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-point:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .key-point::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .key-point:nth-child(1)::before { background: var(--openai-green); }
+        .key-point:nth-child(2)::before { background: var(--accent-blue); }
+        .key-point:nth-child(3)::before { background: var(--accent-orange); }
+        .key-point:nth-child(4)::before { background: var(--accent-purple); }
+        .key-point:nth-child(5)::before { background: var(--accent-yellow); }
+        .key-point:nth-child(6)::before { background: var(--openai-green-dark); }
+
+        .key-point-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .key-point h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--openai-dark);
+        }
+
+        .key-point p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Feature Cards */
+        .feature-section {
+            margin-bottom: 2rem;
+        }
+
+        .feature-section-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-card.reporting h3 { color: var(--openai-green); }
+        .feature-card.audience h3 { color: var(--accent-blue); }
+        .feature-card.business h3 { color: var(--accent-orange); }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card ul li {
+            padding: 0.6rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.9rem;
+            color: #555;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .feature-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .feature-card.reporting ul li::before { background: var(--openai-green); }
+        .feature-card.audience ul li::before { background: var(--accent-blue); }
+        .feature-card.business ul li::before { background: var(--accent-orange); }
+
+        .feature-card ul li strong {
+            color: var(--openai-dark);
+        }
+
+        /* Tools Section */
+        .tools-section {
+            background: linear-gradient(135deg, var(--openai-green-light) 0%, white 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 2px solid var(--openai-green);
+        }
+
+        .tools-section h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--openai-green-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .tool-item:hover {
+            transform: scale(1.03);
+        }
+
+        .tool-item .tool-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--openai-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .tool-item .tool-desc {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Global Support Section */
+        .global-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .global-section h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .global-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .global-list li {
+            padding: 0.7rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.9rem;
+            color: #555;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .global-list li:last-child {
+            border-bottom: none;
+        }
+
+        .global-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+        }
+
+        .global-list li strong {
+            color: var(--openai-dark);
+        }
+
+        /* Technical Architecture */
+        .tech-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .tech-section h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .tech-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .tech-phase {
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-top: 3px solid;
+        }
+
+        .tech-phase:nth-child(1) { border-top-color: var(--openai-green); }
+        .tech-phase:nth-child(2) { border-top-color: var(--accent-blue); }
+        .tech-phase:nth-child(3) { border-top-color: var(--accent-orange); }
+
+        .tech-phase h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: var(--openai-dark);
+        }
+
+        .tech-phase ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-phase ul li {
+            font-size: 0.8rem;
+            color: #555;
+            padding: 0.3rem 0;
+        }
+
+        /* Mermaid Diagram */
+        .diagram-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .diagram-section h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+
+        /* Impact Section */
+        .impact-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, white 100%);
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-section h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--openai-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .impact-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-list li {
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: white;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #555;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .impact-list li::before {
+            content: attr(data-num);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .impact-list li strong {
+            color: var(--openai-dark);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-note {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .header {
+                padding: 2rem 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .summary, .feature-card, .tools-section, .global-section, .tech-section, .diagram-section, .impact-section {
+                padding: 1.5rem;
+            }
+
+            .key-points {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-phases {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="badge">Company / パートナーシップ</div>
+            <h1>ニュース組織が AI を活用して重要なミッションを推進する方法</h1>
+            <div class="header-meta">
+                <span>📅 2026-07-22</span>
+                <span>📰 OpenAI News</span>
+                <span>🏢 OpenAI</span>
+            </div>
+        </header>
+
+        <!-- Summary -->
+        <section class="summary">
+            <h2>📋 概要</h2>
+            <p>OpenAI は「How news organizations are using AI to advance their vital missions」と題した記事を公開し、世界各地のニュース組織が AI をどのように活用して報道の強化、読者の拡大、ビジネスオペレーションの改善を実現しているかを紹介した。AI がジャーナリズムの「代替」ではなく「強化」の手段であることを具体的な事例とともに示し、報道機関と AI 企業の共存モデルを提示する重要な発表である。</p>
+        </section>
+
+        <!-- Key Points -->
+        <div class="key-points">
+            <div class="key-point">
+                <div class="key-point-icon">🔍</div>
+                <h3>報道能力の強化</h3>
+                <p>調査報道、データジャーナリズム、ファクトチェックを AI が加速</p>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">🌍</div>
+                <h3>読者層の拡大</h3>
+                <p>パーソナライゼーション、多言語対応、ローカルニュースのスケール</p>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">💰</div>
+                <h3>ビジネス改善</h3>
+                <p>広告収入最適化、購読者管理、コスト効率向上</p>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">🛠</div>
+                <h3>ジャーナリスト向けツール</h3>
+                <p>ChatGPT、API、Academy、People-First AI Fund</p>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">🤝</div>
+                <h3>グローバル支援</h3>
+                <p>WAN-IFRA パートナーシップによる世界展開</p>
+            </div>
+            <div class="key-point">
+                <div class="key-point-icon">📊</div>
+                <h3>技術アーキテクチャ</h3>
+                <p>取材から配信まで AI が各フェーズを支援</p>
+            </div>
+        </div>
+
+        <!-- Feature Cards: 3 Main Areas -->
+        <section class="feature-section">
+            <h2 class="feature-section-title">📰 AI 活用の 3 つの柱</h2>
+
+            <div class="feature-card reporting">
+                <h3>🔍 報道能力の強化</h3>
+                <ul>
+                    <li><strong>調査報道の加速:</strong> 大量の公文書、裁判記録、財務データを AI が迅速に分析し、記者が重要なパターンや異常を発見しやすくする</li>
+                    <li><strong>データジャーナリズムの強化:</strong> 統計データの分析、可視化の前処理、トレンド検出を AI が支援し、データに基づいた正確な報道を実現する</li>
+                    <li><strong>取材準備の効率化:</strong> バックグラウンドリサーチ、過去記事の要約、関連情報の自動収集により、記者がより深い取材に集中できる環境を構築する</li>
+                    <li><strong>ファクトチェックの補助:</strong> AI が主張の裏付けとなるソースを検索し、記者が事実確認プロセスを効率的に実施できるよう支援する</li>
+                </ul>
+            </div>
+
+            <div class="feature-card audience">
+                <h3>🌍 読者層の拡大</h3>
+                <ul>
+                    <li><strong>パーソナライゼーション:</strong> 読者の関心やニーズに基づいてコンテンツを最適化し、エンゲージメントを向上させる</li>
+                    <li><strong>多言語対応:</strong> AI 翻訳を活用して、記事を複数の言語で配信し、グローバルな読者層を獲得する</li>
+                    <li><strong>コンテンツフォーマットの多様化:</strong> テキスト記事からニュースレター、音声要約、ソーシャルメディア投稿など、多様なフォーマットへの変換を AI が支援する</li>
+                    <li><strong>ローカルニュースのスケール:</strong> 限られたリソースでも AI の支援により、より多くの地域コミュニティに質の高い報道を届ける</li>
+                </ul>
+            </div>
+
+            <div class="feature-card business">
+                <h3>💰 ビジネスオペレーションの改善</h3>
+                <ul>
+                    <li><strong>広告収入の最適化:</strong> 読者データの分析に基づく広告配信の効率化と収益予測</li>
+                    <li><strong>購読者管理の高度化:</strong> 解約リスクの予測、エンゲージメント分析、プロモーション最適化</li>
+                    <li><strong>コスト効率の向上:</strong> 定型的な編集作業の自動化、レポート生成の効率化により運営コストを削減</li>
+                    <li><strong>新たな収益モデルの構築:</strong> AI を活用した付加価値サービスの開発やデータ製品の提供</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section class="tools-section">
+            <h2>🛠 OpenAI のジャーナリスト向けツール</h2>
+            <div class="tools-grid">
+                <div class="tool-item">
+                    <div class="tool-name">ChatGPT</div>
+                    <div class="tool-desc">リサーチ、ドラフト作成支援、情報の要約と整理</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-name">OpenAI API</div>
+                    <div class="tool-desc">ニュースルームの既存ワークフローに AI 機能を統合</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-name">OpenAI Academy for News</div>
+                    <div class="tool-desc">ジャーナリストと編集者向けの AI 教育プログラム</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-name">People-First AI Fund</div>
+                    <div class="tool-desc">非営利ニュース組織への資金提供</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-name">コンテンツライセンス</div>
+                    <div class="tool-desc">報道機関のコンテンツを正当に利用し対価を支払う枠組み</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Global Support -->
+        <section class="global-section">
+            <h2>🌍 世界各地のパブリッシャーへの支援</h2>
+            <ul class="global-list">
+                <li><strong>グローバルパートナーシップ:</strong> WAN-IFRA との協業を通じて世界各地のパブリッシャーに AI 活用のノウハウを提供</li>
+                <li><strong>地域特化型プログラム:</strong> 各地域のメディア環境やニーズに応じたカスタマイズされた支援</li>
+                <li><strong>ローカル言語対応:</strong> 英語圏以外のメディア組織にも AI ツールの恩恵が行き渡るよう、多言語対応を推進</li>
+                <li><strong>新興市場への展開:</strong> メディア産業が発展途上にある地域での AI 活用を支援し、ジャーナリズムの民主化に貢献</li>
+            </ul>
+        </section>
+
+        <!-- Technical Architecture -->
+        <section class="tech-section">
+            <h2>📊 ニュースルームにおける AI 活用アーキテクチャ</h2>
+            <div class="tech-phases">
+                <div class="tech-phase">
+                    <h4>🔍 取材・調査フェーズ</h4>
+                    <ul>
+                        <li><strong>Chat Completions API:</strong> 大量文書から重要情報を抽出</li>
+                        <li><strong>Embeddings API:</strong> 過去記事のベクトル検索で関連情報を即座に取得</li>
+                        <li><strong>ChatGPT:</strong> 対話形式でのリサーチ、仮説の検証</li>
+                    </ul>
+                </div>
+                <div class="tech-phase">
+                    <h4>✍ 制作・編集フェーズ</h4>
+                    <ul>
+                        <li><strong>テキスト生成・校正:</strong> ドラフト校正、見出し候補生成、要約作成</li>
+                        <li><strong>翻訳 API:</strong> 記事の多言語展開を自動化</li>
+                        <li><strong>音声 API:</strong> テキスト記事の音声変換</li>
+                    </ul>
+                </div>
+                <div class="tech-phase">
+                    <h4>📡 配信・分析フェーズ</h4>
+                    <ul>
+                        <li><strong>パーソナライゼーション:</strong> 読者の閲覧履歴と関心に基づく推薦</li>
+                        <li><strong>分析ダッシュボード:</strong> エンゲージメントの自動分析</li>
+                        <li><strong>自動配信最適化:</strong> タイミングとチャネルの最適化</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mermaid Diagram -->
+        <section class="diagram-section">
+            <h2>📊 システムアーキテクチャ図</h2>
+            <div class="mermaid">
+flowchart TD
+    subgraph OpenAI_Platform["OpenAI プラットフォーム"]
+        ChatGPT["ChatGPT"]
+        API["OpenAI API"]
+        Academy["OpenAI Academy for News"]
+    end
+    subgraph AI_Capabilities["AI 活用領域"]
+        Research["取材・調査支援"]
+        Production["制作・編集支援"]
+        Distribution["配信最適化"]
+        Business["ビジネス分析"]
+    end
+    subgraph Newsroom["ニュースルーム"]
+        Journalists["ジャーナリスト"]
+        Editors["編集者"]
+        Publishers["パブリッシャー"]
+    end
+    subgraph Outcomes["成果"]
+        Reporting["報道の強化"]
+        Audience["読者の拡大"]
+        Operations["経営の改善"]
+    end
+    ChatGPT --> Journalists
+    API --> Research
+    API --> Production
+    API --> Distribution
+    Academy --> Journalists
+    Research --> Journalists
+    Production --> Editors
+    Distribution --> Publishers
+    Journalists --> Reporting
+    Publishers --> Audience
+    Publishers --> Operations
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    class ChatGPT,API,Academy openai
+    class Research,Production,Distribution,Business dark
+    class Journalists,Editors,Publishers light
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="impact-section">
+            <h2>💡 開発者への影響</h2>
+            <ul class="impact-list">
+                <li data-num="1"><strong>ニュースルーム向け AI プロダクトの需要拡大:</strong> 報道機関が AI を積極的に導入する流れの中で、ニュースルーム特化型のツールやインテグレーション開発の機会が増加する</li>
+                <li data-num="2"><strong>API 統合パターンの標準化:</strong> OpenAI API をニュースルームのワークフローに組み込むための設計パターンやベストプラクティスが成熟しつつある</li>
+                <li data-num="3"><strong>倫理的 AI 設計の重要性:</strong> ジャーナリズムにおける AI 活用では、正確性、公平性、透明性が厳しく求められるため、これらを担保する技術設計が不可欠である</li>
+                <li data-num="4"><strong>多言語・多地域対応の技術課題:</strong> グローバルなメディア組織を支援するには、多様な言語や文化的文脈に対応する AI システムの構築が求められる</li>
+                <li data-num="5"><strong>持続可能なビジネスモデルとの統合:</strong> AI を導入するだけでなく、それが報道機関の収益向上やコスト削減に直結する仕組みを設計する視点が重要になる</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>ニュース組織にとって AI の導入は、単なる業務効率化にとどまらず、ジャーナリズムの社会的使命をより効果的に果たすための戦略的な選択肢となっている。</p>
+            <p><a href="https://openai.com/index/how-news-organizations-are-using-ai" target="_blank" rel="noopener">公式記事を読む →</a></p>
+            <p class="source-note">Source: OpenAI News | 2026-07-22 | Generated from openai-news-summary report</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                background: '#FFFFFF',
+                fontFamily: 'Zen Maru Gothic, sans-serif',
+                fontSize: '14px'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>

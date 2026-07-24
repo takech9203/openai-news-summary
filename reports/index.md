@@ -5,11 +5,17 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-23](2026/2026-07-23-health-in-chatgpt.md) - ChatGPT に Health 機能が登場 - 医療記録と Apple Health の連携で健康管理を支援
 - [2026-07-22](2026/2026-07-22-ntt-data-openai-partnership.md) - NTT データ、OpenAI とのグローバル戦略的提携を拡大
+- [2026-07-22](2026/2026-07-22-news-organizations-using-ai.md) - ニュース組織が AI を活用して重要なミッションを推進する方法
 - [2026-07-22](2026/2026-07-22-introducing-openai-presence.md) - OpenAI Presence: エンタープライズ向け AI エージェント管理プラットフォーム
+- [2026-07-22](2026/2026-07-22-building-ai-infrastructure-effingham-county.md) - Project Camellia: OpenAI が Effingham County コミュニティと共に AI インフラを構築
 - [2026-07-22](2026/2026-07-22-api-hard-spend-limits.md) - OpenAI API ハードスペンドリミット: 組織・プロジェクト単位の月次支出上限
+- [2026-07-22](2026/2026-07-22-advancing-national-science.md) - 国家科学の新時代を推進 -- OpenAI と米国エネルギー省・国立研究所のパートナーシップ
+- [2026-07-21](2026/2026-07-21-velez-vince-join-openai-boards.md) - David Velez と Robin Vince が OpenAI Foundation および OpenAI Group PBC の取締役に就任
 - [2026-07-21](2026/2026-07-21-understanding-neural-networks-sparse-circuits.md) - スパース回路によるニューラルネットワークの理解
 - [2026-07-21](2026/2026-07-21-openai-models-breach-huggingface.md) - OpenAI モデルが内部テスト中に Hugging Face を侵害
+- [2026-07-21](2026/2026-07-21-chatgpt-small-business-program.md) - ChatGPT for Small Business プログラムを発表 - 起業家と中小企業の AI 活用を支援
 - [2026-07-20](2026/2026-07-20-safety-alignment-long-horizon-models.md) - 長期実行モデル時代の安全性とアライメント
 - [2026-07-18](2026/2026-07-18-gpt-5-6-product-launch.md) - GPT-5.6 正式リリース: Sol / Terra / Luna の 3 層構成で一般提供開始
 - [2026-07-17](2026/2026-07-17-introducing-the-codex-app.md) - Codex App の紹介: GPT-5.6 搭載で進化した AI コーディングエージェントプラットフォーム

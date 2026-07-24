@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT に Health 機能が登場 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-light: #1BC39E;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --openai-white: #FFFFFF;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: linear-gradient(135deg, #f8fffe 0%, var(--openai-light) 50%, #f0faf6 100%);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding: 48px 32px;
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #444654 100%);
+            border-radius: var(--radius-lg);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16,163,127,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16,163,127,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header-date {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 24px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Overview section */
+        .overview-section {
+            margin-bottom: 48px;
+        }
+
+        .overview-text {
+            background: var(--openai-white);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+            margin-bottom: 24px;
+        }
+
+        .overview-text p {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.9;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .overview-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px;
+            background: var(--openai-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .overview-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .overview-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8f8f3 0%, #d4f4eb 100%);
+            border-radius: 10px;
+        }
+
+        .overview-item-text h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--openai-dark);
+        }
+
+        .overview-item-text p {
+            font-size: 0.87rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Feature cards */
+        .features-section {
+            margin-bottom: 48px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--openai-white);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--openai-gray);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--openai-green), var(--openai-green-light));
+        }
+
+        .feature-card-icon {
+            font-size: 2rem;
+            margin-bottom: 14px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--openai-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 12px;
+        }
+
+        .feature-card ul li {
+            font-size: 0.87rem;
+            color: #555;
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .feature-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 8px;
+            height: 8px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Architecture section */
+        .architecture-section {
+            margin-bottom: 48px;
+        }
+
+        .mermaid-wrapper {
+            background: var(--openai-white);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--openai-gray);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Technical section */
+        .technical-section {
+            margin-bottom: 48px;
+        }
+
+        .technical-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .technical-card {
+            background: var(--openai-white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .technical-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--openai-green-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .technical-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .technical-card ul li {
+            font-size: 0.87rem;
+            color: #555;
+            padding: 6px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .technical-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Impact section */
+        .impact-section {
+            margin-bottom: 48px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .impact-card {
+            background: var(--openai-white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--openai-gray);
+        }
+
+        .impact-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--openai-green-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .impact-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .impact-card ul li {
+            font-size: 0.87rem;
+            color: #555;
+            padding: 6px 0;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .impact-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: var(--openai-green);
+            border-radius: 50%;
+        }
+
+        /* Use cases section */
+        .usecases-section {
+            margin-bottom: 48px;
+        }
+
+        .usecases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .usecase-card {
+            background: linear-gradient(135deg, #f0faf6 0%, #e8f8f3 100%);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #c8ede2;
+            transition: transform 0.2s ease;
+        }
+
+        .usecase-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .usecase-icon {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .usecase-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .usecase-card p {
+            font-size: 0.82rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Summary section */
+        .summary-section {
+            margin-bottom: 48px;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #f0faf6 0%, #e8f8f3 100%);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            border: 1px solid #c8ede2;
+        }
+
+        .summary-box p {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+
+        .summary-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .summary-highlight {
+            background: var(--openai-white);
+            border-radius: var(--radius);
+            padding: 18px;
+            border-left: 3px solid var(--openai-green);
+        }
+
+        .summary-highlight h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 6px;
+        }
+
+        .summary-highlight p {
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            background: var(--openai-dark);
+            border-radius: var(--radius-lg);
+            color: white;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: var(--openai-green-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .source-label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .technical-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .usecases-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .summary-highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .mermaid-wrapper {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product (新機能)</span>
+                <h1>ChatGPT に Health 機能が登場</h1>
+                <p class="header-date">2026-07-23</p>
+                <p class="header-subtitle">医療記録と Apple Health の連携で健康管理を支援 - パーソナライズされた健康インサイトを AI が提供</p>
+            </div>
+        </header>
+
+        <!-- Overview -->
+        <section class="overview-section">
+            <h2 class="section-title">概要</h2>
+            <div class="overview-text">
+                <p>OpenAI は 2026 年 7 月 23 日、ChatGPT に「Health」機能を正式にローンチした。対象となる米国ユーザーは医療記録 (Electronic Health Records) や Apple Health のデータを ChatGPT に安全に接続し、自身の健康状態に関するよりパーソナライズされたインサイトを得ることが可能になる。AI が個人の健康データを文脈として活用することで、一般的な健康情報の提供にとどまらず、ユーザー固有の健康状態に基づいた具体的なアドバイスや情報整理を実現する。</p>
+            </div>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <div class="overview-icon">🏥</div>
+                    <div class="overview-item-text">
+                        <h4>パーソナライズされた健康インサイト</h4>
+                        <p>ユーザー固有の医療データに基づいた、より文脈に即した回答を提供</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">🔗</div>
+                    <div class="overview-item-text">
+                        <h4>データの統合的な理解</h4>
+                        <p>複数のソースからの健康情報を横断的に分析し、包括的な視点を提供</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">💬</div>
+                    <div class="overview-item-text">
+                        <h4>自然言語による対話</h4>
+                        <p>医療用語や検査結果を分かりやすい言葉で説明し、健康リテラシーの向上を支援</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="features-section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">📋</div>
+                    <h3>医療記録 (EHR) の接続</h3>
+                    <p>FHIR 標準規格を通じた電子医療記録との安全な連携</p>
+                    <ul>
+                        <li>医療機関が保有する電子健康記録 (EHR) との安全な接続</li>
+                        <li>血液検査や画像診断の結果を ChatGPT が分かりやすく解説</li>
+                        <li>過去の医療記録を基に、健康状態の変化やトレンドを把握</li>
+                        <li>複数の医療機関にまたがる情報を統合的に管理・理解</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📱</div>
+                    <h3>Apple Health との統合</h3>
+                    <p>HealthKit フレームワークを通じた日常的な健康データの活用</p>
+                    <ul>
+                        <li>アクティビティ: 歩数、消費カロリー、運動記録などの身体活動データ</li>
+                        <li>バイタルサイン: 心拍数、血圧、血中酸素濃度などの生体情報</li>
+                        <li>睡眠データ: 睡眠時間、睡眠の質、睡眠パターンの分析</li>
+                        <li>栄養データ: 食事記録や栄養摂取量のトラッキング情報</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔒</div>
+                    <h3>プライバシーとセキュリティ</h3>
+                    <p>HIPAA 準拠の強固なプライバシー・セキュリティ対策</p>
+                    <ul>
+                        <li>データ接続はすべてユーザーの明示的な同意に基づいて実行</li>
+                        <li>転送時および保存時のデータは暗号化により保護</li>
+                        <li>ユーザーはいつでもデータ接続の解除やデータの削除が可能</li>
+                        <li>米国の医療情報保護法 (HIPAA) に準拠した設計</li>
+                        <li>健康データはモデルのトレーニングには使用されない</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🇺🇸</div>
+                    <h3>利用対象と提供地域</h3>
+                    <p>米国内の対象ユーザーに段階的にロールアウト</p>
+                    <ul>
+                        <li>地域: 米国内の対象ユーザーに限定して提供</li>
+                        <li>年齢制限: 成人ユーザーが対象</li>
+                        <li>アカウント要件: Health 機能を有効化したユーザー</li>
+                        <li>段階的展開: 対象ユーザーに段階的にロールアウト</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="architecture-section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+flowchart TD
+    subgraph User["ユーザー"]
+        ChatGPTApp["ChatGPT アプリ"]
+    end
+    subgraph HealthSources["健康データソース"]
+        EHR["医療記録 (EHR)"]
+        AppleHealth["Apple Health"]
+    end
+    subgraph OpenAI["OpenAI Health Platform"]
+        Auth["認証・同意管理"]
+        Connector["データコネクタ"]
+        Encrypt["暗号化レイヤー"]
+        Context["コンテキストエンジン"]
+    end
+    subgraph AI["AI 推論"]
+        GPT["GPT モデル"]
+        Insight["健康インサイト生成"]
+    end
+    EHR -->|FHIR| Connector
+    AppleHealth -->|HealthKit| Connector
+    ChatGPTApp --> Auth
+    Auth --> Connector
+    Connector --> Encrypt
+    Encrypt --> Context
+    Context --> GPT
+    GPT --> Insight
+    Insight --> ChatGPTApp
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    class Auth,Connector,Encrypt,Context openai
+    class GPT,Insight dark
+    class ChatGPTApp,EHR,AppleHealth light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="technical-section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <div class="technical-grid">
+                <div class="technical-card">
+                    <h3>🔧 データ連携の仕組み</h3>
+                    <ul>
+                        <li>FHIR (Fast Healthcare Interoperability Resources): 医療データの相互運用性を確保する国際標準規格を採用</li>
+                        <li>HealthKit 連携: Apple の HealthKit フレームワークを通じて Apple Health データにアクセス</li>
+                        <li>OAuth 認証: 医療機関のデータアクセスには OAuth ベースの認証フローを使用</li>
+                        <li>リアルタイム同期: 接続されたデータソースからの最新情報を反映</li>
+                    </ul>
+                </div>
+                <div class="technical-card">
+                    <h3>🧠 コンテキストウィンドウでの活用</h3>
+                    <ul>
+                        <li>選択的な情報提供: ユーザーの質問に関連する健康データのみをコンテキストとして使用</li>
+                        <li>データの要約: 大量の医療記録を AI が要約し、効率的にコンテキストに組み込む</li>
+                        <li>プライバシー保護: 不要な情報は対話のコンテキストから除外</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="usecases-section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="usecases-grid">
+                <div class="usecase-card">
+                    <div class="usecase-icon">🩺</div>
+                    <h4>検査結果の解説</h4>
+                    <p>血液検査や画像診断の結果を分かりやすく説明</p>
+                </div>
+                <div class="usecase-card">
+                    <div class="usecase-icon">📊</div>
+                    <h4>健康トレンド分析</h4>
+                    <p>時系列データから健康状態の変化を可視化</p>
+                </div>
+                <div class="usecase-card">
+                    <div class="usecase-icon">🏃</div>
+                    <h4>フィットネス管理</h4>
+                    <p>運動データに基づいたパーソナライズされたアドバイス</p>
+                </div>
+                <div class="usecase-card">
+                    <div class="usecase-icon">😴</div>
+                    <h4>睡眠パターン分析</h4>
+                    <p>睡眠の質と改善ポイントを AI が分析</p>
+                </div>
+                <div class="usecase-card">
+                    <div class="usecase-icon">🥗</div>
+                    <h4>栄養管理</h4>
+                    <p>食事記録と栄養バランスの最適化を支援</p>
+                </div>
+                <div class="usecase-card">
+                    <div class="usecase-icon">💊</div>
+                    <h4>医療情報の整理</h4>
+                    <p>複数機関の医療記録を統合的に把握</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="impact-section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h3>⚡ ヘルスケア AI アプリケーションへの示唆</h3>
+                    <ul>
+                        <li>OpenAI が直接ヘルスケア AI 機能を提供することで、サードパーティの健康管理アプリとの競争が激化</li>
+                        <li>健康データコンテキストを活用した API が開発者向けに提供される可能性</li>
+                        <li>OpenAI が設定するプライバシー・セキュリティ基準が業界全体のベンチマークに</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>🏢 医療機関・保険業界への影響</h3>
+                    <ul>
+                        <li>AI を活用した健康インサイトにより、患者がより積極的に健康管理に参加</li>
+                        <li>FHIR 規格の採用が加速し、医療データの相互運用性が向上</li>
+                        <li>将来的に遠隔医療プラットフォームとの統合が進む可能性</li>
+                    </ul>
+                </div>
+                <div class="impact-card">
+                    <h3>⚖️ 規制・コンプライアンスの考慮事項</h3>
+                    <ul>
+                        <li>HIPAA 準拠の必須化: ヘルスケア AI 開発で HIPAA 準拠が不可欠であることが改めて示された</li>
+                        <li>FDA 規制への注意: AI による健康アドバイスが医療機器規制の対象となるか継続監視が必要</li>
+                        <li>州法への対応: 米国の各州で異なるプライバシー法への対応も考慮が必要</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="summary-section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>Health in ChatGPT は、AI アシスタントが個人の健康管理を支援する新しい時代の幕開けを象徴する機能である。医療記録と Apple Health データの安全な接続により、ユーザーは自身の健康状態をより深く理解し、情報に基づいた意思決定を行うことが可能になる。</p>
+                <div class="summary-highlights">
+                    <div class="summary-highlight">
+                        <h4>1. ヘルスケア分野への本格参入</h4>
+                        <p>OpenAI がヘルスケア分野に本格参入する重要なマイルストーンであり、AI アシスタントが日常の健康管理において実用的な役割を果たす新しいパラダイムを提示</p>
+                    </div>
+                    <div class="summary-highlight">
+                        <h4>2. 厳格なプライバシー保護</h4>
+                        <p>HIPAA 準拠の厳格なプライバシー保護と暗号化によるセキュリティ対策を実装。健康データの取り扱いに対する慎重な姿勢</p>
+                    </div>
+                    <div class="summary-highlight">
+                        <h4>3. 今後の展開に注目</h4>
+                        <p>国際展開や API の開発者向け提供、さらなる医療データソースとの連携拡大が注目される</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>OpenAI News Summary - Infographic</p>
+            <p>ソース: <a href="https://openai.com/index/health-in-chatgpt" target="_blank" rel="noopener noreferrer">https://openai.com/index/health-in-chatgpt</a></p>
+            <p class="source-label">現在、米国内の対象ユーザーに段階的にロールアウト中</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#ECECF1',
+                titleColor: '#343541',
+                edgeLabelBackground: '#FFFFFF'
+            },
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 15
+            }
+        });
+    </script>
+</body>
+</html>
