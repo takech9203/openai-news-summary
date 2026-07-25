@@ -5,7 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-24](2026/2026-07-24-chatgpt-voice-desktop.md) - ChatGPT Voice がデスクトップアプリに対応 - エージェント制御を音声で実現
 - [2026-07-23](2026/2026-07-23-health-in-chatgpt.md) - ChatGPT に Health 機能が登場 - 医療記録と Apple Health の連携で健康管理を支援
+- [2026-07-22](2026/2026-07-22-openai-750b-infrastructure-spending.md) - OpenAI の AI インフラ投資が 7,500 億ドルに拡大 - 2030 年までの戦略的支出計画
 - [2026-07-22](2026/2026-07-22-ntt-data-openai-partnership.md) - NTT データ、OpenAI とのグローバル戦略的提携を拡大
 - [2026-07-22](2026/2026-07-22-news-organizations-using-ai.md) - ニュース組織が AI を活用して重要なミッションを推進する方法
 - [2026-07-22](2026/2026-07-22-introducing-openai-presence.md) - OpenAI Presence: エンタープライズ向け AI エージェント管理プラットフォーム
