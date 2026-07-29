@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT Transcribe / GPT Live Transcribe のリリース - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-green-light: #1DB791;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --danger: #E74C3C;
+            --danger-light: #FADBD8;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+
+            --font-main: 'Zen Maru Gothic', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -8%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header h1 .accent {
+            color: var(--openai-green-light);
+        }
+
+        .header .subtitle {
+            font-size: 1.02rem;
+            opacity: 0.85;
+            margin-bottom: 16px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .header-chip {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
+            padding: 6px 14px;
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .header-chip strong {
+            color: var(--openai-green-light);
+            font-weight: 700;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .subsection-title {
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--openai-green-dark);
+            margin: 28px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subsection-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .lead {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .note {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        code.inline {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--openai-gray);
+            color: var(--openai-green-dark);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-size: 0.88em;
+        }
+
+        .hl {
+            background: linear-gradient(transparent 62%, rgba(16, 163, 127, 0.28) 62%);
+            font-weight: 700;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Model Cards (2 models) */
+        .model-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .model-card {
+            border-radius: 18px;
+            padding: 26px;
+            border: 2px solid var(--openai-green);
+            background: linear-gradient(135deg, #FFFFFF 0%, #E8F8F5 100%);
+        }
+
+        .model-card.live {
+            border-color: var(--info);
+            background: linear-gradient(135deg, #FFFFFF 0%, #EAF2FE 100%);
+        }
+
+        .model-tag {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .model-card.live .model-tag {
+            background: var(--info);
+        }
+
+        .model-card h3 {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--openai-dark);
+            word-break: break-all;
+        }
+
+        .model-card .model-role {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .spec-list {
+            list-style: none;
+        }
+
+        .spec-list li {
+            display: flex;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 13.5px;
+            border-bottom: 1px dashed rgba(52, 53, 65, 0.12);
+            line-height: 1.6;
+        }
+
+        .spec-list li:last-child {
+            border-bottom: none;
+        }
+
+        .spec-list .spec-key {
+            flex-shrink: 0;
+            font-weight: 700;
+            color: var(--openai-dark);
+            min-width: 6.5em;
+        }
+
+        .price-badge {
+            display: block;
+            margin-top: 14px;
+            background: var(--openai-dark);
+            color: white;
+            border-radius: 12px;
+            padding: 14px 16px;
+            text-align: center;
+        }
+
+        .price-badge .price-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--openai-green-light);
+            line-height: 1.3;
+        }
+
+        .price-badge .price-label {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table.data {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            min-width: 520px;
+        }
+
+        table.data th {
+            background: var(--openai-green);
+            color: white;
+            padding: 11px 14px;
+            text-align: left;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        table.data th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        table.data th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        table.data td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        table.data tr:last-child td {
+            border-bottom: none;
+        }
+
+        table.data tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        table.data td code, table.data th code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.92em;
+        }
+
+        .yes { color: var(--openai-green-dark); font-weight: 700; }
+        .no { color: var(--danger); font-weight: 700; }
+
+        /* Callouts */
+        .callout {
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .callout h4 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .callout.warn {
+            background: linear-gradient(135deg, #FFF8E6 0%, #FDEFCB 100%);
+            border: 1px solid var(--warning);
+        }
+
+        .callout.warn h4 { color: #B45309; }
+
+        .callout.info {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 1px solid var(--info);
+        }
+
+        .callout.info h4 { color: #1D4ED8; }
+
+        .callout.accent {
+            background: linear-gradient(135deg, #E8F8F5 0%, #D1F2EB 100%);
+            border: 1px solid var(--openai-green);
+        }
+
+        .callout.accent h4 { color: var(--openai-green-dark); }
+
+        .callout.danger {
+            background: linear-gradient(135deg, #FFF5F5 0%, var(--danger-light) 100%);
+            border: 1px solid var(--danger);
+        }
+
+        .callout.danger h4 { color: #C0392B; }
+
+        /* Bullet list */
+        .bullets {
+            list-style: none;
+        }
+
+        .bullets li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 7px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .bullets li .icon {
+            flex-shrink: 0;
+        }
+
+        .bullets li strong {
+            color: var(--text-primary);
+        }
+
+        /* Delay scale */
+        .delay-scale {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 10px;
+            margin: 18px 0 8px;
+        }
+
+        .delay-step {
+            flex: 1 1 110px;
+            background: var(--openai-gray);
+            border: 2px solid rgba(16, 163, 127, 0.25);
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+
+        .delay-step .delay-name {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--openai-green-dark);
+        }
+
+        .delay-step .delay-num {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .delay-axis {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            list-style: none;
+            margin-top: 12px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .footer-links li {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 24px 14px;
+            }
+
+            .spec-list .spec-key {
+                min-width: 5.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">OpenAI API</span>
+                <h1><span class="accent">GPT Transcribe</span> および <span class="accent">GPT Live Transcribe</span> のリリース</h1>
+                <p class="subtitle">🎙️ 高精度ファイル文字起こしと低遅延ストリーミング文字起こしを 2 つのモデルで使い分ける</p>
+                <p class="date">2026-07-28 / OpenAI API Changelog / 新モデル・API 更新</p>
+                <div class="header-meta">
+                    <span class="header-chip"><strong>対象モデル:</strong> gpt-transcribe, gpt-live-transcribe</span>
+                    <span class="header-chip"><strong>対象 API:</strong> v1/audio/transcriptions, v1/realtime</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">OpenAI は 2026 年 7 月 28 日、2 つの新しい音声認識 (speech-to-text) モデルをリリースした。用途に応じて <span class="hl">「精度優先」</span> と <span class="hl">「遅延優先」</span> のモデルを明確に使い分ける構成になった。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3><code class="inline">gpt-transcribe</code>: 精度優先</h3>
+                        <p>高精度なファイル文字起こしと、Realtime におけるコミット済みターンの最終文字起こしを担う。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3><code class="inline">gpt-live-transcribe</code>: 遅延優先</h3>
+                        <p>低遅延のストリーミング文字起こしに特化したモデル。Realtime の transcription session 専用である。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧩</div>
+                    <div class="key-point-content">
+                        <h3>3 つのコンテキスト入力を共通サポート</h3>
+                        <p>自由形式のコンテキスト (<code class="inline">prompt</code>)、キーワードヒント (<code class="inline">keywords</code>)、複数の想定入力言語 (<code class="inline">languages</code>) を指定できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌐</div>
+                    <div class="key-point-content">
+                        <h3>多言語・コードスイッチングへの対応改善</h3>
+                        <p>ドメイン固有の専門用語、多言語音声、およびコードスイッチング (会話中の言語切り替え) を含む音声への対応が改善されている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔀</div>
+                    <div class="key-point-content">
+                        <h3><code class="inline">language</code> から <code class="inline">languages</code> へ</h3>
+                        <p><code class="inline">languages</code> パラメータは従来モデルの単数形 <code class="inline">language</code> フィールドを置き換えるものであり、<span class="hl">複数言語を同時に想定できる</span>点が大きな変更点である。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Feature Cards: 2 models -->
+        <section class="section">
+            <h2 class="section-title">2 つのモデルの位置づけ</h2>
+            <p class="lead">公式ドキュメントに記載されている両モデルのモデルカード情報は以下の通りである。</p>
+            <div class="model-grid">
+                <div class="model-card">
+                    <span class="model-tag">🎯 精度優先 / 汎用</span>
+                    <h3>gpt-transcribe</h3>
+                    <p class="model-role">ファイルおよび Realtime 入力の文字起こし向け高精度 speech-to-text モデル</p>
+                    <ul class="spec-list">
+                        <li><span class="spec-key">入力</span><span>audio, text</span></li>
+                        <li><span class="spec-key">出力</span><span>text</span></li>
+                        <li><span class="spec-key">エンドポイント</span><span><code class="inline">v1/audio/transcriptions</code><br><code class="inline">v1/realtime/transcription_sessions</code></span></li>
+                        <li><span class="spec-key">機能</span><span>streaming</span></li>
+                        <li><span class="spec-key">言語検出</span><span class="yes">あり (<code class="inline">languages</code> を返す)</span></li>
+                    </ul>
+                    <div class="price-badge">
+                        <div class="price-value">0.0045 USD</div>
+                        <div class="price-label">音声 1 分あたり</div>
+                    </div>
+                </div>
+                <div class="model-card live">
+                    <span class="model-tag">⚡ 低遅延 / Realtime 専用</span>
+                    <h3>gpt-live-transcribe</h3>
+                    <p class="model-role">ライブ音声から低遅延の transcript デルタを返すストリーミング speech-to-text モデル</p>
+                    <ul class="spec-list">
+                        <li><span class="spec-key">入力</span><span>audio, text</span></li>
+                        <li><span class="spec-key">出力</span><span>text</span></li>
+                        <li><span class="spec-key">エンドポイント</span><span><code class="inline">v1/realtime/transcription_sessions</code> のみ</span></li>
+                        <li><span class="spec-key">機能</span><span>streaming</span></li>
+                        <li><span class="spec-key">言語検出</span><span class="no">なし</span></li>
+                    </ul>
+                    <div class="price-badge">
+                        <div class="price-value">0.017 USD</div>
+                        <div class="price-label">Realtime 音声 1 分あたり</div>
+                    </div>
+                </div>
+            </div>
+            <p class="note"><code class="inline">gpt-transcribe</code> はファイル文字起こしと Realtime の両方で利用できる汎用モデルである。一方 <code class="inline">gpt-live-transcribe</code> は Realtime の transcription session 専用であり、<code class="inline">v1/audio/transcriptions</code> を含む他のエンドポイントはすべて非サポートと明記されている。</p>
+        </section>
+
+        <!-- Common context inputs -->
+        <section class="section">
+            <h2 class="section-title">共通のコンテキスト入力</h2>
+            <p class="lead">両モデルは以下の 3 つのコンテキスト入力を受け付ける。公式ドキュメントに記載されているパラメータ名と説明は以下の通りである。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>💬 <code class="inline">prompt</code></h3>
+                    <p>録音の話題や状況などに関する<strong>自由形式のコンテキスト</strong>。</p>
+                    <p style="margin-top:8px;">📌 モデルの長さ制限を超えるとリクエストが拒否される。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔖 <code class="inline">keywords</code></h3>
+                    <p>音声中に登場しうる<strong>リテラルな語句</strong> (製品名、薬品名、略語など)。</p>
+                    <p style="margin-top:8px;">📌 あくまでヒントであり、必ず出力されるわけではない。1 語句 1 行で指定し、<code class="inline">&lt;</code>、<code class="inline">&gt;</code>、CR、LF を含められない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌏 <code class="inline">languages</code></h3>
+                    <p><strong>想定される入力言語のリスト</strong>。</p>
+                    <p style="margin-top:8px;">📌 ISO 639-1 (<code class="inline">en</code>, <code class="inline">fr</code>)、一部の ISO 639-3 (<code class="inline">eng</code>, <code class="inline">yue</code>, <code class="inline">cmn</code>)、および <code class="inline">zh</code> の地域ロケール (<code class="inline">zh-cn</code>, <code class="inline">zh-tw</code>, <code class="inline">zh-hk</code>) を受け付ける。無効なコードは拒否される。</p>
+                </div>
+            </div>
+
+            <div class="callout warn">
+                <h4>⚠️ 重要な注意点</h4>
+                <p>公式ドキュメントは、これらの新モデルが単数形の <code class="inline">language</code> フィールドではなく <code class="inline">languages</code> を使用すること、および<span class="hl">両方のフィールドを同時に送信してはならない</span>ことを明記している。従来の <code class="inline">gpt-4o-transcribe</code> や <code class="inline">whisper-1</code> からの移行時には、このパラメータ名の変更に対応する必要がある。</p>
+            </div>
+
+            <div class="callout info">
+                <h4>💡 コンテキスト入力の使い方</h4>
+                <p>コンテキスト入力は<strong>音声そのものを説明するために使うべき</strong>であり、タスクの指示を再記述するために使うべきではないとされている。キーワードはヒントとして機能するため、実際に発話された場合にのみ transcript に含まれる。</p>
+            </div>
+        </section>
+
+        <!-- Workflows -->
+        <section class="section">
+            <h2 class="section-title">2 つのワークフロー</h2>
+
+            <h3 class="subsection-title">📁 ファイル文字起こしのワークフロー (<code class="inline">v1/audio/transcriptions</code>)</h3>
+            <p class="lead"><code class="inline">v1/audio/transcriptions</code> エンドポイントでは、ファイルをアップロードして最終的な transcript を取得するか、処理の進行に合わせてテキストをストリーミングで受け取ることができる。公式ドキュメントは、<span class="hl">完成済みファイルの文字起こしをストリーミングする場合には Realtime セッションを開く必要がない</span>ことを明示している。</p>
+            <ul class="bullets">
+                <li><span class="icon">📦</span><span><strong>最大ファイルサイズ:</strong> 25 MB。これを超えるファイルは分割が必要であり、文の途中で切断しないことが推奨されている</span></li>
+                <li><span class="icon">🎵</span><span><strong>対応フォーマット:</strong> <code class="inline">mp3</code>, <code class="inline">mp4</code>, <code class="inline">mpeg</code>, <code class="inline">mpga</code>, <code class="inline">m4a</code>, <code class="inline">wav</code>, <code class="inline">webm</code></span></li>
+                <li><span class="icon">📡</span><span><strong>ストリーミングイベント:</strong> <code class="inline">transcript.text.delta</code> (部分テキスト)、<code class="inline">transcript.text.done</code> (最終テキストと <code class="inline">languages</code>)、<code class="inline">transcript.text.segment</code> (話者分離時のセグメント)</span></li>
+            </ul>
+
+            <h3 class="subsection-title">🔊 Realtime 文字起こしのワークフロー (<code class="inline">v1/realtime</code>)</h3>
+            <p class="lead">Realtime 文字起こしでは、公式ドキュメントは出発点として <code class="inline">gpt-live-transcribe</code> を推奨している。<code class="inline">gpt-transcribe</code> は「コミット済み音声ターンの後に文字起こしを開始する必要がある場合」または「検出言語の出力が必要な場合」に使用するとされ、<strong>WebSocket 接続を必要とする</strong>。<code class="inline">gpt-transcribe</code> は Realtime または専用の transcription session において、それ以前に文字起こしされたターンを自動的にコンテキストとして利用する。</p>
+            <p class="lead">セッション設定は <code class="inline">session.update</code> イベントで送信され、session オブジェクトの <code class="inline">type</code> は <code class="inline">"transcription"</code> となる。設定は <code class="inline">session.audio.input</code> 配下にネストされる。</p>
+            <ul class="bullets">
+                <li><span class="icon">🎛️</span><span><code class="inline">format</code>: 音声フォーマット (例: <code class="inline">{ "type": "audio/pcm", "rate": 24000 }</code>)</span></li>
+                <li><span class="icon">📝</span><span><code class="inline">transcription</code>: モデル指定とコンテキスト入力 (<code class="inline">model</code>, <code class="inline">prompt</code>, <code class="inline">keywords</code>, <code class="inline">languages</code>, <code class="inline">delay</code>)</span></li>
+                <li><span class="icon">🔇</span><span><code class="inline">turn_detection</code>: <code class="inline">null</code> を指定すると自動ターン検出が無効化され、ターンを手動でコミットする運用になる</span></li>
+            </ul>
+
+            <h4 class="subsection-title">📤 音声送信とターン確定に使うクライアントイベント</h4>
+            <ul class="bullets">
+                <li><span class="icon">➡️</span><span><code class="inline">input_audio_buffer.append</code>: base64 エンコードされた PCM16 ペイロード (<code class="inline">audio</code> フィールド) を送信する</span></li>
+                <li><span class="icon">✅</span><span><code class="inline">input_audio_buffer.commit</code>: VAD が無効な場合にターンを終了する</span></li>
+            </ul>
+
+            <h4 class="subsection-title">📥 サーバから受信する transcript イベント</h4>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>イベント</th>
+                            <th>主なフィールド</th>
+                            <th>内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>conversation.item.input_audio_transcription.delta</code></td>
+                            <td><code>item_id</code>, <code>content_index</code>, <code>delta</code></td>
+                            <td>部分的な transcript の差分</td>
+                        </tr>
+                        <tr>
+                            <td><code>conversation.item.input_audio_transcription.completed</code></td>
+                            <td><code>item_id</code>, <code>content_index</code>, <code>transcript</code></td>
+                            <td>確定した transcript</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout danger">
+                <h4>🔀 イベント順序は保証されない</h4>
+                <p>公式ドキュメントは、<span class="hl">異なる発話ターン間の completion イベントの順序が保証されない</span>ことを明記している。そのため、イベントは <code class="inline">item_id</code> によってアイテムと対応付ける必要がある。<code class="inline">gpt-transcribe</code> を使用する場合、completion イベントには検出言語も含まれる (例: <code class="inline">"languages": [{ "code": "fr" }]</code>)。予測が信頼できない場合は空配列となる。<code class="inline">gpt-live-transcribe</code> は言語検出を返さない。</p>
+            </div>
+        </section>
+
+        <!-- Delay tradeoff & limitations -->
+        <section class="section">
+            <h2 class="section-title">遅延と精度のトレードオフ</h2>
+            <p class="lead"><code class="inline">gpt-live-transcribe</code> では <code class="inline">delay</code> パラメータによって遅延と精度のバランスを調整できる。公式ドキュメントに記載されている値は以下の 5 段階である。</p>
+            <div class="delay-scale">
+                <div class="delay-step"><div class="delay-name">minimal</div><div class="delay-num">段階 1</div></div>
+                <div class="delay-step"><div class="delay-name">low</div><div class="delay-num">段階 2</div></div>
+                <div class="delay-step"><div class="delay-name">medium</div><div class="delay-num">段階 3</div></div>
+                <div class="delay-step"><div class="delay-name">high</div><div class="delay-num">段階 4</div></div>
+                <div class="delay-step"><div class="delay-name">xhigh</div><div class="delay-num">段階 5</div></div>
+            </div>
+            <div class="delay-axis">
+                <span>⚡ 低遅延を優先</span>
+                <span>🎯 精度を優先</span>
+            </div>
+            <div class="callout warn">
+                <h4>📏 数値は記載されていない</h4>
+                <p>実際のミリ秒単位のタイミングは変動するため、<strong>代表的な音声でベンチマークすることが推奨されている</strong>。本レポートでは、公式ドキュメントに具体的な数値が記載されていないため、各段階の遅延値は記載しない。</p>
+            </div>
+
+            <h3 class="subsection-title">🚫 <code class="inline">gpt-live-transcribe</code> の制約</h3>
+            <p class="lead">公式ドキュメントは <code class="inline">gpt-live-transcribe</code> について以下の制約を明記している。</p>
+            <ul class="bullets">
+                <li><span class="icon">❌</span><span>単語レベルの<strong>タイムスタンプ</strong>を提供しない</span></li>
+                <li><span class="icon">❌</span><span><strong>話者ラベル</strong> (speaker labels) を提供しない</span></li>
+                <li><span class="icon">❌</span><span><strong>信頼度スコア</strong> (confidence scores) を提供しない</span></li>
+            </ul>
+            <p class="note">これらが必要な場合は、ファイル文字起こしを利用するか、アプリケーション側でフォールバックを実装する必要がある。</p>
+        </section>
+
+        <!-- Comparison with existing models -->
+        <section class="section">
+            <h2 class="section-title">既存モデルとの機能比較</h2>
+            <p class="lead">公式ドキュメントに記載されている機能サポート状況は以下の通りである。</p>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>機能</th>
+                            <th><code>gpt-transcribe</code></th>
+                            <th><code>gpt-4o-transcribe</code> / <code>-mini</code></th>
+                            <th><code>gpt-4o-transcribe-diarize</code></th>
+                            <th><code>whisper-1</code></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>新規実装での推奨</td>
+                            <td class="yes">推奨</td>
+                            <td>既存統合のみ</td>
+                            <td>話者分離用途</td>
+                            <td>特定機能のみ</td>
+                        </tr>
+                        <tr>
+                            <td><code>prompt</code></td>
+                            <td class="yes">サポート</td>
+                            <td class="yes">サポート</td>
+                            <td class="no">非サポート</td>
+                            <td class="yes">サポート (224 トークン上限)</td>
+                        </tr>
+                        <tr>
+                            <td><code>keywords</code> / <code>languages</code></td>
+                            <td class="yes">サポート</td>
+                            <td class="no">非サポート (<code>language</code> を使用)</td>
+                            <td class="no">非サポート</td>
+                            <td><code>language</code> を使用</td>
+                        </tr>
+                        <tr>
+                            <td>ストリーミング</td>
+                            <td class="yes">サポート</td>
+                            <td class="yes">サポート</td>
+                            <td class="yes">サポート</td>
+                            <td class="no">非サポート</td>
+                        </tr>
+                        <tr>
+                            <td>話者分離 (diarization)</td>
+                            <td class="no">非サポート</td>
+                            <td class="no">非サポート</td>
+                            <td class="yes">サポート</td>
+                            <td class="no">非サポート</td>
+                        </tr>
+                        <tr>
+                            <td>単語タイムスタンプ</td>
+                            <td class="no">非サポート</td>
+                            <td class="no">非サポート</td>
+                            <td class="no">非サポート</td>
+                            <td class="yes">サポート</td>
+                        </tr>
+                        <tr>
+                            <td>英語への翻訳</td>
+                            <td class="no">非サポート</td>
+                            <td class="no">非サポート</td>
+                            <td class="no">非サポート</td>
+                            <td class="yes">サポート</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">公式ドキュメントは <code class="inline">gpt-4o-transcribe</code>、<code class="inline">gpt-4o-mini-transcribe</code>、および <code class="inline">gpt-realtime-whisper</code> について、既存の統合ではサポートされるが新規実装には推奨されないとしている。話者分離が必要な場合は <code class="inline">gpt-4o-transcribe-diarize</code>、単語タイムスタンプや <code class="inline">srt</code> / <code class="inline">vtt</code> 字幕、英語翻訳が必要な場合は <code class="inline">whisper-1</code> を引き続き使用する必要がある。</p>
+        </section>
+
+        <!-- Technical details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+
+            <h3 class="subsection-title">🐍 ファイル文字起こしのコードサンプル</h3>
+            <p class="lead">以下は、公式ドキュメントに記載されているパラメータ構成に基づく実装例である (公式サンプルからの逐語コピーではなく、<span class="hl">説明のための例示コード</span>である)。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">v1/audio/transcriptions - 例示コード</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+with open("support-call.wav", "rb") as audio_file:
+    result = client.audio.transcriptions.create(
+        model="gpt-transcribe",
+        file=audio_file,
+        # 録音の話題や状況を自由形式で記述する
+        prompt="プレミアムプランとアカウント AC-42 に関するカスタマーサポート通話",
+        # keywords と languages は Python SDK では extra_body 経由で指定する
+        extra_body={
+            "keywords": ["premium plan", "AC-42", "billing"],
+            "languages": ["en", "ja"],
+        },
+    )
+
+print(result.text)
+# 検出言語は languages フィールドに含まれる (例: [{"code": "ja"}])
+# 信頼できる検出ができない場合は空配列となる
+print(result.languages)</code></pre>
+            </div>
+            <div class="callout info">
+                <h4>📌 注意</h4>
+                <p>公式ドキュメントによると、Python SDK では <code class="inline">keywords</code> と <code class="inline">languages</code> は <code class="inline">extra_body</code> を経由して渡す。JavaScript SDK ではリクエストオプションの <code class="inline">body</code> を経由して渡す。</p>
+            </div>
+
+            <h3 class="subsection-title">📡 ストリーミングファイル文字起こしのコードサンプル</h3>
+            <p class="lead">以下は<span class="hl">例示コード</span>である。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">stream=True - 例示コード</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+with open("long-recording.mp3", "rb") as audio_file:
+    stream = client.audio.transcriptions.create(
+        model="gpt-transcribe",
+        file=audio_file,
+        stream=True,
+    )
+
+    for event in stream:
+        # transcript.text.delta: 部分テキスト
+        # transcript.text.done: 最終テキストと languages
+        # transcript.text.segment: 話者分離時のセグメント
+        print(event)</code></pre>
+            </div>
+
+            <h3 class="subsection-title">🔧 Realtime セッション設定</h3>
+            <p class="lead">以下は、公式ドキュメントに記載されているセッション設定の構造である。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">session.update - transcription session</span>
+                </div>
+                <pre><code class="language-json">{
+  "type": "session.update",
+  "session": {
+    "type": "transcription",
+    "audio": {
+      "input": {
+        "format": { "type": "audio/pcm", "rate": 24000 },
+        "transcription": {
+          "model": "gpt-live-transcribe",
+          "prompt": "A customer support call about a premium plan and account AC-42.",
+          "keywords": ["premium plan", "AC-42", "billing"],
+          "languages": ["en", "fr"],
+          "delay": "low"
+        },
+        "turn_detection": null
+      }
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="note">コンテキスト入力はセッション途中でも別の <code class="inline">session.update</code> イベントで更新できる。</p>
+
+            <h3 class="subsection-title">🧭 モデル選択の判断基準</h3>
+            <p class="lead">公式ドキュメントの記述に基づくと、モデル選択の判断基準は以下のように整理できる。</p>
+            <div class="table-wrap">
+                <table class="data">
+                    <thead>
+                        <tr>
+                            <th>要件</th>
+                            <th>推奨モデル</th>
+                            <th>理由</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>完成済み音声ファイルの高精度文字起こし</td>
+                            <td><code>gpt-transcribe</code></td>
+                            <td>ファイル文字起こしの推奨モデル</td>
+                        </tr>
+                        <tr>
+                            <td>ライブ音声の低遅延ストリーミング</td>
+                            <td><code>gpt-live-transcribe</code></td>
+                            <td>Realtime 文字起こしの出発点として推奨</td>
+                        </tr>
+                        <tr>
+                            <td>Realtime でコミット済みターン後に文字起こし開始</td>
+                            <td><code>gpt-transcribe</code></td>
+                            <td>該当ケースでの指定モデル</td>
+                        </tr>
+                        <tr>
+                            <td>Realtime で検出言語の出力が必要</td>
+                            <td><code>gpt-transcribe</code></td>
+                            <td><code>gpt-live-transcribe</code> は言語検出を返さない</td>
+                        </tr>
+                        <tr>
+                            <td>話者ラベル付き transcript</td>
+                            <td><code>gpt-4o-transcribe-diarize</code></td>
+                            <td>新モデルは話者分離非サポート</td>
+                        </tr>
+                        <tr>
+                            <td>単語タイムスタンプ、<code>srt</code> / <code>vtt</code> 字幕、英語翻訳</td>
+                            <td><code>whisper-1</code></td>
+                            <td>新モデルは非サポート</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid verbatim) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="lead">以下の図は、ファイル文字起こしと Realtime ストリーミング文字起こしの 2 つのフローを示す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Sources["音声ソース"]
+        AudioFile["音声ファイル<br>mp3 / mp4 / wav / webm 等<br>最大 25 MB"]
+        LiveAudio["ライブ音声<br>PCM16 ストリーム"]
+    end
+
+    subgraph Client["クライアントアプリケーション"]
+        SDK["OpenAI SDK"]
+        WS["WebSocket クライアント"]
+    end
+
+    subgraph Context["コンテキスト入力 (両モデル共通)"]
+        Prompt["prompt<br>自由形式コンテキスト"]
+        Keywords["keywords<br>キーワードヒント"]
+        Languages["languages<br>想定入力言語リスト"]
+    end
+
+    subgraph FileAPI["v1/audio/transcriptions"]
+        FileEP["File Transcription<br>エンドポイント"]
+        FileStream{"stream<br>指定?"}
+    end
+
+    subgraph RealtimeAPI["v1/realtime/transcription_sessions"]
+        Session["transcription session<br>session.update"]
+        Buffer["input_audio_buffer<br>append / commit"]
+    end
+
+    subgraph Models["文字起こしモデル"]
+        Transcribe["gpt-transcribe<br>高精度 / 言語検出あり"]
+        LiveTranscribe["gpt-live-transcribe<br>低遅延 / delay 調整可"]
+    end
+
+    subgraph FileOut["ファイル文字起こし出力"]
+        FinalText["最終 transcript<br>text + languages"]
+        DeltaEvents["transcript.text.delta<br>transcript.text.done"]
+    end
+
+    subgraph RTOut["Realtime 出力イベント"]
+        RTDelta["input_audio_transcription<br>.delta"]
+        RTDone["input_audio_transcription<br>.completed"]
+    end
+
+    AudioFile --> SDK
+    LiveAudio --> WS
+
+    SDK --> FileEP
+    WS --> Session
+    Session --> Buffer
+
+    Prompt --> FileEP
+    Keywords --> FileEP
+    Languages --> FileEP
+    Prompt --> Session
+    Keywords --> Session
+    Languages --> Session
+
+    FileEP --> FileStream
+    FileStream -->|"stream=False"| Transcribe
+    FileStream -->|"stream=True"| Transcribe
+
+    Buffer -->|"低遅延ストリーミング"| LiveTranscribe
+    Buffer -->|"コミット済みターン"| Transcribe
+
+    Transcribe --> FinalText
+    Transcribe --> DeltaEvents
+    LiveTranscribe --> RTDelta
+    Transcribe --> RTDone
+    LiveTranscribe --> RTDone
+
+    FinalText --> SDK
+    DeltaEvents --> SDK
+    RTDelta --> WS
+    RTDone --> WS
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+    classDef gray fill:#ECECF1,stroke:#D9D9E3,stroke-width:2px,color:#343541
+
+    class AudioFile,LiveAudio light
+    class SDK,WS light
+    class Prompt,Keywords,Languages gray
+    class FileEP,Session,Buffer dark
+    class FileStream light
+    class Transcribe,LiveTranscribe openai
+    class FinalText,DeltaEvents,RTDelta,RTDone gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use cases / Developer impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+
+            <div class="use-case">
+                <h4>🔀 パラメータ名の変更への対応</h4>
+                <p>最も直接的な影響は <code class="inline">language</code> から <code class="inline">languages</code> へのパラメータ名変更である。既存の <code class="inline">gpt-4o-transcribe</code> や <code class="inline">whisper-1</code> を使用したコードから <code class="inline">gpt-transcribe</code> へ移行する場合、以下の対応が必要となる。</p>
+                <ul class="bullets">
+                    <li><span class="icon">✅</span><span>単数形 <code class="inline">language</code> を複数形 <code class="inline">languages</code> の配列に置き換える</span></li>
+                    <li><span class="icon">✅</span><span>両方のフィールドを同時に送信しない (公式ドキュメントで明示的に禁止されている)</span></li>
+                    <li><span class="icon">✅</span><span>Python SDK では <code class="inline">languages</code> および <code class="inline">keywords</code> を <code class="inline">extra_body</code> 経由で渡す実装に変更する</span></li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>⚠️ 機能非互換への注意</h4>
+                <p>新モデルは推奨モデルである一方、既存モデルが持つ一部機能をサポートしていない。既存実装が以下の機能に依存している場合、<span class="hl">単純なモデル ID の差し替えでは動作しない</span>。</p>
+                <ul class="bullets">
+                    <li><span class="icon">🗣️</span><span><strong>話者分離:</strong> <code class="inline">gpt-4o-transcribe-diarize</code> を継続使用する必要がある</span></li>
+                    <li><span class="icon">⏱️</span><span><strong>単語タイムスタンプ:</strong> <code class="inline">whisper-1</code> の <code class="inline">response_format="verbose_json"</code> + <code class="inline">timestamp_granularities=["word"]</code> を継続使用する必要がある</span></li>
+                    <li><span class="icon">📺</span><span><strong><code class="inline">srt</code> / <code class="inline">vtt</code> 字幕出力:</strong> <code class="inline">whisper-1</code> を継続使用する必要がある</span></li>
+                    <li><span class="icon">🌐</span><span><strong>英語への翻訳:</strong> <code class="inline">whisper-1</code> の <code class="inline">v1/audio/translations</code> を継続使用する必要がある</span></li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>🏗️ アーキテクチャ設計上の選択肢の増加</h4>
+                <p>公式ドキュメントは「ストリーミング」と「ライブ音声」が独立した選択であることを明示している。つまり、完成済みファイルの文字起こしをストリーミングで受け取る場合には Realtime セッションを開く必要がない。Realtime が必要なのはライブ音声または永続接続が必要な場合に限られる。この整理により、以下のような設計判断が可能になる。</p>
+                <ul class="bullets">
+                    <li><span class="icon">📈</span><span><strong>長時間の録音ファイルに対する進捗表示:</strong> <code class="inline">v1/audio/transcriptions</code> + <code class="inline">stream=True</code> で実現できる (Realtime 不要)</span></li>
+                    <li><span class="icon">💬</span><span><strong>ライブ字幕:</strong> Realtime + <code class="inline">gpt-live-transcribe</code> の <code class="inline">delay</code> チューニング</span></li>
+                    <li><span class="icon">🗄️</span><span><strong>ライブ会話の高精度アーカイブ:</strong> Realtime + <code class="inline">gpt-transcribe</code> によるコミット済みターンの最終 transcript</span></li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>🎚️ 遅延と精度の運用チューニング</h4>
+                <p><code class="inline">gpt-live-transcribe</code> の <code class="inline">delay</code> パラメータ (<code class="inline">minimal</code> / <code class="inline">low</code> / <code class="inline">medium</code> / <code class="inline">high</code> / <code class="inline">xhigh</code>) により、アプリケーション要件に応じた調整が可能になった。ただし公式ドキュメントは実際のミリ秒単位のタイミングが変動するとしているため、代表的な音声によるベンチマークが必須である。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>📊 精度評価のアプローチ</h4>
+                <p>公式ドキュメントは、単語誤り率 (WER) のみに依存せず、アクセント、ノイズ、ドメイン用語を含む代表的な音声でテストすることを推奨している。特に <code class="inline">keywords</code> と <code class="inline">prompt</code> の効果は音声の内容に依存するため、実データによる検証が重要である。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>🔢 イベント順序の非保証への対応</h4>
+                <p>Realtime 文字起こしにおいて、異なる発話ターン間の completion イベントの順序は保証されない。UI へ transcript を表示する実装では、受信順に追記するのではなく <code class="inline">item_id</code> をキーとしてアイテムを管理し、順序を明示的に制御する必要がある。</p>
+            </div>
+        </section>
+
+        <!-- Unverified items -->
+        <section class="section">
+            <h2 class="section-title">検証できなかった項目</h2>
+            <p class="lead">本レポートは Evidence-Based Approach に従い、公式ドキュメントで確認できた事実のみを記載している。以下の項目は公式ドキュメントに記載がないため、本レポートには含めていない。</p>
+            <ul class="bullets">
+                <li><span class="icon">❓</span><span><code class="inline">gpt-transcribe</code> および <code class="inline">gpt-live-transcribe</code> のコンテキスト長 / 入力トークン上限 (モデルカードに未記載)</span></li>
+                <li><span class="icon">❓</span><span>両モデルの最大音声長 (モデルカードに未記載)</span></li>
+                <li><span class="icon">❓</span><span><code class="inline">delay</code> 各段階の具体的なミリ秒値</span></li>
+                <li><span class="icon">❓</span><span>WER などのベンチマークスコア</span></li>
+                <li><span class="icon">❓</span><span><code class="inline">prompt</code> の具体的な長さ制限値 (「モデルの長さ制限」という記述のみ)</span></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="callout accent">
+                <h4>🎙️ 2 つの音声認識モデルのリリース</h4>
+                <p>OpenAI は 2026 年 7 月 28 日、<code class="inline">gpt-transcribe</code> と <code class="inline">gpt-live-transcribe</code> の 2 つの音声認識モデルをリリースした。<code class="inline">gpt-transcribe</code> は <code class="inline">v1/audio/transcriptions</code> と Realtime の両方で利用できる高精度モデルであり、Realtime ではコミット済みターンの最終 transcript と検出言語を提供する。<code class="inline">gpt-live-transcribe</code> は Realtime の transcription session 専用の低遅延ストリーミングモデルであり、<code class="inline">delay</code> パラメータによって遅延と精度のバランスを 5 段階で調整できる。</p>
+            </div>
+            <div class="callout accent">
+                <h4>🧩 共通の強みは 3 つのコンテキスト入力</h4>
+                <p>両モデルの共通の強みは、<code class="inline">prompt</code> (自由形式コンテキスト)、<code class="inline">keywords</code> (キーワードヒント)、<code class="inline">languages</code> (複数の想定入力言語) という 3 つのコンテキスト入力である。特に <code class="inline">languages</code> は従来の単数形 <code class="inline">language</code> を置き換えるものであり、多言語音声やコードスイッチングへの対応が改善されている。</p>
+            </div>
+            <div class="callout warn">
+                <h4>🚚 移行時の注意点</h4>
+                <p>パラメータ名の変更 (<code class="inline">language</code> から <code class="inline">languages</code>)、Python SDK における <code class="inline">extra_body</code> 経由の指定、および話者分離・単語タイムスタンプ・英語翻訳が新モデルでは非サポートである点を確認する必要がある。これらの機能が必要な場合は <code class="inline">gpt-4o-transcribe-diarize</code> または <code class="inline">whisper-1</code> を継続して使用する。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a> (本レポートの一次ソース)</p>
+            <ul class="footer-links">
+                <li><span>📘</span><a href="https://developers.openai.com/api/docs/guides/transcription" target="_blank" rel="noopener noreferrer">Transcription (Speech-to-Text) 概要ガイド</a></li>
+                <li><span>📗</span><a href="https://developers.openai.com/api/docs/guides/speech-to-text" target="_blank" rel="noopener noreferrer">File transcription ガイド</a></li>
+                <li><span>📙</span><a href="https://developers.openai.com/api/docs/guides/realtime-transcription" target="_blank" rel="noopener noreferrer">Realtime transcription ガイド</a></li>
+                <li><span>🃏</span><a href="https://developers.openai.com/api/docs/models/gpt-transcribe" target="_blank" rel="noopener noreferrer">gpt-transcribe モデルカード</a></li>
+                <li><span>🃏</span><a href="https://developers.openai.com/api/docs/models/gpt-live-transcribe" target="_blank" rel="noopener noreferrer">gpt-live-transcribe モデルカード</a></li>
+                <li><span>💰</span><a href="https://developers.openai.com/api/docs/pricing#transcription-and-speech" target="_blank" rel="noopener noreferrer">Transcription and speech の料金</a></li>
+            </ul>
+            <p style="margin-top:14px;">OpenAI News Summary - GPT Transcribe および GPT Live Transcribe のリリース (2026-07-28)</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/json.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

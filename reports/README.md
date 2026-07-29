@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-28](2026/2026-07-28-scientific-computing-agentic-ai.md) - エージェント AI 時代の科学計算: コーディングエージェントによる科学ソフトウェア近代化のフィールドレポート
+- [2026-07-28](2026/2026-07-28-gpt-transcribe-models.md) - GPT Transcribe および GPT Live Transcribe のリリース: 高精度ファイル文字起こしと低遅延ストリーミング文字起こし
 - [2026-07-27](2026/2026-07-27-ai-expanding-work-task-crossover.md) - AI が仕事の範囲を拡張する: 80 万件超のメッセージ分析が示す「タスククロスオーバー」現象
 - [2026-07-24](2026/2026-07-24-chatgpt-voice-desktop.md) - ChatGPT Voice がデスクトップアプリに対応 - エージェント制御を音声で実現
 - [2026-07-23](2026/2026-07-23-health-in-chatgpt.md) - ChatGPT に Health 機能が登場 - 医療記録と Apple Health の連携で健康管理を支援
