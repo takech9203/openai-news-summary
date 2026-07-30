@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT for Academic Researchers - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card .big-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-value.medium {
+            font-size: 1.8rem;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .info-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .info-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .info-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .info-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .info-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .info-table td strong {
+            color: var(--text-primary);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        /* Highlight badge inside text */
+        .highlight {
+            background: rgba(16, 163, 127, 0.12);
+            color: var(--openai-green);
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        /* Model cards */
+        .model-card {
+            border-radius: 16px;
+            padding: 20px;
+            background: white;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+        }
+
+        .model-name {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Checklist */
+        .check-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .check-list li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 32px;
+            position: relative;
+        }
+
+        .check-list li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 2px dashed var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 12px;
+            display: grid;
+            gap: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">製品発表</span>
+                <span class="category-badge">教育・研究支援</span>
+                <h1>ChatGPT for Academic Researchers</h1>
+                <p class="subtitle">10 万人の研究者に最先端 AI モデルを無償提供 — 科学・数学・工学の発見を加速</p>
+                <p class="date">📅 2026-07-29 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-lead">選定された学術機関の研究者 100,000 人にフロンティアモデルへの無料アクセスを提供するプログラム。研究助成金の申請から仮説検証まで、研究の生産性向上と発見の加速を目的とする。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎓</div>
+                    <div class="key-point-content">
+                        <h3>100,000 人の研究者へ無料アクセス</h3>
+                        <p>2026 年夏に 10,000 人からスタートし、2027 年までに 100,000 人へ拡大。プリンストン高等研究所 (IAS) やパリ高等師範学校 (ENS) などですでにアクセス開始。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.6 Sol Pro を含むフロンティアモデル群</h3>
+                        <p>ローンチ時点で GPT-5.6 ファミリー (Terra / Luna / Sol) を提供。ChatGPT、ChatGPT Work、Codex を通じて利用可能。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>2.5 億ドル超の科学研究支援の一環</h3>
+                        <p>2027 年までに総額 2.5 億ドル以上を外部の科学研究・発見の支援に投じるコミットメントの中核を成すプログラム。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>共同研究者の招待とコラボレーション</h3>
+                        <p>承認された研究者は同一機関から最大 4 人の共同研究者を招待可能。ChatGPT Edu 導入済みの機関では機関ワークスペースを通じて調整。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔒</div>
+                    <div class="key-point-content">
+                        <h3>ビジネスグレードのデータ保護</h3>
+                        <p>ワークスペースにはビジネスグレードのプライバシー・セキュリティ保護が適用され、データはデフォルトでモデルの学習に使用されない。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After: 対象規模の拡大 -->
+        <section class="section">
+            <h2 class="section-title">対象規模の拡大ロードマップ</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>2026 年夏 (開始時)</h4>
+                    <div class="big-number">10,000 人</div>
+                    <p>選定された学術機関の研究者からスタート。IAS や ENS などの機関ですでにアクセスが開始されている。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>2027 年まで (拡大後)</h4>
+                    <div class="big-number">100,000 人</div>
+                    <p>10 倍の規模へ拡大を計画。フロンティア AI の恩恵を研究コミュニティ全体へ広げる。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るプログラムと AI 研究利用の現状</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value medium">10 万人</div>
+                    <div class="stat-label">無料アクセス提供対象</div>
+                    <div class="stat-sub">2027 年までに拡大</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value medium">2.5 億ドル</div>
+                    <div class="stat-label">科学研究支援コミットメント</div>
+                    <div class="stat-sub">2027 年までに投資</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value medium">130 万人</div>
+                    <div class="stat-label">毎週の科学・数学用途利用者</div>
+                    <div class="stat-sub">週約 840 万件のメッセージ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">75+</div>
+                    <div class="stat-label">ライフサイエンススキル</div>
+                    <div class="stat-sub">遺伝学から創薬まで</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">83%</div>
+                    <div class="stat-label">FrontierMath Tier 4</div>
+                    <div class="stat-sub">GPT-5.6 Sol (GPT-5.5: 72.5%)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">31.5%</div>
+                    <div class="stat-label">GeneBench Pro 解決率</div>
+                    <div class="stat-sub">GPT-5.6 Sol Pro</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2.5 億ドルの取り組み -->
+        <section class="section">
+            <h2 class="section-title">2.5 億ドル規模の科学研究支援の全体像</h2>
+            <p class="section-lead">本プログラムは、2027 年までに 2.5 億ドル (250 million USD) 以上を外部の科学研究・発見の支援に投じるコミットメントの一部である。</p>
+            <div class="table-wrap">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>取り組み</th>
+                            <th>内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>NextGenAI</strong></td>
+                            <td>研究機関を支援する 5,000 万ドルのイニシアチブ</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Genesis Mission</strong></td>
+                            <td>米国エネルギー省との協業。国立研究所・大学の研究者にフロンティア AI を提供</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ChatGPT for Academic Researchers</strong></td>
+                            <td>本プログラム。100,000 人の研究者に無料アクセスを提供</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- AI による研究加速の現状 -->
+        <section class="section">
+            <h2 class="section-title">AI による研究加速の現状</h2>
+            <p class="section-lead">OpenAI が公開したデータによると、AI は研究ツールとして急速に普及している。</p>
+            <ul class="check-list" style="margin-bottom: 20px;">
+                <li>毎週約 <span class="highlight">130 万人</span>が高度な科学・数学の用途で ChatGPT を利用し、約 <span class="highlight">840 万件</span>のメッセージを生成</li>
+                <li>数学分野では、過去 6 か月で AI が孤立した問題への散発的な利用から、数学研究の日常的な一部へと変化</li>
+                <li>ChatGPT の貢献を謝辞に記載する論文が増加傾向</li>
+            </ul>
+            <div class="feature-grid" style="margin-bottom: 20px;">
+                <div class="feature-card">
+                    <h3>⚛️ 核融合研究</h3>
+                    <p>物理学者 Rogerio Jorge 氏のチームが、産業界や国立研究所で核融合エネルギー装置の設計に使われるオープンソースソフトウェアの開発に AI を活用。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧮 理論計算機科学</h3>
+                    <p>Barna Saha 氏、Yinzhan Xu 氏、Christopher Ye 氏が GPT-5.5 Pro を用いて高次元幾何問題の計算効率に関する新しい限界を確立する証明を開発し、結果を自ら検証・改良。</p>
+                </div>
+            </div>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>AI 利用強度が平均的な研究者</h4>
+                    <div class="big-number">約 3.5%</div>
+                    <p>4 時間以上の作業時間を要すると推定されるタスクを AI に依頼する割合。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>AI 利用強度が上位 20% の研究者</h4>
+                    <div class="big-number">約 7%</div>
+                    <p>他の研究者のほぼ 2 倍の割合で長時間タスクを依頼。より野心的な仕事に取り組む傾向。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 参加者が利用できる機能 -->
+        <section class="section">
+            <h2 class="section-title">参加者が利用できる機能</h2>
+            <p class="section-lead">参加者は ChatGPT、ChatGPT Work、Codex を通じてフロンティアモデルに無料でアクセスできる。ローンチ時点では GPT-5.6 ファミリーを提供。</p>
+            <div class="feature-grid" style="margin-bottom: 20px;">
+                <div class="model-card">
+                    <span class="model-name">GPT-5.6 Terra</span>
+                    <p style="font-size: 14px; color: var(--text-secondary);">日常的な研究向けに能力と効率のバランスを重視。</p>
+                </div>
+                <div class="model-card">
+                    <span class="model-name">GPT-5.6 Luna</span>
+                    <p style="font-size: 14px; color: var(--text-secondary);">軽量タスク向けの高速応答。</p>
+                </div>
+                <div class="model-card">
+                    <span class="model-name">GPT-5.6 Sol</span>
+                    <p style="font-size: 14px; color: var(--text-secondary);">最も困難な科学・数学の問題に対応。</p>
+                </div>
+            </div>
+            <div class="feature-grid" style="margin-bottom: 20px;">
+                <div class="feature-card">
+                    <h3>🔬 拡張機能</h3>
+                    <p>拡張された Deep Research、より高い利用上限、より大きなコンテキストウィンドウを提供。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧬 ライフサイエンススキル 75+</h3>
+                    <p>遺伝学、ゲノミクス、シーケンシング、シングルセル解析、タンパク質モデリング、創薬にまたがる 75 以上のスキル。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔗 コネクタ</h3>
+                    <p>科学文献、公開ゲノム・臨床データベース、衛星画像、計算ノートブック、データプラットフォーム、文献管理ツール (Zotero など) への接続。</p>
+                </div>
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 12px;">📊 ベンチマーク実績</h3>
+            <div class="table-wrap">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>ベンチマーク</th>
+                            <th>GPT-5.6 Sol</th>
+                            <th>比較</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>FrontierMath Tier 4</strong> (研究レベル数学)</td>
+                            <td><span class="highlight">83%</span></td>
+                            <td>GPT-5.5: 72.5%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GeneBench Pro</strong> (生物学データ解析)</td>
+                            <td><span class="highlight">31.5%</span> (Sol Pro)</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- アーキテクチャ (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Program["ChatGPT for Academic Researchers"]
+        subgraph Products["提供プロダクト"]
+            ChatGPT["ChatGPT"]
+            Work["ChatGPT Work"]
+            Codex["Codex"]
+        end
+        subgraph Models["GPT-5.6 ファミリー"]
+            Terra["GPT-5.6 Terra&lt;br/&gt;(日常研究)"]
+            Luna["GPT-5.6 Luna&lt;br/&gt;(軽量・高速)"]
+            Sol["GPT-5.6 Sol&lt;br/&gt;(高難度問題)"]
+        end
+        subgraph Tools["スキル / コネクタ"]
+            LifeSci["ライフサイエンス&lt;br/&gt;スキル 75+"]
+            Connectors["文献 DB / ゲノム DB /&lt;br/&gt;Zotero / ノートブック"]
+        end
+    end
+
+    Researcher(["研究者&lt;br/&gt;(10 万人へ拡大)"]) --> ChatGPT
+    Researcher --> Work
+    Researcher --> Codex
+    ChatGPT --> Models
+    Codex --> Models
+    ChatGPT --> Tools
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Terra,Luna,Sol openai
+    class ChatGPT,Work,Codex dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- トレーニングと研究サポート -->
+        <section class="section">
+            <h2 class="section-title">トレーニングと研究サポート</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📚 レベル別トレーニング</h3>
+                    <p>初心者から高度な応用開発者まで、経験レベルに応じたトレーニングを提供。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👩‍🔬 スペシャリスト支援</h3>
+                    <p>研究ワークフローに精通したスペシャリストによるツール統合支援。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 コミュニティ</h3>
+                    <p>研究者同士が実践的なアプローチを共有し、分野横断的な活用事例を学び合う機会を今後拡充。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 フィードバックループ</h3>
+                    <p>研究者からのフィードバックをモデル改善に活用。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 応募方法 -->
+        <section class="section">
+            <h2 class="section-title">応募方法</h2>
+            <ul class="check-list">
+                <li>初期プログラムは<strong>選定された学術機関</strong>の資格を満たす研究者が対象</li>
+                <li>対象機関は、高い研究活動水準を持つ<strong>学位授与機関 (大学・カレッジ)</strong> であることが条件</li>
+                <li>応募者は所属機関の確認と、進行中の研究および科学的な利用目的に関する情報の提供が必要</li>
+                <li>承認された研究者は同一機関から<strong>最大 4 人の共同研究者</strong>を招待可能 (各共同研究者も所属確認が必要で、プログラムの総アカウント数にカウントされる)</li>
+            </ul>
+        </section>
+
+        <!-- ユースケース / 影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者・研究者への影響</h2>
+            <div class="use-case">
+                <h4>🌍 研究アクセスの民主化</h4>
+                <p>資金力のある一部の研究室に限らず、より多くの研究者がフロンティアモデルを無償で利用可能になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧪 研究ワークフローの高度化</h4>
+                <p>75 以上のライフサイエンススキルとコネクタにより、ゲノム解析からタンパク質モデリング、文献管理までを ChatGPT / Codex 上で完結できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🤖 エージェント的な研究実行</h4>
+                <p>Codex によるコード作成・デバッグ、データセット解析、再現可能なワークフロー構築が研究の実行フェーズを支援する。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ データ保護</h4>
+                <p>ビジネスグレードのセキュリティが適用され、研究データはデフォルトで学習に使用されないため、機密性の高い研究にも利用しやすい。</p>
+            </div>
+            <div class="use-case">
+                <h4>🌱 エコシステムへの波及</h4>
+                <p>OpenAI の科学研究支援 (NextGenAI、Genesis Mission) と合わせ、学術分野での AI 活用が加速する見通し。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>ChatGPT for Academic Researchers は、<span class="highlight">100,000 人</span>の学術研究者に GPT-5.6 ファミリーを含むフロンティアモデルへの無料アクセスを提供する大規模プログラムである。2026 年夏の 10,000 人から始まり 2027 年までに拡大し、<span class="highlight">2.5 億ドル超</span>の科学研究支援コミットメントの中核を成す。75 以上のライフサイエンススキル、拡張された Deep Research、Codex によるエージェント的な研究実行支援に加え、トレーニングや専門家サポートも提供され、ビジネスグレードのデータ保護のもとで研究に活用できる。AI が数学や核融合研究などで実際の成果を生み始めている中、フロンティア AI の恩恵を研究コミュニティ全体に広げる戦略的な取り組みといえる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/chatgpt-for-academic-researchers" target="_blank" rel="noopener noreferrer">https://openai.com/index/chatgpt-for-academic-researchers</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>🔗 <a href="https://openai.com/index/gpt-5-6/" target="_blank" rel="noopener noreferrer">GPT-5.6 の紹介</a></li>
+                <li>🔗 <a href="https://chatgpt.com/sophia/eligible-institutions" target="_blank" rel="noopener noreferrer">対象機関の確認</a></li>
+                <li>🔗 <a href="https://github.com/openai/plugins/tree/main/plugins/life-science-research" target="_blank" rel="noopener noreferrer">ライフサイエンス研究スキル (GitHub)</a></li>
+                <li>🔗 <a href="https://openai.com/business/solutions/education/" target="_blank" rel="noopener noreferrer">ChatGPT Edu / 高等教育向けソリューション</a></li>
+                <li>🔗 <a href="https://openai.com/index/introducing-nextgenai/" target="_blank" rel="noopener noreferrer">NextGenAI イニシアチブ</a></li>
+                <li>🔗 <a href="https://openai.com/index/advancing-the-next-era-of-national-science/" target="_blank" rel="noopener noreferrer">Genesis Mission (米国エネルギー省との協業)</a></li>
+                <li>🔗 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+            <p style="margin-top: 16px; font-size: 12px;">発表日: 2026-07-29 | カテゴリ: 製品発表 / 教育・研究支援 | 本インフォグラフィックは OpenAI News のレポートを基に作成</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

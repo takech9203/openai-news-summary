@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-29](2026/2026-07-29-openai-terraform-provider.md) - OpenAI 公式 Terraform プロバイダーのリリース
+- [2026-07-29](2026/2026-07-29-how-two-settings-tripled-arc-agi-3-scores.md) - 2 つの API 設定で ARC-AGI-3 ベンチマークのスコアが 3 倍に
+- [2026-07-29](2026/2026-07-29-gpt-5-6-frontier-intelligence-efficiency.md) - GPT-5.6 の効率化技術解説: フロンティア性能とフロンティア効率の融合
+- [2026-07-29](2026/2026-07-29-chatgpt-for-academic-researchers.md) - ChatGPT for Academic Researchers: 10 万人の研究者に最先端 AI モデルを無償提供
 - [2026-07-28](2026/2026-07-28-scientific-computing-agentic-ai.md) - エージェント AI 時代の科学計算: コーディングエージェントによる科学ソフトウェア近代化のフィールドレポート
 - [2026-07-28](2026/2026-07-28-gpt-transcribe-models.md) - GPT Transcribe および GPT Live Transcribe のリリース: 高精度ファイル文字起こしと低遅延ストリーミング文字起こし
 - [2026-07-27](2026/2026-07-27-ai-expanding-work-task-crossover.md) - AI が仕事の範囲を拡張する: 80 万件超のメッセージ分析が示す「タスククロスオーバー」現象

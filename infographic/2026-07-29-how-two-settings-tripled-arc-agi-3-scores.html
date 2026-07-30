@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2 つの API 設定で ARC-AGI-3 ベンチマークのスコアが 3 倍に - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Note */
+        .note {
+            background: #FFF7E6;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-left: 4px solid var(--warning);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-sub {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--openai-dark);
+        }
+
+        .section p.body-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 20px;
+        }
+
+        .comparison-card li {
+            margin-bottom: 6px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Table */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .compare-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .compare-table th:nth-child(2) {
+            background: var(--openai-green);
+        }
+
+        .compare-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .compare-table td:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .compare-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Links List */
+        .links-list {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .links-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--openai-gray);
+        }
+
+        .links-list li:last-child {
+            border-bottom: none;
+        }
+
+        .links-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .links-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">技術解説</span>
+                <span class="category-badge">API 活用</span>
+                <h1>2 つの API 設定で ARC-AGI-3 ベンチマークのスコアが 3 倍に</h1>
+                <p class="date">📅 2026-07-29 | ソース: OpenAI News</p>
+                <p class="lead">「推論の保持」と「コンパクションの有効化」だけで GPT-5.6 の ARC-AGI-3 スコアが約 3 倍に。モデルの重みを変えずに、API の使い方だけで性能が数倍変わることを示した技術解説</p>
+            </div>
+        </header>
+
+        <!-- Note -->
+        <div class="note">
+            ⚠️ <strong>注記</strong>: 本レポート作成時点で記事本文の取得ができなかったため (openai.com が自動アクセスをブロック)、公式概要文と OpenAI API に関する一般的な公開情報に基づいて構成している。概要文で確認できる事実と、そこからの推測は明確に区別して記載している。具体的なスコア数値は原文で確認されたい。
+        </div>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 — キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>設定 1: 推論の保持 (Reasoning Retention)</h3>
+                        <p>推論モデルが生成する reasoning item (思考の中間生成物) を次のターンに引き継ぐ。前のターンで立てた仮説や気付きが失われず、探索が振り出しに戻らない</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🗜️</div>
+                    <div class="key-point-content">
+                        <h3>設定 2: コンパクションの有効化 (Compaction)</h3>
+                        <p>長大化した会話履歴を重要な情報を保ちながら自動圧縮。コンテキスト超過による失敗を防ぎ、トークン効率も向上する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>結果: GPT-5.6 の ARC-AGI-3 スコアが約 3 倍に</h3>
+                        <p>2 つの設定だけでスコアが約 3 倍 (tripled) に向上。「boosting scores and efficiency」の記述どおり、スコアと実行効率の両方が改善した</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎮</div>
+                    <div class="key-point-content">
+                        <h3>ARC-AGI-3 とは</h3>
+                        <p>事前知識に頼らない流動的知能 (fluid intelligence) を測る ARC Prize 系列の最新ベンチマーク。エージェントがインタラクティブな環境を多ターンで探索しながら課題を解く形式</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💡</div>
+                    <div class="key-point-content">
+                        <h3>示唆: ハーネス設定が成績を大きく左右する</h3>
+                        <p>多ターンのエージェントタスクでは、モデルの能力そのものだけでなく「コンテキストをどう管理するか」が成績を大きく左右する。エージェント開発者に広く応用できる知見</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る改善</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">約 3 倍</div>
+                    <div class="stat-label">ARC-AGI-3 スコア向上 (GPT-5.6)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2 つ</div>
+                    <div class="stat-label">有効化した API 設定</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">モデルの重みの変更</div>
+                </div>
+            </div>
+            <p class="body-text" style="margin-top: 16px;">※ 具体的なスコア数値は記事本文が取得できなかったため未確認。「モデルの重みを一切変えずに、API の使い方だけで性能が数倍変わり得る」点が最大のポイント。</p>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After — 設定変更の効果</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before — 設定なし</h4>
+                    <ul>
+                        <li>ターンごとに状況分析を最初からやり直し</li>
+                        <li>前のターンの仮説・気付きが失われ、探索が振り出しに戻る</li>
+                        <li>履歴がコンテキスト上限に達すると単純な切り捨て (truncation) で重要な手掛かりを喪失</li>
+                        <li>コンテキスト超過によるエラーや強制打ち切り</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After — 2 つの設定を有効化</h4>
+                    <ul>
+                        <li>推論 (reasoning item) をターン間で引き継ぎ、仮説・戦略を継続</li>
+                        <li>初期の観察結果や成功パターンを参照し続けられる</li>
+                        <li>重要情報を保ったまま履歴を圧縮し、長期タスクを完走</li>
+                        <li>入力トークン量が減り、コストとレイテンシも改善</li>
+                        <li>スコアが約 3 倍に向上</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な内容 — 2 つの設定の詳細</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧠 推論の保持 (Reasoning Retention)</h3>
+                    <p><strong>確認できる事実</strong>: スコア向上の要因の 1 つは「推論を保持する (retaining reasoning)」設定。</p>
+                    <p style="margin-top: 8px;"><strong>推測を含む解説</strong>: Responses API では <code>previous_response_id</code> によるサーバー側の会話継続、あるいは <code>include: ["reasoning.encrypted_content"]</code> で暗号化された推論内容をクライアント側で次リクエストに渡す方式が公式に提供されている。「環境を観察し、仮説を立て、行動して検証する」タイプのタスクで特に大きな効果を持つ。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🗜️ コンパクションの有効化 (Compaction)</h3>
+                    <p><strong>確認できる事実</strong>: もう 1 つの要因は「コンパクションの有効化 (enabling compaction)」。</p>
+                    <p style="margin-top: 8px;"><strong>推測を含む解説</strong>: 長大化した会話履歴をコンテキストウィンドウに収まるよう自動的に圧縮・要約する仕組み。期待できる効果は次のとおり。</p>
+                    <ul>
+                        <li>長いエピソードでも初期の観察結果や成功パターンを参照し続けられる</li>
+                        <li>コンテキスト超過によるエラーや強制打ち切りを回避</li>
+                        <li>入力トークン量が減り、コストとレイテンシの両面で効率向上</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 結果: スコアが約 3 倍に</h3>
+                    <p><strong>確認できる事実</strong>: 2 つの設定により GPT-5.6 の ARC-AGI-3 スコアが約 3 倍 (tripled) になった。</p>
+                    <p style="margin-top: 8px;">ベンチマーク結果を比較する際には、モデル本体の能力に加えてハーネス (実行環境) の設定が大きな変数になることを意味する。概要文の「boosting scores and efficiency」は圧縮によるトークン効率の改善を指すと考えられる。</p>
+                </div>
+            </div>
+
+            <h3 class="section-sub">📊 2 つの設定の比較</h3>
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>推論の保持</th>
+                        <th>コンパクション</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>解決する問題</td>
+                        <td>ターン間で思考が失われる</td>
+                        <td>履歴がコンテキスト上限を超える</td>
+                    </tr>
+                    <tr>
+                        <td>主な効果</td>
+                        <td>仮説・戦略の継続、探索の一貫性</td>
+                        <td>長期タスクの完走、トークン効率</td>
+                    </tr>
+                    <tr>
+                        <td>効く場面</td>
+                        <td>多ターンの試行錯誤タスク</td>
+                        <td>長時間・長履歴のエージェント実行</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <p class="body-text">以下は Responses API の公開仕様に基づく一般的な実装例であり、記事中のコードそのものではない点に注意。</p>
+
+            <h3 class="section-sub">🖥️ コードサンプル: 推論を保持した多ターンエージェントループ</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">推論を保持した多ターンエージェントループ</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+previous_response_id = None
+
+for step in range(max_steps):
+    observation = env.get_observation()
+
+    response = client.responses.create(
+        model="gpt-5.6",
+        # 前ターンの推論 (reasoning item) を含む状態を引き継ぐ
+        previous_response_id=previous_response_id,
+        input=[{"role": "user", "content": observation}],
+        reasoning={"effort": "high"},
+        tools=game_tools,
+    )
+
+    previous_response_id = response.id
+    env.apply_action(response)</code></pre>
+            </div>
+            <p class="body-text">サーバー側ステートを使わない場合は、<code>include=["reasoning.encrypted_content"]</code> を指定して暗号化済み推論を取得し、次リクエストの <code>input</code> に含めて渡す方式でも同様に推論を保持できる。</p>
+
+            <h3 class="section-sub">🏗️ アーキテクチャ</h3>
+            <p class="body-text">2 つの設定を有効にしたエージェントループの構成 (公開仕様に基づく概念図)。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Env["ARC-AGI-3 環境"]
+        Game["インタラクティブゲーム"]
+    end
+
+    subgraph Agent["エージェントハーネス"]
+        Loop["エージェントループ"]
+    end
+
+    subgraph API["OpenAI API (GPT-5.6)"]
+        Reasoning["Reasoning Items<br/>(推論の保持)"]
+        Compaction["Compaction<br/>(履歴の圧縮)"]
+        Model["GPT-5.6"]
+    end
+
+    Game -->|観察| Loop
+    Loop -->|リクエスト + 前ターンの推論| Model
+    Model --> Reasoning
+    Reasoning -->|次ターンへ引き継ぎ| Model
+    Compaction -->|圧縮済み履歴| Model
+    Model -->|行動| Loop
+    Loop -->|アクション| Game
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Model,Reasoning,Compaction openai
+    class Loop,Game dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>🔧 設定の見直しだけで性能が大きく変わる</h4>
+                <p>モデルを変更しなくても、推論の保持とコンパクションの有効化という設定変更のみで、多ターンタスクの成績が数倍変わり得る。エージェントを構築している開発者はまず自分のハーネス設定を確認する価値がある。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔁 多ターンエージェントでは推論の引き継ぎが標準的なベストプラクティスに</h4>
+                <p><code>previous_response_id</code> や暗号化推論の受け渡しにより、ターンをまたいだ思考の一貫性を確保できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>⏱️ 長時間実行タスクにはコンパクションが有効</h4>
+                <p>コンテキスト超過による失敗を防ぎつつ、トークン消費を抑えられるため、スコアとコスト効率の両立が可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚖️ ベンチマーク比較時の注意</h4>
+                <p>公表スコアの差はモデル能力だけでなくハーネス設定に起因する場合がある。再現・比較の際は API 設定を揃える必要がある。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI は、<strong>推論の保持</strong>と<strong>コンパクション</strong>という 2 つの API 設定を有効化するだけで、GPT-5.6 の ARC-AGI-3 スコアが約 3 倍に向上したことを公表した。多ターンのエージェントタスクでは、モデルの生の能力と同じくらい「<strong>思考を捨てないこと</strong>」と「<strong>コンテキストを溢れさせないこと</strong>」が重要であることを示す実例であり、エージェントを開発するすべての開発者にとって、ハーネス設定を見直す動機となる発表である。なお、本レポートは記事本文が取得できなかったため公式概要文に基づいており、具体的なスコア数値や実装詳細は原文で確認されたい。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="links-list">
+                <li>📰 記事原文: <a href="https://openai.com/index/how-two-settings-tripled-our-arc-agi-3-scores" target="_blank" rel="noopener noreferrer">How enabling two settings tripled our scores on the ARC-AGI-3 benchmark</a></li>
+                <li>📚 <a href="https://platform.openai.com/docs/api-reference/responses" target="_blank" rel="noopener noreferrer">OpenAI Responses API リファレンス</a></li>
+                <li>🧭 <a href="https://platform.openai.com/docs/guides/reasoning" target="_blank" rel="noopener noreferrer">OpenAI Reasoning モデルガイド</a></li>
+                <li>🏆 <a href="https://arcprize.org/" target="_blank" rel="noopener noreferrer">ARC Prize (ARC-AGI 公式サイト)</a></li>
+                <li>🗞️ <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/how-two-settings-tripled-our-arc-agi-3-scores" target="_blank" rel="noopener noreferrer">https://openai.com/index/how-two-settings-tripled-our-arc-agi-3-scores</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-07-29 | ソース: OpenAI News | カテゴリ: 技術解説 / API 活用</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

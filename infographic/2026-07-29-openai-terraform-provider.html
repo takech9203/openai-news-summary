@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI 公式 Terraform プロバイダーのリリース - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .comparison-card li {
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .comparison-card.before li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Resource Table */
+        .resource-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .resource-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .resource-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .resource-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .resource-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .resource-table td:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .resource-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        /* Workflow Steps */
+        .workflow-steps {
+            display: grid;
+            gap: 12px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .workflow-step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .workflow-step-content h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .workflow-step-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .workflow-step-content code {
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        /* Note / Warning */
+        .note {
+            background: #FEF3C7;
+            border-left: 4px solid var(--warning);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #92400E;
+        }
+
+        .note strong {
+            color: #78350F;
+        }
+
+        .tip {
+            background: rgba(16, 163, 127, 0.08);
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .tip code {
+            background: var(--openai-dark);
+            color: var(--openai-green);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Guide List */
+        .guide-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .guide-item {
+            background: var(--openai-light);
+            border: 1px solid rgba(16, 163, 127, 0.25);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .guide-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .guide-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .summary-box strong {
+            color: #1DB791;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <span class="category-badge">開発者ツール</span>
+                <h1>🏗️ OpenAI 公式 Terraform プロバイダーのリリース</h1>
+                <p class="date">📅 2026-07-29 | ソース: OpenAI API Changelog</p>
+                <p class="lead">OpenAI API プラットフォームのリソースを IaC (Infrastructure as Code) として宣言的に管理できる公式プロバイダーが Terraform Registry に登場</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📦</div>
+                    <div class="key-point-content">
+                        <h3>OpenAI リソースを IaC で管理</h3>
+                        <p>プロジェクト、ユーザー、グループ、ロール、アクセス割り当て、サービスアカウント、証明書、招待、レート制限などを Terraform コードとして宣言的に管理できる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔁</div>
+                    <div class="key-point-content">
+                        <h3>Terraform 標準ワークフローをフルサポート</h3>
+                        <p>plan / apply による変更レビューと適用、既存リソースのインポート、構成ドリフトの検出と是正に対応</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏢</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズのガバナンスと再現性が向上</h3>
+                        <p>これまでダッシュボードの手動操作や Administration API の直接呼び出しに限られていた組織リソース管理を、レビュー可能なコードに置き換えられる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌐</div>
+                    <div class="key-point-content">
+                        <h3>Terraform Registry から入手可能</h3>
+                        <p>プロバイダーは openai/openai として Terraform Registry で公開。Terraform 1.0 以降で利用できる (インポート機能は 1.5 以降)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: 手動管理から IaC 管理へ</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 手動管理</h4>
+                    <ul>
+                        <li>ダッシュボードでの手動操作か Administration API の直接呼び出しのみ</li>
+                        <li>変更のレビューや承認フローを組み込みにくい</li>
+                        <li>コード外の設定変更 (ドリフト) に気づけない</li>
+                        <li>環境間で設定差異が発生しやすい</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: IaC 管理</h4>
+                    <ul>
+                        <li>HCL コードによる宣言的なリソース管理</li>
+                        <li>terraform plan の差分でレビュー・監査証跡を確保</li>
+                        <li>ドリフトを検出し宣言された構成へ是正</li>
+                        <li>同一モジュールで開発・ステージング・本番を統一管理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manageable Resources -->
+        <section class="section">
+            <h2 class="section-title">管理可能なリソース</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">公式 changelog およびガイドによると、本プロバイダーで以下の 10 種類のリソースを管理できる。</p>
+            <div class="table-wrapper">
+                <table class="resource-table">
+                    <thead>
+                        <tr>
+                            <th>リソース</th>
+                            <th>説明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>📁 プロジェクト (projects)</td>
+                            <td>組織内のプロジェクトの作成・設定管理</td>
+                        </tr>
+                        <tr>
+                            <td>👤 ユーザー (users)</td>
+                            <td>組織メンバーの管理</td>
+                        </tr>
+                        <tr>
+                            <td>👥 グループ (groups)</td>
+                            <td>ユーザーグループの管理</td>
+                        </tr>
+                        <tr>
+                            <td>🎭 ロール (roles)</td>
+                            <td>ロール定義の管理</td>
+                        </tr>
+                        <tr>
+                            <td>🔐 アクセス割り当て (access assignments)</td>
+                            <td>ロール・グループベースのアクセス制御</td>
+                        </tr>
+                        <tr>
+                            <td>🤖 サービスアカウント (service accounts)</td>
+                            <td>ワークロード ID または API キー認証のマシンユーザー</td>
+                        </tr>
+                        <tr>
+                            <td>📜 証明書 (certificates)</td>
+                            <td>証明書の管理</td>
+                        </tr>
+                        <tr>
+                            <td>✉️ 招待 (invitations)</td>
+                            <td>組織へのユーザー招待</td>
+                        </tr>
+                        <tr>
+                            <td>⏱️ レート制限 (rate limits)</td>
+                            <td>プロジェクト単位のレート制限設定</td>
+                        </tr>
+                        <tr>
+                            <td>💰 支出アラート (spend alerts)</td>
+                            <td>コスト管理のためのアラート設定</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">Terraform 標準ワークフローのサポート</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔍 変更のレビューと適用</h3>
+                    <p><code>terraform plan</code> で差分を確認し、レビュー後に <code>terraform apply</code> で適用。変更を安全に反映できる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📥 既存リソースのインポート</h3>
+                    <p>ダッシュボードで作成済みのリソースを Terraform 管理下に取り込む。Terraform 1.5 以降が必要</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 ドリフトの検出と是正</h3>
+                    <p>コード外で加えられた変更を検出し、宣言された構成に収束させる。意図しない設定変更を防止</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prerequisites & Auth -->
+        <section class="section">
+            <h2 class="section-title">前提条件と認証</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">✅</div>
+                    <div class="key-point-content">
+                        <h3>前提条件</h3>
+                        <p>Terraform 1.0 以降 (インポート機能は 1.5 以降) と、Admin API キーを作成できる権限を持つ組織が必要</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔑</div>
+                    <div class="key-point-content">
+                        <h3>Admin API キーによる認証</h3>
+                        <p>認証には Administration API 用の Admin API キーを使用。通常の API キーとは異なり、管理系エンドポイント専用である点に注意</p>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">Admin API キーの設定</span>
+                </div>
+                <pre><code class="language-bash">export OPENAI_ADMIN_KEY="&lt;your-admin-api-key&gt;"</code></pre>
+            </div>
+            <div class="tip">
+                <strong>オプション設定:</strong> <code>OPENAI_ORG_ID</code> と <code>OPENAI_PROJECT_ID</code> を設定すると、<code>OpenAI-Organization</code> および <code>OpenAI-Project</code> ヘッダーが付与される。未設定の場合、組織・プロジェクトはキーから推定される。
+            </div>
+            <div class="note">
+                <strong>⚠️ セキュリティ上の注意:</strong> Admin API キーは環境変数またはシークレットマネージャーで管理し、Terraform ファイルやソース管理に含めないことが推奨されている。
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: コードサンプル</h2>
+            <p style="font-size: 14px; color: var(--text-secondary);">公式ガイドに掲載されているプロバイダー設定とプロジェクト作成の例。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">HCL</span>
+                    <span class="code-title">プロバイダー設定とプロジェクト作成</span>
+                </div>
+                <pre><code class="language-hcl">terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    openai = {
+      source  = "openai/openai"
+      version = ">= 1.0.0"
+    }
+  }
+}
+
+provider "openai" {}
+
+resource "openai_project" "example" {
+  name = "terraform-managed"
+}
+
+output "project_id" {
+  value = openai_project.example.project_id
+}</code></pre>
+            </div>
+
+            <h3 class="section-subtitle">基本的なワークフロー</h3>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="workflow-step-number">1</div>
+                    <div class="workflow-step-content">
+                        <h4>初期化</h4>
+                        <p><code>terraform init</code> — プロバイダーのダウンロード</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-step-number">2</div>
+                    <div class="workflow-step-content">
+                        <h4>フォーマットと構文検証</h4>
+                        <p><code>terraform fmt</code> / <code>terraform validate</code></p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-step-number">3</div>
+                    <div class="workflow-step-content">
+                        <h4>変更内容の確認</h4>
+                        <p><code>terraform plan</code> — 差分をレビュー</p>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-step-number">4</div>
+                    <div class="workflow-step-content">
+                        <h4>レビュー後に適用</h4>
+                        <p><code>terraform apply</code> — 承認して反映</p>
+                    </div>
+                </div>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">基本的なワークフロー</span>
+                </div>
+                <pre><code class="language-bash"># 初期化 (プロバイダーのダウンロード)
+terraform init
+
+# フォーマットと構文検証
+terraform fmt
+terraform validate
+
+# 変更内容の確認
+terraform plan
+
+# レビュー後に適用
+terraform apply</code></pre>
+            </div>
+            <div class="tip">
+                <strong>💡 再現性の担保:</strong> <code>.terraform.lock.hcl</code> をコミットしてプロバイダーバージョンを固定し、更新時は <code>terraform init -upgrade</code> を使用することが推奨されている。
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph IaC["Terraform ワークフロー"]
+        HCL["HCL 構成ファイル<br/>(*.tf)"]
+        CLI["Terraform CLI<br/>plan / apply / import"]
+        State["State ファイル"]
+    end
+
+    subgraph Provider["OpenAI Terraform プロバイダー"]
+        TFP["openai/openai<br/>(Terraform Registry)"]
+    end
+
+    subgraph OpenAI["OpenAI API Platform"]
+        Admin["Administration API<br/>(Admin API キー)"]
+        subgraph Resources["管理対象リソース"]
+            Proj["プロジェクト"]
+            Users["ユーザー / グループ / ロール"]
+            SA["サービスアカウント / 証明書"]
+            RL["レート制限 / 支出アラート"]
+        end
+    end
+
+    HCL --> CLI
+    CLI <--> State
+    CLI --> TFP
+    TFP --> Admin
+    Admin --> Proj
+    Admin --> Users
+    Admin --> SA
+    Admin --> RL
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Admin,Proj,Users,SA,RL openai
+    class HCL,CLI,State,TFP dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Case Guides -->
+        <section class="section">
+            <h2 class="section-title">ユースケース別ガイド</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">公式ドキュメントには以下のユースケース別ガイドが用意されている。</p>
+            <div class="guide-list">
+                <div class="guide-item">
+                    <h4>📁 Projects and access</h4>
+                    <p>プロジェクトとロール・グループベースのアクセス管理</p>
+                </div>
+                <div class="guide-item">
+                    <h4>🤖 Service accounts</h4>
+                    <p>ワークロード ID または API キー認証のサービスアカウント</p>
+                </div>
+                <div class="guide-item">
+                    <h4>🛡️ Model, tool, and data controls</h4>
+                    <p>モデルアクセス、ホスト型ツール、データ保持の制御</p>
+                </div>
+                <div class="guide-item">
+                    <h4>💸 Rate limits and spend</h4>
+                    <p>既存レート制限の取り込みと支出アラートの設定</p>
+                </div>
+                <div class="guide-item">
+                    <h4>🔄 Import and reconciliation</h4>
+                    <p>既存リソースの取り込みとドリフト検出</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>🚪 手動運用からの脱却</h4>
+                <p>ダッシュボードでの手動操作に依存していたプロジェクト・ユーザー・アクセス管理を、コードレビュー可能な宣言的構成に置き換えられる</p>
+            </div>
+            <div class="use-case">
+                <h4>🏛️ ガバナンスの強化</h4>
+                <p>変更が terraform plan の差分としてレビューされるため、監査証跡と承認フローを CI/CD パイプラインに組み込める</p>
+            </div>
+            <div class="use-case">
+                <h4>🔍 ドリフト検出</h4>
+                <p>コード外で加えられた設定変更 (レート制限の手動変更など) を検出し、意図した構成へ是正できる</p>
+            </div>
+            <div class="use-case">
+                <h4>📦 既存環境の移行</h4>
+                <p>インポート機能により、すでに運用中の OpenAI 組織を段階的に Terraform 管理へ移行できる (Terraform 1.5 以降)</p>
+            </div>
+            <div class="use-case">
+                <h4>🌍 マルチ環境の統一管理</h4>
+                <p>開発・ステージング・本番などのプロジェクトを同一モジュールで複製し、環境間の設定差異を排除できる</p>
+            </div>
+            <div class="note">
+                <strong>⚠️ 注意点:</strong> Admin API キーが必要であり、通常の API キーでは動作しない。キーの権限が強力なため、シークレット管理の徹底が必須となる。
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI 公式 Terraform プロバイダーのリリースにより、OpenAI API プラットフォームの組織リソースを <strong>IaC として管理</strong>できるようになった。プロジェクト、ユーザー、グループ、ロール、サービスアカウント、証明書、レート制限、支出アラートなど幅広いリソースに対応し、<strong>plan / apply によるレビュー</strong>、<strong>既存リソースのインポート</strong>、<strong>ドリフト検出</strong>といった Terraform 標準ワークフローをフルサポートする。エンタープライズ環境で OpenAI を利用する組織にとって、<strong>ガバナンス・監査・再現性</strong>の観点で大きな前進となるアップデートである。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📖 <a href="https://developers.openai.com/api/docs/guides/terraform" target="_blank" rel="noopener noreferrer">OpenAI Terraform ガイド (公式ドキュメント)</a></li>
+                <li>📦 <a href="https://registry.terraform.io/providers/openai/openai/latest" target="_blank" rel="noopener noreferrer">Terraform Registry: openai/openai プロバイダー</a></li>
+                <li>📚 <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+            </ul>
+            <p style="margin-top: 12px;">発表日: 2026-07-29 | カテゴリ: API 更新 / 開発者ツール | ソース: OpenAI API Changelog</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
