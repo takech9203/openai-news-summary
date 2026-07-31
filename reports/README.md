@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-30](2026/2026-07-30-gpt-5-6-price-performance-frontier.md) - GPT-5.6 で価格性能フロンティアを前進 — Luna 80%・Terra 20% の値下げと Fast mode の導入
+- [2026-07-30](2026/2026-07-30-avatarin-retail-agent-gpt-realtime.md) - avatarin が GPT-Realtime で 24 時間 365 日対応の小売接客エージェントを構築
+- [2026-07-30](2026/2026-07-30-api-fast-mode-gpt-5-6-price-cuts.md) - OpenAI API が Fast mode を導入 (Priority Processing を置き換え)、GPT-5.6 の価格を引き下げ
 - [2026-07-29](2026/2026-07-29-openai-terraform-provider.md) - OpenAI 公式 Terraform プロバイダーのリリース
 - [2026-07-29](2026/2026-07-29-how-two-settings-tripled-arc-agi-3-scores.md) - 2 つの API 設定で ARC-AGI-3 ベンチマークのスコアが 3 倍に
 - [2026-07-29](2026/2026-07-29-gpt-5-6-frontier-intelligence-efficiency.md) - GPT-5.6 の効率化技術解説: フロンティア性能とフロンティア効率の融合

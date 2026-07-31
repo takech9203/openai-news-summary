@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast mode 導入と GPT-5.6 値下げ - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --openai-green: #10A37F;
+            --openai-green-light: #1BC89D;
+            --openai-green-dark: #0D8A6A;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+            --danger-red: #E74C3C;
+            --danger-red-light: #FADBD8;
+            --danger-red-dark: #C0392B;
+            --success-green-light: #D5F5E3;
+            --warning-orange: #FF6B35;
+            --font-main: 'Zen Maru Gothic', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--openai-light);
+            color: var(--openai-dark);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #2C2D36 100%);
+            border-radius: 20px;
+            padding: 48px 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .header-badge {
+            background: var(--openai-green);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.2em;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 span {
+            color: var(--openai-green-light);
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.05em;
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 4px solid var(--openai-green);
+        }
+
+        section {
+            margin-bottom: 36px;
+        }
+
+        /* Overview Cards */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .overview-card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .overview-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .overview-card h3 {
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--openai-dark);
+        }
+
+        .overview-card p {
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--openai-dark) 0%, #444654 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--openai-green-light);
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        /* Before/After Section */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 0;
+            align-items: stretch;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .comparison-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        .comparison-card {
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FFF5F5 0%, var(--danger-red-light) 100%);
+            border: 2px solid var(--danger-red);
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #F0FFF4 0%, var(--success-green-light) 100%);
+            border: 2px solid var(--openai-green);
+        }
+
+        .comparison-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .before .comparison-label {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .after .comparison-label {
+            background: var(--openai-green);
+            color: white;
+        }
+
+        .comparison-card h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .before h3 {
+            color: var(--danger-red-dark);
+        }
+
+        .after h3 {
+            color: var(--openai-green-dark);
+        }
+
+        .comparison-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-list li {
+            padding: 8px 0;
+            font-size: 0.92em;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.6;
+        }
+
+        .comparison-list li .icon {
+            flex-shrink: 0;
+            font-size: 1.1em;
+        }
+
+        .comparison-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: var(--openai-green);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border-top: 4px solid var(--openai-green);
+        }
+
+        .feature-card h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.92em;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .feature-card code,
+        .practice-card code,
+        .use-case code,
+        .note-box code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: var(--openai-gray);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--openai-green-dark);
+        }
+
+        /* Pricing Tables */
+        .pricing-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .pricing-card h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pricing-card .note {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 500px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+
+        .price-table th {
+            background: var(--openai-green);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .price-table.fast th {
+            background: var(--openai-dark);
+        }
+
+        .price-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .price-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .price-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .price-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .price-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .price-table .cut-badge {
+            display: inline-block;
+            background: var(--danger-red);
+            color: white;
+            font-size: 0.8em;
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+
+        /* Comparison table (Priority vs Fast) */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88em;
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .compare-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .compare-table th.highlight {
+            background: var(--openai-green);
+        }
+
+        .compare-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .compare-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .compare-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .compare-table td:first-child {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        /* Practice / Detail cards */
+        .practices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .practice-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .practice-card h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .practice-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .practice-list li {
+            padding: 8px 0;
+            font-size: 0.9em;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.7;
+        }
+
+        .practice-list li .icon {
+            flex-shrink: 0;
+        }
+
+        .steps {
+            list-style: none;
+            padding: 0;
+            counter-reset: step;
+        }
+
+        .steps li {
+            counter-increment: step;
+            padding: 10px 0;
+            padding-left: 36px;
+            position: relative;
+            font-size: 0.92em;
+            line-height: 1.7;
+            border-bottom: 1px dashed var(--openai-gray);
+        }
+
+        .steps li:last-child {
+            border-bottom: none;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 24px;
+            height: 24px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        /* Note box */
+        .note-box {
+            background: #FFF3CD;
+            border: 1px solid #FFC107;
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 0.9em;
+            margin-top: 20px;
+            line-height: 1.7;
+        }
+
+        .note-box strong {
+            color: #B45309;
+        }
+
+        /* Code Section */
+        .code-wrapper {
+            background: #282c34;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .code-wrapper:last-child {
+            margin-bottom: 0;
+        }
+
+        .code-header {
+            background: #21252b;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #FF5F56; }
+        .code-dot.yellow { background: #FFBD2E; }
+        .code-dot.green { background: #27C93F; }
+
+        .code-title {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85em;
+            margin-left: 12px;
+        }
+
+        .code-wrapper pre {
+            margin: 0;
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .code-wrapper pre code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            line-height: 1.7;
+            background: transparent;
+            padding: 0;
+        }
+
+        /* Architecture Section */
+        .mermaid-wrapper {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .use-case p {
+            font-size: 0.92em;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Summary callout */
+        .impact-callout {
+            background: linear-gradient(135deg, #E8F8F5 0%, #D1F2EB 100%);
+            border: 1px solid var(--openai-green);
+            border-radius: 14px;
+            padding: 24px 28px;
+        }
+
+        .impact-callout h4 {
+            color: var(--openai-green-dark);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .impact-callout p {
+            font-size: 0.92em;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--openai-dark);
+            border-radius: 16px;
+            padding: 28px 32px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            font-size: 0.88em;
+        }
+
+        .footer a {
+            color: var(--openai-green-light);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 32px 24px;
+            }
+            .header h1 {
+                font-size: 1.6em;
+            }
+            .container {
+                padding: 20px 16px;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-meta">
+                <span class="header-date">2026-07-30</span>
+                <span class="header-badge">API 更新・料金改定</span>
+            </div>
+            <h1><span>Fast mode</span> を導入 (Priority Processing を置き換え)、<br>GPT-5.6 の価格を引き下げ</h1>
+            <p class="header-subtitle">GPT-5.6 Luna が 80%、Terra が 20% の値下げ。gpt-5.6-sol では標準の 2 倍の価格で最大 2.5 倍の速度を提供</p>
+        </header>
+
+        <!-- Overview -->
+        <section>
+            <h2 class="section-title">概要</h2>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <span class="overview-icon">💰</span>
+                    <div>
+                        <h3>GPT-5.6 の価格引き下げ</h3>
+                        <p>GPT-5.6 Luna を 80%、GPT-5.6 Terra を 20% 値下げ。コスト効率が大きく改善し、大量処理での採用ハードルが下がる</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">⚡</span>
+                    <div>
+                        <h3>Fast mode の導入</h3>
+                        <p>Priority Processing を置き換える新機能。GPT-5.6 Sol では標準処理の 2 倍の価格で最大 2.5 倍の速度と安定したレイテンシを提供</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">🔄</span>
+                    <div>
+                        <h3>後方互換性を維持</h3>
+                        <p><code>priority</code> を指定した既存リクエストは自動的に Fast mode で処理される。コード変更は不要で移行作業なしに恩恵を受けられる</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">🎯</span>
+                    <div>
+                        <h3>選択肢とコスト構造の明確化</h3>
+                        <p>レイテンシが重要なユーザー向けアプリケーションを運用する開発者にとって、速度と価格のトレードオフが明確になる更新</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section>
+            <h2 class="section-title">数字で見る更新</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">-80%</div>
+                    <div class="stat-label">GPT-5.6 Luna の価格引き下げ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">-20%</div>
+                    <div class="stat-label">GPT-5.6 Terra の価格引き下げ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2.5 倍</div>
+                    <div class="stat-label">Fast mode の最大速度 (gpt-5.6-sol、標準比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2 倍</div>
+                    <div class="stat-label">Fast mode の価格 (標準比、料金ページ準拠)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After Comparison -->
+        <section>
+            <h2 class="section-title">Before / After: Priority Processing → Fast mode</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card before">
+                    <span class="comparison-label">BEFORE</span>
+                    <h3>🐢 Priority Processing (旧)</h3>
+                    <ul class="comparison-list">
+                        <li><span class="icon">📅</span><span>提供期間: 2026-07-30 まで</span></li>
+                        <li><span class="icon">🔧</span><span>指定方法: <code>service_tier: "priority"</code></span></li>
+                        <li><span class="icon">🚀</span><span>GPT-5.6 Sol の速度: 標準比で高速</span></li>
+                        <li><span class="icon">💵</span><span>価格: 標準よりプレミアム</span></li>
+                    </ul>
+                </div>
+                <div class="comparison-arrow">→</div>
+                <div class="comparison-card after">
+                    <span class="comparison-label">AFTER</span>
+                    <h3>⚡ Fast mode (新)</h3>
+                    <ul class="comparison-list">
+                        <li><span class="icon">📅</span><span>提供期間: 2026-07-30 から</span></li>
+                        <li><span class="icon">🔧</span><span>指定方法: <code>service_tier: "fast"</code> (旧値 <code>"priority"</code> も有効)</span></li>
+                        <li><span class="icon">🚀</span><span>GPT-5.6 Sol の速度: 標準比で最大 2.5 倍、より安定したレイテンシ</span></li>
+                        <li><span class="icon">💵</span><span>価格: 標準の約 2 倍 (料金ページ準拠)</span></li>
+                        <li><span class="icon">✅</span><span>後方互換性: <code>priority</code> 指定は自動的に Fast mode を使用</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section>
+            <h2 class="section-title">料金情報 (短コンテキスト、100 万トークンあたり)</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>💰 標準価格 (改定後)</h3>
+                    <p class="note">Changelog には引き下げ率のみが記載されており、改定前の価格は公式ページ上に掲載されていない</p>
+                    <div class="table-scroll">
+                        <table class="price-table">
+                            <thead>
+                                <tr>
+                                    <th>モデル</th>
+                                    <th>入力</th>
+                                    <th>キャッシュ入力</th>
+                                    <th>キャッシュ書き込み</th>
+                                    <th>出力</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>gpt-5.6-sol</td>
+                                    <td>$5.00</td>
+                                    <td>$0.50</td>
+                                    <td>$6.25</td>
+                                    <td>$30.00</td>
+                                </tr>
+                                <tr>
+                                    <td>gpt-5.6-terra<span class="cut-badge">-20%</span></td>
+                                    <td>$2.00</td>
+                                    <td>$0.20</td>
+                                    <td>$2.50</td>
+                                    <td>$12.00</td>
+                                </tr>
+                                <tr>
+                                    <td>gpt-5.6-luna<span class="cut-badge">-80%</span></td>
+                                    <td>$0.20</td>
+                                    <td>$0.02</td>
+                                    <td>$0.25</td>
+                                    <td>$1.20</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="pricing-card">
+                    <h3>⚡ Fast mode の料金 (短コンテキストのみ)</h3>
+                    <p class="note">キャッシュ入力トークンの割引は標準処理と同様に適用される</p>
+                    <div class="table-scroll">
+                        <table class="price-table fast">
+                            <thead>
+                                <tr>
+                                    <th>モデル</th>
+                                    <th>入力</th>
+                                    <th>キャッシュ入力</th>
+                                    <th>キャッシュ書き込み</th>
+                                    <th>出力</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>gpt-5.6-sol</td>
+                                    <td>$10.00</td>
+                                    <td>$1.00</td>
+                                    <td>$12.50</td>
+                                    <td>$60.00</td>
+                                </tr>
+                                <tr>
+                                    <td>gpt-5.6-terra</td>
+                                    <td>$4.00</td>
+                                    <td>$0.40</td>
+                                    <td>$5.00</td>
+                                    <td>$24.00</td>
+                                </tr>
+                                <tr>
+                                    <td>gpt-5.6-luna</td>
+                                    <td>$0.40</td>
+                                    <td>$0.04</td>
+                                    <td>$0.50</td>
+                                    <td>$2.40</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison table -->
+        <section>
+            <h2 class="section-title">Priority Processing と Fast mode の比較</h2>
+            <div class="table-scroll">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>Priority Processing (旧)</th>
+                            <th class="highlight">Fast mode (新)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>提供期間</td>
+                            <td>2026-07-30 まで</td>
+                            <td>2026-07-30 から</td>
+                        </tr>
+                        <tr>
+                            <td>指定方法</td>
+                            <td><code>service_tier: "priority"</code></td>
+                            <td><code>service_tier: "fast"</code> (旧値 <code>"priority"</code> も有効)</td>
+                        </tr>
+                        <tr>
+                            <td>GPT-5.6 Sol の速度</td>
+                            <td>標準比で高速</td>
+                            <td>標準比で最大 2.5 倍</td>
+                        </tr>
+                        <tr>
+                            <td>価格</td>
+                            <td>標準よりプレミアム</td>
+                            <td>標準の約 2 倍 (料金ページ準拠)</td>
+                        </tr>
+                        <tr>
+                            <td>後方互換性</td>
+                            <td>-</td>
+                            <td><code>priority</code> 指定は自動的に Fast mode を使用</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Technical Details / API Changes -->
+        <section>
+            <h2 class="section-title">技術詳細・API 変更点</h2>
+            <div class="practices-grid">
+                <div class="practice-card">
+                    <h3>🔧 有効化の方法 (2 通り)</h3>
+                    <p style="font-size: 0.88em; color: #666; margin-bottom: 8px;">Responses API (<code>v1/responses</code>) と Chat Completions API (<code>v1/chat/completions</code>) の両方で利用可能</p>
+                    <ol class="steps">
+                        <li><strong>リクエスト単位:</strong> <code>service_tier</code> パラメータに <code>"fast"</code> (または <code>"priority"</code>) を指定する</li>
+                        <li><strong>プロジェクト単位:</strong> 設定画面 (Settings → General → Project) で Project Service Tier を Fast に設定する。明示的な <code>service_tier</code> 指定のないリクエストが段階的に Fast mode へ移行する</li>
+                    </ol>
+                    <div class="note-box">
+                        <strong>レスポンスの確認:</strong> レスポンスオブジェクトの <code>service_tier</code> フィールドで実際に使用されたティアを確認できる。GPT-5.6 以前のモデルでは、<code>priority</code> と <code>fast</code> のどちらを指定してもレスポンスには <code>priority</code> が返される点に注意
+                    </div>
+                </div>
+                <div class="practice-card">
+                    <h3>⚠️ 制約事項</h3>
+                    <ul class="practice-list">
+                        <li><span class="icon">🚫</span><span>長コンテキスト、ファインチューニング済みモデル、Embeddings は非対応</span></li>
+                        <li><span class="icon">🖼️</span><span>マルチモーダルリクエスト (画像入力を含む) は対応</span></li>
+                        <li><span class="icon">📊</span><span>レート制限は標準処理とモデルごとに共有</span></li>
+                        <li><span class="icon">📈</span><span><strong>ランプレート制限:</strong> 100 万 TPM 以上を送信し、かつ 15 分以内に TPM を 50% 超増加させた場合に発動する可能性がある。制限された場合、リクエストは標準の速度・価格で処理され、<code>service_tier: "default"</code> が返される</span></li>
+                        <li><span class="icon">🤝</span><span>Fast mode と Scale Tier は同等の SLA 扱いとなり、対象の Enterprise 契約ではレイテンシ目標未達時にサービスクレジットが提供される場合がある</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section>
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-wrapper">
+                <div class="code-header">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                    <span class="code-title">fast_mode.py - Python (Responses API)</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+response = client.responses.create(
+    model="gpt-5.6-sol",
+    input="Hello!",
+    service_tier="fast",
+)
+print(response)</code></pre>
+            </div>
+            <div class="code-wrapper">
+                <div class="code-header">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                    <span class="code-title">curl - Responses API で Fast mode を指定</span>
+                </div>
+                <pre><code class="language-bash">curl https://api.openai.com/v1/responses \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.6-sol",
+    "input": "Hello!",
+    "service_tier": "fast"
+  }'</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section>
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアントアプリケーション"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph API["OpenAI API"]
+        Router["service_tier ルーティング"]
+        subgraph Tiers["処理ティア"]
+            Fast["Fast mode<br/>最大 2.5 倍高速 / 2 倍価格"]
+            Standard["Standard<br/>標準速度 / 標準価格"]
+        end
+        Model["gpt-5.6-sol / terra / luna"]
+    end
+
+    SDK -->|"service_tier: fast"| Router
+    SDK -->|"service_tier: priority (旧指定)"| Router
+    Router -->|"fast / priority"| Fast
+    Router -->|"default"| Standard
+    Fast --> Model
+    Standard --> Model
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Fast,Model openai
+    class Router,Standard dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section>
+            <h2 class="section-title">開発者への影響・ユースケース</h2>
+            <div class="use-case">
+                <h4>🔄 コード変更は不要</h4>
+                <p>既存の <code>service_tier: "priority"</code> 指定はそのまま動作し、自動的に Fast mode として処理される。移行作業なしで速度向上の恩恵を受けられる。</p>
+            </div>
+            <div class="use-case">
+                <h4>💸 GPT-5.6 Luna のコストが大幅減</h4>
+                <p>80% の値下げにより、大量処理や低コスト用途での Luna 採用のハードルが大きく下がる。Terra も 20% の値下げで中間グレードの選択肢として魅力が増す。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚡ レイテンシ重視アプリの選択肢が明確化</h4>
+                <p>ユーザー向けのリアルタイムアプリケーションでは、2 倍のコストで最大 2.5 倍の速度と安定したレイテンシを得られる Fast mode が有力な選択肢となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>📈 トラフィック急増時の注意</h4>
+                <p>ランプレート制限があるため、Fast mode へのトラフィック移行はフィーチャーフラグなどを用いて段階的に行う必要がある。ETL やバッチ処理には Fast mode を使わず、Batch API (標準の 50% 価格) を検討すべきである。</p>
+            </div>
+            <div class="use-case">
+                <h4>📊 ダッシュボードでの確認</h4>
+                <p>使用状況ダッシュボードでサービスティア別にグループ化して Fast mode の利用状況を確認できる (GPT-5.6 以前のモデルでは <code>priority</code> と表示される)。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section>
+            <h2 class="section-title">まとめ</h2>
+            <div class="impact-callout">
+                <h4>💡 コスト・速度戦略を組み立てやすく</h4>
+                <p>2026 年 7 月 30 日の更新は、価格と速度の両面で GPT-5.6 ファミリーの利便性を高めるものである。GPT-5.6 Luna の 80% 値下げと Terra の 20% 値下げによりコスト効率が大きく改善し、Priority Processing を置き換える Fast mode は <code>gpt-5.6-sol</code> で最大 2.5 倍の高速化を実現した。後方互換性が確保されているため既存コードの変更は不要であり、開発者はワークロードの特性に応じて <strong>Standard、Fast mode、Batch を使い分けるコスト・速度戦略</strong>を組み立てやすくなった。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 8px;">OpenAI News Summary - Fast mode 導入と GPT-5.6 価格引き下げ (2026-07-30)</p>
+            <div class="footer-links">
+                <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a>
+                <a href="https://developers.openai.com/api/docs/guides/fast-mode" target="_blank" rel="noopener noreferrer">Fast mode ガイド</a>
+                <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener noreferrer">OpenAI API 料金ページ</a>
+                <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
