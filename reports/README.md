@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-07-31](2026/2026-07-31-unive-ai-ready-workforce.md) - Univé が AI 対応の人材を育成: ChatGPT Enterprise によるリーダーシップとガバナンスの融合
+- [2026-07-31](2026/2026-07-31-disrupting-criminal-scam-operation.md) - 犯罪的詐欺組織の摘発: カンボジア拠点の詐欺ネットワークによる ChatGPT 悪用を阻止
+- [2026-07-31](2026/2026-07-31-building-abundant-intelligence.md) - Building abundant intelligence: 豊富な知能を実現するフルスタックアプローチ
+- [2026-07-31](2026/2026-07-31-advancing-responsible-ai-europe.md) - 欧州における責任ある AI の推進: OpenAI の安全性・透明性・来歴管理への取り組み
 - [2026-07-30](2026/2026-07-30-gpt-5-6-price-performance-frontier.md) - GPT-5.6 で価格性能フロンティアを前進 — Luna 80%・Terra 20% の値下げと Fast mode の導入
 - [2026-07-30](2026/2026-07-30-avatarin-retail-agent-gpt-realtime.md) - avatarin が GPT-Realtime で 24 時間 365 日対応の小売接客エージェントを構築
 - [2026-07-30](2026/2026-07-30-api-fast-mode-gpt-5-6-price-cuts.md) - OpenAI API が Fast mode を導入 (Priority Processing を置き換え)、GPT-5.6 の価格を引き下げ
