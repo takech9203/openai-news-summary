@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-01](2026/2026-08-01-ten-advances-in-mathematics.md) - Ten advances in mathematics and theoretical computer science: 数学・理論計算機科学における 10 の進展
 - [2026-07-31](2026/2026-07-31-unive-ai-ready-workforce.md) - Univé が AI 対応の人材を育成: ChatGPT Enterprise によるリーダーシップとガバナンスの融合
 - [2026-07-31](2026/2026-07-31-disrupting-criminal-scam-operation.md) - 犯罪的詐欺組織の摘発: カンボジア拠点の詐欺ネットワークによる ChatGPT 悪用を阻止
 - [2026-07-31](2026/2026-07-31-building-abundant-intelligence.md) - Building abundant intelligence: 豊富な知能を実現するフルスタックアプローチ
