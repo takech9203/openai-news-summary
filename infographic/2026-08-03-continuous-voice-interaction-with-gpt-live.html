@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-Live: 応答性の高い音声 AI を実現するリアルタイムシステム - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 28px 0 14px;
+            padding-bottom: 6px;
+            border-bottom: 2px dashed rgba(16, 163, 127, 0.35);
+        }
+
+        .section-subtitle:first-of-type {
+            margin-top: 0;
+        }
+
+        .lead-text {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .comparison-card ul li {
+            margin-bottom: 10px;
+            padding-left: 22px;
+            position: relative;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Detail List */
+        .detail-list {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-list li {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 42px;
+        }
+
+        .detail-list li::before {
+            content: '▶';
+            position: absolute;
+            left: 18px;
+            color: var(--openai-green);
+            font-size: 11px;
+            top: 18px;
+        }
+
+        .detail-list li strong {
+            color: var(--text-primary);
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        /* Lesson Cards */
+        .lesson-card {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border: 2px solid rgba(245, 158, 11, 0.4);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-bottom: 14px;
+        }
+
+        .lesson-card h4 {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #B45309;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lesson-card p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+        }
+
+        /* Flow Steps */
+        .flow-steps {
+            display: grid;
+            gap: 10px;
+            counter-reset: step;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .flow-step-num {
+            counter-increment: step;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .flow-step p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .flow-step p strong {
+            color: var(--text-primary);
+        }
+
+        /* Callout */
+        .callout {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.15) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.35);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin: 20px 0;
+            font-size: 14.5px;
+            color: var(--text-primary);
+        }
+
+        .callout strong {
+            color: var(--openai-green);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .summary-box h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-box p {
+            font-size: 14.5px;
+            opacity: 0.92;
+            line-height: 1.9;
+        }
+
+        .summary-box .accent {
+            color: #34D399;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .footer ul li {
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Engineering</span>
+                <span class="category-badge" style="background: #3B82F6;">音声 AI インフラ</span>
+                <h1>GPT-Live: 応答性の高い音声 AI を実現するリアルタイムシステムを 6 か月で構築</h1>
+                <p class="subtitle">全二重音声モデル + 専用メディア高速パスで、人間の会話に期待されるサブ秒の応答性を大規模に実現 🎙️</p>
+                <p class="date">📅 2026-08-03 | ソース: OpenAI News (Engineering)</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 — 5 つのキーポイント</h2>
+            <p class="lead-text">OpenAI は第 3 世代音声システム「GPT-Live」を支えるリアルタイムシステムの構築過程を解説するエンジニアリング記事を公開。「音声は流れ続けなければならない」という原則のもと、過去 6 か月間でモデル推論、コンテキスト管理、メディアトランスポートを再構築した。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>全二重 (full-duplex) 音声モデル</h3>
+                        <p>ターン検出器 (turn detector) をオーディオパスから排除。音声モデル自体が会話の主導権を持ち、より即時的で自然な会話を実現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>Go 実装の専用メディア高速パス</h3>
+                        <p>Python asyncio から Go へ書き直し、フレーム配信の滑らかさが大幅改善。新システムの p95 が旧システムの p50 に匹敵</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>GPT-5.5 への非同期委譲</h3>
+                        <p>深い推論やツール利用が必要な場合、会話の流れを妨げることなくフロンティアモデルに委譲。「話す」と「考える」を分離する 2 モデルアーキテクチャ</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔀</div>
+                    <div class="key-point-content">
+                        <h3>ハンドオフによる無停止コンテキスト圧縮</h3>
+                        <p>モデルインスタンス間のシームレスな切り替え機構により、長時間の通話でもメディアを中断せずコンテキスト圧縮 (compaction) を実行</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📡</div>
+                    <div class="key-point-content">
+                        <h3>単一 UDP パケットでセッション開始</h3>
+                        <p>WARP と Instant Connect により SDP 交換をクリティカルパスから外し、トランスポートハンドシェイクを集約</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る GPT-Live</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">6 か月</div>
+                    <div class="stat-label">推論・コンテキスト管理・トランスポートの再構築期間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">第 3 世代</div>
+                    <div class="stat-label">OpenAI の音声システム</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">p95 ≒ 旧 p50</div>
+                    <div class="stat-label">Go 再実装によるフレーム配信の改善</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1 UDP</div>
+                    <div class="stat-label">パケットでセッション開始</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2 モデル</div>
+                    <div class="stat-label">「話す」音声モデル + 「考える」GPT-5.5</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">ターン制からストリーミングへの移行</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 従来の音声アーキテクチャ</h4>
+                    <ul>
+                        <li><strong>カスケード型</strong>: 音声認識 → LLM → 音声合成が直列実行。レイテンシが増大し、声のトーンやペースの手がかりが失われる</li>
+                        <li><strong>speech-to-speech モデル</strong>: 音声を直接処理して改善したが、推論開始の判断はターン検出器に依存</li>
+                        <li>検出器が早すぎればユーザーの発話が遮られ、遅すぎれば応答が鈍く感じられる</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: GPT-Live</h4>
+                    <ul>
+                        <li>音声モデル自体が会話の主導権を持つ。音声はモデルに直接流れ込み、モデルから流れ出る</li>
+                        <li>深い推論やツール利用は非同期で実行。フロンティアモデル呼び出しや会話の永続化はライブパスの外で処理</li>
+                        <li>システムの主たる役割は<strong>途切れのないメディアループの維持</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ全体像</h2>
+            <p class="lead-text">ライブメディアシステムでは、すべてのオーディオフレームをスケジュール通りに配信する必要がある。トランスポート、処理、推論のいずれかで遅延が生じると、可聴のポーズやアーティファクトになる。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    User(["ユーザー"])
+
+    subgraph Client["クライアント"]
+        WebRTC["WebRTC + WARP / Instant Connect<br>(単一 UDP パケットで接続開始)"]
+    end
+
+    subgraph LivePath["専用メディア高速パス (Go 実装)"]
+        MediaFE["メディアフロントエンド"]
+        Voice["GPT-Live 音声モデル<br>(全二重 / ステートフル推論)"]
+    end
+
+    subgraph AsyncPath["非同期パス (RPC 境界)"]
+        AppServer["アプリケーションサーバー<br>(ターン分解 / 会話の永続化)"]
+        Frontier["フロンティアモデル (GPT-5.5)<br>推論 / 検索 / ツール利用"]
+    end
+
+    User <-->|"音声ストリーム"| WebRTC
+    WebRTC <--> MediaFE
+    MediaFE <-->|"継続的な音声フレーム"| Voice
+    Voice -.->|"委譲 (非同期)"| AppServer
+    AppServer -.-> Frontier
+    Frontier -.->|"結果を会話に反映"| Voice
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Voice,Frontier openai
+    class MediaFE,AppServer,WebRTC dark
+                </pre>
+            </div>
+            <h3 class="section-subtitle">継続的推論を可能にする 3 つの設計上の決定</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🛤️ メディアフローとロジックの分離</h3>
+                    <p>音声はクライアントと音声モデルの間の<span class="highlight">専用高速パス</span>を移動。委譲・ツール利用などのアプリケーション処理は非同期 RPC 境界の背後で実行され、遅いツール呼び出しは自身の結果を遅らせてもメディアのフローは停止させない</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🐹 Go による再実装</h3>
+                    <p>メディアフロントエンドと推論ロジックを Python <code>asyncio</code> 実装から Go で書き直し。フレーム配信の滑らかさが大幅に改善し、<span class="highlight">新システムの p95 が旧システムの p50 に匹敵</span>する水準に</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 WebRTC をトランスポート基盤に採用</h3>
+                    <p>低レイテンシメディア向け設計で、パケットロス、クロックドリフト、接続変化があっても動作を継続。パケット遅延時は音声をわずかに引き伸ばしてギャップを防ぎ、その後短時間再生を加速してリアルタイムに追いつく</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stateful Conversation -->
+        <section class="section">
+            <h2 class="section-title">ステートフルな会話の維持 — ハンドオフ機構</h2>
+            <p class="lead-text">音声セッションは長時間アクティブなまま維持される一方、コンテキストは継続的に増大し、モデルインスタンスは需要に応じて起動・停止する。これに対処するため、モデルインスタンス間のシームレスなハンドオフ機構を構築した。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+sequenceDiagram
+    participant U as ユーザー
+    participant A as モデルインスタンス A
+    participant B as モデルインスタンス B (代替)
+
+    U->>A: 音声ストリーム (会話継続中)
+    Note over B: ウォームアップ開始
+    Note over B: 圧縮済みコンテキストをプリフィル
+    U->>A: 会話は中断されない
+    U->>B: 並列に推論を実行
+    Note over A,B: B の準備完了後に切り替え
+    U->>B: メディアを中断せずカットオーバー
+                </pre>
+            </div>
+            <ul class="detail-list">
+                <li><strong>並行ウォームアップ</strong>: 移行が必要な場合、既存インスタンスと並行して代替インスタンスをウォームアップし、現在のセッションコンテキストをプリフィル。両方に対して並列に推論を実行し、新インスタンスの準備完了時点で切り替える</li>
+                <li><strong>動的コンテキスト圧縮 (compaction) の課題</strong>: 会話が長引くとコンテキストがモデルの上限を超え得るが、圧縮は時間がかかる操作であり、過去のコンテキストを変更するため KV キャッシュ (過去に処理したトークンのアテンションのキーと値) を無効化してしまう</li>
+                <li><strong>解決策</strong>: 圧縮を<span class="highlight">管理された移行の一種</span>として扱う。元のインスタンスが会話を続ける間にコンテキストを圧縮し、新しいコンテキストで代替インスタンスを準備。メディアを中断せず切り替えられるため、長時間の通話でも必要に応じて圧縮を実行できる</li>
+            </ul>
+        </section>
+
+        <!-- Delegation -->
+        <section class="section">
+            <h2 class="section-title">会話をブロックしない委譲</h2>
+            <p class="lead-text">GPT-Live は「話す」ことと深く「考える」ことを分離する 2 モデルアーキテクチャを採用。これを 1 つのシステムのように感じさせるために 2 つの課題を解決した。</p>
+
+            <h3 class="section-subtitle">① 委譲の高速化</h3>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="flow-step-num">1</div>
+                    <p><strong>推論セッションの事前作成</strong>: 音声セッション開始時に、アプリケーションサーバーがフロンティアモデル用の推論セッションを作成し、初期の会話コンテキストをプリフィル。最初の委譲リクエスト前にプロンプト処理を完了させておく</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-num">2</div>
+                    <p><strong>セッションアフィニティの維持</strong>: 推論セッションを音声会話の間維持し、連続するリクエストに安定したアフィニティを使用。プロンプトキャッシングと組み合わせてレイテンシを改善しつつ、ワーカー障害からの復旧も容易に保つ</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-num">3</div>
+                    <p><strong>パラメータ調整</strong>: 推論の強度 (reasoning effort)、出力上限、ツールスキーマ、モデルとツール間のラウンドトリップを調整し、会話が有用な結果をより早く受け取れるようにした</p>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">② 連続音声からの離散ターンの導出</h3>
+            <ul class="detail-list">
+                <li><strong>ターンへの分解</strong>: ChatGPT の会話 UI や分析・安全性インフラの一部はユーザーとアシスタントのターンを前提とするため、アプリケーションサーバーが重なり合う曖昧な会話を離散的なメッセージに分解する</li>
+                <li><strong>発話権 (floor) の推定</strong>: 部分的な文字起こしとタイミング信号を使ってどの話者が発話権を持つかを推定し、メッセージのキューを構築。最新メッセージは暫定的で、テキスト、タイミング、話者の割り当てはすべて変わり得る</li>
+                <li><strong>話者の重なりへの対応</strong>: ユーザー発話中のアシスタントの短い相槌 ("mm hmm" や "okay" など) は独立したメッセージにせず、実質的な割り込みはメッセージにする</li>
+            </ul>
+            <div class="callout">
+                💡 システムは会話の 2 つのビューを維持する。現在の状態の<strong>投機的ビュー</strong> (UI 表示用) と、発話内容の<strong>確定的な記録</strong> (分析パイプラインのログ用) である。
+            </div>
+        </section>
+
+        <!-- Protocol -->
+        <section class="section">
+            <h2 class="section-title">より高速なプロトコルによるセッション開始</h2>
+            <p class="lead-text">応答性はユーザーがボタンをクリックした瞬間から始まる。標準的な WebRTC セッションの開始には多数のプロトコルハンドシェイクとネットワークラウンドトリップが必要で、QUIC のようなラウンドトリップ最小化を重視する後発プロトコル以前の設計であるため、プロトコル間で処理が重複することがあった (例: 各プロトコルが独自の anti-DoS 機構を持つ)。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📜 WARP</h3>
+                    <p>WebRTC コミュニティの協力者とともに<span class="highlight">オープン仕様のセット</span>として設計。IETF の TSVWG ワーキンググループで提案を進めており、libwebrtc と Pion には既に WARP サポートが追加され、他の WebRTC 実装でも対応が進行中</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ Instant Connect</h3>
+                    <p>WebRTC 接続前に SDP パラメータを共有するシグナリング交換を<span class="highlight">クリティカルパスから除去</span>。サーバー容量を予約せず、既存の WebRTC 実装を変更せずにパラメータを事前ネゴシエート。有効なら最初のメディアパケット到着時にサーバーがセッションを実体化し、無効なら進行中の標準シグナリングフローに追加レイテンシなしでフォールバック</p>
+                </div>
+            </div>
+            <div class="callout">
+                🚀 Instant Connect と WARP により、SDP 交換をクリティカルパスから外し、トランスポートハンドシェイクを集約した結果、クライアントは<strong>単一の UDP パケット</strong>でセッションを開始できるようになった。
+            </div>
+        </section>
+
+        <!-- Production Testing -->
+        <section class="section">
+            <h2 class="section-title">実データによる本番環境での安全なテスト</h2>
+            <p class="lead-text">ユーザーへの提供前に、本番の ChatGPT Voice セッションの一部を徐々に増やしながら、既存の Advanced Voice Mode と新システムの両方にルーティングするサイレントテストを実施。Advanced Voice Mode が通常通りユーザーにサービスを提供する一方、シャドウパスは読み取り専用モードで推論を実行し、ユーザーが聞く内容を変えることなく、実際のクライアント、ネットワーク、セッション長、地理的分布にシステムをさらした。</p>
+            <div class="lesson-card">
+                <h4>📊 教訓 1: キャパシティは GPU スループットに還元できない</h4>
+                <p>音声セッションは開いたままフレームを送信し続けるため、CPU 側のストリームハンドラ、キュー、ネットワークパスも推論と並行してスケールが必要。実負荷下ではサポートコンポーネントが負荷テストの予測より早く飽和し、推論リクエストの蓄積とレイテンシの複合的悪化を引き起こした。問いを「GPU が何リクエストを処理できるか」から「すべてのフレームをスケジュール通りに保ちながら何セッションを同時に維持できるか」に変更した。</p>
+            </div>
+            <div class="lesson-card">
+                <h4>🌍 教訓 2: 地理が第一級の関心事</h4>
+                <p>遠隔のキャパシティへのルーティングは起動時とストリーミング中の複数の時点で遅延を追加する。モデルのロールアウトをリージョンのキャパシティやトラフィックステアリング設定と合わせて検証し、レイテンシを送信元の地理ごとに分解するようにした。</p>
+            </div>
+            <div class="lesson-card">
+                <h4>🔍 教訓 3: 現実的なセッションライフサイクルでのみ現れる障害</h4>
+                <p>長時間セッションはメモリと永続化の圧力を露呈し、再接続は圧縮と状態復元を試し、通常のクライアント切断はシャットダウンハンドシェイクの競合を明らかにした。</p>
+            </div>
+            <div class="lesson-card">
+                <h4>📈 教訓 4: 可観測性とロールアウト制御の改善</h4>
+                <p>異なるレイテンシ源を混同するメトリクスや、不健全な個別エンジンを隠す集約ダッシュボード、テスト済み構成とデプロイ済み構成のドリフトが見つかった。より粒度の細かいテレメトリ、既知の正常構成に対する検証、段階的ランプ、個別パスの迅速な分離・無効化機能を追加した。</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響 / ユースケース</h2>
+            <div class="use-case">
+                <h4>🔮 GPT-Live API の予告</h4>
+                <p>この記事のアーキテクチャは今後提供予定の GPT-Live API の基盤となることが明言されており、Realtime API の後継として全二重・低レイテンシの音声体験を開発者が利用できるようになる見込み。</p>
+            </div>
+            <div class="use-case">
+                <h4>🌐 WARP のオープン仕様化</h4>
+                <p>WARP は IETF TSVWG で標準化が進められており、libwebrtc と Pion に既にサポートが追加されている。WebRTC ベースのリアルタイムアプリケーションを構築する開発者は、この最適化の恩恵を受けられる可能性がある。</p>
+            </div>
+            <div class="use-case">
+                <h4>🏗️ リアルタイムシステム設計の知見</h4>
+                <p>メディアパスとアプリケーションロジックの分離、Go による低ジッタ実装 (p95 が旧 p50 に匹敵)、ハンドオフによる無停止コンテキスト圧縮、シャドウトラフィックによる本番テストなど、音声 AI に限らずレイテンシ重視のシステム設計全般に応用できるパターンが示されている。</p>
+            </div>
+            <div class="use-case">
+                <h4>💬 ChatGPT Voice の機能拡張</h4>
+                <p>このアーキテクチャは、ChatGPT デスクトップアプリでのコンピュータ操作やエージェントのコーディネーションといった新機能を支えている。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="summary-box">
+            <h2>📝 まとめ</h2>
+            <p>GPT-Live は<span class="accent">「音声は流れ続けなければならない」</span>という原則のもとに構築された第 3 世代音声システムである。全二重音声モデルによるターン検出器の排除、Go 実装の専用メディアパス、ハンドオフ機構による無停止のコンテキスト圧縮、GPT-5.5 への非同期委譲、WARP と Instant Connect による単一 UDP パケットでのセッション開始という各レイヤーの最適化により、人間の会話に期待される<span class="accent">サブ秒の応答性</span>を大規模に実現した。このアーキテクチャは ChatGPT Voice のエージェント連携機能を支えており、今後の GPT-Live API の基盤にもなる。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/continuous-voice-interaction-with-gpt-live" target="_blank" rel="noopener noreferrer">https://openai.com/index/continuous-voice-interaction-with-gpt-live</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📄 <a href="https://openai.com/index/introducing-gpt-live/" target="_blank" rel="noopener noreferrer">Introducing GPT-Live (GPT-Live 発表記事)</a></li>
+                <li>📄 <a href="https://openai.com/index/delivering-low-latency-voice-ai-at-scale/" target="_blank" rel="noopener noreferrer">Delivering low-latency voice AI at scale (先行する音声インフラ再構築の記事)</a></li>
+                <li>📚 <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></li>
+                <li>📰 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

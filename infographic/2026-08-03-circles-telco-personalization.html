@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circles、OpenAI 技術で通信事業のパーソナライゼーションを実現 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section .lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Company Profile */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .profile-item {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: center;
+        }
+
+        .profile-item .profile-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .profile-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--openai-dark);
+        }
+
+        .profile-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card .highlight {
+            display: inline-block;
+            background: rgba(16, 163, 127, 0.12);
+            color: var(--openai-green);
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 8px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .comparison-card li {
+            margin-bottom: 8px;
+            padding-left: 22px;
+            position: relative;
+        }
+
+        .comparison-card.before li::before {
+            content: '✕';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-note {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 6px;
+        }
+
+        /* Autonomy Progress */
+        .progress-steps {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1fr;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .progress-step {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .progress-step.current {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .progress-step.goal {
+            background: var(--gradient-header);
+            color: white;
+            border: 2px dashed var(--openai-green);
+        }
+
+        .progress-step .step-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .progress-step.goal .step-value {
+            color: var(--openai-green);
+        }
+
+        .progress-step .step-label {
+            font-size: 12px;
+        }
+
+        .progress-arrow {
+            font-size: 20px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .progress-steps {
+                grid-template-columns: 1fr;
+            }
+            .progress-arrow {
+                text-align: center;
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Quote */
+        .quote-card {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 16px 16px 0;
+            padding: 24px 28px;
+        }
+
+        .quote-card .quote-mark {
+            font-size: 2rem;
+            color: var(--openai-green);
+            line-height: 1;
+        }
+
+        .quote-card p.quote-en {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .quote-card p.quote-ja {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .quote-card .quote-author {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-dark);
+            text-align: right;
+        }
+
+        /* Governance List */
+        .governance-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .governance-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+
+        .governance-item .gov-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .governance-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .governance-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .stats-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .stats-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .stats-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .stats-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .stats-table td.metric-value {
+            color: var(--openai-green);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mermaid-note {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Outlook */
+        .outlook-card {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(29, 183, 145, 0.05) 100%);
+            border: 2px dashed var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .outlook-card ul {
+            list-style: none;
+        }
+
+        .outlook-card li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            padding-left: 28px;
+            position: relative;
+        }
+
+        .outlook-card li::before {
+            content: '🔭';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Summary */
+        .summary-card {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .summary-card strong {
+            color: var(--openai-green);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">導入事例 (Customer Story)</span>
+                <h1>Circles、OpenAI 技術で通信事業のパーソナライゼーションを実現</h1>
+                <p class="subtitle">ARPU 22% 向上・解約率 9% 削減 — AI ネイティブな通信事業スタックの構築</p>
+                <p class="date">📅 2026-08-03 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">シンガポール発のテクノロジー企業 Circles は、OpenAI API と Codex を活用して「AI ネイティブな通信事業スタック」を構築。サポート・パーソナライゼーション・オペレーション・マネタイゼーションをリアルタイムに連携させ、豊富な顧客シグナル (利用状況・請求・ネットワーク・位置情報) をタイムリーなアクションに変換するという通信業界の長年の課題を解決した。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">💬</div>
+                    <div class="key-point-content">
+                        <h3>AI Concierge — 対話型インターフェース</h3>
+                        <p>OpenAI API プラットフォームを基盤に、検索・アカウント管理・サポート・レコメンデーションを単一の体験に統合。顧客のリアルタイムな文脈を理解して問題を解決する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>ARPU +22%・解約率 -9% (シンガポール)</h3>
+                        <p>AI パーソナライゼーションにより、ユーザー 1 人あたりの平均収益が 22% 向上し、解約率 (チャーン) が 9% 減少した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>CareX — 自律解決率 65% のマルチエージェント</h3>
+                        <p>AI Concierge を支えるマルチエージェントアーキテクチャ「CareX」は、カスタマーサポートで 65% の自律解決率を達成している。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>Codex で開発効率 +29%</h3>
+                        <p>社内開発でも Codex を活用し、設計・コーディング支援・テストの加速により開発効率が 29% 向上した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>ガバナンスを中核に据えた設計</h3>
+                        <p>PII 暗号化・スコープ限定アクセス・段階的ロールアウトなど、規制産業での大規模 AI 運用に必要な統制を実装している。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Company Profile -->
+        <section class="section">
+            <h2 class="section-title">Circles について</h2>
+            <div class="profile-grid">
+                <div class="profile-item">
+                    <div class="profile-icon">🏢</div>
+                    <h4>2014 年創業</h4>
+                    <p>シンガポール発のテクノロジー企業</p>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-icon">☁️</div>
+                    <h4>SaaS プラットフォーム</h4>
+                    <p>デジタル通信事業者の AI 活用型 CX の立ち上げ・運営を支援</p>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-icon">📱</div>
+                    <h4>Circles.Life</h4>
+                    <p>シンガポールで自社コンシューマー向け通信事業も運営</p>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-icon">🌏</div>
+                    <h4>6 大陸・14 か国</h4>
+                    <p>世界の通信事業者と協業</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After — 通信サポート体験の再構築</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 従来の受動的サポート</h4>
+                    <ul>
+                        <li>顧客がメニューを辿る必要がある</li>
+                        <li>情報を何度も繰り返し伝える</li>
+                        <li>問題発生後に対応を待つ</li>
+                        <li>画一的なキャンペーン配信</li>
+                        <li>単純な回答のみの従来型チャットボット</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: AI Concierge による能動的体験</h4>
+                    <ul>
+                        <li>検索・アカウント管理・サポート・推奨を単一体験に統合</li>
+                        <li>リアルタイムな文脈 (ローミング閲覧中・請求調査中など) を理解</li>
+                        <li>適切なスペシャリストエージェントへ自動ルーティング</li>
+                        <li>ハイパーパーソナライズされたレコメンデーション</li>
+                        <li>「理解し、行動し、解決する」エージェント設計</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る導入成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">+22%</div>
+                    <div class="stat-label">ARPU 向上</div>
+                    <div class="stat-note">プランアップグレード・アドオン増 (シンガポール)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">-9%</div>
+                    <div class="stat-label">解約率 (チャーン) 低下</div>
+                    <div class="stat-note">タイムリーなレコメンデーションによる</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">65%</div>
+                    <div class="stat-label">自律解決率 (現在)</div>
+                    <div class="stat-note">CareX、人間の介入なし</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">+29%</div>
+                    <div class="stat-label">開発効率向上</div>
+                    <div class="stat-note">Codex による設計・コーディング・テスト</div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 700; margin-top: 28px; margin-bottom: 4px;">📊 自律解決率のロードマップ</h3>
+            <div class="progress-steps">
+                <div class="progress-step">
+                    <div class="step-value">55%</div>
+                    <div class="step-label">初期導入 (ある事業者の最初の 1 週間)</div>
+                </div>
+                <div class="progress-arrow">➜</div>
+                <div class="progress-step current">
+                    <div class="step-value">65%</div>
+                    <div class="step-label">現在 (対応ワークフローのカスタマーサービス)</div>
+                </div>
+                <div class="progress-arrow">➜</div>
+                <div class="progress-step goal">
+                    <div class="step-value">95%</div>
+                    <div class="step-label">目標 (テキスト + リアルタイム音声を含む全体)</div>
+                </div>
+            </div>
+
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>指標</th>
+                        <th>成果</th>
+                        <th>対象・条件</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ARPU</td>
+                        <td class="metric-value">+22%</td>
+                        <td>シンガポール、AI レコメンデーション受領グループとの比較 (プランアップグレード・アドオン増)</td>
+                    </tr>
+                    <tr>
+                        <td>解約率 (チャーン)</td>
+                        <td class="metric-value">-9%</td>
+                        <td>シンガポール、タイムリーなレコメンデーションによる</td>
+                    </tr>
+                    <tr>
+                        <td>自律解決率 (現在)</td>
+                        <td class="metric-value">65%</td>
+                        <td>CareX、対応ワークフローのカスタマーサービス (人間の介入なし)</td>
+                    </tr>
+                    <tr>
+                        <td>自律解決率 (初期導入)</td>
+                        <td class="metric-value">55%</td>
+                        <td>ある事業者における導入後最初の 1 週間</td>
+                    </tr>
+                    <tr>
+                        <td>自律解決率 (目標)</td>
+                        <td class="metric-value">95%</td>
+                        <td>テキスト・音声を含むワークフロー全体</td>
+                    </tr>
+                    <tr>
+                        <td>開発効率</td>
+                        <td class="metric-value">+29%</td>
+                        <td>Codex による設計・コーディング支援・ユニットテスト</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主要コンポーネント</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>💬 AI Concierge</h3>
+                    <p>OpenAI API 上に構築された対話型インターフェース。検索、アカウント管理、サポート、パーソナライズされたレコメンデーションを単一の体験に統合。顧客のリアルタイムな文脈を理解し、適切なスペシャリストエージェントへルーティングして、情報の繰り返しなしに問題を解決する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 CareX (マルチエージェント)</h3>
+                    <p>顧客の履歴と現在のアクティビティを理解する<span class="highlight">オーケストレーションエージェント</span>と、請求・サブスクリプション・ネットワーク管理・アカウントサービスを担う<span class="highlight">スペシャリストエージェント</span>を組み合わせ。エージェントは解決に必要な情報のみを受け取り、必要に応じて完全な文脈を添えて人間へエスカレーションする。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 Xplore IQ (パーソナライゼーション)</h3>
+                    <p>OpenAI API 上に構築された AI パーソナライゼーションエンジン。顧客の行動・アカウント履歴・リアルタイムシグナルを組み合わせ、ローミングパックやプランアップグレードの推奨からチャーン防止まで、最も関連性の高い「次のアクション」を特定。効果は AI 群と非 AI 群の比較で測定された。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ Codex (社内開発)</h3>
+                    <p>エンジニアリング・情報セキュリティ (infosec)・インシデント管理の各チームが、設計・コーディング支援・テストの加速に Codex を活用。検証と最終レビューはスペシャリストが責任を持つ体制を維持しつつ、開発効率を <span class="highlight">29% 向上</span>させ、エンジニアが付加価値の高いイノベーションに集中できるようにした。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ ガバナンスレイヤー</h3>
+                    <p>顧客情報がモデルレイヤーに到達する前に自動制御を適用。LLM に渡す前に<span class="highlight">個人識別情報 (PII) を特定・暗号化</span>し、スペシャリストエージェントには特定タスクに必要な情報への<span class="highlight">スコープ限定アクセス</span>のみを付与する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote -->
+        <section class="section">
+            <h2 class="section-title">キーパーソンの声</h2>
+            <div class="quote-card">
+                <div class="quote-mark">❝</div>
+                <p class="quote-en">"AI should empower users, not force-fit them into outdated journeys. OpenAI's role has been critical in enabling Circles to scale this vision globally. With the AI concierge, we are moving beyond providing simple answers to delivering real-world outcomes, along with balancing cost and latency to maximize value for operators and customers alike."</p>
+                <p class="quote-ja">AI はユーザーに力を与えるべきであり、時代遅れの体験に無理に押し込めるものではありません。このビジョンをグローバルに拡大するうえで、OpenAI の役割は極めて重要でした。AI Concierge により、単純な回答の提供を超えて現実世界の成果を届けるとともに、コストとレイテンシのバランスを取り、事業者と顧客双方の価値を最大化しています。</p>
+                <p class="quote-author">— Awais Malik 氏 (Circles、Global Chief Growth Officer)</p>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="lead">記事の内容に基づく Circles の AI ネイティブ通信スタックの構成。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    User(["顧客"]) --> Concierge["AI Concierge<br/>(対話型インターフェース)"]
+
+    subgraph Stack["Circles AI ネイティブ通信スタック"]
+        subgraph CareX["CareX (マルチエージェントアーキテクチャ)"]
+            Orch["オーケストレーション<br/>エージェント"]
+            Billing["請求"]
+            Subs["サブスクリプション"]
+            Network["ネットワーク管理"]
+            Account["アカウントサービス"]
+        end
+        XploreIQ["Xplore IQ<br/>(パーソナライゼーションエンジン)"]
+        Gov["ガバナンスレイヤー<br/>(PII 暗号化・スコープ限定アクセス)"]
+    end
+
+    subgraph OpenAI["OpenAI API プラットフォーム"]
+        Models["LLM"]
+    end
+
+    Concierge --> Orch
+    Orch --> Billing
+    Orch --> Subs
+    Orch --> Network
+    Orch --> Account
+    Concierge --> XploreIQ
+    Gov --> Models
+    CareX --> Gov
+    XploreIQ --> Gov
+    Orch -. "エスカレーション<br/>(全文脈を添付)" .-> Human(["人間のエージェント"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Models openai
+    class Concierge,Orch,XploreIQ dark
+                </pre>
+            </div>
+            <p class="mermaid-note">※ 社内開発では、これとは別に Codex がエンジニアリング・情報セキュリティ・インシデント管理チームの設計、コーディング支援、ユニットテストに活用されている。</p>
+        </section>
+
+        <!-- Governance -->
+        <section class="section">
+            <h2 class="section-title">ガバナンスの重視</h2>
+            <p class="lead">通信事業者向けの AI 構築には、顧客と事業者双方を守るセーフガードが必要となる。</p>
+            <div class="governance-list">
+                <div class="governance-item">
+                    <div class="gov-icon">🔐</div>
+                    <div>
+                        <h4>PII の特定・暗号化</h4>
+                        <p>顧客情報がモデルレイヤーに到達する前に自動制御を適用し、LLM に渡す前に個人識別情報を特定・暗号化する</p>
+                    </div>
+                </div>
+                <div class="governance-item">
+                    <div class="gov-icon">🎚️</div>
+                    <div>
+                        <h4>スコープ限定アクセス</h4>
+                        <p>スペシャリストエージェントには、顧客プロファイル全体への無制限アクセスではなく、特定の解決タスクに必要な情報のみを付与</p>
+                    </div>
+                </div>
+                <div class="governance-item">
+                    <div class="gov-icon">🙋</div>
+                    <div>
+                        <h4>人間へのエスカレーションパス</h4>
+                        <p>AI エージェントは必要に応じて、完全な文脈を添えて人間のエージェントへシームレスにエスカレーション</p>
+                    </div>
+                </div>
+                <div class="governance-item">
+                    <div class="gov-icon">🚦</div>
+                    <div>
+                        <h4>運用コントロール</h4>
+                        <p>段階的ロールアウト、レート制限、ロールバックメカニズム、商用セーフガードにより、通信環境全体への拡大時も統制を維持</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者・企業への影響</h2>
+            <div class="use-case">
+                <h4>🧩 マルチエージェント設計の実例</h4>
+                <p>顧客履歴を理解するオーケストレーションエージェントとドメイン特化のスペシャリストエージェントを組み合わせる構成は、大規模なカスタマーサポート自動化の参考パターンとなる。</p>
+            </div>
+            <div class="use-case">
+                <h4>📏 効果測定の手法</h4>
+                <p>AI レコメンデーションを受けたグループと受けていないグループの比較により ARPU +22%、解約率 -9% を測定しており、AI 施策の ROI を定量評価する好例となっている。</p>
+            </div>
+            <div class="use-case">
+                <h4>📶 段階的な自律化</h4>
+                <p>初週 55% から現在 65%、目標 95% という段階的な自律解決率の向上は、人間へのエスカレーションを維持しながら AI の対応範囲を広げるアプローチを示している。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ ガバナンス設計</h4>
+                <p>LLM へ渡す前の PII 特定・暗号化、エージェントへのスコープ限定アクセス、段階的ロールアウト、レート制限、ロールバックといった規制産業での AI 運用に必要な統制の実装例を提供している。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚙️ Codex の社内活用</h4>
+                <p>顧客向け製品と並行して開発チームの生産性向上 (+29%) に Codex を使う、二面的な AI 活用モデルを示している。</p>
+            </div>
+        </section>
+
+        <!-- Outlook -->
+        <section class="section">
+            <h2 class="section-title">今後の展望</h2>
+            <div class="outlook-card">
+                <ul>
+                    <li>OpenAI とともに AI ネイティブ通信スタックの拡張を継続し、<strong>CareX のオブザーバビリティ強化</strong>を推進</li>
+                    <li>顧客とのやり取りをより自然でアクセスしやすくする<strong>リアルタイム音声サポート</strong>の導入を計画 (テキスト + 音声で自律解決率 95% を目標)</li>
+                    <li>長期的には、従来のアプリナビゲーションを超えた<strong>対話型で文脈を理解する通信体験</strong>を構想し、事業者の能動的でパーソナライズされた顧客エンゲージメントを支援</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-card">
+                <p>Circles は OpenAI API を基盤に、マルチエージェントアーキテクチャ「<strong>CareX</strong>」とパーソナライゼーションエンジン「<strong>Xplore IQ</strong>」からなる AI ネイティブな通信スタックを構築し、シンガポールで <strong>ARPU +22%</strong>、<strong>解約率 -9%</strong>、カスタマーサポートの <strong>65% 自律解決</strong>という定量的な成果を実証した。社内では <strong>Codex</strong> により開発効率を <strong>29% 向上</strong>させ、PII 暗号化やスコープ限定アクセスなどのガバナンスを中核に据えた設計は、規制産業における大規模 AI 導入のモデルケースとなっている。今後はリアルタイム音声サポートの導入により、ワークフロー全体で <strong>95% の自律解決</strong>を目指す。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/circles" target="_blank" rel="noopener noreferrer">https://openai.com/index/circles</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📄 <a href="https://openai.com/index/circles" target="_blank" rel="noopener noreferrer">Circles powers telco personalization with OpenAI technology (OpenAI 公式)</a></li>
+                <li>🔧 <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI API プラットフォーム</a></li>
+                <li>⚡ <a href="https://openai.com/codex/" target="_blank" rel="noopener noreferrer">Codex</a></li>
+                <li>🏢 <a href="https://circles.co" target="_blank" rel="noopener noreferrer">Circles 公式サイト</a></li>
+                <li>📰 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+            <p style="margin-top: 12px;">発表日: 2026-08-03 | カテゴリ: 導入事例 (Customer Story) | ソース: OpenAI News</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
