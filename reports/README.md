@@ -5,8 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-04](2026/2026-08-04-third-party-cyber-evaluations-openai-models.md) - 第三者によるサイバーセキュリティ評価に関する OpenAI モデルのインシデントと新たな安全策
+- [2026-08-04](2026/2026-08-04-learn-teach-chatgpt-work-codex.md) - New Ways to Learn and Teach with ChatGPT Work and Codex: 教育向け新プラグインの発表
 - [2026-08-03](2026/2026-08-03-continuous-voice-interaction-with-gpt-live.md) - GPT-Live: 応答性の高い音声 AI を実現するリアルタイムシステムを 6 か月で構築
 - [2026-08-03](2026/2026-08-03-circles-telco-personalization.md) - Circles、OpenAI 技術で通信事業のパーソナライゼーションを実現 — ARPU 22% 向上・解約率 9% 削減
+- [2026-08-03](2026/2026-08-03-apple-is-getting-this-wrong.md) - Apple is getting this wrong: Apple の訴訟に対する OpenAI の公式反論
 - [2026-08-01](2026/2026-08-01-ten-advances-in-mathematics.md) - Ten advances in mathematics and theoretical computer science: 数学・理論計算機科学における 10 の進展
 - [2026-07-31](2026/2026-07-31-unive-ai-ready-workforce.md) - Univé が AI 対応の人材を育成: ChatGPT Enterprise によるリーダーシップとガバナンスの融合
 - [2026-07-31](2026/2026-07-31-disrupting-criminal-scam-operation.md) - 犯罪的詐欺組織の摘発: カンボジア拠点の詐欺ネットワークによる ChatGPT 悪用を阻止
