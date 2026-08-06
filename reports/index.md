@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-05](2026/2026-08-05-fast-mode-long-context-support.md) - Fast mode が GPT-5.6 Sol / Terra / Luna の長文コンテキスト (272K トークン超) に対応
+- [2026-08-04](2026/2026-08-04-usage-costs-api-key-filtering.md) - Usage・Costs ダッシュボードが API キー単位のフィルタリングとグルーピングに対応
 - [2026-08-04](2026/2026-08-04-third-party-cyber-evaluations-openai-models.md) - 第三者によるサイバーセキュリティ評価に関する OpenAI モデルのインシデントと新たな安全策
 - [2026-08-04](2026/2026-08-04-learn-teach-chatgpt-work-codex.md) - New Ways to Learn and Teach with ChatGPT Work and Codex: 教育向け新プラグインの発表
 - [2026-08-03](2026/2026-08-03-continuous-voice-interaction-with-gpt-live.md) - GPT-Live: 応答性の高い音声 AI を実現するリアルタイムシステムを 6 か月で構築

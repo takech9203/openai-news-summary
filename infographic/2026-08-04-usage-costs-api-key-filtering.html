@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usage・Costs ダッシュボードが API キー単位のフィルタリングとグルーピングに対応 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap');
+
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote {
+            background: var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Tech Details */
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .api-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .api-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .api-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .api-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .api-table code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            background: var(--openai-gray);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        .note {
+            background: #FEF3C7;
+            border-left: 4px solid var(--warning);
+            padding: 14px 18px;
+            border-radius: 0 12px 12px 0;
+            font-size: 13px;
+            color: #92400E;
+            margin-top: 16px;
+        }
+
+        .note a {
+            color: #B45309;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .api-table {
+                font-size: 12px;
+            }
+
+            .api-table th,
+            .api-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <span class="category-badge">ダッシュボード機能</span>
+                <h1>Usage・Costs ダッシュボードが API キー単位のフィルタリングとグルーピングに対応</h1>
+                <p class="date">発表日: 2026-08-04 | ソース: OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-lead">OpenAI は 2026 年 8 月 4 日、API Changelog にて Usage・Costs ダッシュボードの機能強化を発表。API キー単位でのデータのフィルタリングとグルーピングが GUI と API の両方で可能になった。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>ダッシュボードで API キー単位の分析</h3>
+                        <p>組織の Usage ダッシュボードおよび Costs ダッシュボードで、API キーによるデータのフィルタリングとグルーピングが可能になった</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔌</div>
+                    <div class="key-point-content">
+                        <h3>Usage API / Costs API もディメンション対応</h3>
+                        <p>プログラムからのレポート作成・分析を目的とした Usage API と Costs API でも、API キーというディメンション (集計軸) がサポートされた</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🗂️</div>
+                    <div class="key-point-content">
+                        <h3>キー単位でコストの内訳を把握</h3>
+                        <p>複数の API キーを用途別・チーム別・アプリケーション別に発行して運用している組織では、キー単位での使用量とコストの内訳を GUI と API の両方から把握できる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">✅</div>
+                    <div class="key-point-content">
+                        <h3>既存コードへの影響なし</h3>
+                        <p>推論系 API (Responses API や Chat Completions API など) の呼び出し方法に変更はなく、レポーティング側の機能追加のみ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <p>Usage・Costs ダッシュボードでは API キー単位での絞り込み・比較ができず、キーごとの使用量とコストの内訳を直接確認できなかった</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <p>ダッシュボードで API キーによるフィルタリング・グルーピングが可能に。Usage API / Costs API でも API キーディメンションでプログラマティックに集計できる</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔍 フィルタリング</h3>
+                    <p>特定の API キーに絞り込んで使用量やコストを表示できる。<a href="https://platform.openai.com/settings/organization/usage" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">Usage・Costs ダッシュボード</a>から利用可能</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 グルーピング</h3>
+                    <p>API キーごとにデータを分割して比較できる。どのキーがどれだけの使用量・コストを発生させているかを一目で確認</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 Usage API のキーディメンション</h3>
+                    <p>プログラムから使用量を取得する Usage API で API キーのディメンションをサポート。レポート作成・分析に活用できる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 Costs API のキーディメンション</h3>
+                    <p>コストデータを取得する Costs API でも API キー単位の集計に対応。社内のコスト管理ツールや BI ダッシュボードに組み込める</p>
+                </div>
+            </div>
+            <div class="quote">
+                Changelog 原文: "Customers can now filter and group data by API key in the Usage and Costs dashboards. The Usage API and Costs API also support the API key dimension for programmatic reporting and analysis."
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Org["組織 (複数の API キーを運用)"]
+        KeyA["API キー A<br/>(本番アプリ)"]
+        KeyB["API キー B<br/>(社内ツール)"]
+        KeyC["API キー C<br/>(検証環境)"]
+    end
+
+    subgraph Platform["OpenAI Platform"]
+        Meter["使用量・コスト計測"]
+        subgraph Reporting["レポーティング"]
+            Dashboard["Usage / Costs ダッシュボード<br/>API キーでフィルタ・グルーピング"]
+            UsageAPI["Usage API"]
+            CostsAPI["Costs API"]
+        end
+    end
+
+    subgraph Consumer["利用者"]
+        Admin["管理者 (GUI)"]
+        BI["社内 BI / コスト管理ツール"]
+    end
+
+    KeyA --> Meter
+    KeyB --> Meter
+    KeyC --> Meter
+    Meter --> Dashboard
+    Meter --> UsageAPI
+    Meter --> CostsAPI
+    Dashboard --> Admin
+    UsageAPI -->|"API キーディメンション"| BI
+    CostsAPI -->|"API キーディメンション"| BI
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Dashboard,UsageAPI,CostsAPI openai
+    class Meter dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Tech Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <p class="section-lead">Usage API と Costs API は、組織の管理者向けに提供される Admin API の一部であり、Admin API キー (<code style="font-family: monospace; background: var(--openai-gray); padding: 2px 6px; border-radius: 4px;">sk-admin-...</code>) で認証してアクセスする。</p>
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th>API</th>
+                        <th>エンドポイント</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Usage API</strong></td>
+                        <td><code>GET /v1/organization/usage/{endpoint}</code></td>
+                        <td>トークン数やリクエスト数などの使用量データを時間バケット単位で取得 (例: <code>completions</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Costs API</strong></td>
+                        <td><code>GET /v1/organization/costs</code></td>
+                        <td>日次のコストデータを取得</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th>パラメータ</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>api_key_ids</code></td>
+                        <td>API キーによる絞り込み (フィルタリング)</td>
+                    </tr>
+                    <tr>
+                        <td><code>group_by=api_key_id</code></td>
+                        <td>API キー単位の集計 (グルーピング)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="note">
+                注意: Changelog 本文には具体的なパラメータ仕様は記載されていないため、最新のパラメータ詳細は <a href="https://platform.openai.com/docs/api-reference/usage" target="_blank" rel="noopener noreferrer">API リファレンス</a>を参照
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">API キーごとに使用量をグルーピングして取得 (curl)</span>
+                </div>
+                <pre><code class="language-bash">curl "https://api.openai.com/v1/organization/usage/completions?start_time=1754265600&bucket_width=1d&group_by=api_key_id" \
+  -H "Authorization: Bearer $OPENAI_ADMIN_KEY" \
+  -H "Content-Type: application/json"</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">特定の API キーに絞り込む例 (curl)</span>
+                </div>
+                <pre><code class="language-bash">curl "https://api.openai.com/v1/organization/usage/completions?start_time=1754265600&api_key_ids=key_abc123" \
+  -H "Authorization: Bearer $OPENAI_ADMIN_KEY" \
+  -H "Content-Type: application/json"</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">コストデータを API キー単位で集計</span>
+                </div>
+                <pre><code class="language-python">import requests
+
+ADMIN_KEY = "sk-admin-..."
+headers = {"Authorization": f"Bearer {ADMIN_KEY}"}
+
+response = requests.get(
+    "https://api.openai.com/v1/organization/costs",
+    headers=headers,
+    params={
+        "start_time": 1754265600,  # 集計開始時刻 (Unix 秒)
+        "group_by": "api_key_id",  # API キー単位でグルーピング
+    },
+)
+data = response.json()
+
+for bucket in data["data"]:
+    for result in bucket["results"]:
+        print(result)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>💡 キー単位のコスト可視化</h4>
+                <p>アプリケーションやチームごとに API キーを分けて発行していれば、どのキーがどれだけの使用量・コストを発生させているかをダッシュボード上で直接確認できる</p>
+            </div>
+            <div class="use-case">
+                <h4>🔄 チャージバック (コスト按分) の自動化</h4>
+                <p>Usage API / Costs API の API キーディメンションを使えば、部門別・プロダクト別のコスト按分レポートをプログラムで自動生成できる</p>
+            </div>
+            <div class="use-case">
+                <h4>🚨 異常検知への活用</h4>
+                <p>キー単位の使用量を定期的に取得することで、特定のキーの使用量急増 (漏えいや不具合の兆候) を早期に検出する仕組みを構築しやすくなる</p>
+            </div>
+            <div class="use-case">
+                <h4>🗝️ キー運用の設計指針</h4>
+                <p>用途ごとに API キーを分割して発行する運用が、そのままコスト管理の粒度になる。今後は「1 アプリケーション 1 キー」のような運用がより有効になる</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                2026 年 8 月 4 日の更新により、Usage・Costs ダッシュボードで API キー単位のフィルタリングとグルーピングが可能になり、Usage API / Costs API でも API キーディメンションによるプログラマティックなレポート作成に対応した。複数の API キーを運用する組織にとって、コストの内訳把握、チャージバックの自動化、使用量の異常検知が容易になる。推論系 API への影響はなく、既存コードの変更は不要である。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+                <li><a href="https://platform.openai.com/settings/organization/usage" target="_blank" rel="noopener noreferrer">Usage・Costs ダッシュボード</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference/usage" target="_blank" rel="noopener noreferrer">Usage API リファレンス</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference/admin-api-keys" target="_blank" rel="noopener noreferrer">Admin API キーについて</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
