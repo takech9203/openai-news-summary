@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-06](2026/2026-08-06-openai-apa-youth-mental-health.md) - 米国心理学会 (APA) と連携し、若者のメンタルヘルスと責任ある AI を推進
+- [2026-08-06](2026/2026-08-06-improving-gpt-5-6-sol-in-chatgpt.md) - Improving GPT‑5.6 Sol in ChatGPT—and expanding access to GPT-5.6 Luna for free users
+- [2026-08-06](2026/2026-08-06-how-the-world-is-putting-chatgpt-to-work.md) - From asking to doing: How the world is putting ChatGPT to work — 世界の ChatGPT 活用実態レポート
 - [2026-08-05](2026/2026-08-05-fast-mode-long-context-support.md) - Fast mode が GPT-5.6 Sol / Terra / Luna の長文コンテキスト (272K トークン超) に対応
 - [2026-08-04](2026/2026-08-04-usage-costs-api-key-filtering.md) - Usage・Costs ダッシュボードが API キー単位のフィルタリングとグルーピングに対応
 - [2026-08-04](2026/2026-08-04-third-party-cyber-evaluations-openai-models.md) - 第三者によるサイバーセキュリティ評価に関する OpenAI モデルのインシデントと新たな安全策
