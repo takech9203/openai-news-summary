@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-07](2026/2026-08-07-responding-next-frontier-critical-cyber-capabilities.md) - 重大なサイバー能力の新たなフロンティアへの対応: Astra の予備評価とセーフガード強化
+- [2026-08-07](2026/2026-08-07-hsp-gruppe.md) - HSP GRUPPE、ChatGPT Enterprise で税務アドバイザリーの AI 活用能力を構築 — 週次アクティブ利用率 84%・年間約 40,000 時間の追加キャパシティを試算
 - [2026-08-06](2026/2026-08-06-openai-apa-youth-mental-health.md) - 米国心理学会 (APA) と連携し、若者のメンタルヘルスと責任ある AI を推進
 - [2026-08-06](2026/2026-08-06-improving-gpt-5-6-sol-in-chatgpt.md) - Improving GPT‑5.6 Sol in ChatGPT—and expanding access to GPT-5.6 Luna for free users
 - [2026-08-06](2026/2026-08-06-how-the-world-is-putting-chatgpt-to-work.md) - From asking to doing: How the world is putting ChatGPT to work — 世界の ChatGPT 活用実態レポート
