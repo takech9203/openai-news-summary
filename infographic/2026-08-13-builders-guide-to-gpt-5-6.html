@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The builder's guide to GPT-5.6 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section p.lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Note Box */
+        .note-box {
+            background: #FFF7ED;
+            border: 2px dashed var(--warning);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: #92400E;
+            margin-top: 20px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .comparison-card ul li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .comparison-card.before ul li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Pricing Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .pricing-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .pricing-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .pricing-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .pricing-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .pricing-table tr td:first-child {
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Routing Pattern */
+        .routing-list {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .routing-list li {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .routing-list .model-tag {
+            background: var(--openai-green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Impact List */
+        .impact-list {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .impact-list li {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .impact-list li strong {
+            color: var(--openai-dark);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Applied AI</span>
+                <span class="category-badge" style="background: #3B82F6;">開発者向けガイド</span>
+                <h1>The builder's guide to GPT-5.6</h1>
+                <p class="subtitle">スタートアップのためのモデル選択と Responses API 活用ガイド — 賢いモデルルーティングと新 API 機能で、高速・低コストな AI エージェントを構築する</p>
+                <p class="date">📅 発表日: 2026-08-13 | ソース: OpenAI News (Applied AI)</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📘</div>
+                    <div class="key-point-content">
+                        <h3>スタートアップ向けの実践ガイド</h3>
+                        <p>OpenAI が 2026 年 8 月 13 日に公開。GPT-5.6 ファミリーで、より高速かつコスト効率の高い AI エージェントを構築するための設計判断を体系化する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧭</div>
+                    <div class="key-point-content">
+                        <h3>柱 1: 賢いモデル選択 (smarter model selection)</h3>
+                        <p>ワークフローのステップごとに Sol (計画・複雑な推論) / Terra (バランス) / Luna (大量処理) を割り当て、evals で継続的に最適化する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>柱 2: Responses API の新機能活用</h3>
+                        <p>Programmatic Tool Calling、Multi-agent Orchestration、Prompt Caching Controls、Fast mode でラウンドトリップ・レイテンシ・コストを削減する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>「成果の定義」から始める原則</h3>
+                        <p>リスク・エラーコスト・緊急性・規模に応じて、知能・速度・信頼性・コストの最適バランスはステップごとに変わる。evals で「追加の知能が効く箇所」を見極める</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>7 月の値下げが前提</h3>
+                        <p>2026 年 7 月 30 日の Luna 80%・Terra 20% 値下げと Fast mode 導入を受け、限られた資金でエージェントをスケールさせる「型」を提示する</p>
+                    </div>
+                </div>
+            </div>
+            <div class="note-box">
+                ⚠️ 注: レポート作成時点で記事本文の全文取得ができなかったため (Bot 保護による制限)、RSS 概要と GPT-5.6 に関する既報の公式発表 (2026-07-09 モデルファミリー発表、2026-07-30 料金改定と Fast mode 導入、2026-08-05 Fast mode 長文対応) に基づいて構成。個別の事例企業名や記事固有の数値は原文で確認のこと。
+            </div>
+        </section>
+
+        <!-- Model Selection -->
+        <section class="section">
+            <h2 class="section-title">賢いモデル選択: Sol / Terra / Luna の使い分け</h2>
+            <p class="lead">GPT-5.6 ファミリーは共通仕様 (1.05M トークンコンテキスト、128K トークン最大出力、6 段階の推論エフォート) を持ちながら、価格と知能のバランスが異なる 3 モデルで構成される。</p>
+            <div class="table-wrapper">
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>モデル</th>
+                            <th>位置づけ</th>
+                            <th>入力 (per 1M tokens)</th>
+                            <th>出力 (per 1M tokens)</th>
+                            <th>主な用途</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GPT-5.6 Sol</td>
+                            <td>フラッグシップ</td>
+                            <td>$5.00</td>
+                            <td>$30.00</td>
+                            <td>計画立案、複雑な推論、不確実性の解消</td>
+                        </tr>
+                        <tr>
+                            <td>GPT-5.6 Terra</td>
+                            <td>バランス型</td>
+                            <td>$2.00</td>
+                            <td>$12.00</td>
+                            <td>日常業務、チャットボット、コンテンツ生成</td>
+                        </tr>
+                        <tr>
+                            <td>GPT-5.6 Luna</td>
+                            <td>最速・最安</td>
+                            <td>$0.20</td>
+                            <td>$1.20</td>
+                            <td>大量処理、分類、仕様が明確な実装作業</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="lead">OpenAI が繰り返し強調するのは「AI を効率的に使うことは成果 (outcome) の定義から始まる」という原則。評価 (evals) を使って「追加の知能が結果を実質的に改善する箇所」と「より速く低コストな処理で同じ品質を出せる箇所」を見極めることが推奨される。</p>
+
+            <h3 class="section-subtitle">📊 数字で見る GPT-5.6 ファミリー</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1.05M</div>
+                    <div class="stat-label">トークンコンテキスト (共通仕様)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">128K</div>
+                    <div class="stat-label">最大出力トークン</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 6%</div>
+                    <div class="stat-label">Luna のコスト (1 年前のフロンティア級比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 9 倍</div>
+                    <div class="stat-label">Luna の速度 (同上比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">80%</div>
+                    <div class="stat-label">Luna 値下げ幅 (2026-07-30)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2.5 倍</div>
+                    <div class="stat-label">Fast mode の最大速度 (Standard 比)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: エージェント設計の変化</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <ul>
+                        <li>単一モデル前提の設計で、全ステップに同じ知能・コストを適用</li>
+                        <li>ツール協調ロジックはクライアント側で実装し、複数ラウンドトリップが発生</li>
+                        <li>大量処理のコストが高く、スタートアップにはスケールが難しい</li>
+                        <li>レイテンシ改善の手段が限られる</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <ul>
+                        <li>ステップごとに Sol / Terra / Luna をルーティングし evals で検証</li>
+                        <li>Programmatic Tool Calling と Multi-agent Orchestration で協調を API 側に寄せる</li>
+                        <li>Luna ($0.20 / $1.20) で大量処理を従来比 80% 安で運用</li>
+                        <li>対話パスのみ Fast mode (最大 2.5 倍高速) を選択適用</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">Responses API の新機能によるエージェント構築</h2>
+            <p class="lead">GPT-5.6 世代で Responses API に追加された機能群は、エージェントのレイテンシとコストを削減する上で中心的な役割を果たす。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔧 Programmatic Tool Calling</h3>
+                    <p>モデルが JavaScript を記述・実行して複数ツールを協調させ、並列実行・ループ・条件分岐を単一リクエスト内で処理。複数ラウンドトリップを排してレイテンシとトークン消費を削減する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤝 Multi-agent Orchestration (ベータ)</h3>
+                    <p>ルートエージェントがサブエージェントを並列に起動・協調 (spawn_agent、send_message など 6 アクション)。専門化したサブエージェントへの分割が API レベルでサポートされる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💾 Explicit Prompt Caching Controls</h3>
+                    <p>キャッシュ動作を明示的に制御し、ヒット率を最適化。キャッシュ入力は通常入力の 10 分の 1 の価格で、長いシステムプロンプトやツール定義を持つエージェントでは効果が大きい。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎚️ 推論の細粒度制御</h3>
+                    <p><code>reasoning.effort</code> (none〜max の 6 段階) と Pro モードにより、ステップの難易度に応じた推論リソース配分が可能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🚀 Fast mode</h3>
+                    <p><code>service_tier: "fast"</code> の指定で Standard 比最大 2.5 倍の速度 (価格 2 倍)。2026 年 8 月 5 日からは 272K トークン超の長文コンテキストにも対応。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: モデルルーティングの基本パターン</h2>
+            <p class="lead">コーディングエージェントを例にした、公式発表で示されている分担の型。</p>
+            <ul class="routing-list">
+                <li><span class="model-tag">Sol</span>不確実性の解消、計画立案 (必要なら <code>reasoning.effort: "high"</code> 以上)</li>
+                <li><span class="model-tag">Luna</span>仕様が明確な変更の実装、テストの作成・実行、結果の評価</li>
+            </ul>
+
+            <h3 class="section-subtitle">💻 コードサンプル</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">ステップごとにモデルを使い分けるエージェントの例 (Responses API)</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# ステップ 1: Sol で計画を立てる (高い推論エフォート)
+plan = client.responses.create(
+    model="gpt-5.6-sol",
+    input="このリポジトリの障害レポートを分析し、修正計画を立ててください: ...",
+    reasoning={"effort": "high"},
+)
+
+# ステップ 2: Luna で仕様が明確な実装を大量・低コストに実行
+for task in parse_tasks(plan.output_text):
+    result = client.responses.create(
+        model="gpt-5.6-luna",
+        input=f"次のタスクを実装してください:\n{task}",
+        reasoning={"effort": "low"},
+    )
+    print(result.output_text)
+
+# 応答時間が重要な対話パスでは Fast mode を指定
+answer = client.responses.create(
+    model="gpt-5.6-sol",
+    input="ユーザーからの緊急の質問: ...",
+    service_tier="fast",  # Standard 比で最大 2.5 倍高速 (価格 2 倍)
+)
+print(answer.output_text)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Programmatic Tool Calling でラウンドトリップを削減する例</span>
+                </div>
+                <pre><code class="language-python">response = client.responses.create(
+    model="gpt-5.6-terra",
+    input="最新の Python セキュリティ勧告を 3 件検索し、それぞれ詳細を取得して表にまとめてください。",
+    tools=[
+        {"type": "function", "name": "web_search", "description": "Web を検索する",
+         "parameters": {"type": "object",
+                        "properties": {"query": {"type": "string"}},
+                        "required": ["query"]}},
+        {"type": "function", "name": "fetch_url", "description": "URL の内容を取得する",
+         "parameters": {"type": "object",
+                        "properties": {"url": {"type": "string"}},
+                        "required": ["url"]}},
+    ],
+    tool_choice="programmatic",  # モデルが JavaScript でツールを協調制御
+)
+print(response.output_text)</code></pre>
+            </div>
+            <div class="note-box">
+                ⚠️ 注: 上記は既報の公式発表に基づく利用イメージ。正確なパラメータは公式ドキュメントを参照。
+            </div>
+
+            <h3 class="section-subtitle">🏗️ アーキテクチャ</h3>
+            <p class="lead">コスト効率の高いエージェントの設計イメージ。ステップごとのモデルルーティングと Responses API 機能の組み合わせを示す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Agent["AI エージェント (スタートアップのプロダクト)"]
+        Router["モデルルーティング<br/>(evals で最適化)"]
+        Plan["計画・複雑な推論"]
+        Bulk["大量処理・定型実装"]
+        Interactive["対話・低レイテンシ応答"]
+    end
+
+    subgraph API["OpenAI Responses API"]
+        Sol["GPT-5.6 Sol<br/>$5 / $30 per 1M tokens"]
+        Terra["GPT-5.6 Terra<br/>$2 / $12 per 1M tokens"]
+        Luna["GPT-5.6 Luna<br/>$0.20 / $1.20 per 1M tokens"]
+        subgraph Features["コスト・速度最適化機能"]
+            PTC["Programmatic<br/>Tool Calling"]
+            MA["Multi-agent<br/>Orchestration"]
+            Cache["Prompt Caching<br/>Controls"]
+            Fast["Fast mode<br/>最大 2.5 倍高速"]
+        end
+    end
+
+    Router --> Plan
+    Router --> Bulk
+    Router --> Interactive
+    Plan --> Sol
+    Bulk --> Luna
+    Interactive --> Terra
+    Interactive -.-> Fast
+    Sol --> PTC
+    Sol --> MA
+    Luna --> Cache
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef feature fill:#ECECF1,stroke:#10A37F,stroke-width:2px,color:#343541
+
+    class Sol,Terra,Luna openai
+    class Router,Plan,Bulk,Interactive dark
+    class PTC,MA,Cache,Fast feature
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース: スタートアップにとっての意味</h2>
+            <div class="use-case">
+                <h4>📦 Luna での大量処理 (ドキュメント分析・問い合わせ分類・定型実装)</h4>
+                <p>7 月 30 日の値下げにより従来比 80% 安で運用可能。1 年前のフロンティア級モデルに匹敵する性能を約 6% のコストかつ約 9 倍の速度で提供し、大量処理を伴うエージェントの経済性を大きく変える。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚡ Sol + Fast mode でユーザー体験に直結する応答時間を短縮</h4>
+                <p>ユーザー対話など応答時間が重要なパスのみ <code>service_tier: "fast"</code> を選択的に適用することで、コストと体験のバランスを取る。Standard 比最大 2.5 倍高速 (価格 2 倍)。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧩 コーディングエージェントの分担設計</h4>
+                <p>Sol が不確実性の解消と計画立案を担い、Luna が仕様の明確な実装・テスト作成・結果評価を大量・低コストに実行する。「モデルルーティング + API 機能活用」の型で、限られた資金でもエージェントプロダクトをスケールできる。</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <ul class="impact-list">
+                <li><strong>🧭 モデル選択が設計の中心課題になる</strong>単一モデル前提の設計から、ステップごとに Sol / Terra / Luna を割り当てるルーティング設計へ移行し、evals で継続的に検証するプラクティスが標準になる。</li>
+                <li><strong>💰 エージェントの単価が大幅に低下</strong>Luna の値下げ ($0.20 / $1.20 per 1M tokens) により、大量処理を含むエージェントの運用コストが従来比で大きく下がり、スタートアップでもスケールさせやすくなった。</li>
+                <li><strong>🔁 ラウンドトリップ削減の手段が揃った</strong>Programmatic Tool Calling とマルチエージェントオーケストレーションにより、従来はクライアント側で組んでいた協調ロジックを API 側に寄せられる。</li>
+                <li><strong>🚀 レイテンシ要件は Fast mode で対応</strong>ユーザー対話など応答時間が重要なパスのみ <code>service_tier: "fast"</code> を指定する選択的な適用が、コストと体験のバランスを取る現実的な方法になる。</li>
+                <li><strong>💾 キャッシュ設計の重要性が増す</strong>長いシステムプロンプトやツール定義を持つエージェントでは、Explicit Prompt Caching Controls によるヒット率最適化がコストに直結する。</li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>「The builder's guide to GPT-5.6」は、スタートアップが GPT-5.6 で高速かつコスト効率の高い AI エージェントを構築するための実践ガイドである。柱は 2 つあり、1 つはワークフローのステップごとに Sol (計画・複雑な推論) / Terra (バランス) / Luna (大量処理) を使い分けるモデルルーティングを evals で最適化すること、もう 1 つは Programmatic Tool Calling、マルチエージェントオーケストレーション、Prompt Caching Controls、Fast mode といった Responses API の新機能でラウンドトリップ・レイテンシ・コストを削ることである。7 月の大幅値下げと合わせて、限られたリソースでエージェントプロダクトをスケールさせるための設計指針がまとまった形となる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/builders-guide-to-gpt-5-6" target="_blank" rel="noopener noreferrer">https://openai.com/index/builders-guide-to-gpt-5-6</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>GPT-5.6 の発表: <a href="https://openai.com/index/gpt-5-6/" target="_blank" rel="noopener noreferrer">https://openai.com/index/gpt-5-6/</a></li>
+                <li>GPT-5.6 で価格性能フロンティアを前進: <a href="https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6" target="_blank" rel="noopener noreferrer">https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6</a></li>
+                <li>Responses API リファレンス: <a href="https://platform.openai.com/docs/api-reference/responses" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/api-reference/responses</a></li>
+                <li>Fast mode ガイド: <a href="https://developers.openai.com/api/docs/guides/fast-mode" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/guides/fast-mode</a></li>
+                <li>API 料金の詳細: <a href="https://openai.com/business/pricing/#api" target="_blank" rel="noopener noreferrer">https://openai.com/business/pricing/#api</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

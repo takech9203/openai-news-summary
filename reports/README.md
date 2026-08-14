@@ -5,6 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-13](2026/2026-08-13-previewing-ultrafast.md) - Ultrafast mode プレビュー発表: GPT-5.6 Sol を最大 14 倍高速化 (Cerebras 提供、最大 750 トークン/秒)
+- [2026-08-13](2026/2026-08-13-dali-rajic-chief-revenue-officer.md) - OpenAI が Dali Rajic 氏を Chief Revenue Officer (CRO) に任命
+- [2026-08-13](2026/2026-08-13-builders-guide-to-gpt-5-6.md) - The builder's guide to GPT-5.6 — スタートアップのためのモデル選択と Responses API 活用ガイド
+- [2026-08-12](2026/2026-08-12-ringcentral.md) - RingCentral、ChatGPT Work と Codex でエンジニアリングからオペレーションまで AI ネイティブな働き方を構築
+- [2026-08-12](2026/2026-08-12-how-enterprises-put-ai-to-work.md) - From assistance to execution: How enterprises put AI to work — 企業の AI 活用実態レポート
+- [2026-08-11](2026/2026-08-11-testing-ads-in-chatgpt.md) - ChatGPT 広告のテストと国際展開 - 無料アクセス維持のための新たな収益モデル
+- [2026-08-11](2026/2026-08-11-daybreak-models-are-now-available-on-aws.md) - Daybreak モデルが AWS で利用可能に: Amazon Bedrock を通じたエンタープライズサイバー防衛の展開
 - [2026-08-07](2026/2026-08-07-responding-next-frontier-critical-cyber-capabilities.md) - 重大なサイバー能力の新たなフロンティアへの対応: Astra の予備評価とセーフガード強化
 - [2026-08-07](2026/2026-08-07-hsp-gruppe.md) - HSP GRUPPE、ChatGPT Enterprise で税務アドバイザリーの AI 活用能力を構築 — 週次アクティブ利用率 84%・年間約 40,000 時間の追加キャパシティを試算
 - [2026-08-06](2026/2026-08-06-openai-apa-youth-mental-health.md) - 米国心理学会 (APA) と連携し、若者のメンタルヘルスと責任ある AI を推進
