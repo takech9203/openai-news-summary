@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-17](2026/2026-08-17-the-defenders-window.md) - The Defender's Window: AI 時代のサイバーセキュリティにおける「防御者の窓」
+- [2026-08-17](2026/2026-08-17-openai-joins-ports-pike-project.md) - OpenAI が PORTS-Pike プロジェクトに参画: オハイオ州南部で約 8 GW 級 AI データセンター容量を確保
+- [2026-08-17](2026/2026-08-17-new-policy-ideas-for-the-intelligence-age.md) - 知能時代のための新しい政策アイデア: OpenAI が 14 の独立プロジェクトに資金提供
 - [2026-08-13](2026/2026-08-13-previewing-ultrafast.md) - Ultrafast mode プレビュー発表: GPT-5.6 Sol を最大 14 倍高速化 (Cerebras 提供、最大 750 トークン/秒)
 - [2026-08-13](2026/2026-08-13-dali-rajic-chief-revenue-officer.md) - OpenAI が Dali Rajic 氏を Chief Revenue Officer (CRO) に任命
 - [2026-08-13](2026/2026-08-13-builders-guide-to-gpt-5-6.md) - The builder's guide to GPT-5.6 — スタートアップのためのモデル選択と Responses API 活用ガイド
