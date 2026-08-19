@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NVIDIA が ChatGPT Work で専門知識をグローバルにスケール - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section p.body-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Meta table */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .meta-table th,
+        .meta-table td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .meta-table th {
+            width: 130px;
+            color: var(--openai-green);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .meta-table td {
+            color: var(--text-secondary);
+        }
+
+        .meta-table a {
+            color: var(--openai-green);
+            word-break: break-all;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-value small {
+            font-size: 1rem;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Quote */
+        .quote {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.06) 0%, rgba(16, 163, 127, 0.12) 100%);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            margin: 16px 0;
+        }
+
+        .quote p {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .quote cite {
+            display: block;
+            font-size: 13px;
+            font-style: normal;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Effect Table */
+        .effect-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .effect-table th,
+        .effect-table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .effect-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            font-weight: 700;
+        }
+
+        .effect-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .effect-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .effect-table tbody th {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: normal;
+        }
+
+        .effect-table td.before-cell {
+            color: #DC2626;
+        }
+
+        .effect-table td.after-cell {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* Related Links */
+        .related-links {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .related-links li::before {
+            content: '🔗';
+            margin-right: 8px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">導入事例 (ChatGPT Work)</span>
+                <h1>NVIDIA が ChatGPT Work で専門知識をグローバルにスケール</h1>
+                <p class="date">📅 2026-08-18 | ソース: OpenAI News</p>
+                <p class="lead">手作業の削減、業界動向シグナルの整理、成功ワークフローのグローバル展開を実現</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">メタデータ</h2>
+            <table class="meta-table">
+                <tr><th>発表日</th><td>2026-08-18</td></tr>
+                <tr><th>ソース</th><td>OpenAI News</td></tr>
+                <tr><th>カテゴリ</th><td>導入事例 (ChatGPT Work)</td></tr>
+                <tr><th>公式リンク</th><td><a href="https://openai.com/index/nvidia/chatgpt-work" target="_blank" rel="noopener noreferrer">https://openai.com/index/nvidia/chatgpt-work</a></td></tr>
+            </table>
+        </section>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 / キーポイント</h2>
+            <p class="body-text">OpenAI は、NVIDIA が ChatGPT Work を活用して手作業の削減、業界動向シグナルの整理、成功したワークフローのグローバル展開を実現している導入事例を公開した。ナレッジワーカーは情報の収集・整理に費やす時間を減らし、その情報に基づいて行動する時間を増やしている。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">⚙️</div>
+                    <div class="key-point-content">
+                        <h3>GTM チームの定型業務を自動化</h3>
+                        <p>GTC イベント準備の手作業分析 (業務時間の約 40%) を週 2 回の自動実行プロセスに置き換え、週あたり約 16 時間を削減</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📡</div>
+                    <div class="key-point-content">
+                        <h3>情報過多からシグナルを抽出</h3>
+                        <p>ソリューションアーキテクトが週 25〜40 件の外部 AI アップデートを 5〜8 件の実行可能なシグナルへ集約</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌏</div>
+                    <div class="key-point-content">
+                        <h3>ワークフローのグローバル共有</h3>
+                        <p>個人が構築したワークフローを San Jose・台北・欧州・Washington, DC の同僚へ再利用可能な形で共有し、各地域のニーズに合わせてカスタマイズ</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>プロトタイピングの高速化</h3>
+                        <p>アイデアから動作するプロトタイプまで約 3〜5 日で到達 (従来の手作業・個別ツールでは 2〜3 週間の見積もり)</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧭</div>
+                    <div class="key-point-content">
+                        <h3>外部動向と社内優先事項の接続</h3>
+                        <p>急速に変化する外部の技術動向を NVIDIA の社内プロジェクト・議論・優先事項と結び付け、行動につながるインサイトを提示</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る導入効果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">40<small>%</small></div>
+                    <div class="stat-label">イベント前に手作業分析が占めていた業務時間 (Before)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">16<small> 時間/週</small></div>
+                    <div class="stat-label">12 週間の GTC 計画サイクルでの削減時間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">25〜40<small> 件</small></div>
+                    <div class="stat-label">毎週レビューする外部 AI アップデート</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5〜8<small> 件</small></div>
+                    <div class="stat-label">絞り込まれた実行可能なシグナル</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3〜5<small> 日</small></div>
+                    <div class="stat-label">アイデアからプロトタイプまで (従来 2〜3 週間)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">週 2<small> 回</small></div>
+                    <div class="stat-label">ChatGPT Work プロセスの自動実行頻度</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GTM Team -->
+        <section class="section">
+            <h2 class="section-title">GTM チーム: イベント準備業務の自動化</h2>
+            <p class="body-text">NVIDIA の GTM (Go-To-Market) ストラテジストである Will Daney 氏は、グローバルの営業・事業開発・製品リーダーの戦略実行と測定を支援しており、NVIDIA の AI カンファレンスである GTC に向けたフィールド組織のサポートを定期的に担当している。</p>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <p>GTC の準備には、アカウントリストの作成、登録状況のトラッキング、顧客・パートナー対応のためのアクション特定など、スプレッドシートでの膨大な作業が必要。イベント前の期間には、手作業の分析が業務時間の約 40% を占めていた。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <p>作業の多くを週 2 回自動実行される ChatGPT Work のプロセスに置き換え。12 週間の GTC 計画サイクル全体で、週あたり約 16 時間の削減を実現。</p>
+                </div>
+            </div>
+            <p class="body-text" style="margin-top: 16px;">ワークフローを自身で所有しているため、新しいツールの購買・導入・保守を待つことなく、イベントの変化に合わせて自ら適応できる。San Jose、台北、欧州、Washington, DC のイベントを担当する同僚にワークフローを共有し、各地域のニーズに合わせてカスタマイズされている。</p>
+            <div class="quote">
+                <p>「ChatGPT の本当の鍵は、すでに開発したワークフローを、ほぼオーバーヘッドなしにイベントごとに自動化できることだと思います」</p>
+                <cite>— Will Daney 氏 (Go-To-Market Strategist, NVIDIA)</cite>
+            </div>
+        </section>
+
+        <!-- Solutions Architect -->
+        <section class="section">
+            <h2 class="section-title">ソリューションアーキテクト: 情報過多からシグナルを抽出</h2>
+            <p class="body-text">NVIDIA マーケティング組織の AI オペレーションチームに所属する Rachita Jain 氏 (ソリューションアーキテクト) は、AI ワークフローの構築とチームの新ツール導入支援を担当。新しいモデル、ベンチマーク、研究が毎日登場する業界のペースに追従することが課題だった。</p>
+            <p class="body-text">情報自体は容易に入手できるが、どの動向が NVIDIA にとって重要かを判断し、社内のプロジェクト・議論・優先事項と結び付けることが難しい。Jain 氏は ChatGPT Work で、信頼できる外部ソースを社内コンテキストと併せてレビューし、意味のある重なりを特定して、行動につながるインサイトを提示するワークフローを構築した。</p>
+            <div class="key-point" style="margin: 16px 0;">
+                <div class="key-point-icon">🎯</div>
+                <div class="key-point-content">
+                    <h3>成果</h3>
+                    <p>毎週約 25〜40 件の外部 AI アップデートを、5〜8 件の実行可能なシグナルへと絞り込み</p>
+                </div>
+            </div>
+            <div class="quote">
+                <p>「ChatGPT は受動的な読書を能動的なインテリジェンスに変えてくれました」</p>
+                <cite>— Rachita Jain 氏 (Solutions Architect, NVIDIA)</cite>
+            </div>
+            <p class="body-text">同じ環境がプロトタイピングにも活用されている。アイデアの検討からアプローチの探索、コードベースの作業、デバッグ、成果物の改善までを、ツールを切り替えることなく一貫して進められる。ある事例では、アイデアから動作するプロトタイプまで約 3〜5 日で到達した。個別のツールで手作業により構築した場合の見積もりは 2〜3 週間だった。</p>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">ワークフローの構造</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Inputs["入力ソース"]
+        Internal["社内データ&lt;br/&gt;(アカウント / 登録 / 優先事項)"]
+        External["外部シグナル&lt;br/&gt;(モデル / ベンチマーク / 研究)"]
+    end
+
+    subgraph Work["ChatGPT Work"]
+        WF1["GTM ワークフロー&lt;br/&gt;(週 2 回自動実行)"]
+        WF2["インテリジェンス&lt;br/&gt;ワークフロー (週次)"]
+    end
+
+    subgraph Outputs["成果"]
+        Out1["イベント準備の自動化&lt;br/&gt;週 16 時間削減"]
+        Out2["25〜40 件の更新を&lt;br/&gt;5〜8 件のシグナルに集約"]
+        Share["ワークフロー共有&lt;br/&gt;(San Jose / 台北 / 欧州 / DC)"]
+    end
+
+    Internal --> WF1
+    Internal --> WF2
+    External --> WF2
+    WF1 --> Out1
+    WF2 --> Out2
+    WF1 --> Share
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class WF1,WF2 openai
+    class Out1,Out2,Share dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Effect Summary Table -->
+        <section class="section">
+            <h2 class="section-title">導入効果のまとめ</h2>
+            <div class="table-wrap">
+                <table class="effect-table">
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>Before</th>
+                            <th>After</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>GTC 準備の手作業分析</th>
+                            <td class="before-cell">業務時間の約 40%</td>
+                            <td class="after-cell">週 2 回の自動実行プロセスに置き換え</td>
+                        </tr>
+                        <tr>
+                            <th>GTC 計画サイクル (12 週間)</th>
+                            <td class="before-cell">手作業中心</td>
+                            <td class="after-cell">週あたり約 16 時間を削減</td>
+                        </tr>
+                        <tr>
+                            <th>業界動向の把握</th>
+                            <td class="before-cell">受動的な情報収集</td>
+                            <td class="after-cell">週 25〜40 件を 5〜8 件の実行可能なシグナルに集約</td>
+                        </tr>
+                        <tr>
+                            <th>プロトタイプ開発</th>
+                            <td class="before-cell">約 2〜3 週間 (手作業・複数ツール)</td>
+                            <td class="after-cell">約 3〜5 日 (ChatGPT Work で一貫作業)</td>
+                        </tr>
+                        <tr>
+                            <th>ワークフローの展開</th>
+                            <td class="before-cell">個人・単一イベントに限定</td>
+                            <td class="after-cell">複数地域のチームへ共有・カスタマイズ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Future Outlook -->
+        <section class="section">
+            <h2 class="section-title">今後の展望: 成功パターンのスケール</h2>
+            <p class="body-text">次の機会は、すでに機能しているものをスケールさせることである。専門知識を再利用可能なワークフローに変換することで、NVIDIA の各チームは実証済みのプロセスを職能・イベント・地域を越えて適応でき、同時に業務に最も近い人々がプロセスの進化をコントロールし続けられる。</p>
+            <p class="body-text">AI の状況が変化し続ける中、これらの共有ワークフローは、外部の動向と社内の優先事項をより迅速に結び付け、AI を活用した働き方をより多くの従業員に広げることに役立つ。目標は、チームが発見の解釈、コラボレーション、顧客支援につながる業務により多くの時間を使えるようにすることである。</p>
+            <div class="quote">
+                <p>「ChatGPT は私個人にとって本当にフォースマルチプライヤーです。まるでチームが自分のために働いてくれているようです。細かい作業から抜け出し、本当に重要な仕事に集中できるようになりました」</p>
+                <cite>— Will Daney 氏</cite>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">企業ユーザー・開発者への影響</h2>
+            <p class="body-text">本事例は、ChatGPT Work をエンタープライズで活用する際の実践的なパターンを示している。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🛠️ 現場主導の自動化</h3>
+                    <p>業務に最も近い担当者が自らワークフローを構築・所有することで、ツールの購買・導入・保守を待たずに変化へ迅速に適応できる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔁 ワークフローの再利用性</h3>
+                    <p>一度構築したワークフローを他地域・他チームへ共有し、ローカルのニーズに合わせてカスタマイズするスケールモデルが有効</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📶 情報過多への対処</h3>
+                    <p>外部ソースと社内コンテキストを組み合わせて重要なシグナルを抽出するアプローチは、変化の速い業界の情報収集業務全般に応用可能</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 一貫した構築環境</h3>
+                    <p>アイデア検討からコーディング、デバッグ、改善までを単一環境で行うことで、サイドプロジェクトを数日で実用的な成果物へ発展させられる</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Case Examples -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>1. イベント準備オペレーションの自動化 (GTM)</h4>
+                <p>アカウントリスト作成、登録状況トラッキング、顧客・パートナー対応アクションの特定を週 2 回の自動プロセスに集約。担当者はイベントの変化に合わせてワークフローを自ら適応させられる。</p>
+            </div>
+            <div class="use-case">
+                <h4>2. 業界動向インテリジェンス (ソリューションアーキテクト)</h4>
+                <p>信頼できる外部ソースと社内コンテキストを併せてレビューし、意味のある重なりを特定して行動につながるインサイトを提示。受動的な読書を能動的なインテリジェンスに変換。</p>
+            </div>
+            <div class="use-case">
+                <h4>3. 高速プロトタイピング</h4>
+                <p>アイデア検討・アプローチ探索・コードベース作業・デバッグ・成果物改善をツール切り替えなしで一貫実行。従来 2〜3 週間の見積もりを約 3〜5 日に短縮。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                NVIDIA は ChatGPT Work により、GTM チームのイベント準備業務を自動化して週約 16 時間を削減し、ソリューションアーキテクトは週 25〜40 件の外部 AI アップデートを 5〜8 件の実行可能なシグナルへ集約している。専門知識を再利用可能なワークフローとして共有し、地域や職能を越えて成功パターンをスケールさせるアプローチは、エンタープライズにおける AI 活用の実践的なモデルケースといえる。
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://openai.com/index/nvidia/chatgpt-work" target="_blank" rel="noopener noreferrer">How NVIDIA scales expertise with ChatGPT Work (公式記事)</a></li>
+                <li><a href="https://openai.com/chatgpt/enterprise/" target="_blank" rel="noopener noreferrer">ChatGPT for Work</a></li>
+                <li><a href="https://openai.com/index/nvidia" target="_blank" rel="noopener noreferrer">How NVIDIA engineers and researchers build with Codex (関連事例)</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li><a href="https://help.openai.com/" target="_blank" rel="noopener noreferrer">OpenAI ヘルプセンター</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/nvidia/chatgpt-work" target="_blank" rel="noopener noreferrer">https://openai.com/index/nvidia/chatgpt-work</a></p>
+            <p style="margin-top: 8px;">本インフォグラフィックは OpenAI News のレポート (2026-08-18) を基に作成されたものです。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
