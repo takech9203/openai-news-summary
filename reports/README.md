@@ -5,11 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-19](2026/2026-08-19-replit-gpt-5-6-luna-free-mode.md) - Replit が GPT-5.6 Luna を活用した Free Mode でソフトウェア開発の裾野を拡大
+- [2026-08-19](2026/2026-08-19-offering-zero-data-retention-for-frontier-models.md) - フロンティアモデル向け Zero Data Retention の提供と Private Safety Processing のプレビュー
 - [2026-08-18](2026/2026-08-18-strengthening-democratic-oversight-in-national-security.md) - 国家安全保障における民主的監督の強化 (Strengthening Democratic Oversight in National Security)
 - [2026-08-18](2026/2026-08-18-partnering-with-codeai.md) - CodeAI とのパートナーシップ: 「最初の AI 世代」の育成に向けた取り組み
 - [2026-08-18](2026/2026-08-18-pacing-model-development-cyber-capabilities.md) - サイバー重大能力の時代におけるモデル開発ペースの調整
 - [2026-08-18](2026/2026-08-18-nvidia-chatgpt-work.md) - NVIDIA が ChatGPT Work で専門知識をグローバルにスケール
 - [2026-08-18](2026/2026-08-18-chatgpt-for-teens.md) - ChatGPT for Teens 発表: 学習のために設計され、保護機能に支えられた 10 代向け ChatGPT
+- [2026-08-18](2026/2026-08-18-chatgpt-ads-expands-across-europe.md) - ChatGPT Ads がヨーロッパ 31 市場に拡大
 - [2026-08-18](2026/2026-08-18-asana-codex.md) - Asana、Codex で 5 年分のエンジニアリング作業を 2 週間で完了
 - [2026-08-17](2026/2026-08-17-the-defenders-window.md) - The Defender's Window: AI 時代のサイバーセキュリティにおける「防御者の窓」
 - [2026-08-17](2026/2026-08-17-openai-joins-ports-pike-project.md) - OpenAI が PORTS-Pike プロジェクトに参画: オハイオ州南部で約 8 GW 級 AI データセンター容量を確保
