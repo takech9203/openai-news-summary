@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-20](2026/2026-08-20-stampli-chatgpt-work.md) - Stampli、ChatGPT Work と Codex でローンチ作業時間を 68% 削減
+- [2026-08-20](2026/2026-08-20-prompt-caching-dashboard-gpt-image-2-transparency.md) - API アップデート: プロンプトキャッシュダッシュボードと gpt-image-2 透過背景
+- [2026-08-20](2026/2026-08-20-introducing-ai-futures.md) - AI Futures の発表: OpenAI が権力・ガバナンス・自由の未来を探る新ブログを開設
 - [2026-08-19](2026/2026-08-19-replit-gpt-5-6-luna-free-mode.md) - Replit が GPT-5.6 Luna を活用した Free Mode でソフトウェア開発の裾野を拡大
 - [2026-08-19](2026/2026-08-19-offering-zero-data-retention-for-frontier-models.md) - フロンティアモデル向け Zero Data Retention の提供と Private Safety Processing のプレビュー
 - [2026-08-18](2026/2026-08-18-strengthening-democratic-oversight-in-national-security.md) - 国家安全保障における民主的監督の強化 (Strengthening Democratic Oversight in National Security)
