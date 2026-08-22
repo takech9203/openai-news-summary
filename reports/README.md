@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-21](2026/2026-08-21-regional-processing-gpt-5-6-sol-price-cut.md) - API アップデート: リクエスト単位のリージョン処理選択と GPT-5.6 Sol の値下げ
 - [2026-08-20](2026/2026-08-20-stampli-chatgpt-work.md) - Stampli、ChatGPT Work と Codex でローンチ作業時間を 68% 削減
 - [2026-08-20](2026/2026-08-20-prompt-caching-dashboard-gpt-image-2-transparency.md) - API アップデート: プロンプトキャッシュダッシュボードと gpt-image-2 透過背景
 - [2026-08-20](2026/2026-08-20-introducing-ai-futures.md) - AI Futures の発表: OpenAI が権力・ガバナンス・自由の未来を探る新ブログを開設
