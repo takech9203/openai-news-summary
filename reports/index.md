@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-25](2026/2026-08-25-jalapeno-first-results.md) - Jalapeño 初の実測結果: AI 推論で業界最高水準の速度と電力効率を実証
+- [2026-08-25](2026/2026-08-25-full-stack-abundant-intelligence.md) - 潤沢なインテリジェンスを支えるフルスタック : OpenAI CFO が語るコンピュート戦略
+- [2026-08-25](2026/2026-08-25-disrupting-russia-influence-campaign.md) - ロシア発の新たな秘密影響工作を阻止 — 偽シンクタンク「International Burke Institute」を利用したキャンペーン
+- [2026-08-25](2026/2026-08-25-admin-plugin-chatgpt-work-codex.md) - ChatGPT Work と Codex 向け Admin plugin の発表 - 会話だけでワークスペース管理を完結
 - [2026-08-24](2026/2026-08-24-gpt-5-6-in-kiro.md) - GPT-5.6 が Kiro で利用可能に: 開発者向け価格性能比の向上
 - [2026-08-21](2026/2026-08-21-regional-processing-gpt-5-6-sol-price-cut.md) - API アップデート: リクエスト単位のリージョン処理選択と GPT-5.6 Sol の値下げ
 - [2026-08-20](2026/2026-08-20-stampli-chatgpt-work.md) - Stampli、ChatGPT Work と Codex でローンチ作業時間を 68% 削減
