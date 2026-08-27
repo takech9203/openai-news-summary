@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-08-26](2026/2026-08-26-loveholidays.md) - loveholidays が Codex で全社員を「ビルダー」に: 社内ソフトウェア開発の民主化事例
+- [2026-08-26](2026/2026-08-26-learning-never-stops.md) - Learning never stops: AI が学習を継続的にする方法
+- [2026-08-26](2026/2026-08-26-hugging-face-incident-and-the-road-ahead.md) - The Hugging Face incident and the road ahead: Hugging Face セキュリティインシデントの調査結果と今後の対策
+- [2026-08-26](2026/2026-08-26-bringing-chatgpt-for-teachers-to-more-us-school-districts.md) - ChatGPT for Teachers、米国のより多くの学区へ拡大
 - [2026-08-25](2026/2026-08-25-jalapeno-first-results.md) - Jalapeño 初の実測結果: AI 推論で業界最高水準の速度と電力効率を実証
 - [2026-08-25](2026/2026-08-25-full-stack-abundant-intelligence.md) - 潤沢なインテリジェンスを支えるフルスタック : OpenAI CFO が語るコンピュート戦略
 - [2026-08-25](2026/2026-08-25-disrupting-russia-influence-campaign.md) - ロシア発の新たな秘密影響工作を阻止 — 偽シンクタンク「International Burke Institute」を利用したキャンペーン
