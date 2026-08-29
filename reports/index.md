@@ -6,6 +6,7 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-08-28](2026/2026-08-28-supporting-next-generation-ai-startups-thailand.md) - タイ次世代 AI スタートアップ支援: OpenAI と MHESI がアクセラレーターを開始
+- [2026-08-28](2026/2026-08-28-our-decision-on-cursor-following-its-acquisition-by-spacex.md) - SpaceX による買収を受けた Cursor に関する OpenAI の決定: モデル提供契約の終了
 - [2026-08-27](2026/2026-08-27-what-students-gain-from-chatgpt-critical-thinking-training.md) - Better answers, broader thinking: ChatGPT と批判的思考トレーニングが学生にもたらすもの
 - [2026-08-27](2026/2026-08-27-expanding-our-presence-in-brazil.md) - ブラジルにおける OpenAI のプレゼンス拡大
 - [2026-08-26](2026/2026-08-26-loveholidays.md) - loveholidays が Codex で全社員を「ビルダー」に: 社内ソフトウェア開発の民主化事例
