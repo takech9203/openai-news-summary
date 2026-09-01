@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutual TLS (mTLS) と X.509 Workload Identity Federation が一般提供開始 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section > p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .sub-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--openai-dark);
+        }
+
+        .sub-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .info-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .info-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .info-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .info-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .info-table tr td:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .info-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .info-table code, .inline-code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12.5px;
+            background: var(--openai-gray);
+            color: var(--openai-dark);
+            padding: 2px 6px;
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        /* Steps */
+        .steps {
+            counter-reset: step;
+            display: grid;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--openai-light);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Note */
+        .note {
+            background: #FEF3C7;
+            border-left: 4px solid var(--warning);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            font-size: 13px;
+            color: #92400E;
+            margin-top: 20px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px dashed var(--openai-green);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Related Links */
+        .link-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .link-list li {
+            font-size: 14px;
+        }
+
+        .link-list li::before {
+            content: '🔗';
+            margin-right: 8px;
+        }
+
+        .link-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .link-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <span class="category-badge">セキュリティ</span>
+                <h1>🔐 Mutual TLS (mTLS) と X.509 Workload Identity Federation が一般提供開始</h1>
+                <p class="subtitle">TLS クライアント証明書による多層防御と、証明書を短期トークンに交換して長期 API キーを排除するシークレットレス認証が GA に</p>
+                <p class="date">📅 発表日: 2026-08-29 | ソース: OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p>2026 年 8 月 29 日、OpenAI API Changelog にて <strong>Mutual TLS (mTLS)</strong> と <strong>X.509 Workload Identity Federation</strong> の一般提供 (GA) 開始が発表された。証明書と X.509 アイデンティティプロバイダーは Platform コンソールで直接設定でき、アクセスは組織のロールと権限によって制御される。エンタープライズのゼロトラスト要件や、シークレットレス運用を求めるワークロードにとって重要なアップデートである。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>mTLS で追加のセキュリティ層</h3>
+                        <p>通常のベアラー認証 (API キーなど) に加えて TLS クライアント証明書の検証を必須にする。API キーの代替ではなく、追加の検証層である点に注意</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔑</div>
+                    <div class="key-point-content">
+                        <h3>X.509 フェデレーションで長期 API キーを排除</h3>
+                        <p>検証済みのクライアント証明書を短期 (最大 1 時間) の OpenAI アクセストークンに交換でき、長期保管される API キー自体を不要にできる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🖥️</div>
+                    <div class="key-point-content">
+                        <h3>Platform コンソールで直接設定</h3>
+                        <p>Organization settings &gt; Security &gt; Mutual TLS から設定でき、アクセスは組織のロールと権限 (RBAC) で制御される。管理 API による自動化も可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>段階的な導入と無停止ローテーション</h3>
+                        <p>証明書はアップロードしただけでは強制されず、プロジェクト単位で有効化できる。旧アンカーを残したまま新アンカーを有効化することでダウンタイムなしのローテーションが可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏢</div>
+                    <div class="key-point-content">
+                        <h3>エンタープライズのゼロトラスト要件に対応</h3>
+                        <p>クライアント証明書検証の義務付けなどコンプライアンス要件に対応しやすくなり、API キー漏洩時にも証明書がなければ API を呼び出せない多層防御を実現</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (API キーのみ)</h4>
+                    <p>長期の API キーを各ワークロードに配布・保管。キーが漏洩するとそのまま API を呼び出せてしまい、漏洩時の影響範囲が大きい。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (mTLS + X.509 WIF)</h4>
+                    <p>TLS クライアント証明書の検証を必須化。さらに証明書を最大 1 時間の短期トークンに交換することで長期 API キーの配布自体が不要になり、漏洩時の影響を最小化。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るポイント</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">最大 1 時間</div>
+                    <div class="stat-label">アクセストークンの有効期間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 種類</div>
+                    <div class="stat-label">mTLS 専用ホスト (デフォルト / US / EU)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">最大 50 個</div>
+                    <div class="stat-label">組織あたりの証明書オブジェクト数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1 日超</div>
+                    <div class="stat-label">アップロード時に必要な残存有効期間</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 1: mTLS -->
+        <section class="section">
+            <h2 class="section-title">主な内容 1: Mutual TLS (mTLS)</h2>
+            <p>組織またはプロジェクトで信頼証明書 (トラストアンカー) を有効化すると、そのスコープ内の API リクエストは、通常の認証情報に加えて TLS クライアント証明書の提示が必須になる。<strong>API キーやサービスアカウント認証の代替ではなく、追加の検証層</strong>である。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⚙️ 設定場所</h3>
+                    <p>Platform コンソールの Organization settings &gt; Security &gt; Mutual TLS (<a href="https://platform.openai.com/settings/organization/security" target="_blank" rel="noopener noreferrer" style="color: var(--openai-green);">platform.openai.com/settings/organization/security</a>) から設定する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📜 証明書要件</h3>
+                    <p>PEM エンコードのトラストアンカーを証明書オブジェクトごとに 1 つアップロード。アップロード時点から 1 日超先まで有効であること。クライアント証明書には Authority Key Identifier (AKI) が必須。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔛 有効化が必要</h3>
+                    <p>証明書のアップロードだけでは mTLS は強制されない。有効化 (activation) がリクエスト動作を変更するステップとなる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 検証順序</h3>
+                    <p>プロジェクトレベル → 組織レベルの順にトラストアンカーを確認し、まず直接パス、次に提示された中間証明書を含むチェーン検証にフォールバックする。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧮 CEL フィルタ</h3>
+                    <p>任意で CEL 式を追加し、受け入れるクライアント証明書を Subject や SAN の属性で制約できる。</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">CEL</span>
+                    <span class="code-title">CEL フィルタの例 (公式ドキュメント記載)</span>
+                </div>
+                <pre><code class="language-plaintext">subject.organizational_unit == "Production" &&
+subject_alt_names.exists(san, san.type == DNS && san.value.endsWith(".example.com"))</code></pre>
+            </div>
+
+            <h3 class="sub-title">🌐 mTLS 専用ホスト</h3>
+            <p>mTLS はホストベースで提供され、通常の <span class="inline-code">/v1</span> ルートをそのまま使用する。</p>
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>ホスト</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>mtls.api.openai.com</code></td>
+                        <td>デフォルト mTLS ホスト</td>
+                    </tr>
+                    <tr>
+                        <td><code>mtls-us.api.openai.com</code></td>
+                        <td>米国リージョナルホスト</td>
+                    </tr>
+                    <tr>
+                        <td><code>mtls-eu.api.openai.com</code></td>
+                        <td>EU リージョナルホスト</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="sub-title">👤 必要な権限 (RBAC)</h3>
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>権限</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>api.mtls.read</code></td>
+                        <td>証明書設定の一覧表示・閲覧・テスト</td>
+                    </tr>
+                    <tr>
+                        <td><code>api.mtls.write</code></td>
+                        <td>証明書のアップロード・更新・有効化・無効化・削除</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 12px;">組織オーナーロールにはこれらの権限が含まれるが、カスタムロールにも付与できる。</p>
+        </section>
+
+        <!-- Feature 2: X.509 WIF -->
+        <section class="section">
+            <h2 class="section-title">主な内容 2: X.509 Workload Identity Federation</h2>
+            <p>TLS クライアント証明書のアイデンティティを、短期の OpenAI アクセストークンに交換する仕組み。<strong>このフローが置き換えるのは API キーであり、クライアント証明書ではない</strong>。X.509 プロバイダーは独自のトラストストアを持たず、mTLS で設定した既存の証明書トラストを再利用する。</p>
+
+            <h3 class="sub-title">🛠️ 設定手順</h3>
+            <div class="steps">
+                <div class="step">mTLS 設定で信頼ルート証明書をアップロード・有効化する</div>
+                <div class="step">ダッシュボードで <strong>Create identity provider</strong> から Provider type に <strong>X.509</strong> を選択する (作成後にタイプ変更は不可)</div>
+                <div class="step">必須の <span class="inline-code">openai.subject</span> 変換 (空でない CEL 式) を設定し、任意で <span class="inline-code">openai.*</span> 名の追加変換や Attribute conditions を設定する</div>
+                <div class="step">プロバイダー詳細ページから <strong>Create mapping</strong> で、対象プロジェクトのサービスアカウントと <span class="inline-code">openai.subject</span> の完全一致マッピングを作成する</div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">属性変換の設定例 (公式ドキュメント記載)</span>
+                </div>
+                <pre><code class="language-json">[
+  {
+    "attribute": "openai.subject",
+    "expression": "assertion.subject.common_name"
+  },
+  {
+    "attribute": "openai.environment",
+    "expression": "assertion.subject.organizational_unit"
+  }
+]</code></pre>
+            </div>
+
+            <h3 class="sub-title">⏱️ トークンの特性</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⌛ 最大 1 時間で失効</h3>
+                    <p>アクセストークンは最大 1 時間で失効し、検証済みクライアント証明書より長く存続しない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔁 リフレッシュトークンなし</h3>
+                    <p>リフレッシュトークンは返されない。失効後は再交換が必要。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔗 暗号学的バインドなし</h3>
+                    <p>トークンは証明書に暗号学的にバインドされない (DPoP や <span class="inline-code">cnf</span> クレームは不使用)。証明書単体では API 呼び出しは認可されず、<strong>トークンと証明書の両方</strong>が独立に検証される。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ: X.509 認証フロー</h2>
+            <p>X.509 Workload Identity Federation の認証フロー。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Org["組織管理者 (Platform コンソール)"]
+        Trust["mTLS トラストアンカー<br/>(PEM アップロード + 有効化)"]
+        IdP["X.509 Identity Provider<br/>(openai.subject 変換)"]
+        Map["サービスアカウント<br/>マッピング"]
+    end
+
+    subgraph Workload["ワークロード"]
+        Cert["クライアント証明書<br/>+ 秘密鍵"]
+    end
+
+    subgraph Auth["mtls.auth.openai.com"]
+        Token["POST /oauth/token<br/>(token-exchange)"]
+    end
+
+    subgraph API["mtls.api.openai.com"]
+        Resp["/v1/responses など<br/>通常の /v1 ルート"]
+    end
+
+    Trust --> Token
+    IdP --> Token
+    Map --> Token
+    Cert -- "1. mTLS ハンドシェイクで<br/>証明書を提示" --> Token
+    Token -- "2. 短期アクセストークン<br/>(最大 1 時間)" --> Cert
+    Cert -- "3. Bearer トークン + 証明書" --> Resp
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#ECECF1,stroke:#343541,stroke-width:1px,color:#343541
+
+    class Token,Resp openai
+    class Trust,IdP,Map dark
+    class Cert light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Technical Details: Code Samples -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: コードサンプル</h2>
+
+            <h3 class="sub-title">🔐 mTLS 経由の API 呼び出し (API キー使用)</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">mTLS ホスト経由での API 呼び出し</span>
+                </div>
+                <pre><code class="language-bash">export OPENAI_MTLS_CERT_CHAIN="/path/to/client-chain.pem"
+export OPENAI_MTLS_KEY="/path/to/client-key.pem"
+
+curl https://mtls.api.openai.com/v1/models \
+  --cert "$OPENAI_MTLS_CERT_CHAIN" \
+  --key "$OPENAI_MTLS_KEY" \
+  --header "Authorization: Bearer $OPENAI_API_KEY"</code></pre>
+            </div>
+            <p>チェーンファイルはクライアント証明書を先頭に、必要な中間証明書を続ける。OpenAI は AIA URL からの中間証明書取得や CRL/OCSP チェックを行わないため、完全なチェーンを TLS ハンドシェイクで提示する必要がある。</p>
+
+            <h3 class="sub-title">🎫 X.509 トークン交換 (API キー不要)</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">証明書を短期アクセストークンに交換</span>
+                </div>
+                <pre><code class="language-bash">export OPENAI_IDENTITY_PROVIDER_ID="idp_example"
+export OPENAI_SERVICE_ACCOUNT_ID="svc_acct_example"
+
+curl --cert "$OPENAI_MTLS_CERT_CHAIN" \
+  --key "$OPENAI_MTLS_KEY" \
+  --request POST "https://mtls.auth.openai.com/oauth/token" \
+  --header "Content-Type: application/json" \
+  --data @- &lt;&lt;JSON
+{
+  "grant_type": "urn:ietf:params:oauth:grant-type:token-exchange",
+  "subject_token_type": "urn:openai:params:oauth:token-type:x509",
+  "identity_provider_id": "${OPENAI_IDENTITY_PROVIDER_ID}",
+  "service_account_id": "${OPENAI_SERVICE_ACCOUNT_ID}"
+}
+JSON</code></pre>
+            </div>
+            <p>証明書は TLS 接続経由で提示するため、リクエストボディに <span class="inline-code">subject_token</span> は含めない。成功レスポンス:</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">トークン交換の成功レスポンス</span>
+                </div>
+                <pre><code class="language-json">{
+  "access_token": "eyJ...",
+  "issued_token_type": "urn:ietf:params:oauth:token-type:access_token",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "scope": "api.model.read api.model.request"
+}</code></pre>
+            </div>
+            <p>取得したトークンで API を呼び出す (証明書の提示も引き続き必要):</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">短期トークンによる API 呼び出し</span>
+                </div>
+                <pre><code class="language-bash">curl --request POST \
+  --cert "$OPENAI_MTLS_CERT_CHAIN" \
+  --key "$OPENAI_MTLS_KEY" \
+  --header "Authorization: Bearer $OPENAI_WIF_ACCESS_TOKEN" \
+  --header "Content-Type: application/json" \
+  --data "{\"model\":\"$OPENAI_MODEL\",\"input\":\"Say hello in one sentence.\"}" \
+  "https://mtls.api.openai.com/v1/responses"</code></pre>
+            </div>
+        </section>
+
+        <!-- Technical Details: API Changes -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: 証明書管理 API とエラーコード</h2>
+
+            <h3 class="sub-title">🗂️ 証明書管理 API</h3>
+            <p>証明書の管理は Platform コンソールだけでなく、管理 API でも自動化できる。</p>
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>タスク</th>
+                        <th>エンドポイント</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>証明書アップロード</td>
+                        <td><code>POST /v1/organization/certificates</code></td>
+                    </tr>
+                    <tr>
+                        <td>組織証明書一覧</td>
+                        <td><code>GET /v1/organization/certificates</code></td>
+                    </tr>
+                    <tr>
+                        <td>取得 / 更新 / 削除</td>
+                        <td><code>GET</code> / <code>POST</code> / <code>DELETE /v1/organization/certificates/{certificate_id}</code></td>
+                    </tr>
+                    <tr>
+                        <td>組織で有効化 / 無効化</td>
+                        <td><code>POST /v1/organization/certificates/activate</code>、<code>.../deactivate</code></td>
+                    </tr>
+                    <tr>
+                        <td>プロジェクト単位の操作</td>
+                        <td><code>GET</code> / <code>POST /v1/organization/projects/{project_id}/certificates</code> (<code>/activate</code>、<code>/deactivate</code>)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="sub-title">⚠️ 主なエラーコード</h3>
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>エラーコード</th>
+                        <th>意味</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>certificate_required</code></td>
+                        <td>必要な証明書素材が未提示</td>
+                    </tr>
+                    <tr>
+                        <td><code>invalid_certificate</code></td>
+                        <td>証明書のデコード / パース不能、または AKI 欠如</td>
+                    </tr>
+                    <tr>
+                        <td><code>certificate_verification_failed</code></td>
+                        <td>有効なトラストアンカーに到達できない</td>
+                    </tr>
+                    <tr>
+                        <td><code>certificate_attribute_verification_failed</code></td>
+                        <td>パス検証は成功したが CEL フィルタで拒否</td>
+                    </tr>
+                    <tr>
+                        <td><code>authentication_temporarily_unavailable</code></td>
+                        <td>検証タイムアウト等 (HTTP 503、リトライ可)</td>
+                    </tr>
+                    <tr>
+                        <td><code>invalid_subject_token</code></td>
+                        <td>(トークン交換時) 証明書の欠落 / 無効、チェーン到達不可、有効期間外など</td>
+                    </tr>
+                    <tr>
+                        <td><code>invalid_grant</code></td>
+                        <td>(トークン交換時) プロバイダー / マッピング無効、Attribute conditions による拒否など</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケースと開発者への影響</h2>
+            <div class="use-case">
+                <h4>🛡️ セキュリティの多層化 (ゼロトラスト対応)</h4>
+                <p>mTLS により、API キーが漏洩しても有効なクライアント証明書がなければ API を呼び出せなくなる。ゼロトラストやエンタープライズのコンプライアンス要件 (クライアント証明書検証の義務付け) に対応しやすくなる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔑 長期シークレットの排除 (シークレットレス運用)</h4>
+                <p>X.509 Workload Identity Federation により、ワークロードに長期の API キーを配布・保管する必要がなくなる。証明書ベースで最大 1 時間の短期トークンを都度取得するため、漏洩時の影響範囲を最小化できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>📈 段階的な導入が可能</h4>
+                <p>証明書はアップロードしただけでは強制されず、プロジェクト単位で有効化できる。公式ガイドは、まず非クリティカルなプロジェクトで有効化して代表的なリクエストを検証してから、他プロジェクトや組織レベルへ展開する手順を推奨している。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔄 無停止の証明書ローテーション</h4>
+                <p>旧アンカーを無効化せずに新アンカーをアップロード・有効化し、全ワークロード移行後に旧アンカーを無効化する手順により、ダウンタイムなしでローテーションできる。中間証明書はアンカー変更なしでローテーション可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚠️ 運用上の注意点</h4>
+                <p>組織あたり証明書オブジェクトは最大 50 個。CRL/OCSP による失効チェックは行われないため、インシデント対応はルート / プロバイダー / マッピングの無効化と短いトークン寿命を前提に設計する。Private Link とは互換性がない。SPIFFE X.509-SVID は非対応 (SPIFFE は JWT-SVID を使用)。Codex は X.509 フェデレーション非対応 (OIDC トークンか SPIFFE JWT-SVID を使用)。</p>
+            </div>
+            <div class="note">
+                💡 注意: mTLS は API キー認証の代替ではなく追加の検証層。X.509 フェデレーションが置き換えるのは API キーであり、クライアント証明書ではない。トークン取得後も API 呼び出し時には証明書の提示が引き続き必要。
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>mTLS と X.509 Workload Identity Federation の GA により、OpenAI API のワークロード認証はエンタープライズグレードに強化された。mTLS は API キー認証に TLS クライアント証明書検証を追加する多層防御を提供し、X.509 フェデレーションはその証明書を最大 1 時間の短期トークンに交換することで長期 API キーの配布自体を不要にする。Platform コンソール (Organization settings &gt; Security) と管理 API の両方から設定でき、プロジェクト単位の段階的な有効化、CEL フィルタによる証明書の属性制約、無停止ローテーションなど、実運用に必要な仕組みが揃っている。証明書チェーンの完全な提示 (AIA 取得なし) や CRL/OCSP チェック非対応といった制約を踏まえた設計が導入の鍵となる。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="link-list">
+                <li><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+                <li><a href="https://developers.openai.com/api/docs/guides/mutual-tls" target="_blank" rel="noopener noreferrer">Mutual TLS ガイド</a></li>
+                <li><a href="https://developers.openai.com/api/docs/guides/workload-identity-federation/x509" target="_blank" rel="noopener noreferrer">X.509 Workload Identity Federation ガイド</a></li>
+                <li><a href="https://platform.openai.com/settings/organization/security" target="_blank" rel="noopener noreferrer">Platform コンソール (組織セキュリティ設定)</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-08-29 | カテゴリ: API 更新 / セキュリティ | ソース: OpenAI API Changelog</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
