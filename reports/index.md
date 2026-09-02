@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-01](2026/2026-09-01-path-to-astra.md) - Path to Astra: Preparedness Framework のサイバーセキュリティ「Critical」基準に達した初のモデル
+- [2026-09-01](2026/2026-09-01-gilbert-tobin.md) - 法律事務所 Gilbert + Tobin が OpenAI と共に AI をガバナンスしスケールする方法
+- [2026-09-01](2026/2026-09-01-chatgpt-connects-health-records.md) - 医療機関が EHR などの業界データを ChatGPT に接続可能に
+- [2026-09-01](2026/2026-09-01-ai-native-company-workflows.md) - AI ネイティブ企業がワークフローを運用能力へ転換する方法
+- [2026-08-31](2026/2026-08-31-supporting-california-bill-advance-ai-youth-safety.md) - OpenAI、若年層の AI 安全性を推進するカリフォルニア州法案を支持
 - [2026-08-31](2026/2026-08-31-polimill.md) - Polimill が日本の次世代パブリック AI インフラを構築: 約 1,050 自治体が利用する QommonsAI と Codex による開発 3-5 倍高速化
 - [2026-08-31](2026/2026-08-31-expanding-access-to-ai-with-chatgpt-ads.md) - AI へのアクセス拡大におけるマイルストーン: ChatGPT Ads が年間換算収益 10 億ドルを達成
 - [2026-08-29](2026/2026-08-29-mtls-x509-workload-identity-federation.md) - Mutual TLS (mTLS) と X.509 Workload Identity Federation が一般提供開始
