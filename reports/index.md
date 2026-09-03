@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-02](2026/2026-09-02-atv-big-air-tour.md) - ATV Big Air Tour が ChatGPT で 3 日分の作業を 3 時間に短縮
+- [2026-09-02](2026/2026-09-02-api-error-handling-update.md) - API エラーレスポンスの改善 — 429 (slow_down) と 503 (server_is_overloaded) の区別
 - [2026-09-01](2026/2026-09-01-path-to-astra.md) - Path to Astra: Preparedness Framework のサイバーセキュリティ「Critical」基準に達した初のモデル
 - [2026-09-01](2026/2026-09-01-gilbert-tobin.md) - 法律事務所 Gilbert + Tobin が OpenAI と共に AI をガバナンスしスケールする方法
 - [2026-09-01](2026/2026-09-01-chatgpt-connects-health-records.md) - 医療機関が EHR などの業界データを ChatGPT に接続可能に

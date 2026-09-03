@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API エラーレスポンスの改善 — 429 (slow_down) と 503 (server_is_overloaded) の区別 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;           /* メインアクセント */
+            --openai-dark: #343541;            /* ダーク背景 (ChatGPT) */
+            --openai-light: #F7F7F8;           /* ライト背景 */
+            --openai-gray: #ECECF1;            /* セカンダリ背景 */
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Meta table */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .meta-item {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .meta-item .meta-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .meta-item .meta-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .meta-item .meta-value a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .meta-item .meta-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        code.inline {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: var(--openai-gray);
+            border-radius: 6px;
+            padding: 2px 6px;
+            color: var(--openai-dark);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            margin: 8px 0 0 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Error comparison cards */
+        .error-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .error-compare {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .error-card {
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid;
+        }
+
+        .error-card.err429 {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-color: var(--warning);
+        }
+
+        .error-card.err503 {
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+            border-color: var(--info);
+        }
+
+        .error-card .error-status {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .error-card.err429 .error-status {
+            background: var(--warning);
+        }
+
+        .error-card.err503 .error-status {
+            background: var(--info);
+        }
+
+        .error-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .error-card p.error-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .error-card table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .error-card table th,
+        .error-card table td {
+            padding: 6px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(52, 53, 65, 0.1);
+        }
+
+        .error-card table th {
+            width: 42%;
+            color: var(--text-muted);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .error-card ul {
+            margin-left: 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .error-card ul li {
+            margin-bottom: 6px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card p {
+            font-size: 13.5px;
+            color: var(--text-primary);
+        }
+
+        .comparison-card ul {
+            margin: 8px 0 0 18px;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .comparison-card ul li {
+            margin-bottom: 6px;
+        }
+
+        /* Retry strategy table */
+        .retry-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .retry-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .retry-table td {
+            padding: 12px 16px;
+            background: var(--openai-gray);
+            border-bottom: 2px solid white;
+            color: var(--text-secondary);
+        }
+
+        .retry-note {
+            background: rgba(16, 163, 127, 0.08);
+            border: 1px dashed var(--openai-green);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 13.5px;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14.5px;
+            line-height: 1.8;
+        }
+
+        .summary-box strong {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 1px 6px;
+        }
+
+        /* Related links */
+        .related-links {
+            list-style: none;
+        }
+
+        .related-links li {
+            margin-bottom: 10px;
+            padding: 12px 16px;
+            background: var(--openai-gray);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .related-links li::before {
+            content: '🔗';
+            margin-right: 8px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <h1>API エラーレスポンスの改善</h1>
+                <p class="subtitle">429 (slow_down) と 503 (server_is_overloaded) の区別が可能に 🔀</p>
+                <p class="date">📅 2026-09-02 | OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">メタデータ</h2>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <div class="meta-label">発表日</div>
+                    <div class="meta-value">2026-09-02</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">ソース</div>
+                    <div class="meta-value">OpenAI API Changelog</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">カテゴリ</div>
+                    <div class="meta-value">API 更新</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">公式リンク</div>
+                    <div class="meta-value"><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">developers.openai.com/api/docs/changelog</a></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Points (概要) -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-lead">2026 年 9 月 2 日、OpenAI API のエラーレスポンスが更新され、「急激なトラフィック増加」と「一時的なモデル過負荷」という 2 つの異なる状況を、アプリケーション側で区別できるようになりました。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔀</div>
+                    <div class="key-point-content">
+                        <h3>2 つのエラー状況を明確に区別</h3>
+                        <p>急激なトラフィック増加は HTTP 429 (エラーコード <code class="inline">slow_down</code>)、一時的なモデル過負荷は HTTP 503 (エラーコード <code class="inline">server_is_overloaded</code>) として返されます。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>原因に応じたリトライ戦略の選択が可能に</h3>
+                        <p>開発者はエラーの原因 (クライアント側のトラフィック増加ペース or サーバー側の過負荷) に応じて、適切なリトライ戦略を選択できるようになります。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⏱️</div>
+                    <div class="key-point-content">
+                        <h3>Retry-After ヘッダーを優先</h3>
+                        <p>どちらのレスポンスにも <code class="inline">Retry-After</code> ヘッダーが含まれる場合があり、ヘッダーがある場合は指定された時間以上待機してからリトライすることが推奨されています。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>ヘッダーがなければ指数バックオフ</h3>
+                        <p><code class="inline">Retry-After</code> ヘッダーがない場合は、指数バックオフ (exponential backoff) でリトライすることが推奨されています。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛠️</div>
+                    <div class="key-point-content">
+                        <h3>公式 SDK は Retry-After をすでに考慮</h3>
+                        <p>公式 SDK は、リトライ対象のエラーに対して <code class="inline">Retry-After</code> ヘッダーをすでに考慮して動作します。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After — エラーレスポンスの変更</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>❌ Before (変更前)</h4>
+                    <p>「クライアント側のトラフィック増加ペースの問題」と「サーバー側の一時的な過負荷」を区別しにくく、原因の切り分けが困難でした。</p>
+                    <ul>
+                        <li>エラーの原因がクライアント側かサーバー側か判別しづらい</li>
+                        <li>原因別のリトライ戦略を選択できない</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>✅ After (変更後)</h4>
+                    <p>ステータスコードとエラーコードで原因を明確に判別できます。</p>
+                    <ul>
+                        <li>429 + <code class="inline">slow_down</code>: 急激なトラフィック増加</li>
+                        <li>503 + <code class="inline">server_is_overloaded</code>: 一時的なモデル過負荷</li>
+                        <li>原因別に最適化されたエラーハンドリングを実装可能</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error comparison (主な内容) -->
+        <section class="section">
+            <h2 class="section-title">主な内容 — 2 つのエラーコードの比較</h2>
+            <div class="error-compare">
+                <div class="error-card err429">
+                    <span class="error-status">HTTP 429</span>
+                    <h3>🚦 slow_down: 急激なトラフィック増加</h3>
+                    <p class="error-desc">リクエストレートがサービスの安全に処理できる速度を超えて増加した場合に返されます。</p>
+                    <table>
+                        <tr><th>エラータイプ</th><td><code class="inline">rate_limit_error</code></td></tr>
+                        <tr><th>エラーコード</th><td><code class="inline">slow_down</code></td></tr>
+                        <tr><th>原因</th><td>増加ペースの速さ (クライアント側)</td></tr>
+                    </table>
+                    <ul>
+                        <li><span class="highlight">RPM (requests-per-minute) や TPM (tokens-per-minute) の制限内でも発生し得る</span>点が特徴で、レート制限超過とは異なり「増加ペースの速さ」が原因</li>
+                        <li>目安: トラフィックが入力 100 万 TPM に達した後は、15 分ごとに 50% を超えない範囲で増やす</li>
+                        <li>推奨対応: リクエストレートを下げ、その後段階的に増やす</li>
+                    </ul>
+                </div>
+                <div class="error-card err503">
+                    <span class="error-status">HTTP 503</span>
+                    <h3>🔥 server_is_overloaded: 一時的なモデル過負荷</h3>
+                    <p class="error-desc">リクエストしたモデルに、その時点でリクエストを処理する十分なキャパシティがない場合に返されます。</p>
+                    <table>
+                        <tr><th>エラータイプ</th><td><code class="inline">service_unavailable_error</code></td></tr>
+                        <tr><th>エラーコード</th><td><code class="inline">server_is_overloaded</code></td></tr>
+                        <tr><th>原因</th><td>一時的な状態 (サーバー側)</td></tr>
+                    </table>
+                    <ul>
+                        <li>クライアント側のトラフィックではなく、<span class="highlight">サーバー側の一時的な状態</span>を示す</li>
+                        <li>エラーが継続する場合は、ステータスページでインシデントが発生していないか確認することが推奨</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Retry strategy -->
+        <section class="section">
+            <h2 class="section-title">推奨リトライ戦略</h2>
+            <table class="retry-table">
+                <thead>
+                    <tr>
+                        <th>条件</th>
+                        <th>推奨される対応</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>⏱️ <code class="inline">Retry-After</code> ヘッダーあり</td>
+                        <td>指定された時間以上待機してからリトライ</td>
+                    </tr>
+                    <tr>
+                        <td>📈 <code class="inline">Retry-After</code> ヘッダーなし</td>
+                        <td>ジッター付きの指数バックオフでリトライし、リトライ回数に上限を設ける</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="retry-note">
+                💡 公式 SDK は、リトライ対象のエラーに対して <code class="inline">Retry-After</code> ヘッダーをすでに考慮して動作します。
+            </div>
+        </section>
+
+        <!-- Technical details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細 — エラーレスポンスの例</h2>
+            <p class="section-lead">エラーレスポンスの <code class="inline">error</code> オブジェクトには <code class="inline">type</code> と <code class="inline">code</code> が含まれ、<code class="inline">error.code</code> を確認することで具体的な原因を特定できます。以下はドキュメントに記載されたフィールドに基づく例です。</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">429 (slow_down) の例</span>
+                </div>
+                <pre><code class="language-json">{
+  "error": {
+    "message": "Your request rate increased faster than the service can safely handle. Reduce your request rate, then increase it gradually.",
+    "type": "rate_limit_error",
+    "code": "slow_down"
+  }
+}</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">503 (server_is_overloaded) の例</span>
+                </div>
+                <pre><code class="language-json">{
+  "error": {
+    "message": "The requested model does not have enough capacity to process your request at the moment. Please retry later.",
+    "type": "service_unavailable_error",
+    "code": "server_is_overloaded"
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Code sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <p class="section-lead"><code class="inline">Retry-After</code> ヘッダーを優先し、ない場合はジッター付き指数バックオフでリトライする Python の実装例です。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Retry-After 優先 + ジッター付き指数バックオフの実装例</span>
+                </div>
+                <pre><code class="language-python">import random
+import time
+
+from openai import OpenAI, APIStatusError
+
+client = OpenAI(max_retries=0)  # SDK の自動リトライを無効化し、手動で制御する例
+
+MAX_RETRIES = 5
+BASE_DELAY = 1.0  # 秒
+
+
+def create_response_with_retry(**kwargs):
+    for attempt in range(MAX_RETRIES + 1):
+        try:
+            return client.chat.completions.create(**kwargs)
+        except APIStatusError as e:
+            # 429 (slow_down) と 503 (server_is_overloaded) のみリトライ対象
+            if e.status_code not in (429, 503) or attempt == MAX_RETRIES:
+                raise
+
+            retry_after = e.response.headers.get("Retry-After")
+            if retry_after is not None:
+                # Retry-After ヘッダーがある場合: 指定時間以上待機
+                delay = float(retry_after)
+            else:
+                # ヘッダーがない場合: ジッター付き指数バックオフ
+                delay = BASE_DELAY * (2 ** attempt) + random.uniform(0, 1)
+
+            error_code = getattr(e, "code", None)
+            print(f"HTTP {e.status_code} (code={error_code}): {delay:.1f} 秒待機してリトライします")
+            time.sleep(delay)
+
+
+response = create_response_with_retry(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}],
+)
+print(response.choices[0].message.content)</code></pre>
+            </div>
+            <div class="retry-note">
+                📝 公式 SDK のデフォルトのリトライ機構は <code class="inline">Retry-After</code> ヘッダーをすでに考慮するため、多くのケースでは SDK の自動リトライをそのまま利用できます。
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ — リトライフローの全体像</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    Start(["API リクエスト送信"]) --> Resp{"レスポンス"}
+    Resp -->|"2xx 成功"| Done(["完了"])
+    Resp -->|"429 slow_down"| RateNote["急激なトラフィック増加<br/>レートを下げて段階的に増やす"]
+    Resp -->|"503 server_is_overloaded"| OverloadNote["一時的なモデル過負荷<br/>継続する場合はステータスページを確認"]
+
+    RateNote --> Header{"Retry-After<br/>ヘッダーあり?"}
+    OverloadNote --> Header
+
+    Header -->|"あり"| WaitHeader["指定時間以上待機"]
+    Header -->|"なし"| Backoff["ジッター付き指数バックオフで待機"]
+
+    WaitHeader --> Limit{"リトライ上限内?"}
+    Backoff --> Limit
+    Limit -->|"はい"| Start
+    Limit -->|"いいえ"| Fail(["エラーとして処理"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Start,Done openai
+    class RateNote,OverloadNote,WaitHeader,Backoff dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer impact (Feature cards) -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔍 エラー原因の切り分けが可能に</h3>
+                    <p>これまで区別しにくかった「クライアント側のトラフィック増加ペースの問題 (429 slow_down)」と「サーバー側の一時的な過負荷 (503 server_is_overloaded)」を、ステータスコードとエラーコードで明確に判別できます。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔧 エラーハンドリングの見直し</h3>
+                    <p><code class="inline">error.code</code> に基づいて分岐するエラーハンドリングを実装している場合、新しいコード (<code class="inline">slow_down</code>, <code class="inline">server_is_overloaded</code>) への対応を追加するとよいでしょう。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ リトライ戦略の最適化</h3>
+                    <p>429 (slow_down) ではリクエストレートを下げて段階的に増やす対応、503 (server_is_overloaded) では待機後のリトライとステータスページの確認という、原因別の対応が可能になります。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⏱️ Retry-After ヘッダーの活用</h3>
+                    <p>自前のリトライ処理を実装している場合は、<code class="inline">Retry-After</code> ヘッダーを優先し、ない場合のみ指数バックオフを使う実装が推奨されます。公式 SDK を利用している場合はヘッダーがすでに考慮されます。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🚀 トラフィックを段階的に拡大するアプリケーション</h4>
+                <p>429 (slow_down) は RPM や TPM の制限内でも発生し得るため、急拡大するサービスではリクエストレートを段階的に増やす制御が有効です。公式ドキュメントでは、入力 100 万 TPM 到達後は 15 分ごとに 50% を超えない範囲で増やすことが目安とされています。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ 自前のリトライ処理を実装しているシステム</h4>
+                <p><code class="inline">Retry-After</code> ヘッダーがあれば指定時間以上待機し、なければジッター付き指数バックオフ (リトライ回数に上限を設定) でリトライする実装に更新することで、公式推奨に沿ったエラーハンドリングを実現できます。</p>
+            </div>
+            <div class="use-case">
+                <h4>📊 運用監視・アラートの高度化</h4>
+                <p>503 (server_is_overloaded) はサーバー側の一時的な状態を示すため、エラーが継続する場合はステータスページでインシデントの有無を確認するフローを運用に組み込むことで、原因の切り分けが迅速になります。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                2026 年 9 月 2 日の更新により、OpenAI API は「急激なトラフィック増加 (<strong>429 slow_down</strong>)」と「一時的なモデル過負荷 (<strong>503 server_is_overloaded</strong>)」を明確に区別して返すようになりました。開発者は <strong>Retry-After</strong> ヘッダーがあれば指定時間以上待機し、なければジッター付き指数バックオフでリトライするという公式推奨に沿って、原因別に最適化されたエラーハンドリングを実装できます。
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog (公式)</a></li>
+                <li><a href="https://developers.openai.com/api/docs/guides/error-codes" target="_blank" rel="noopener noreferrer">エラーコードガイド</a></li>
+                <li><a href="https://developers.openai.com/api/docs/guides/rate-limits" target="_blank" rel="noopener noreferrer">レート制限ガイド</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
