@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-6 Astra が API でリリース、Responses API に長時間タスク向け新機能 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;           /* メインアクセント */
+            --openai-dark: #343541;            /* ダーク背景 (ChatGPT) */
+            --openai-light: #F7F7F8;           /* ライト背景 */
+            --openai-gray: #ECECF1;            /* セカンダリ背景 */
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --danger: #EF4444;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Meta grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .meta-item {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .meta-item .meta-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--openai-green);
+            margin-bottom: 4px;
+        }
+
+        .meta-item .meta-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .meta-item .meta-value a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .meta-item .meta-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        code.inline {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: var(--openai-gray);
+            border-radius: 6px;
+            padding: 2px 6px;
+            color: var(--openai-dark);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Capability chips */
+        .capability-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .capability-chip {
+            background: var(--gradient-accent);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 13.5px;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(16, 163, 127, 0.25);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card .feature-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--openai-green);
+            color: white;
+            border-radius: 50%;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card .feature-en {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--openai-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            margin: 8px 0 0 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .feature-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* API change: supported / unsupported */
+        .api-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .api-compare {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .api-card {
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid;
+        }
+
+        .api-card.unsupported {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border-color: #F87171;
+        }
+
+        .api-card.supported {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border-color: #34D399;
+        }
+
+        .api-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .api-card.unsupported h4 {
+            color: #DC2626;
+        }
+
+        .api-card.supported h4 {
+            color: #059669;
+        }
+
+        .api-card ul {
+            list-style: none;
+        }
+
+        .api-card ul li {
+            margin-bottom: 10px;
+            font-size: 13.5px;
+            color: var(--text-primary);
+            padding-left: 26px;
+            position: relative;
+        }
+
+        .api-card.unsupported ul li::before {
+            content: '🚫';
+            position: absolute;
+            left: 0;
+        }
+
+        .api-card.supported ul li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+        }
+
+        /* API change table */
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .api-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .api-table td {
+            padding: 12px 16px;
+            background: var(--openai-gray);
+            border-bottom: 2px solid white;
+            color: var(--text-secondary);
+        }
+
+        .api-table td:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        /* Alert / note box */
+        .note-box {
+            background: rgba(16, 163, 127, 0.08);
+            border: 1px dashed var(--openai-green);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 13.5px;
+            color: var(--text-secondary);
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 13.5px;
+            color: var(--text-primary);
+            margin-top: 16px;
+        }
+
+        .alert-box strong {
+            color: #B45309;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14.5px;
+            line-height: 1.8;
+        }
+
+        .summary-box strong {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 1px 6px;
+        }
+
+        /* Related links */
+        .related-links {
+            list-style: none;
+        }
+
+        .related-links li {
+            margin-bottom: 10px;
+            padding: 12px 16px;
+            background: var(--openai-gray);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .related-links li::before {
+            content: '🔗';
+            margin-right: 8px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">新機能</span>
+                <span class="category-badge">API 更新</span>
+                <h1>GPT-6 Astra が API でリリース 🚀</h1>
+                <p class="subtitle">Responses API に長時間タスク向けの 3 つの新機能 (非同期ツール呼び出し・ターン途中ステアリング・推論努力レベル変更) が追加</p>
+                <p class="date">📅 2026-09-03 | OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">メタデータ</h2>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <div class="meta-label">発表日</div>
+                    <div class="meta-value">2026-09-03</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">ソース</div>
+                    <div class="meta-value">OpenAI API Changelog</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">カテゴリ</div>
+                    <div class="meta-value">新機能 / API 更新</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">公式リンク</div>
+                    <div class="meta-value"><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">developers.openai.com/api/docs/changelog</a></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Points (概要) -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-lead">2026 年 9 月 3 日、OpenAI は最上位モデル <span class="highlight">GPT-6 Astra</span> を Responses API と Chat Completions API でリリースしました。「最も困難なエンドツーエンドの作業のために構築された、最も高性能なモデル」と位置付けられ、提供されたコンテキストとツールを使って複雑なタスクを最初の依頼から完成まで遂行できます。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>最上位モデル GPT-6 Astra が API で利用可能に</h3>
+                        <p><code class="inline">v1/responses</code> と <code class="inline">v1/chat/completions</code> の両方でリリース。推論・コーディング・コンピュータ操作・調査 (リサーチ)・文書作成を組み合わせ、複雑なタスクをエンドツーエンドで遂行します。</p>
+                        <div class="capability-chips">
+                            <span class="capability-chip">🧠 推論</span>
+                            <span class="capability-chip">💻 コーディング</span>
+                            <span class="capability-chip">🖱️ コンピュータ操作</span>
+                            <span class="capability-chip">🔍 調査</span>
+                            <span class="capability-chip">📝 文書作成</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⏳</div>
+                    <div class="key-point-content">
+                        <h3>Responses API に長時間タスク向け新機能が 3 つ追加</h3>
+                        <p>非同期ツール呼び出し、ターン途中のステアリング、会話途中での推論努力レベル変更という、GPT-6 Astra での長時間実行タスクを制御するための機能が同日追加されました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔧</div>
+                    <div class="key-point-content">
+                        <h3>ツール呼び出しは Responses API が必須</h3>
+                        <p>Chat Completions API でツールを使用している場合は、Responses API への移行ガイドに従う必要があります。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🚫</div>
+                    <div class="key-point-content">
+                        <h3>一部パラメータが非対応に</h3>
+                        <p>推論努力レベル <code class="inline">none</code>、カスタムの <code class="inline">temperature</code>、<code class="inline">top_p</code>、<code class="inline">logprobs</code> は GPT-6 Astra では非対応です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>Preparedness Framework で初の Critical レベル</h3>
+                        <p>GPT-6 Astra はサイバーセキュリティ能力が初めて Critical レベルに達したモデルです。安全対策の詳細は「Path to Astra」(2026-09-01) および「Safety overview: GPT-6 Astra」(2026-09-03) で説明されています。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main features -->
+        <section class="section">
+            <h2 class="section-title">主な内容 — Responses API の長時間タスク向け新機能</h2>
+            <p class="section-lead">GPT-6 Astra での長時間実行作業向けに、以下の 3 つの制御機能が <code class="inline">v1/responses</code> に追加されました。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-number">1</span>
+                    <h3>🔄 非同期ツール呼び出し</h3>
+                    <p class="feature-en">Async Tool Calling</p>
+                    <p>アプリケーション側が function ツールやカスタムツールを実行している間も<span class="highlight">モデルが作業を継続</span>し、ツールの結果が利用可能になり次第返却できます。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">2</span>
+                    <h3>🎮 ターン途中のステアリング</h3>
+                    <p class="feature-en">Mid-turn Steering</p>
+                    <p><span class="highlight">WebSocket 経由</span>でレスポンス生成中に追加指示を送信でき、修正や要件変更を実行中のモデルに反映できます。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-number">3</span>
+                    <h3>🎚️ 会話途中での推論努力レベル変更</h3>
+                    <p class="feature-en">Reasoning Effort Change</p>
+                    <p><span class="highlight">キャッシュ済みプロンプトのプレフィックスを保持したまま</span>、難しい作業では推論努力レベルを上げ、定型的なフォローアップでは下げることができます。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- API changes -->
+        <section class="section">
+            <h2 class="section-title">API 変更点 — 移行時の注意点</h2>
+            <p class="section-lead">GPT-6 Astra は既存モデルと同じ感覚では使えません。移行にあたっては<span class="highlight">非対応パラメータ</span>と<span class="highlight">ツール呼び出しの制約</span>に注意が必要です。</p>
+            <div class="api-compare">
+                <div class="api-card unsupported">
+                    <h4>🚫 非対応 (使えなくなるもの)</h4>
+                    <ul>
+                        <li>推論努力レベル <code class="inline">none</code></li>
+                        <li>カスタムの <code class="inline">temperature</code></li>
+                        <li>カスタムの <code class="inline">top_p</code></li>
+                        <li><code class="inline">logprobs</code></li>
+                        <li>Chat Completions API でのツール呼び出し (Responses API への移行が必要)</li>
+                    </ul>
+                </div>
+                <div class="api-card supported">
+                    <h4>✅ 対応 (新たに使えるもの)</h4>
+                    <ul>
+                        <li><code class="inline">v1/responses</code> での GPT-6 Astra 利用</li>
+                        <li><code class="inline">v1/chat/completions</code> での GPT-6 Astra 利用 (ツールなし)</li>
+                        <li>非同期ツール呼び出し (Responses API)</li>
+                        <li>WebSocket 経由のターン途中ステアリング</li>
+                        <li>会話途中での推論努力レベル変更 (キャッシュ保持)</li>
+                    </ul>
+                </div>
+            </div>
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>対象エンドポイント</td>
+                        <td><code class="inline">v1/responses</code>、<code class="inline">v1/chat/completions</code></td>
+                    </tr>
+                    <tr>
+                        <td>新モデル</td>
+                        <td>GPT-6 Astra (推論・コーディング・コンピュータ操作・調査・文書作成)</td>
+                    </tr>
+                    <tr>
+                        <td>非対応パラメータ</td>
+                        <td><code class="inline">temperature</code>、<code class="inline">top_p</code>、<code class="inline">logprobs</code>、推論努力レベル <code class="inline">none</code></td>
+                    </tr>
+                    <tr>
+                        <td>ツール呼び出し</td>
+                        <td>Responses API のみ対応 (Chat Completions は移行が必要)</td>
+                    </tr>
+                    <tr>
+                        <td>安全機構</td>
+                        <td>ミスアライメント監視による非同期チェック (安全アラート・会話停止の可能性あり)</td>
+                    </tr>
+                    <tr>
+                        <td>新機能</td>
+                        <td>非同期ツール呼び出し、WebSocket 経由のターン途中ステアリング、会話途中の推論努力レベル変更</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="alert-box">
+                ⚠️ <strong>ミスアライメント監視</strong>: 対応する Responses API リクエストでエージェント作業中の問題を非同期にチェックし、安全アラートの発報や会話停止によるレビューを行う場合があります。エージェントワークフローではこれらのケースのハンドリングを考慮した設計が必要です。
+            </div>
+            <div class="note-box" style="margin-top: 16px;">
+                📚 参照先として「Using GPT-6 Astra」ガイド、コンピュータ操作ガイド、料金ページが案内されています。
+            </div>
+        </section>
+
+        <!-- Code sample -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細 — コードサンプル</h2>
+            <p class="section-lead">Responses API での GPT-6 Astra の基本的な呼び出し例です (公式の「Using GPT-6 Astra」ガイドを参照のこと)。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Responses API での GPT-6 Astra の基本的な呼び出し例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+response = client.responses.create(
+    model="gpt-6-astra",
+    input="リポジトリ全体を調査し、リファクタリング計画を作成してください。",
+    tools=[
+        {
+            "type": "function",
+            "name": "run_tests",
+            "description": "テストスイートを実行する",
+            "parameters": {"type": "object", "properties": {}},
+        }
+    ],
+)
+print(response.output_text)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="section-lead">GPT-6 Astra へのアクセス経路と、Responses API の長時間タスク向け新機能の流れを示します。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["Client Application"]
+        SDK["OpenAI SDK"]
+        Tools["Function / Custom Tools<br/>(非同期実行)"]
+        WS["WebSocket Client<br/>(ターン途中ステアリング)"]
+    end
+
+    subgraph API["OpenAI API"]
+        Responses["Responses API<br/>(v1/responses)"]
+        ChatC["Chat Completions API<br/>(v1/chat/completions)"]
+        Monitor["ミスアライメント監視<br/>(非同期チェック)"]
+    end
+
+    subgraph Model["Model"]
+        Astra["GPT-6 Astra"]
+    end
+
+    SDK --> Responses
+    SDK --> ChatC
+    Responses --> Astra
+    ChatC -->|"ツール呼び出しは非対応"| Astra
+    Responses <-->|"非同期ツール呼び出し"| Tools
+    WS -->|"追加指示 / 推論努力レベル変更"| Responses
+    Responses -.-> Monitor
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Astra openai
+    class Responses,ChatC,Monitor dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🚚 Responses API への移行が実質的に必須に</h3>
+                    <p>GPT-6 Astra でツール呼び出しを利用するには Responses API が必要なため、Chat Completions API でツールを使用している既存アプリケーションは移行ガイドに従った対応が求められます。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 サンプリング系パラメータの見直しが必要</h3>
+                    <p><code class="inline">temperature</code>、<code class="inline">top_p</code>、<code class="inline">logprobs</code> に依存した実装 (出力の多様性制御やログ確率を利用した後処理など) は、GPT-6 Astra では動作しないため設計の見直しが必要になります。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ 長時間タスクの設計自由度が向上</h3>
+                    <p>非同期ツール呼び出しにより、時間のかかるツール実行中もモデルが作業を継続できるため、エージェント型アプリケーションのスループット改善が期待できます。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎮 実行中のタスクに介入できる</h3>
+                    <p>WebSocket 経由のターン途中ステアリングにより、長時間タスクを最初からやり直すことなく、途中で修正指示や要件変更を反映できます。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 コストと品質の動的な調整が可能に</h3>
+                    <p>会話途中で推論努力レベルを変更でき、キャッシュ済みプレフィックスを保持したまま、タスクの難易度に応じてコストとレイテンシを最適化できます。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ 安全機構の挙動を考慮した設計が必要</h3>
+                    <p>ミスアライメント監視により安全アラートの発報や会話停止が発生し得るため、エージェントワークフローではこれらのケースのハンドリングを考慮する必要があります。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🤖 長時間実行されるエージェント型ワークフロー</h4>
+                <p>リポジトリ全体の調査とリファクタリング計画の作成のような複雑なタスクを、最初の依頼から完成までエンドツーエンドで遂行できます。非同期ツール呼び出しにより、テストスイートの実行のような時間のかかるツール実行中もモデルが作業を継続し、スループットを改善できます。</p>
+            </div>
+            <div class="use-case">
+                <h4>🎮 実行中タスクへのリアルタイム介入</h4>
+                <p>WebSocket 経由のターン途中ステアリングにより、レスポンス生成中に追加指示を送信できます。長時間タスクを最初からやり直すことなく、途中で修正や要件変更を実行中のモデルに反映できます。</p>
+            </div>
+            <div class="use-case">
+                <h4>💰 タスク難易度に応じたコスト最適化</h4>
+                <p>会話途中での推論努力レベル変更により、難しい作業では推論努力レベルを上げ、定型的なフォローアップでは下げるという運用が可能です。キャッシュ済みプロンプトのプレフィックスを保持したまま、コストとレイテンシを動的に最適化できます。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <strong>GPT-6 Astra</strong> は、推論からコンピュータ操作までを組み合わせて複雑なタスクをエンドツーエンドで遂行する OpenAI の最上位モデルとして、Responses API と Chat Completions API でリリースされました。ツール呼び出しが <strong>Responses API 必須</strong>となり、サンプリング系パラメータが非対応になるなど、既存アプリケーションには移行対応が求められます。同時に追加された<strong>非同期ツール呼び出し・ターン途中ステアリング・推論努力レベルの動的変更</strong>という 3 つの新機能は、長時間実行されるエージェント型ワークフローの制御性を大きく高めるものであり、Responses API を中心としたエージェント開発への移行を加速させる更新と言えます。
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog (公式)</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li>関連レポート: Path to Astra (2026-09-01)</li>
+                <li>関連レポート: Safety overview: GPT-6 Astra (2026-09-03)</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -5,11 +5,17 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-03](2026/2026-09-03-safety-overview-gpt-6-astra.md) - GPT-6 Astra の安全性概要: Preparedness Framework で初の Critical レベル到達モデル
+- [2026-09-03](2026/2026-09-03-playco-game-prototyping-with-astra.md) - Playco が GPT-6 Astra によるゲームプロトタイピングで手作業の修正を 50% 削減
+- [2026-09-03](2026/2026-09-03-legora-financial-statement-review-with-astra.md) - Legora が GPT-6 Astra で 41 件の文書を数分でレビュー
+- [2026-09-03](2026/2026-09-03-gpt-6-astra-api-release.md) - GPT-6 Astra が API でリリース、Responses API に長時間タスク向け新機能
+- [2026-09-03](2026/2026-09-03-daybreak-for-frontline-defenders.md) - Daybreak for Frontline Defenders: 重要インフラ防御に 10 億ドル規模の取り組みを発表
 - [2026-09-02](2026/2026-09-02-atv-big-air-tour.md) - ATV Big Air Tour が ChatGPT で 3 日分の作業を 3 時間に短縮
 - [2026-09-02](2026/2026-09-02-api-error-handling-update.md) - API エラーレスポンスの改善 — 429 (slow_down) と 503 (server_is_overloaded) の区別
 - [2026-09-01](2026/2026-09-01-path-to-astra.md) - Path to Astra: Preparedness Framework のサイバーセキュリティ「Critical」基準に達した初のモデル
 - [2026-09-01](2026/2026-09-01-gilbert-tobin.md) - 法律事務所 Gilbert + Tobin が OpenAI と共に AI をガバナンスしスケールする方法
 - [2026-09-01](2026/2026-09-01-chatgpt-connects-health-records.md) - 医療機関が EHR などの業界データを ChatGPT に接続可能に
+- [2026-09-01](2026/2026-09-01-api-ipv6-support.md) - api.openai.com への接続で IPv6 が利用可能に
 - [2026-09-01](2026/2026-09-01-ai-native-company-workflows.md) - AI ネイティブ企業がワークフローを運用能力へ転換する方法
 - [2026-08-31](2026/2026-08-31-supporting-california-bill-advance-ai-youth-safety.md) - OpenAI、若年層の AI 安全性を推進するカリフォルニア州法案を支持
 - [2026-08-31](2026/2026-08-31-polimill.md) - Polimill が日本の次世代パブリック AI インフラを構築: 約 1,050 自治体が利用する QommonsAI と Codex による開発 3-5 倍高速化
