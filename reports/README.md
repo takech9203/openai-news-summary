@@ -8,6 +8,7 @@ OpenAI の最新ニュースレポート一覧
 - [2026-09-03](2026/2026-09-03-safety-overview-gpt-6-astra.md) - GPT-6 Astra の安全性概要: Preparedness Framework で初の Critical レベル到達モデル
 - [2026-09-03](2026/2026-09-03-playco-game-prototyping-with-astra.md) - Playco が GPT-6 Astra によるゲームプロトタイピングで手作業の修正を 50% 削減
 - [2026-09-03](2026/2026-09-03-legora-financial-statement-review-with-astra.md) - Legora が GPT-6 Astra で 41 件の文書を数分でレビュー
+- [2026-09-03](2026/2026-09-03-introducing-gpt-6-astra.md) - GPT-6 Astra 発表: コンピュータ操作・コーディング・サイバーセキュリティ・科学で最先端の新世代モデル
 - [2026-09-03](2026/2026-09-03-gpt-6-astra-api-release.md) - GPT-6 Astra が API でリリース、Responses API に長時間タスク向け新機能
 - [2026-09-03](2026/2026-09-03-daybreak-for-frontline-defenders.md) - Daybreak for Frontline Defenders: 重要インフラ防御に 10 億ドル規模の取り組みを発表
 - [2026-09-02](2026/2026-09-02-atv-big-air-tour.md) - ATV Big Air Tour が ChatGPT で 3 日分の作業を 3 時間に短縮
