@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-06](2026/2026-09-06-research-acceleration-view-inside-openai.md) - Research acceleration: OpenAI 社内でコーディングエージェントが AI 研究を加速している実態データ
+- [2026-09-06](2026/2026-09-06-an-alien-mind.md) - An Alien Mind: Chief Scientist Pachocki が語る高度化する AI とアライメントの課題
 - [2026-09-03](2026/2026-09-03-safety-overview-gpt-6-astra.md) - GPT-6 Astra の安全性概要: Preparedness Framework で初の Critical レベル到達モデル
 - [2026-09-03](2026/2026-09-03-playco-game-prototyping-with-astra.md) - Playco が GPT-6 Astra によるゲームプロトタイピングで手作業の修正を 50% 削減
 - [2026-09-03](2026/2026-09-03-legora-financial-statement-review-with-astra.md) - Legora が GPT-6 Astra で 41 件の文書を数分でレビュー
