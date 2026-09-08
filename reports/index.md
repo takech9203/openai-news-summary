@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-07](2026/2026-09-07-supporting-independent-journalism-in-ukraine.md) - ウクライナの独立ジャーナリズム支援: OpenAI・AIRPPU・WAN-IFRA が AI プログラムを開始
 - [2026-09-06](2026/2026-09-06-research-acceleration-view-inside-openai.md) - Research acceleration: OpenAI 社内でコーディングエージェントが AI 研究を加速している実態データ
 - [2026-09-06](2026/2026-09-06-an-alien-mind.md) - An Alien Mind: Chief Scientist Pachocki が語る高度化する AI とアライメントの課題
 - [2026-09-03](2026/2026-09-03-safety-overview-gpt-6-astra.md) - GPT-6 Astra の安全性概要: Preparedness Framework で初の Critical レベル到達モデル
