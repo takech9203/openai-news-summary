@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API アップデート: Prompt Cache Diagnostics GA 化と GPT Image 2.5 モデルリリース - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Meta Table */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .meta-table th,
+        .meta-table td {
+            text-align: left;
+            padding: 10px 16px;
+            border-bottom: 1px dashed rgba(16, 163, 127, 0.25);
+        }
+
+        .meta-table th {
+            width: 30%;
+            color: var(--openai-green);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .meta-table td {
+            color: var(--text-secondary);
+        }
+
+        .meta-table a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .meta-table a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .sub-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 28px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .section p.lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote {
+            background: var(--openai-light);
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .quote .quote-label {
+            display: block;
+            font-style: normal;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 6px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Model Table */
+        .model-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .model-table th {
+            background: var(--gradient-accent);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .model-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .model-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .model-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .model-table code {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--openai-dark);
+        }
+
+        code.inline {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--openai-dark);
+        }
+
+        /* Check List */
+        .check-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .check-list li {
+            position: relative;
+            padding: 12px 16px 12px 44px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .check-list li::before {
+            content: '✔';
+            position: absolute;
+            left: 16px;
+            top: 12px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        .check-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Related Links */
+        .link-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .link-list li {
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .link-list li::before {
+            content: '🔗';
+            margin-right: 10px;
+        }
+
+        .link-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .link-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .summary-box strong {
+            color: #1DB791;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .model-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <h1>API アップデート: Prompt Cache Diagnostics GA 化と GPT Image 2.5 モデルリリース</h1>
+                <p class="date">📅 2026-09-08 | ソース: OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">📋 メタデータ</h2>
+            <table class="meta-table">
+                <tr><th>発表日</th><td>2026-09-08</td></tr>
+                <tr><th>ソース</th><td>OpenAI API Changelog</td></tr>
+                <tr><th>カテゴリ</th><td>API 更新</td></tr>
+                <tr><th>公式リンク</th><td><a href="https://platform.openai.com/docs/changelog" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/changelog</a></td></tr>
+            </table>
+        </section>
+
+        <!-- Overview / Key Points -->
+        <section class="section">
+            <h2 class="section-title">💡 概要</h2>
+            <p class="lead">2026 年 9 月 8 日、OpenAI は API Changelog にて 2 つのアップデートを発表した。Responses API における Prompt Cache Diagnostics の一般提供 (GA) 開始と、画像生成モデル GPT Image 2.5 Sunburst / Flare のリリースである。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>Prompt Cache Diagnostics が GA 化</h3>
+                        <p>Responses API で一般提供を開始。GPT-5.6 以降のサポート対象モデルで、キャッシュ再利用状況の比較・キャッシュミスの原因特定・トラブルシューティングガイダンスの参照が可能に。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎨</div>
+                    <div class="key-point-content">
+                        <h3>GPT Image 2.5 Sunburst / Flare をリリース</h3>
+                        <p>Sunburst は編集精度を最重視、Flare は高速かつ高品質な日常的画像生成向け。Image API と Responses API の画像生成ツール経由で利用できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚙️</div>
+                    <div class="key-point-content">
+                        <h3>新しい品質設定 xhigh / max に対応</h3>
+                        <p>GPT Image 2.5 の両モデルとも、新しい xhigh と max の品質設定をサポートし、用途に応じた品質とコストのバランス調整が可能になった。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>料金は GPT Image 2 と同一</h3>
+                        <p>GPT Image 2 と同じトークンレートが適用されるため、既存の画像生成ワークフローからモデル名の変更だけで移行しやすい。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <section class="section">
+            <h2 class="section-title">📰 主な内容</h2>
+
+            <h3 class="sub-title">🔍 Prompt Cache Diagnostics の GA 化</h3>
+            <p class="lead">Responses API で Prompt Cache Diagnostics が一般提供 (GA) となった。対応モデルは GPT-5.6 以降のサポート対象モデルである。</p>
+            <div class="quote">
+                <span class="quote-label">公式 Changelog より</span>
+                "Compare cache reuse against a previous response, identify reasons for cache misses, and follow troubleshooting guidance"
+            </div>
+            <ul class="check-list">
+                <li><strong>キャッシュ再利用の比較</strong>: 過去のレスポンスと比較して、プロンプトキャッシュがどの程度再利用されたかを確認できる</li>
+                <li><strong>キャッシュミスの原因特定</strong>: キャッシュヒットしなかった理由 (プロンプト先頭部分の変更など) を診断情報として取得できる</li>
+                <li><strong>トラブルシューティングガイダンス</strong>: 診断結果に基づく改善ガイダンスに従うことで、キャッシュ再利用率を高めコストとレイテンシを削減できる</li>
+            </ul>
+            <p class="lead">プロンプトキャッシュはプロンプトの共通プレフィックスを再利用することで入力トークンのコストとレイテンシを削減する仕組みだが、これまではキャッシュミスが発生した際にその原因を特定する手段が限られていた。GA 化により、本番環境でも安心して診断機能を活用できるようになった。</p>
+
+            <h3 class="sub-title">🎨 GPT Image 2.5 Sunburst / GPT Image 2.5 Flare のリリース</h3>
+            <p class="lead">画像生成・編集向けの新モデル 2 種がリリースされた。</p>
+            <table class="model-table">
+                <thead>
+                    <tr><th>モデル</th><th>特徴</th><th>主な用途</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>gpt-image-2.5-sunburst</code></td><td>編集精度を最重視</td><td>精密な画像編集ワークフロー</td></tr>
+                    <tr><td><code>gpt-image-2.5-flare</code></td><td>高速かつ高品質</td><td>日常的な画像生成</td></tr>
+                </tbody>
+            </table>
+            <div class="quote">
+                <span class="quote-label">公式 Changelog より</span>
+                "Use Sunburst for workflows where editing precision matters most, or Flare for fast, high-quality everyday image generation"
+            </div>
+            <ul class="check-list">
+                <li><strong>利用可能な API</strong>: Image API (<code class="inline">v1/images</code>) および Responses API (<code class="inline">v1/responses</code>) の画像生成ツール</li>
+                <li><strong>品質設定</strong>: 両モデルとも新しい <code class="inline">xhigh</code> と <code class="inline">max</code> の品質設定に対応</li>
+                <li><strong>料金</strong>: GPT Image 2 と同じトークンレートを使用</li>
+            </ul>
+        </section>
+
+        <!-- Feature Cards -->
+        <section class="section">
+            <h2 class="section-title">✨ 主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔁 キャッシュ再利用の比較</h3>
+                    <p>過去のレスポンスと比較し、プロンプトキャッシュの再利用状況をデータで確認。改善効果を定量的に把握できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🩺 キャッシュミス診断</h3>
+                    <p>キャッシュヒットしなかった理由 (プロンプト先頭部分の変更など) を診断情報として取得し、原因を特定できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📖 改善ガイダンス</h3>
+                    <p>診断結果に基づくトラブルシューティングガイダンスに従い、キャッシュ再利用率を高めてコストとレイテンシを削減。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌅 GPT Image 2.5 Sunburst</h3>
+                    <p>編集精度を最重視したモデル。被写体を維持しながら背景だけを変更するなど、精密な画像編集ワークフローに最適。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ GPT Image 2.5 Flare</h3>
+                    <p>高速かつ高品質な画像生成モデル。日常的な画像生成タスクをスピーディにこなす。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎚️ xhigh / max 品質設定</h3>
+                    <p>新しい 2 段階の高品質設定により、用途に応じた品質とコストのバランス調整が可能に。料金は GPT Image 2 と同一。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">🛠️ 技術的な詳細 (API 変更点)</h2>
+
+            <h3 class="sub-title">🔍 Prompt Cache Diagnostics の利用イメージ</h3>
+            <p class="lead">Responses API のレスポンスに含まれるキャッシュ関連情報を参照し、過去のレスポンスと比較してキャッシュミスの原因を診断する。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Prompt Cache Diagnostics の利用例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# 1 回目のリクエスト (キャッシュのベースライン)
+first = client.responses.create(
+    model="gpt-5.6",
+    input=[
+        {"role": "developer", "content": LONG_SYSTEM_PROMPT},
+        {"role": "user", "content": "ユーザーからの質問 1"},
+    ],
+)
+
+# 2 回目のリクエスト (キャッシュ再利用を期待)
+second = client.responses.create(
+    model="gpt-5.6",
+    input=[
+        {"role": "developer", "content": LONG_SYSTEM_PROMPT},
+        {"role": "user", "content": "ユーザーからの質問 2"},
+    ],
+)
+
+# キャッシュ利用状況の確認
+print(second.usage.input_tokens_details.cached_tokens)</code></pre>
+            </div>
+            <p class="lead">キャッシュヒット率が低い場合は、診断情報をもとにプロンプト構成 (静的な部分を先頭に、動的な部分を末尾に配置するなど) を見直すことで再利用率を改善できる。</p>
+
+            <h3 class="sub-title">🎨 GPT Image 2.5 の利用例</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Image API での画像生成・編集</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# Flare: 高速な日常用途の画像生成
+result = client.images.generate(
+    model="gpt-image-2.5-flare",
+    prompt="夕焼けの富士山と桜の風景",
+    quality="xhigh",  # 新しい品質設定: xhigh / max
+)
+
+# Sunburst: 編集精度が重要なワークフロー
+edited = client.images.edit(
+    model="gpt-image-2.5-sunburst",
+    image=open("input.png", "rb"),
+    prompt="背景を星空に変更し、被写体はそのまま維持する",
+    quality="max",
+)</code></pre>
+            </div>
+            <p class="lead">Responses API の画像生成ツール経由でも利用できる。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Responses API の画像生成ツール経由での利用</span>
+                </div>
+                <pre><code class="language-python">response = client.responses.create(
+    model="gpt-5.6",
+    input="製品ロゴのコンセプト画像を生成してください",
+    tools=[{"type": "image_generation", "model": "gpt-image-2.5-flare"}],
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">🏗️ アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["Client Application"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph API["OpenAI API"]
+        subgraph Responses["Responses API (v1/responses)"]
+            Diag["Prompt Cache Diagnostics (GA)"]
+            ImgTool["Image Generation Tool"]
+        end
+        subgraph Images["Image API (v1/images)"]
+            Gen["images.generate"]
+            Edit["images.edit"]
+        end
+    end
+
+    subgraph Models["Models"]
+        GPT56["GPT-5.6+"]
+        Sunburst["gpt-image-2.5-sunburst"]
+        Flare["gpt-image-2.5-flare"]
+    end
+
+    SDK --> Responses
+    SDK --> Images
+    Diag --> GPT56
+    ImgTool --> Sunburst
+    ImgTool --> Flare
+    Gen --> Flare
+    Edit --> Sunburst
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class GPT56,Sunburst,Flare openai
+    class Diag,ImgTool,Gen,Edit dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">🎯 開発者への影響 / ユースケース</h2>
+            <div class="use-case">
+                <h4>📊 コスト最適化の可視化</h4>
+                <p>Prompt Cache Diagnostics により、キャッシュミスの原因をデータに基づいて特定できるようになり、プロンプト設計の改善サイクルを回しやすくなった。</p>
+            </div>
+            <div class="use-case">
+                <h4>🏭 本番環境での利用</h4>
+                <p>GA 化により、本番ワークロードでも診断機能を安定して利用できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🖼️ 画像生成の選択肢拡大</h4>
+                <p>編集精度重視の Sunburst と速度重視の Flare をユースケースに応じて使い分けられる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🎚️ 品質の柔軟な制御</h4>
+                <p>新しい xhigh / max 品質設定により、用途に応じた品質とコストのバランス調整が可能になった。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔄 移行コストの低さ</h4>
+                <p>料金は GPT Image 2 と同じトークンレートのため、既存の画像生成ワークフローからモデル名の変更だけで移行しやすい。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">🔗 関連リンク</h2>
+            <ul class="link-list">
+                <li><a href="https://platform.openai.com/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+                <li><a href="https://platform.openai.com/docs/guides/prompt-caching" target="_blank" rel="noopener noreferrer">プロンプトキャッシュガイド</a></li>
+                <li><a href="https://platform.openai.com/docs/guides/image-generation" target="_blank" rel="noopener noreferrer">画像生成ガイド</a></li>
+                <li><a href="https://platform.openai.com/docs/pricing#image-generation" target="_blank" rel="noopener noreferrer">料金ページ (画像生成)</a></li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">📝 まとめ</h2>
+            <div class="summary-box">
+                <p>2026 年 9 月 8 日の API アップデートでは、Responses API の <strong>Prompt Cache Diagnostics が GA 化</strong>され (GPT-5.6 以降対応)、キャッシュミスの原因特定と再利用改善が本番環境で可能になった。また、画像生成モデル <strong>GPT Image 2.5 Sunburst</strong> (編集精度重視) と <strong>GPT Image 2.5 Flare</strong> (高速・高品質) がリリースされ、新しい <strong>xhigh / max 品質設定</strong>に対応した。料金は GPT Image 2 と同一のため、既存ワークフローからの移行障壁は低い。コスト最適化と画像生成品質の両面で、開発者にとって実用性の高いアップデートである。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 8px;">本インフォグラフィックは OpenAI API Changelog (2026-09-08) のレポートをもとに作成されました。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

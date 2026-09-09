@@ -5,6 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-08](2026/2026-09-08-the-work-now-within-reach.md) - The Work Now Within Reach: 高性能かつ手頃な AI が広げる仕事の可能性
+- [2026-09-08](2026/2026-09-08-teen-development-research-grants.md) - AI と十代の発達に関する新研究への助成プログラムを発表
+- [2026-09-08](2026/2026-09-08-supporting-journalism-from-classrooms-to-newsrooms.md) - OpenAI、教室からニュースルームまでジャーナリズム支援の取り組みを拡大
+- [2026-09-08](2026/2026-09-08-navier-stokes-solution.md) - ナビエ–ストークス方程式のミレニアム懸賞問題に対する AI 生成の解法を公開
+- [2026-09-08](2026/2026-09-08-introducing-chatgpt-images-2-5.md) - ChatGPT Images 2.5 の発表: アイデアやスケッチをより洗練された画像へ
+- [2026-09-08](2026/2026-09-08-codex-quantum-computing-experiments.md) - GPT-5.6 Sol が量子コンピューティング実験の実行を支援
+- [2026-09-08](2026/2026-09-08-api-update-prompt-cache-diagnostics-gpt-image-2-5.md) - API アップデート: Prompt Cache Diagnostics GA 化と GPT Image 2.5 モデルリリース
+- [2026-09-08](2026/2026-09-08-1password.md) - 1Password が Codex でエンジニアリング生産性を 21% 向上
 - [2026-09-07](2026/2026-09-07-supporting-independent-journalism-in-ukraine.md) - ウクライナの独立ジャーナリズム支援: OpenAI・AIRPPU・WAN-IFRA が AI プログラムを開始
 - [2026-09-06](2026/2026-09-06-research-acceleration-view-inside-openai.md) - Research acceleration: OpenAI 社内でコーディングエージェントが AI 研究を加速している実態データ
 - [2026-09-06](2026/2026-09-06-an-alien-mind.md) - An Alien Mind: Chief Scientist Pachocki が語る高度化する AI とアライメントの課題
