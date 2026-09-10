@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-09](2026/2026-09-09-paul-christiano-joins-openai-foundation-board.md) - Paul Christiano 氏が OpenAI Foundation Board に参加
+- [2026-09-09](2026/2026-09-09-gpt-6-astra-next-generation-work.md) - GPT-6 Astra: ビジネス向けの次世代インテリジェンス — 高度な推論・コンピュータ操作・文章/デザイン判断力を訴求
+- [2026-09-09](2026/2026-09-09-ai-policy-window.md) - AI 政策の窓は開いている: Chris Lehane が持続的な政策行動を提唱
 - [2026-09-08](2026/2026-09-08-the-work-now-within-reach.md) - The Work Now Within Reach: 高性能かつ手頃な AI が広げる仕事の可能性
 - [2026-09-08](2026/2026-09-08-teen-development-research-grants.md) - AI と十代の発達に関する新研究への助成プログラムを発表
 - [2026-09-08](2026/2026-09-08-supporting-journalism-from-classrooms-to-newsrooms.md) - OpenAI、教室からニュースルームまでジャーナリズム支援の取り組みを拡大
