@@ -5,6 +5,16 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-14](2026/2026-09-14-perplexity-improving-accuracy-with-astra.md) - Perplexity が GPT-6 Astra にエンドツーエンドのシステム運用を委任
+- [2026-09-11](2026/2026-09-11-scaling-storage-one-billion-users.md) - 10 億人の ChatGPT ユーザーを支えるオンラインストレージの急速なスケーリング (Part 1)
+- [2026-09-11](2026/2026-09-11-cognition-devin-testing-with-astra.md) - Cognition、GPT-6 Astra で Devin による自己テストを強化
+- [2026-09-10](2026/2026-09-10-put-data-to-work.md) - Now everyone can put data to work: ChatGPT Work の Data agent 発表
+- [2026-09-10](2026/2026-09-10-introducing-the-agents-api.md) - Agents API 発表: Codex ハーネスによるクラウドエージェントのマネージドサービス
+- [2026-09-10](2026/2026-09-10-introducing-chatgpt-financial-services.md) - ChatGPT for Financial Services の発表 : 金融サービス向け ChatGPT が登場
+- [2026-09-10](2026/2026-09-10-gpt-live-1-in-the-api.md) - GPT-Live-1 が API で提供開始: より自然な音声体験の構築が可能に
+- [2026-09-10](2026/2026-09-10-expanding-ai-access-us-government.md) - 米国の連邦・州・地方・部族政府向けに AI アクセスとサイバー防御を拡大
+- [2026-09-10](2026/2026-09-10-codex-chatgpt-antimicrobials.md) - Codex と ChatGPT を活用した抗菌分子の探索: ペンシルベニア大学の研究事例
+- [2026-09-10](2026/2026-09-10-api-key-expiration.md) - プロジェクト API キーに有効期限を設定可能に: 組織・プロジェクトレベルでの最大キー寿命の強制にも対応
 - [2026-09-09](2026/2026-09-09-paul-christiano-joins-openai-foundation-board.md) - Paul Christiano 氏が OpenAI Foundation Board に参加
 - [2026-09-09](2026/2026-09-09-gpt-6-astra-next-generation-work.md) - GPT-6 Astra: ビジネス向けの次世代インテリジェンス — 高度な推論・コンピュータ操作・文章/デザイン判断力を訴求
 - [2026-09-09](2026/2026-09-09-ai-policy-window.md) - AI 政策の窓は開いている: Chris Lehane が持続的な政策行動を提唱
