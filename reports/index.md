@@ -6,6 +6,7 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-09-14](2026/2026-09-14-perplexity-improving-accuracy-with-astra.md) - Perplexity が GPT-6 Astra にエンドツーエンドのシステム運用を委任
+- [2026-09-14](2026/2026-09-14-fyxer.md) - Fyxer が信頼される AI エグゼクティブアシスタントを構築した方法
 - [2026-09-11](2026/2026-09-11-scaling-storage-one-billion-users.md) - 10 億人の ChatGPT ユーザーを支えるオンラインストレージの急速なスケーリング (Part 1)
 - [2026-09-11](2026/2026-09-11-cognition-devin-testing-with-astra.md) - Cognition、GPT-6 Astra で Devin による自己テストを強化
 - [2026-09-10](2026/2026-09-10-put-data-to-work.md) - Now everyone can put data to work: ChatGPT Work の Data agent 発表
