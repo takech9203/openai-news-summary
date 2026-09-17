@@ -5,6 +5,12 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-16](2026/2026-09-16-unlocking-new-ways-of-working.md) - 労働者はいかにして新しい働き方を切り開いているか: OpenAI 経済研究「Work at the Frontier」第 2 報告書
+- [2026-09-16](2026/2026-09-16-reimagining-advertising-with-ai.md) - AI で広告を再構築する: Sponsored Agents とマーケター向けツールの発表
+- [2026-09-16](2026/2026-09-16-model-misalignment-reporting-framework.md) - OpenAI、モデルミスアライメント報告フレームワークを発表 — 6 件の懸念事例も同時公開
+- [2026-09-16](2026/2026-09-16-how-to-connect-ai-usage-to-business-value.md) - AI 利用状況をビジネス価値に結びつける方法 : ChatGPT Work と Codex のアナリティクス活用ガイド
+- [2026-09-16](2026/2026-09-16-helping-older-adults-use-ai-in-everyday-life.md) - 高齢者の日常生活での AI 活用を支援: OpenAI と AARP が実践型 ChatGPT ワークショップを展開
+- [2026-09-15](2026/2026-09-15-api-key-governance-controls.md) - API キー作成のガバナンス管理: 組織・プロジェクトレベルで作成可能なキー種別を制限可能に
 - [2026-09-14](2026/2026-09-14-perplexity-improving-accuracy-with-astra.md) - Perplexity が GPT-6 Astra にエンドツーエンドのシステム運用を委任
 - [2026-09-14](2026/2026-09-14-fyxer.md) - Fyxer が信頼される AI エグゼクティブアシスタントを構築した方法
 - [2026-09-11](2026/2026-09-11-scaling-storage-one-billion-users.md) - 10 億人の ChatGPT ユーザーを支えるオンラインストレージの急速なスケーリング (Part 1)
