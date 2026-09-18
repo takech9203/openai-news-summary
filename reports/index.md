@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-17](2026/2026-09-17-cooley-gopublic.md) - Cooley が ChatGPT で IPO 業務を加速: 独自 AI プロダクト「GO Public」
+- [2026-09-17](2026/2026-09-17-astra-for-law.md) - Astra for Law の発表: 法律業務向けフロンティアインテリジェンス
 - [2026-09-16](2026/2026-09-16-unlocking-new-ways-of-working.md) - 労働者はいかにして新しい働き方を切り開いているか: OpenAI 経済研究「Work at the Frontier」第 2 報告書
 - [2026-09-16](2026/2026-09-16-reimagining-advertising-with-ai.md) - AI で広告を再構築する: Sponsored Agents とマーケター向けツールの発表
 - [2026-09-16](2026/2026-09-16-model-misalignment-reporting-framework.md) - OpenAI、モデルミスアライメント報告フレームワークを発表 — 6 件の懸念事例も同時公開
