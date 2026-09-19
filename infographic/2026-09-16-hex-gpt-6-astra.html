@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex が GPT-6 Astra で複雑な分析をビジュアルレポートに変換 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Notice Box (二次ソース注記) */
+        .notice-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .notice-box .notice-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .notice-box p {
+            font-size: 13.5px;
+            color: #78350F;
+            line-height: 1.7;
+        }
+
+        .notice-box a {
+            color: #92400E;
+            font-weight: 700;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section > p, .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Workflow Steps (具体例) */
+        .workflow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .workflow-step {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .workflow-step.highlight {
+            background: var(--gradient-accent);
+        }
+
+        .workflow-arrow {
+            color: var(--openai-green);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Quote */
+        .quote-box {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-top: 16px;
+        }
+
+        .quote-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .quote-box .quote-author {
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        /* Table */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .detail-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .detail-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .detail-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .detail-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        .detail-table td:first-child {
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        .note-box {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+        }
+
+        .summary-box p {
+            font-size: 14.5px;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-steps {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .workflow-arrow {
+                text-align: center;
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">導入事例</span>
+                <h1>Hex が GPT-6 Astra で複雑な分析をビジュアルレポートに変換</h1>
+                <p class="date">📅 2026-09-16 | ソース: OpenAI News/Blog</p>
+            </div>
+        </header>
+
+        <!-- 二次ソース注記 -->
+        <div class="notice-box">
+            <div class="notice-icon">⚠️</div>
+            <p><strong>注記</strong>: レポート作成時点で、公式記事 (https://openai.com/index/hex-gpt-6-astra) は Cloudflare によるアクセス制限 (HTTP 403) のため直接取得できませんでした。本インフォグラフィックは、同記事の内容を報じた二次ソース (AI Pricing Guru、AIToolly) で確認できた範囲の情報に基づいており、確認できなかった項目は記載していません。</p>
+        </div>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>Hex のデータエージェントに GPT-6 Astra を採用</h3>
+                        <p>データ分析プラットフォームを提供する Hex は、自律的な「データエージェント」の中核に最新モデル GPT-6 Astra を組み込みました。OpenAI は 2026 年 9 月 16 日にこの導入事例を公開しました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎨</div>
+                    <div class="key-point-content">
+                        <h3>表や未整形サマリーから構造化されたビジュアルレポートへ</h3>
+                        <p>複雑な分析結果を、文章化された知見 (written findings)、チャート、地域別ビュー、インタラクティブなレポートへと構造化して出力できるようになりました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>チームが直接データを探索できる共有可能なレポート</h3>
+                        <p>生成されるレポートはインタラクティブで、チームメンバーは静的な数値を眺めるのではなくレポート上で直接データを探索できます。組織全体に自信を持って共有できる (proud to share) レポートの生成を目指した設計です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>LLM の役割が「プレゼンテーション・可視化エンジン」へ拡張</h3>
+                        <p>この事例は、大規模言語モデルの役割がテキストやコードの生成にとどまらず、データ変換から可視化、ビジネスコミュニケーションまでを一貫して担う方向に拡張していることを示しています。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <p>複雑な分析の結果が表形式や未整形のサマリーで出力され、チームメンバーは静的な数値を眺めるだけだった。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <p>文章化された知見、チャート、地域別ビューを含むインタラクティブなレポートが生成され、チームがレポート上で直接データを探索し、組織全体に共有できるようになった。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主要機能 -->
+        <section class="section">
+            <h2 class="section-title">GPT-6 Astra が担う 4 つの役割</h2>
+            <p class="section-lead">Hex のデータエージェントにおいて、GPT-6 Astra は以下の役割を担うとされています。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔧 データ変換の実行</h3>
+                    <p>可視化に必要なデータの結合・変換処理を実行します (結合、フィルタリングなど)。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 可視化ライブラリの操作</h3>
+                    <p>高度な可視化に必要なライブラリを直接扱い、インタラクティブな成果物を構築します。地理空間 (geospatial) 処理を含む可視化にも対応します。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧮 分析の実施</h3>
+                    <p>時系列のトレンド比較、ランキング、チャネル別・地域別の内訳の作成を行います。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>✅ 結果の妥当性チェック</h3>
+                    <p>算出された数値が意味を成しているか、ユーザーの実際の質問やビジネス上の目的に答えているかを検証する「判断」のステップを担います。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 具体例 -->
+        <section class="section">
+            <h2 class="section-title">具体例: 販売チャネルに関する質問からダッシュボードまで</h2>
+            <p class="section-lead">OpenAI の記事では、販売チャネルに関する 1 つの質問から始まるワークフローが紹介されています。エージェントが以下の流れを一貫して生成します。</p>
+            <div class="workflow-steps">
+                <div class="workflow-step">💬 販売チャネルに関する質問</div>
+                <span class="workflow-arrow">→</span>
+                <div class="workflow-step">⏱️ 時系列のパフォーマンス分析</div>
+                <span class="workflow-arrow">→</span>
+                <div class="workflow-step">📝 文章化された知見</div>
+                <span class="workflow-arrow">→</span>
+                <div class="workflow-step">📊 トレンド比較・ランキング・地域別内訳</div>
+                <span class="workflow-arrow">→</span>
+                <div class="workflow-step highlight">🖥️ インタラクティブなダッシュボード</div>
+            </div>
+            <div class="quote-box">
+                <p>GPT-6 Astra は、地理空間 (geospatial) 処理を含む高度な可視化に必要なライブラリやデータ変換を扱える。</p>
+                <p class="quote-author">— Caitlin Colgrove 氏 (Hex CTO) の発言の趣旨</p>
+            </div>
+        </section>
+
+        <!-- 技術詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <p class="section-lead">二次ソースで確認できた範囲では、ワークフローの各段階における GPT-6 Astra の役割は以下のように整理されます。</p>
+            <table class="detail-table">
+                <thead>
+                    <tr>
+                        <th>段階</th>
+                        <th>GPT-6 Astra の役割</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>データ準備</td>
+                        <td>可視化に必要なデータ変換 (結合、フィルタリングなど)</td>
+                    </tr>
+                    <tr>
+                        <td>可視化構築</td>
+                        <td>可視化ライブラリを使ったインタラクティブな成果物の作成 (地理空間ビューを含む)</td>
+                    </tr>
+                    <tr>
+                        <td>分析</td>
+                        <td>トレンド、ランキング、チャネル別・地域別の比較</td>
+                    </tr>
+                    <tr>
+                        <td>妥当性チェック</td>
+                        <td>結果がユーザーの質問とビジネス目的に適合しているかの検証</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="note-box">
+                <strong>補足</strong>: Hex のドキュメントでは、同社の Notebook Agent は提案された SQL やコードを監査できる技術ユーザー向けと位置づけられています。また、エンタープライズプランでは OpenAI / Anthropic の API キーを持ち込む BYOK (Bring Your Own Key) に対応しています。なお、本発表において OpenAI と Hex は、レイテンシ、精度、レポート単価などの定量的なベンチマーク結果は公開していません。
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="section-lead">Hex プラットフォームと GPT-6 Astra の全体構成を以下に示します。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    User(["ユーザー<br/>(例: 販売チャネルに関する質問)"]) --> Agent
+
+    subgraph Hex["Hex プラットフォーム"]
+        Agent["データエージェント<br/>(Notebook Agent)"]
+        Data[("接続データ<br/>(SQL / データウェアハウス)")]
+    end
+
+    subgraph Astra["GPT-6 Astra"]
+        Transform["データ変換"]
+        Viz["可視化ライブラリ操作<br/>(地理空間処理を含む)"]
+        Analysis["分析<br/>(トレンド / ランキング / 地域別)"]
+        Judge["妥当性チェック<br/>(質問・ビジネス目的との適合)"]
+    end
+
+    Agent --> Transform
+    Data --> Transform
+    Transform --> Viz
+    Transform --> Analysis
+    Analysis --> Judge
+    Viz --> Judge
+    Judge --> Report["インタラクティブレポート<br/>(知見 + チャート + ダッシュボード)"]
+    Report --> Team(["チームメンバー<br/>(直接データを探索)"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Transform,Viz,Analysis,Judge openai
+    class Agent,Report dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者・企業への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者・企業への影響</h2>
+            <div class="use-case">
+                <h4>🏗️ 可視化までを含むエージェント設計の参照事例</h4>
+                <p>LLM をデータ変換・分析だけでなく、可視化ライブラリの操作とインタラクティブレポートの構築まで担わせる設計の実例であり、データ分析系エージェントを開発するチームの参考になります。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚖️ 「判断」ステップの組み込み</h4>
+                <p>数値の妥当性やビジネス目的との適合性をモデル自身に検証させるステップを設けており、分析エージェントの信頼性を高めるパターンとして注目されます。ただし、チャートの見た目の良さは結合・フィルタ・結論の正しさを保証しないため、人間によるレビュー体制は引き続き重要です。</p>
+            </div>
+            <div class="use-case">
+                <h4>🌉 技術とビジネスの橋渡しの自動化</h4>
+                <p>技術的な分析結果を、組織全体で共有可能なビジュアルレポートへ自動変換する流れが広がることで、データチームの成果物の伝達コストが下がる可能性があります。</p>
+            </div>
+            <div class="use-case">
+                <h4>💰 コスト設計の検討が必要</h4>
+                <p>定量的なベンチマークは公開されていないため、フロンティアモデルを分析ワークフローに導入する際は、自社のデータとツールでの検証 (同一データ・受け入れ基準での比較テスト) を行ったうえで採否を判断することが望ましいでしょう。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>Hex は GPT-6 Astra をデータエージェントに組み込み、販売チャネル分析のような複雑な質問に対して、データ変換から可視化ライブラリの操作、トレンド・ランキング・地域別の分析、結果の妥当性チェックまでを一貫して実行し、チームがそのまま探索・共有できるインタラクティブなビジュアルレポートを生成しています。LLM が分析パイプラインの「最後の 1 マイル」であるビジネスコミュニケーションまで担う事例として、データ分析エージェントの設計に示唆を与える発表です。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/hex-gpt-6-astra" target="_blank" rel="noopener noreferrer">https://openai.com/index/hex-gpt-6-astra</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/hex-gpt-6-astra" target="_blank" rel="noopener noreferrer">Hex turns complex analysis into visual reports with GPT-6 Astra (公式記事)</a></li>
+                <li><a href="https://hex.tech/" target="_blank" rel="noopener noreferrer">Hex 公式サイト</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li><a href="https://www.aipricing.guru/news/hex-gpt-6-astra-visual-reports-pricing-impact-september-2026/" target="_blank" rel="noopener noreferrer">参照した二次ソース: AI Pricing Guru</a></li>
+                <li><a href="https://aitoolly.com/ai-news/article/2026-09-19-hex-leverages-openai-gpt-6-astra-to-transform-complex-data-analysis-into-interactive-visual-reports" target="_blank" rel="noopener noreferrer">参照した二次ソース: AIToolly</a></li>
+            </ul>
+            <p style="margin-top: 12px;">注記: 本インフォグラフィックは二次ソースで確認できた範囲の情報に基づいて作成されています。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

@@ -11,6 +11,7 @@ OpenAI の最新ニュースレポート一覧
 - [2026-09-16](2026/2026-09-16-reimagining-advertising-with-ai.md) - AI で広告を再構築する: Sponsored Agents とマーケター向けツールの発表
 - [2026-09-16](2026/2026-09-16-model-misalignment-reporting-framework.md) - OpenAI、モデルミスアライメント報告フレームワークを発表 — 6 件の懸念事例も同時公開
 - [2026-09-16](2026/2026-09-16-how-to-connect-ai-usage-to-business-value.md) - AI 利用状況をビジネス価値に結びつける方法 : ChatGPT Work と Codex のアナリティクス活用ガイド
+- [2026-09-16](2026/2026-09-16-hex-gpt-6-astra.md) - Hex が GPT-6 Astra で複雑な分析をビジュアルレポートに変換
 - [2026-09-16](2026/2026-09-16-helping-older-adults-use-ai-in-everyday-life.md) - 高齢者の日常生活での AI 活用を支援: OpenAI と AARP が実践型 ChatGPT ワークショップを展開
 - [2026-09-15](2026/2026-09-15-api-key-governance-controls.md) - API キー作成のガバナンス管理: 組織・プロジェクトレベルで作成可能なキー種別を制限可能に
 - [2026-09-14](2026/2026-09-14-perplexity-improving-accuracy-with-astra.md) - Perplexity が GPT-6 Astra にエンドツーエンドのシステム運用を委任
