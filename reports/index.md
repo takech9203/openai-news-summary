@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-18](2026/2026-09-18-australian-youth-safety-blueprint.md) - Australian Youth Safety Blueprint の発表: 若者を守り力づける 6 つの柱のロードマップ
 - [2026-09-17](2026/2026-09-17-cooley-gopublic.md) - Cooley が ChatGPT で IPO 業務を加速: 独自 AI プロダクト「GO Public」
 - [2026-09-17](2026/2026-09-17-astra-for-law.md) - Astra for Law の発表: 法律業務向けフロンティアインテリジェンス
 - [2026-09-16](2026/2026-09-16-unlocking-new-ways-of-working.md) - 労働者はいかにして新しい働き方を切り開いているか: OpenAI 経済研究「Work at the Frontier」第 2 報告書
