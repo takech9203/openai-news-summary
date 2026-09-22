@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-21](2026/2026-09-21-expanding-openai-academy-with-new-learning-paths.md) - OpenAI Academy が新しいラーニングパスで拡張、役割別の AI 学習を提供
+- [2026-09-21](2026/2026-09-21-advisory-group-on-mathematics-and-ai.md) - 数学と AI に関する諮問グループ (AGMAI) の設立
 - [2026-09-18](2026/2026-09-18-australian-youth-safety-blueprint.md) - Australian Youth Safety Blueprint の発表: 若者を守り力づける 6 つの柱のロードマップ
 - [2026-09-17](2026/2026-09-17-cooley-gopublic.md) - Cooley が ChatGPT で IPO 業務を加速: 独自 AI プロダクト「GO Public」
 - [2026-09-17](2026/2026-09-17-astra-for-law.md) - Astra for Law の発表: 法律業務向けフロンティアインテリジェンス
