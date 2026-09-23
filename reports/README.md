@@ -5,7 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-22](2026/2026-09-22-priorities-principles-third-party-assessments.md) - サードパーティ評価を効果的に行うための優先事項と原則
+- [2026-09-22](2026/2026-09-22-parallel-cuts-time-and-cost-with-astra.md) - Parallel が GPT-6 Astra でリサーチ時間とコストを半減
+- [2026-09-22](2026/2026-09-22-introducing-gpt-6-sol-and-luna.md) - GPT-6 Sol と Luna の発表: コスト効率のフロンティアを押し広げる新モデル
+- [2026-09-22](2026/2026-09-22-better-prompt-caching-for-gpt-6.md) - GPT-6 のプロンプトキャッシュが強化: ヒット率向上と新しい診断・最適化ツール
+- [2026-09-21](2026/2026-09-21-v7.md) - V7 が AI エージェントに組織的な記憶 (institutional memory) を提供
+- [2026-09-21](2026/2026-09-21-higgsfield-from-prompt-to-production-with-astra.md) - Higgsfield AI が GPT-6 Astra で新しい動画機能を 1 日で出荷
 - [2026-09-21](2026/2026-09-21-expanding-openai-academy-with-new-learning-paths.md) - OpenAI Academy が新しいラーニングパスで拡張、役割別の AI 学習を提供
+- [2026-09-21](2026/2026-09-21-building-standards-next-phase-ai.md) - AI の次のフェーズに向けた標準の構築 : フロンティア AI と RSI の国際標準を米国主導で
 - [2026-09-21](2026/2026-09-21-advisory-group-on-mathematics-and-ai.md) - 数学と AI に関する諮問グループ (AGMAI) の設立
 - [2026-09-18](2026/2026-09-18-australian-youth-safety-blueprint.md) - Australian Youth Safety Blueprint の発表: 若者を守り力づける 6 つの柱のロードマップ
 - [2026-09-17](2026/2026-09-17-cooley-gopublic.md) - Cooley が ChatGPT で IPO 業務を加速: 独自 AI プロダクト「GO Public」

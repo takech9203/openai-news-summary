@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-6 のプロンプトキャッシュが強化 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card code,
+        .use-case code,
+        .key-point-content code,
+        .section-lead code,
+        td code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: rgba(16, 163, 127, 0.1);
+            color: #0D8A6A;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        /* Number badge for optimization steps */
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        .code-note {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table.results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table.results-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        table.results-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        table.results-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        table.results-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        table.results-table td.company {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        table.results-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(29, 183, 145, 0.05) 100%);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Related links */
+        .related-links {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .related-links li {
+            font-size: 14px;
+        }
+
+        .related-links li::before {
+            content: '🔗';
+            margin-right: 8px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product (API)</span>
+                <h1>GPT-6 のプロンプトキャッシュが強化 🚀</h1>
+                <p class="subtitle">ヒット率向上と新しい診断・最適化ツールで、永続的エージェントをより高速・低コストに</p>
+                <p class="date">📅 2026-09-22 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>デフォルトでより高いキャッシュヒット率</h3>
+                        <p>GPT-6 ファミリー向けに改良されたプロンプトキャッシュシステムを発表。デフォルトでより高いキャッシュヒット率を実現する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>30 分ウィンドウで最大 90% 割引</h3>
+                        <p>30 分間のウィンドウ内で再利用された適格な共有プレフィックスにキャッシュ割引が適用され、キャッシュされた入力トークンには最大 90% の割引が提供される。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>新しい監視・診断ツール群</h3>
+                        <p>キャッシュパフォーマンスの監視、キャッシュミスの診断、プロンプトのどの部分をキャッシュするかの選択を可能にする新しいツール群を導入。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>永続的エージェントの経済性を改善</h3>
+                        <p>コードベースのリファクタリングや調査ドキュメントの作成など、数時間にわたって複雑なタスクを実行する永続的なエージェントを、より高速かつ低コストで運用できるようにすることが狙い。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るアップデート</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">90%</div>
+                    <div class="stat-label">キャッシュ済み入力トークンの最大割引率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">30 分</div>
+                    <div class="stat-label">キャッシュ再利用ウィンドウ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">50%+</div>
+                    <div class="stat-label">GitHub Copilot の新規処理トークン削減</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">36%</div>
+                    <div class="stat-label">Wordsmith の推論コスト削減</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Monitoring & Diagnostics -->
+        <section class="section">
+            <h2 class="section-title">キャッシュの監視とキャッシュミスの診断</h2>
+            <p class="section-lead">新しい <strong>Prompt Caching Dashboard</strong> では、アプリケーションの入力のうちどれだけがキャッシュから提供されているかを確認できる。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📈 ヒット率の時系列トラッキング</h3>
+                    <p>キャッシュヒット率の推移を時系列で追跡し、パフォーマンスの変化を継続的に把握できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 入力構成チャート</h3>
+                    <p>キャッシュ済みトークンと未キャッシュトークンを比較し、入力の構成を可視化する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 ヒット低下の検出</h3>
+                    <p>キャッシュヒットの低下を検出し、アプリケーション変更がキャッシュ性能に与える影響を評価できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🩺 キャッシュ診断ツール</h3>
+                    <p>予期しないキャッシュミスの原因を特定。リクエストを直近のレスポンスと比較し、モデル・ツール・設定・入力のどの変更が再利用を妨げたかを識別し、影響を受けたトークンの推定数も表示する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optimization Techniques -->
+        <section class="section">
+            <h2 class="section-title">アプリケーションに合わせた 4 つの最適化手法</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon"><span class="step-badge">1</span></div>
+                    <div class="key-point-content">
+                        <h3>🎯 キャッシュ対象の選択</h3>
+                        <p>明示的なキャッシュブレークポイント (explicit cache breakpoints) により、再利用するプロンプトプレフィックスを開発者が選択できる。更新されたプロンプトキャッシュガイドで、使用方法、キャッシュされたプレフィックスの有効期間、ツールや入力の変更が再利用に与える影響が解説されている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon"><span class="step-badge">2</span></div>
+                    <div class="key-point-content">
+                        <h3>🧠 キャッシュを壊さずに reasoning effort を調整</h3>
+                        <p>GPT-6 モデルでは、<code>configuration_update</code> を末尾に追加することで、リクエストレベルの reasoning effort を変更せずにレスポンス間で推論の強度を調整できる。難しいタスクでは effort を上げ、定型的なフォローアップでは下げるといった運用が、再利用可能なコンテキストを保持したまま可能になる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon"><span class="step-badge">3</span></div>
+                    <div class="key-point-content">
+                        <h3>🔧 ツールや指示の変更時にキャッシュを保持</h3>
+                        <p>ツール定義・スキーマ・順序を安定させることで、以前のコンテキストの再利用性を維持できる。定義を削除する代わりに <code>allowed_tools</code> で呼び出し可能なツールを制限するか、ツールが不要な場合は <code>tool_choice</code> を <code>none</code> に設定する。新しい指示は developer メッセージとしてコンテキストの末尾に追加し、古い指示を上書きする。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon"><span class="step-badge">4</span></div>
+                    <div class="key-point-content">
+                        <h3>🔥 キャッシュのプリウォームによるレイテンシ削減</h3>
+                        <p>プリウォーミング (prewarming) により、既知のコンテキストを事前に準備しておくことで、リクエスト到着時にモデルがより早く応答を開始できる。たとえば、ユーザーが最初の質問をする前に、アプリケーションの起動時に共有指示・ツール定義・参照資料をプリウォームすることで、処理をユーザーの待ち時間の外に移動できる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <p class="section-lead">診断ツールはキャッシュミスの種別・理由・影響トークン数を構造化された形式で返す。記事に掲載されている診断結果の例は以下の通り。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">プロンプトキャッシュ診断結果の例</span>
+                </div>
+                <pre><code class="language-json">{
+  "prompt_cache_diagnostics": {
+    "type": "cache_miss",
+    "reason": "tools_changed",
+    "comparison_reusable_tokens": 5629,
+    "cache_missed_tokens": 5629
+  }
+}</code></pre>
+            </div>
+            <p class="code-note">💡 この例では、ツール定義の変更 (<code>tools_changed</code>) が原因で 5,629 トークンがキャッシュミスとなったことが示されている。</p>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph App["エージェントアプリケーション"]
+        Prewarm["プリウォーム<br>(共有指示・ツール定義)"]
+        Req["API リクエスト<br>(明示的キャッシュブレークポイント)"]
+        Config["configuration_update<br>(reasoning effort 調整)"]
+    end
+
+    subgraph API["OpenAI API (GPT-6)"]
+        Cache["プロンプトキャッシュ<br>(30 分ウィンドウ / 最大 90% 割引)"]
+        Model["GPT-6 モデル"]
+    end
+
+    subgraph Tools["開発者ツール"]
+        Dashboard["Prompt Caching<br>Dashboard"]
+        Diag["キャッシュ診断ツール"]
+    end
+
+    Prewarm --> Cache
+    Req --> Cache
+    Config --> Req
+    Cache -->|"キャッシュヒット"| Model
+    Cache -.->|"キャッシュミス"| Diag
+    Cache --> Dashboard
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Cache,Model openai
+    class Dashboard,Diag dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Adoption Results -->
+        <section class="section">
+            <h2 class="section-title">導入企業の実績</h2>
+            <p class="section-lead">記事では複数の企業による導入効果が紹介されている。</p>
+            <div class="table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>企業</th>
+                            <th>実績</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="company">🐙 GitHub Copilot</td>
+                            <td>数十億件のリクエストにおいて、新規処理が必要なプロンプトトークンの割合を従来比 50% 以上削減</td>
+                        </tr>
+                        <tr>
+                            <td class="company">🍓 Strawberry Browser</td>
+                            <td>ダッシュボードと診断でヒット率を数ポイント改善し、コストを 20% 削減。会話のフォークが経済的に実現可能に</td>
+                        </tr>
+                        <tr>
+                            <td class="company">🤲 Manus</td>
+                            <td>明示的・自動キャッシュの併用とブレークポイント配置の改善により、1 週間未満でキャッシュヒット率が約 85% から 90% 超に向上</td>
+                        </tr>
+                        <tr>
+                            <td class="company">✍️ Wordsmith</td>
+                            <td>明示的キャッシュブレークポイントへの移行により、ヒット率が 83% から 91% に向上。キャッシュ書き込みは約 3 分の 2 減、推論コストは 36% 削減</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>💰 コスト削減</h4>
+                <p>キャッシュされた入力トークンに最大 90% の割引が適用され、長時間動作するエージェントの経済性が向上する。</p>
+            </div>
+            <div class="use-case">
+                <h4>👀 可観測性の向上</h4>
+                <p>ダッシュボードと診断ツールにより、これまで把握しにくかったキャッシュミスの原因 (モデル・ツール・設定・入力の変更) を特定できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧩 設計の柔軟性</h4>
+                <p><code>configuration_update</code> による reasoning effort の動的調整や、<code>allowed_tools</code> / <code>tool_choice</code> を使ったツール管理により、キャッシュを維持したままエージェントの挙動を変更できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>⏱️ レイテンシ改善</h4>
+                <p>プリウォーミングにより初回応答までの時間を短縮できる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>GPT-6 ファミリーの改良されたプロンプトキャッシュシステムは、30 分間の再利用ウィンドウと高いデフォルトヒット率により、永続的エージェントの運用コストとレイテンシを大幅に削減する。Prompt Caching Dashboard と診断ツールによる可観測性の向上、明示的キャッシュブレークポイント・<code>configuration_update</code>・プリウォーミングといった最適化手段の追加により、開発者はワークロードに合わせてキャッシュ戦略を細かく制御できるようになった。GitHub Copilot や Manus などの導入事例が示す通り、長時間動作するエージェントの経済性を左右する重要なアップデートである。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://openai.com/index/better-prompt-caching-for-gpt-6" target="_blank" rel="noopener noreferrer">Better prompt caching for GPT-6 (公式発表)</a></li>
+                <li><a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></li>
+                <li><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/better-prompt-caching-for-gpt-6" target="_blank" rel="noopener noreferrer">https://openai.com/index/better-prompt-caching-for-gpt-6</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-09-22 | カテゴリ: Product (API) | ソース: OpenAI News</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

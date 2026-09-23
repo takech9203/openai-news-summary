@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-6 Sol と Luna の発表 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Pricing Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .pricing-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .pricing-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .pricing-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .pricing-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .pricing-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .price-old {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            margin-right: 6px;
+        }
+
+        .price-new {
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        .discount-badge {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .feature-card li {
+            margin-bottom: 6px;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: #065F46;
+        }
+
+        .note-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 13px;
+            color: #92400E;
+        }
+
+        /* Benchmark list */
+        .bench-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .bench-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border-left: 4px solid var(--openai-green);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .bench-item strong {
+            color: var(--text-primary);
+        }
+
+        /* Sub headings */
+        .sub-heading {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-heading:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Availability */
+        .availability-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .availability-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .availability-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .summary-box strong {
+            color: #1DB791;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product / 新モデル発表</span>
+                <h1>GPT-6 Sol と Luna の発表</h1>
+                <p class="subtitle">コスト効率のフロンティアを押し広げる新モデル 🌞🌙</p>
+                <p class="date">📅 2026-09-22 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-lead">フラッグシップモデル GPT-6 Astra に続き、GPT-6 ファミリーを拡張する 2 つの新モデル <strong>GPT-6 Sol</strong> と <strong>GPT-6 Luna</strong> が発表された。Astra と同様の手法で訓練され、専門的業務、事実性、コーディング、コンピュータ操作、アライメントの進歩を、より高速かつ低価格なモデルに展開する。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>API 価格を前世代比 50% 引き下げ</h3>
+                        <p>キャッシングと推論基盤の改善による低コスト化の削減分をユーザーに還元。GPT-5.6 のプロモーション価格と比較して 50% の値下げを実現した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>Astra 級の進歩を高速・低価格モデルへ展開</h3>
+                        <p>専門的業務、事実性 (Factuality)、コーディング、コンピュータ操作、アライメントにおける GPT-6 Astra の進歩を、Sol と Luna に引き継いだ。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>主要ベンチマークで競合を上回るコスト効率</h3>
+                        <p>AutomationBench、Agents' Last Exam、FrontierCode、DeepSWE、OSWorld 2.0 の各評価で、競合モデルと同等以上の性能を大幅に低いタスクあたりコストで達成。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>プロンプトキャッシングの大幅改善</h3>
+                        <p>デフォルトでより高いキャッシュヒット率を実現し、キャッシュ済み入力トークンの読み取りに 90% の割引を適用。ダッシュボードや診断ツールも拡充された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧭</div>
+                    <div class="key-point-content">
+                        <h3>モデル選択の指針が明確化</h3>
+                        <p>GPT-6 Astra は引き続き全方位で最良のモデル。最高の結果が必要な場合は Astra、コスト効率を重視する場合は Sol / Luna という使い分けが推奨される。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section">
+            <h2 class="section-title">料金: API 価格 50% 値下げ 💸</h2>
+            <p class="section-lead">Sol と Luna の API 価格は、GPT-5.6 のプロモーション価格と比較して 50% 引き下げられた (いずれも 100 万トークンあたり)。</p>
+            <div class="table-wrapper">
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>モデル</th>
+                            <th>入力 (100 万トークン)</th>
+                            <th>出力 (100 万トークン)</th>
+                            <th>値下げ幅</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GPT-5.6 Sol → GPT-6 Sol</strong></td>
+                            <td><span class="price-old">$4</span><span class="price-new">$2</span></td>
+                            <td><span class="price-old">$20</span><span class="price-new">$10</span></td>
+                            <td><span class="discount-badge">50% OFF</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPT-5.6 Luna → GPT-6 Luna</strong></td>
+                            <td><span class="price-old">$0.20</span><span class="price-new">$0.10</span></td>
+                            <td><span class="price-old">$1.20</span><span class="price-new">$0.50</span></td>
+                            <td><span class="discount-badge">50% OFF</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="highlight-box">
+                ⚡ さらにプロンプトキャッシングの改善により、キャッシュ済み入力トークンの読み取りには <strong>90% の割引</strong>が適用される。
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る Sol と Luna</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">50%</div>
+                    <div class="stat-label">API 価格の値下げ幅 (前世代のプロモーション価格比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">90%</div>
+                    <div class="stat-label">キャッシュ済み入力トークン読み取りの割引率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 1/2</div>
+                    <div class="stat-label">GPT-6 Sol の事実性誤り (前世代比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">50%+</div>
+                    <div class="stat-label">GitHub Copilot で新規処理が必要なプロンプトトークンの削減率</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Features -->
+        <section class="section">
+            <h2 class="section-title">主要機能・性能ハイライト</h2>
+
+            <h3 class="sub-heading">💼 専門的業務 (Professional work)</h3>
+            <p class="section-lead">ビジネスワークフローを評価する <strong>AutomationBench 1.0.6</strong> (営業、マーケティング、オペレーション、サポート、財務、人事にまたがる 47 のツールを使ったエンドツーエンドのワークフローを評価) での結果。</p>
+            <div class="table-wrapper">
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>モデル (effort)</th>
+                            <th>スコア</th>
+                            <th>タスクあたりコスト</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GPT-6 Sol (xhigh)</strong></td>
+                            <td><span class="price-new">33.2%</span></td>
+                            <td><span class="price-new">$0.27</span></td>
+                        </tr>
+                        <tr>
+                            <td>GPT-6 Astra (low)</td>
+                            <td>30.3%</td>
+                            <td>GPT-6 Sol の 3.9 倍</td>
+                        </tr>
+                        <tr>
+                            <td>Claude Opus 5 (max)</td>
+                            <td>26.9%</td>
+                            <td>GPT-6 Sol の 11.1 倍</td>
+                        </tr>
+                        <tr>
+                            <td>Claude Fable 5.1 w/ Opus 5 Fallback (max)</td>
+                            <td>31.4%</td>
+                            <td>GPT-6 Sol の 8.9 倍超 (フォールバックコスト未計上)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="bench-list">
+                <div class="bench-item">🏆 <span>GPT-6 Sol (xhigh) は Claude Opus 5 (max) を、Opus 5 のタスクあたりコストの<strong>わずか 9%</strong> で上回る</span></div>
+                <div class="bench-item">📈 <span>GPT-6 Luna (high) は前世代を <strong>5.4 ポイント</strong>上回り、タスクあたりコストは <strong>58% 低い</strong></span></div>
+                <div class="bench-item">🎯 <span>複雑な専門業務ワークフローを評価する <strong>Agents' Last Exam V1</strong> では、GPT-6 Sol (max) が <strong>56.4%</strong> を記録し、Claude Opus 5 の同評価での最高スコアを <strong>60% 低い</strong>タスクあたりコストで上回った</span></div>
+            </div>
+
+            <h3 class="sub-heading">✅ 事実性 (Factuality)</h3>
+            <p class="section-lead">ユーザーが誤りを報告した実際の会話 (匿名化済み) に基づく社内の事実性評価での改善。</p>
+            <div class="bench-list">
+                <div class="bench-item">📉 <span>GPT-6 Sol の誤りは<strong>前世代の約半分</strong>となり、はるかに低いコストで Astra 級の信頼性に近づいた</span></div>
+                <div class="bench-item">💡 <span>GPT-6 Luna も大幅に改善し、高い effort 設定では GPT-5.6 Sol と同等の性能を<strong>約 100 分の 1 のコスト</strong>で達成</span></div>
+            </div>
+
+            <h3 class="sub-heading">💻 コーディング</h3>
+            <p class="section-lead">OpenAI 社内でのコーディングエージェント利用は指数関数的に増加しており、API 価格換算で 1 日あたりのトークン使用額は研究者の中央値で $600 超、90 パーセンタイルで $7,000 超に達している。持続的な利用コストが重要になる中、Sol と Luna は高いコーディング性能と低価格を両立する。</p>
+            <div class="bench-list">
+                <div class="bench-item">🔧 <span><strong>FrontierCode 1.1 Main</strong> (正しさに加え、テスト品質やスコープ規律などの「マージ可能性」で採点): GPT-6 Sol は GPT-5.6 Sol から大幅に改善し、はるかに低いコストで Claude Fable 5.1 (xhigh) に匹敵</span></div>
+                <div class="bench-item">🛠️ <span><strong>DeepSWE 1.1</strong> (実際のコードベースでの長期ソフトウェアエンジニアリングタスク): GPT-6 Sol (max) は <strong>68.8%</strong> を記録し、Claude Fable 5 の最高スコア 69.9% (xhigh) との差は 1.1 ポイント、タスクあたりコストは<strong>約 80% 低い</strong></span></div>
+                <div class="bench-item">🌙 <span>GPT-6 Luna (max) は <strong>66.6%</strong> で、medium effort の Claude Opus 5 および Fable 5 に匹敵。タスクあたりコストは <strong>Opus 5 比で 93%、Fable 5 比で 96% 低い</strong></span></div>
+            </div>
+
+            <h3 class="sub-heading">🖥️ コンピュータ操作 (Computer use)</h3>
+            <p class="section-lead">GPT-6 Astra が世界最高のコンピュータ操作モデルである一方、Sol と Luna は前世代よりコスト効率の高い性能を提供する。<strong>OSWorld 2.0 offline</strong> での結果。</p>
+            <div class="bench-list">
+                <div class="bench-item">⚖️ <span>GPT-6 Sol (xhigh) は Claude Opus 5 (medium) と同等のスコア (<strong>60.5% 対 60.3%</strong>) を<strong>約 80% 低い</strong>タスクあたりコストで達成</span></div>
+                <div class="bench-item">🚀 <span>GPT-6 Luna (max) は GPT-5.6 Sol (medium) を <strong>10 分の 1 のコスト</strong>で上回る</span></div>
+            </div>
+        </section>
+
+        <!-- Additional Features -->
+        <section class="section">
+            <h2 class="section-title">その他の改善点</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>💬 コミュニケーションスタイルの改善</h3>
+                    <p>GPT-6 Astra の改善されたスタイルを Sol と Luna にも導入。特に技術的な会話やコーディングの会話で顕著。</p>
+                    <ul>
+                        <li>より明瞭な表現</li>
+                        <li>専門用語や不自然な言い回しの減少</li>
+                        <li>価値の低い詳細の削減</li>
+                        <li>実質を損なわないやや短めの回答</li>
+                        <li>結論を急がず、確認した内容としていない内容を率直に伝え、曖昧な表現が少ない</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ キャッシング改善 (エージェント・長い会話向け)</h3>
+                    <p>デフォルトでより高いキャッシュヒット率を実現。キャッシュ済み入力トークンの読み取りは 90% 割引。</p>
+                    <ul>
+                        <li><strong>監視と診断</strong>: Prompt Caching Dashboard でキャッシュ状況と推移を可視化。診断ツールがキャッシュ機会の逸失原因と対処方法を説明</li>
+                        <li><strong>キャッシュを壊さない設定変更</strong>: reasoning effort の増減やツールの有効化 / 無効化を行っても、以前のコンテキストがキャッシュ再利用のために保持される</li>
+                        <li><strong>プレフィックスの最適化</strong>: 明示的なブレークポイントで、キャッシュされるプロンプトプレフィックスの終端を開発者が指定可能</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ アライメントの継続的改善</h3>
+                    <p>Astra で導入されたアライメント手法の上に構築。コーディング作業に関する誤解を招く主張の発生率低下を含め、両モデルとも GPT-5.6 の対応モデルから改善。</p>
+                    <ul>
+                        <li>評価対象: コーディングにおける欺瞞、検索の故障、レビュアー回避、警告の迂回、未承認のやり取りといった意図的に困難な状況</li>
+                        <li>通常利用時の失敗率を示すものではない (詳細はシステムカードを参照)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🐙 GitHub での実績</h3>
+                    <p>過去数か月のキャッシング改善により、OpenAI モデルへの数十億件のリクエストにおいて、新規処理が必要なプロンプトトークンの割合が 50% 以上削減され、Copilot の応答が高速化した。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術詳細 (API Changelog 2026-09-22)</h2>
+            <div class="bench-list">
+                <div class="bench-item">🧠 <span>GPT-6 Sol と GPT-6 Luna は<strong>テキスト・画像入力</strong>に対応する<strong>推論モデル</strong>で、<strong>Responses API</strong> と <strong>Chat Completions API</strong> で利用可能</span></div>
+                <div class="bench-item">🆔 <span>API でのモデル ID は <strong><code>gpt-6-sol</code></strong> および <strong><code>gpt-6-luna</code></strong></span></div>
+                <div class="bench-item">💲 <span>料金は Sol が入力 $2 / 出力 $10、Luna が入力 $0.10 / 出力 $0.50 (いずれも 100 万トークンあたり)</span></div>
+            </div>
+
+            <h3 class="sub-heading">🏗️ アーキテクチャ</h3>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph OpenAI["OpenAI API"]
+        subgraph Models["GPT-6 モデルファミリー"]
+            Astra["GPT-6 Astra<br>(最高性能)"]
+            Sol["gpt-6-sol<br>($2 / $10 per 1M tokens)"]
+            Luna["gpt-6-luna<br>($0.10 / $0.50 per 1M tokens)"]
+        end
+        subgraph APIs["エンドポイント"]
+            Responses["Responses API"]
+            Chat["Chat Completions API"]
+        end
+        Cache["プロンプトキャッシング<br>(キャッシュ読み取り 90% 割引)"]
+    end
+
+    Dev(["開発者 / エージェント"]) --> Responses
+    Dev --> Chat
+    Responses --> Sol
+    Responses --> Luna
+    Chat --> Sol
+    Chat --> Luna
+    Responses --> Astra
+    Sol --- Cache
+    Luna --- Cache
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef gray fill:#ECECF1,stroke:#C5C5D2,stroke-width:2px,color:#343541
+
+    class Astra,Sol,Luna openai
+    class Responses,Chat dark
+    class Cache gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>💰 コスト削減</h4>
+                <p>Sol と Luna の API 価格が GPT-5.6 のプロモーション価格比で 50% 引き下げられ、日常的なタスクや大規模アプリケーションで先端 AI の活用が現実的になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚡ キャッシング最適化の選択肢拡大</h4>
+                <p>ダッシュボードと診断ツールによる可視化、キャッシュを維持したままの reasoning effort / ツール変更、明示的ブレークポイントにより、エージェントや長い会話でのコストと応答速度を最適化できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>💻 コーディングエージェントの持続利用</h4>
+                <p>低価格化により、Codex に長く要求の高いタスクを任せる際の反復の余地が広がる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧭 モデル選択の指針</h4>
+                <p>最高の結果が必要な場合は GPT-6 Astra、コスト効率を重視する場合は Sol / Luna という使い分けが明確化された。</p>
+            </div>
+        </section>
+
+        <!-- Availability -->
+        <section class="section">
+            <h2 class="section-title">利用可能状況</h2>
+            <div class="availability-list">
+                <div class="availability-item"><span class="availability-icon">✅</span><span>ChatGPT Work と Codex で、Plus / Pro / Business / Enterprise / Edu の全ユーザー向けに提供開始</span></div>
+                <div class="availability-item"><span class="availability-icon">🖥️</span><span>Free / Go ユーザーはデスクトップアプリで GPT-6 Luna を利用可能</span></div>
+                <div class="availability-item"><span class="availability-icon">⏳</span><span>Chat ではまだ利用不可</span></div>
+                <div class="availability-item"><span class="availability-icon">🔄</span><span>サービス安定化のため、ChatGPT では段階的にロールアウトされる</span></div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>GPT-6 Sol と Luna は、GPT-6 Astra の知能を<strong>コスト効率のフロンティア</strong>へ展開するモデルである。API 価格は前世代比 <strong>50% 引き下げ</strong>られ、AutomationBench、Agents' Last Exam、FrontierCode、DeepSWE、OSWorld 2.0 の各評価で、競合モデルと同等以上の性能を大幅に低いタスクあたりコストで達成したと報告されている。あわせてプロンプトキャッシングの改善 (デフォルトでの高ヒット率、<strong>キャッシュ読み取り 90% 割引</strong>、診断ツールや明示的ブレークポイントなどの最適化手段) が導入され、エージェントや長い会話を扱う開発者のコスト構造を大きく改善する内容となっている。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/introducing-gpt-6-sol-and-luna" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-gpt-6-sol-and-luna</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+                <li><a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
