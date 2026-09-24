@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>invideo が GPT-6 Astra でカラーグレーディングの成功率を 3 倍に改善 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section .lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Profile Table */
+        .profile-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .profile-table th,
+        .profile-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .profile-table th {
+            width: 30%;
+            color: var(--openai-green);
+            font-weight: 700;
+            background: var(--openai-light);
+        }
+
+        .profile-table td {
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-note {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .comparison-card li {
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .comparison-card.before li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Quote */
+        .quote {
+            background: var(--openai-light);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .quote p {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .quote cite {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: normal;
+            text-align: right;
+        }
+
+        /* Results Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .results-table thead th {
+            background: var(--openai-dark);
+            color: white;
+            font-weight: 700;
+        }
+
+        .results-table td {
+            color: var(--text-secondary);
+        }
+
+        .results-table td strong {
+            color: var(--openai-green);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* Related Links */
+        .related-links {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .related-links li {
+            margin-bottom: 10px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .related-links li::before {
+            content: '🔗';
+            position: absolute;
+            left: 0;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Startup (導入事例)</span>
+                <h1>invideo が GPT-6 Astra でカラーグレーディングの成功率を 3 倍に改善</h1>
+                <p class="subtitle">エージェント型動画エディタを提供する invideo が、GPT-6 Astra によりフレームレベル精度の編集計画、カラー作業の成功率約 3 倍改善、1 日約 50 個のカスタムエフェクト制作を実現</p>
+                <p class="date">📅 2026-09-23 | 出典: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">動画編集は、ストーリーの構成、効果音の配置、トランジションの作成、色調整など、創造的かつ技術的な判断の連続である。invideo はこうした作業を AI エージェントが担いながら、人間の編集者が主導権を保てるように設計されている。GPT-6 Astra の採用により、複雑な編集の計画と実行、タイムライン上の正確な位置への変更適用において、より高い精度を実現した。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎨</div>
+                    <div class="key-point-content">
+                        <h3>カラー作業の成功率が約 3 倍に改善</h3>
+                        <p>従来は失敗率が非常に高かったカラーコレクションとカラーグレーディングのタスクで、GPT-6 Astra により成功率が約 3 倍に改善した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">✨</div>
+                    <div class="key-point-content">
+                        <h3>1 日で約 50 個のカスタムエフェクトを制作</h3>
+                        <p>テキスト説明やビジュアルリファレンスからエフェクトをコーディングし、invideo の数名の編集者が 1 日で約 50 個のエフェクトを作成した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>フレームレベル精度の編集計画</h3>
+                        <p>従来テストしたモデルよりも少ない推論ステップと出力トークンで、複雑な編集操作を計画・実行できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧭</div>
+                    <div class="key-point-content">
+                        <h3>長時間タスクでも当初の目的を維持</h3>
+                        <p>タスクが長く複雑になり、複数の指示を実行しても、編集者の当初の目的を見失わないことが確認された。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Company Profile -->
+        <section class="section">
+            <h2 class="section-title">導入企業プロファイル</h2>
+            <table class="profile-table">
+                <tr>
+                    <th>企業名</th>
+                    <td>invideo</td>
+                </tr>
+                <tr>
+                    <th>プロダクト</th>
+                    <td>エージェント型動画エディタ</td>
+                </tr>
+                <tr>
+                    <th>企業規模</th>
+                    <td>スタートアップ</td>
+                </tr>
+                <tr>
+                    <th>利用モデル</th>
+                    <td>GPT-6 Astra</td>
+                </tr>
+                <tr>
+                    <th>設計思想</th>
+                    <td>AI エージェントが編集作業を担いながら、人間の編集者が主導権を保つ</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る主な成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">約 3 倍</div>
+                    <div class="stat-label">カラーグレーディング / カラーコレクションの成功率改善</div>
+                    <div class="stat-note">従来モデル比</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 50 個</div>
+                    <div class="stat-label">1 日で制作したカスタムエフェクト</div>
+                    <div class="stat-note">数名の編集者で達成</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">フレーム単位</div>
+                    <div class="stat-label">編集計画の精度</div>
+                    <div class="stat-note">少ない推論ステップで完了</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (従来モデル)</h4>
+                    <ul>
+                        <li>カラーグレーディング / カラーコレクションのタスクで非常に高い失敗率</li>
+                        <li>複雑な作業の計画に多くの推論ステップと出力トークンを消費</li>
+                        <li>長く複雑なタスクで当初の目的を維持しにくい</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (GPT-6 Astra)</h4>
+                    <ul>
+                        <li>カラー作業の成功率が約 3 倍に改善</li>
+                        <li>はるかに少ない推論ステップと出力トークンで複雑な作業を完了</li>
+                        <li>複数の指示を実行しても編集者の当初の目的を維持</li>
+                        <li>フレームレベルの精度で特定の編集を計画</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <section class="section">
+            <h2 class="section-title">主なポイント</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🗺️ 複雑な編集の計画と指示への忠実性</h3>
+                    <p>AI エージェントは、編集者の指示を一連のステップに変換し、適切なツールを選択し、作業を実行して結果を検証する必要がある。GPT-6 Astra は従来テストしたモデルよりも少ない推論ステップでこれらの操作を計画でき、タスクが長く複雑になっても編集者の当初の目的を見失わない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎨 適切なアプローチの選択と変化への適応</h3>
+                    <p>カラー作業では、コレクション (補正)、グレーディング、再生成、LUT、アイソレーション (分離) といった重複するアプローチから適切な手法を選択する必要がある。例えば、人物の肌のトーンを維持しながら背景の色を変更するには、フレームをまたいで人物を分離・追跡してから、それ以外の領域に色を適用しなければならない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 完全に編集可能なカスタムエフェクトの作成</h3>
+                    <p>テキストによる説明やビジュアルリファレンスをカスタムエフェクトに変換。エージェントは映像素材に合わせたエフェクトをコーディングし、タイムライン上に配置し、編集者が調整できるコントロールを追加できる。</p>
+                </div>
+            </div>
+
+            <div class="quote">
+                <p>「Astra ははるかに少ない推論セットと出力トークンで複雑な作業を完了している」("Astra is using far fewer reasoning sets and thus output tokens to complete complex work.")</p>
+                <cite>— Sanket Shah 氏、CEO、invideo</cite>
+            </div>
+            <div class="quote">
+                <p>「以前はカラーグレーディングとカラーコレクションのタスクで非常に高い失敗率が見られたが、Astra により成功率は約 3 倍に改善した」("Earlier, we saw very high failure rates for color-grading and color-correction tasks. With Astra, the success rate improved about three times.")</p>
+                <cite>— Sanket Shah 氏、CEO、invideo</cite>
+            </div>
+            <div class="quote">
+                <p>「Astra がフレームレベルの精度で特定の編集を計画できることは非常に驚異的だ」</p>
+                <cite>— Sanket Shah 氏、CEO、invideo</cite>
+            </div>
+        </section>
+
+        <!-- Workflow Diagram -->
+        <section class="section">
+            <h2 class="section-title">エージェント編集ワークフロー</h2>
+            <p class="lead">GPT-6 Astra を中核とするエージェントが、編集者の指示を一連のステップに変換し、適切なツールを選択して実行・検証する。カラー作業では重複するアプローチの中から適切な手法を選択する。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    Editor(["編集者の指示<br>(テキスト / ビジュアルリファレンス)"]) --> Astra["GPT-6 Astra<br>(エージェント)"]
+
+    Astra --> Plan["ステップへの変換<br>(少ない推論ステップで計画)"]
+    Plan --> Select["適切なツール / アプローチの選択"]
+
+    subgraph Color["カラー作業のアプローチ"]
+        C1["コレクション (補正)"]
+        C2["グレーディング"]
+        C3["再生成 / LUT"]
+        C4["アイソレーション (分離)"]
+    end
+
+    Select --> Color
+    Select --> Effect["カスタムエフェクトの<br>コーディングと配置"]
+    Color --> Execute["実行と結果の検証<br>(フレームレベルの精度)"]
+    Effect --> Execute
+    Execute --> Timeline(["タイムラインへ適用<br>編集者が調整可能なコントロール"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Astra openai
+    class Plan,Select,Execute dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Results Summary -->
+        <section class="section">
+            <h2 class="section-title">成果のまとめ</h2>
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>成果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>カラーグレーディング / カラーコレクションの成功率</td>
+                        <td><strong>約 3 倍に改善</strong></td>
+                    </tr>
+                    <tr>
+                        <td>カスタムエフェクトの制作</td>
+                        <td><strong>数名の編集者が 1 日で約 50 個を作成</strong></td>
+                    </tr>
+                    <tr>
+                        <td>編集計画</td>
+                        <td><strong>フレームレベルの精度</strong>、より少ない推論ステップと出力トークンで完了</td>
+                    </tr>
+                    <tr>
+                        <td>長時間タスク</td>
+                        <td>複数の指示を実行しても<strong>当初の目的を維持</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>⚡ 少ない推論ステップでのマルチステップタスク実行</h4>
+                <p>エージェント型アプリケーションにおいて、GPT-6 Astra が少ない推論ステップと出力トークンで複雑なマルチステップタスクを計画・実行できる事例が示された。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧭 長時間実行エージェントワークフローの設計</h4>
+                <p>タスクが長期化・複雑化しても当初の目的を維持できる特性は、長時間実行されるエージェントワークフローの設計に有用な参考となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛠️ 調整可能な成果物を生成するクリエイティブツール開発</h4>
+                <p>自然言語やビジュアルリファレンスからコードを生成し、ユーザーが調整可能な形で成果物を提供するパターン (カスタムエフェクト作成) は、クリエイティブツール開発の実践例として参考になる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                invideo は GPT-6 Astra を活用することで、フレームレベルの精度での編集計画、カラーグレーディング / カラーコレクションの成功率の約 3 倍改善、1 日で約 50 個のカスタムエフェクト制作を実現した。クリエイティブプロフェッショナルは、退屈な計画作業やフレーム単位の作業に時間を費やすことなく、ストーリー、自らのセンス、最終カットの主導権を維持できる。
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://openai.com/index/invideo-builds-with-gpt-6-astra" target="_blank" rel="noopener noreferrer">公式記事: How invideo improves color grading 3x with GPT-6 Astra</a></li>
+                <li><a href="https://invideo.io/" target="_blank" rel="noopener noreferrer">invideo 公式サイト</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/invideo-builds-with-gpt-6-astra" target="_blank" rel="noopener noreferrer">https://openai.com/index/invideo-builds-with-gpt-6-astra</a></p>
+            <p>発表日: 2026-09-23 | ソース: OpenAI News | カテゴリ: Startup (導入事例)</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

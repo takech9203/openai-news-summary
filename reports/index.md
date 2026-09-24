@@ -5,6 +5,16 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-23](2026/2026-09-23-two-years-of-openai-academy.md) - OpenAI Academy 2 周年: コミュニティトレーナープログラムで AI スキル教育をさらに拡大
+- [2026-09-23](2026/2026-09-23-sam-altman-un-security-council-remarks.md) - Sam Altman 氏、国連安全保障理事会で AI の安全性と国際協力について演説
+- [2026-09-23](2026/2026-09-23-ringg.md) - Ringg の AI エージェント、OpenAI を活用し顧客からの電話の最大 65% を解決
+- [2026-09-23](2026/2026-09-23-openai-extends-cyber-access-to-ukraine-for-civilian-defense.md) - OpenAI、ウクライナに Daybreak プログラムへのアクセスを拡大し民間インフラのサイバー防衛を支援
+- [2026-09-23](2026/2026-09-23-invideo-builds-with-gpt-6-astra.md) - invideo が GPT-6 Astra でカラーグレーディングの成功率を 3 倍に改善
+- [2026-09-23](2026/2026-09-23-introducing-mentalhealthbench.md) - MentalHealthBench の発表: メンタルヘルス会話における AI 応答を評価する専門家主導のオープンベンチマーク
+- [2026-09-23](2026/2026-09-23-harvey-from-context-to-confidence-with-astra.md) - Harvey が GPT-6 Astra でリーガルコンテキストをより強力なドラフトへ変換
+- [2026-09-23](2026/2026-09-23-grab-openai-ai-skills-southeast-asia.md) - Grab と OpenAI が東南アジアに実践的な AI スキルを提供
+- [2026-09-23](2026/2026-09-23-chatgpt-ads-expands-southeast-asia-taiwan.md) - ChatGPT Ads が東南アジアと台湾に拡大
+- [2026-09-23](2026/2026-09-23-airbnb-gpt-6-astra.md) - Airbnb が GPT-6 Astra と OpenAI フロンティアモデルへのアクセスを拡大
 - [2026-09-22](2026/2026-09-22-priorities-principles-third-party-assessments.md) - サードパーティ評価を効果的に行うための優先事項と原則
 - [2026-09-22](2026/2026-09-22-parallel-cuts-time-and-cost-with-astra.md) - Parallel が GPT-6 Astra でリサーチ時間とコストを半減
 - [2026-09-22](2026/2026-09-22-introducing-gpt-6-sol-and-luna.md) - GPT-6 Sol と Luna の発表: コスト効率のフロンティアを押し広げる新モデル
