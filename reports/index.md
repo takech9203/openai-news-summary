@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-25](2026/2026-09-25-proaction.md) - Proaction が Codex で売上を 60% 向上させ、月 75 時間以上を削減
 - [2026-09-23](2026/2026-09-23-two-years-of-openai-academy.md) - OpenAI Academy 2 周年: コミュニティトレーナープログラムで AI スキル教育をさらに拡大
 - [2026-09-23](2026/2026-09-23-sam-altman-un-security-council-remarks.md) - Sam Altman 氏、国連安全保障理事会で AI の安全性と国際協力について演説
 - [2026-09-23](2026/2026-09-23-ringg.md) - Ringg の AI エージェント、OpenAI を活用し顧客からの電話の最大 65% を解決
