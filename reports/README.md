@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-28](2026/2026-09-28-lenfest-ai-collaborative-expansion.md) - Lenfest Institute が OpenAI の支援拡大により大規模プログラムを拡張
+- [2026-09-28](2026/2026-09-28-how-we-will-do-better-for-australia.md) - オーストラリアへの対応改善に向けた OpenAI の表明 (How we will do better for Australia)
+- [2026-09-28](2026/2026-09-28-codex-originals.md) - Codex Originals: Codex 活用ストーリーの募集を開始
+- [2026-09-28](2026/2026-09-28-basis-tax-workbook-with-astra.md) - Basis、GPT-6 Astra で税務ワークブックを 2 倍の速度で完了
 - [2026-09-25](2026/2026-09-25-proaction.md) - Proaction が Codex で売上を 60% 向上させ、月 75 時間以上を削減
 - [2026-09-25](2026/2026-09-25-gpt-6-image-encoding-fix.md) - GPT-6 Sol と GPT-6 Luna の画像エンコーディング不具合を修正: 画像理解品質が改善、eval の再実行を推奨
 - [2026-09-23](2026/2026-09-23-two-years-of-openai-academy.md) - OpenAI Academy 2 周年: コミュニティトレーナープログラムで AI スキル教育をさらに拡大
