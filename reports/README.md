@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-09-29](2026/2026-09-29-introducing-gpt-6-1-sol.md) - GPT-6.1 Sol 発表: Astra 級の知能を 1/5 のコストで提供する新モデル
+- [2026-09-29](2026/2026-09-29-introducing-dots.md) - Introducing dots: OpenAI がプロアクティブなアシスタント「dots」を発表
+- [2026-09-29](2026/2026-09-29-devday-2026-recap.md) - DevDay 2026 Recap: GPT-6 Astra、ChatGPT、Codex、API など 20 件超の発表を総括
+- [2026-09-29](2026/2026-09-29-api-update-computer-use-ultrafast.md) - API 更新: Agents API にコンピュータ操作機能を追加、GPT-6 Astra に Ultrafast モードが登場
+- [2026-09-28](2026/2026-09-28-towards-safety-cases-for-frontier-ai-training.md) - フロンティア AI トレーニングにおけるセーフティケースに向けて
 - [2026-09-28](2026/2026-09-28-lenfest-ai-collaborative-expansion.md) - Lenfest Institute が OpenAI の支援拡大により大規模プログラムを拡張
 - [2026-09-28](2026/2026-09-28-how-we-will-do-better-for-australia.md) - オーストラリアへの対応改善に向けた OpenAI の表明 (How we will do better for Australia)
 - [2026-09-28](2026/2026-09-28-codex-originals.md) - Codex Originals: Codex 活用ストーリーの募集を開始

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フロンティア AI トレーニングにおけるセーフティケースに向けて - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Notice Banner */
+        .notice-banner {
+            background: #FEF3C7;
+            border: 2px dashed #F59E0B;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .notice-banner .notice-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .notice-banner p {
+            font-size: 13px;
+            color: #92400E;
+            line-height: 1.7;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card .card-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card .en-label {
+            font-size: 12px;
+            color: var(--openai-green);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Unverified Badge */
+        .unverified-badge {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #92400E;
+            border: 1px solid #F59E0B;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .info-box h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1E40AF;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .info-box .chain {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .info-box .chain-item {
+            background: white;
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1E40AF;
+        }
+
+        .info-box .chain-arrow {
+            color: #3B82F6;
+            font-weight: 700;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-top: 4px;
+        }
+
+        .summary-box h4 {
+            color: var(--openai-green);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">安全性</span>
+                <h1>フロンティア AI トレーニングにおけるセーフティケースに向けて</h1>
+                <p class="subtitle">Towards Safety Cases for Frontier AI Training — トレーニング段階の安全性を体系的に論証する初期ガイドライン</p>
+                <p class="date">📅 2026-09-28 | OpenAI News (Safety)</p>
+            </div>
+        </header>
+
+        <!-- Notice -->
+        <div class="notice-banner">
+            <span class="notice-icon">⚠️</span>
+            <p><strong>本インフォグラフィックの情報源について:</strong> 元レポート作成時点で記事全文は取得できておらず (openai.com が自動アクセスに 403 を返却)、公式の発表タイトルおよび概要のみに基づいています。概要に含まれない技術詳細は「未確認」と明記しています。</p>
+        </div>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>トレーニング段階のセーフティケース初期ガイドラインを発表</h3>
+                        <p>OpenAI は 2026 年 9 月 28 日、フロンティア AI モデルの「トレーニング段階」を対象としたセーフティケース (safety case) の初期ガイドラインを発表しました。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📐</div>
+                    <div class="key-point-content">
+                        <h3>3 つの領域で構成</h3>
+                        <p>ガイドラインは (1) 技術的セーフガード、(2) 運用プラクティス、(3) ミスアライメントインシデントの調査、という 3 領域をカバーします。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>デプロイ段階からトレーニング段階へ</h3>
+                        <p>デプロイ (提供) 段階だけでなく、モデルをトレーニングする段階そのものの安全性を体系的に論証しようとする点が今回の特徴です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏭</div>
+                    <div class="key-point-content">
+                        <h3>高信頼性産業で実績ある手法を AI に適用</h3>
+                        <p>セーフティケースは、システムの安全性を証拠に基づく構造化された議論として示す手法で、航空・原子力などの高信頼性産業で長く用いられてきた概念です。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌱</div>
+                    <div class="key-point-content">
+                        <h3>業界標準化への布石</h3>
+                        <p>「初期ガイドライン (early guidelines)」という位置付けから、今後の改訂や業界全体での議論の出発点となることが期待されます。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content: 3 Areas -->
+        <section class="section">
+            <h2 class="section-title">主要内容: ガイドラインの 3 領域</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">公式概要によると、初期ガイドラインは以下の 3 領域で構成されます。各領域の具体的な内容は記事全文が取得できていないため<strong>未確認</strong>です。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="card-number">1</div>
+                    <h3>🔧 技術的セーフガード</h3>
+                    <p class="en-label">Technical Safeguards</p>
+                    <p>トレーニング中のフロンティアモデルに対する技術的な安全対策を扱う領域。トレーニング中の評価、能力の監視、アクセス制御などが含まれるかは不明です。</p>
+                    <span class="unverified-badge">⚠️ 具体的な対策内容は未確認</span>
+                </div>
+                <div class="feature-card">
+                    <div class="card-number">2</div>
+                    <h3>🏢 運用プラクティス</h3>
+                    <p class="en-label">Operational Practices</p>
+                    <p>トレーニングを実施する組織・プロセス面での安全確保を扱う領域。運用体制、意思決定プロセス、エスカレーション手順などが含まれる可能性があります。</p>
+                    <span class="unverified-badge">⚠️ 詳細は未確認</span>
+                </div>
+                <div class="feature-card">
+                    <div class="card-number">3</div>
+                    <h3>🔍 ミスアライメントインシデントの調査</h3>
+                    <p class="en-label">Investigating Misalignment Incidents</p>
+                    <p>トレーニング中または評価中に観測されたミスアライメント (モデルの挙動が意図から逸脱する事象) のインシデントをどのように調査するかを扱う領域です。</p>
+                    <span class="unverified-badge">⚠️ 調査の手法・基準・報告プロセスは未確認</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Background -->
+        <section class="section">
+            <h2 class="section-title">背景: セーフティケースとは</h2>
+            <p style="font-size: 14px; color: var(--text-secondary);">セーフティケースは「システムが特定の運用環境で許容可能な程度に安全であることを示す、構造化された証拠に基づく主張」です。AI 安全性の分野では、フロンティアモデルの能力が高まるにつれ、評価結果の羅列ではなく、明示的な連鎖として安全性を論証するアプローチとして注目されています。</p>
+            <div class="info-box">
+                <h4>🔗 セーフティケースの構成要素</h4>
+                <p>安全性を以下の連鎖として体系的に論証します。</p>
+                <div class="chain">
+                    <span class="chain-item">主張 (Claim)</span>
+                    <span class="chain-arrow">→</span>
+                    <span class="chain-item">議論 (Argument)</span>
+                    <span class="chain-arrow">→</span>
+                    <span class="chain-item">証拠 (Evidence)</span>
+                </div>
+            </div>
+            <div class="info-box" style="background: linear-gradient(135deg, #F7F7F8 0%, #ECECF1 100%); border-color: rgba(16, 163, 127, 0.3);">
+                <h4 style="color: var(--openai-dark);">📌 関連する動き</h4>
+                <p>OpenAI は 2026 年 9 月 22 日にも「Priorities and principles for third-party assessments」(第三者評価の優先事項と原則) を公表しており、今回の発表は安全性ガバナンスの枠組み整備を継続的に進める流れの一環と位置付けられます (両発表の直接的な関係性は未確認)。</p>
+            </div>
+        </section>
+
+        <!-- Technical Details: Architecture -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: ガイドラインの構造 (概要ベース)</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph SC["フロンティア AI トレーニングのセーフティケース (初期ガイドライン)"]
+        TS["技術的セーフガード&lt;br/&gt;Technical Safeguards"]
+        OP["運用プラクティス&lt;br/&gt;Operational Practices"]
+        MI["ミスアライメント&lt;br/&gt;インシデントの調査"]
+    end
+
+    Train(["フロンティアモデルの&lt;br/&gt;トレーニング"]) --> SC
+    SC --> Claim["安全性の論証&lt;br/&gt;(証拠に基づく構造化された主張)"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class TS,OP,MI openai
+    class Claim dark
+                </pre>
+            </div>
+            <p class="diagram-note">※ 上図は公式概要に記載された 3 領域を図示したものであり、各領域間の関係や内部構造は未確認です。</p>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者・コミュニティへの影響</h2>
+            <div class="use-case">
+                <h4>🔬 トレーニング段階の安全性への注目</h4>
+                <p>デプロイ前評価 (Preparedness Framework など) に加え、トレーニングプロセス自体を安全性論証の対象とする動きが明確になり、フロンティアモデル開発の透明性向上につながる可能性があります。</p>
+            </div>
+            <div class="use-case">
+                <h4>🌐 業界標準化への布石</h4>
+                <p>「初期ガイドライン (early guidelines)」という位置付けから、今後の改訂や業界全体での議論の出発点となることが期待されます。</p>
+            </div>
+            <div class="use-case">
+                <h4>📋 ミスアライメント調査の体系化</h4>
+                <p>インシデント調査がガイドラインの柱の 1 つとされたことで、ミスアライメント事象の報告・分析プラクティスが整備されていく可能性があります。</p>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">※ API や製品への直接的な変更を伴う発表ではないため、開発者が即座に対応すべき事項は確認されていません。</p>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <h4>💡 フロンティア AI 開発の安全性議論における重要な一歩</h4>
+                <p>OpenAI は、フロンティア AI の「トレーニング段階」の安全性を体系的に論証するためのセーフティケース初期ガイドラインを発表しました。ガイドラインは技術的セーフガード、運用プラクティス、ミスアライメントインシデントの調査という 3 領域をカバーします。記事全文が取得できなかったため各領域の具体的内容は未確認ですが、デプロイ前評価にとどまらずトレーニングプロセス自体を安全性ガバナンスの対象とする点で、重要な一歩と言えます。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/towards-safety-cases-for-frontier-ai-training" target="_blank" rel="noopener noreferrer">https://openai.com/index/towards-safety-cases-for-frontier-ai-training</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>🔗 <a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety</a></li>
+                <li>🔗 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li>🔗 <a href="https://openai.com/preparedness" target="_blank" rel="noopener noreferrer">OpenAI Preparedness Framework</a></li>
+            </ul>
+            <p style="margin-top: 12px;">📅 発表日: 2026-09-28 | カテゴリ: 研究成果 / 安全性</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

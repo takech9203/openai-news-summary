@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 更新: Agents API にコンピュータ操作機能を追加、GPT-6 Astra に Ultrafast モードが登場 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .subsection-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            font-size: 14px;
+            padding-left: 18px;
+        }
+
+        /* Spec Table */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .spec-table th,
+        .spec-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .spec-table th {
+            background: var(--openai-dark);
+            color: white;
+            font-weight: 700;
+        }
+
+        .spec-table tr:nth-child(even) {
+            background: var(--openai-light);
+        }
+
+        .spec-table code {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Inline code */
+        p code, li code {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Callout */
+        .callout {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .callout.warning {
+            background: #FEF3C7;
+            border: 2px solid var(--warning);
+            color: #92400E;
+        }
+
+        .callout.info {
+            background: #DBEAFE;
+            border: 2px solid var(--info);
+            color: #1E40AF;
+        }
+
+        .callout .callout-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Quote */
+        .quote {
+            border-left: 4px solid var(--openai-green);
+            background: var(--openai-light);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .checklist li::before {
+            content: '✅';
+            flex-shrink: 0;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .summary-box strong {
+            color: #FFFFFF;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+            display: grid;
+            gap: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span>
+                <h1>Agents API にコンピュータ操作機能を追加、GPT-6 Astra に Ultrafast モードが登場</h1>
+                <p class="date">📅 2026-09-29 | ソース: OpenAI API Changelog</p>
+                <p class="lead">エージェントのブラウザ操作と低レイテンシ推論、2 つの方向で API が進化 🚀</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🖥️</div>
+                    <div class="key-point-content">
+                        <h3>Agents API にコンピュータ操作 (computer use) 機能を追加</h3>
+                        <p>エージェントが OpenAI ホストのブラウザ内でウェブタスクを完了できるようになり、ブラウザ環境の構築・運用を OpenAI 側に任せられる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>アクセス承認とサインインはアプリケーション側で制御</h3>
+                        <p>ウェブサイトへのアクセス承認と認証処理は開発者のアプリケーション側でハンドリングする設計。ガードレールを組み込みやすく、認証情報をモデルへの入力から分離できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>GPT-6 Astra に Ultrafast モードが登場</h3>
+                        <p>Responses API で <code>service_tier: "ultrafast"</code> を指定すると、出力トークン間のレイテンシ (inter-token latency) を短縮できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌎</div>
+                    <div class="key-point-content">
+                        <h3>Ultrafast はレート制限・データレジデンシーに注意</h3>
+                        <p>レート制限の対象で、グローバル処理と米国データレジデンシーのみ対応。EU などその他の地域推論レジデンシーはサポートされず、専用料金が適用される。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">☀️</div>
+                    <div class="key-point-content">
+                        <h3>同日に GPT-6.1 Sol もリリース (別レポート参照)</h3>
+                        <p>複雑なコーディングとプロフェッショナルワーク向けの新モデル <code>gpt-6.1-sol</code> も同日発表。GPT-6 Astra より低コストで、ベータ版のマルチエージェント機能を備える。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: ブラウザ操作エージェントの構築</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <ul>
+                        <li>スクリーンショット取得・アクション実行・環境維持の実行ループを開発者側で実装</li>
+                        <li>仮想マシンや Playwright / Selenium などのブラウザ自動化基盤を自前で構築・運用</li>
+                        <li>インフラの維持コストが継続的に発生</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <ul>
+                        <li>OpenAI ホストのブラウザでエージェントがタスクを実行</li>
+                        <li>ブラウザ環境の構築・運用が不要に</li>
+                        <li>アクセス承認とサインインはアプリケーション側で制御し、安全性を確保</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🖥️ Agents API コンピュータ操作</h3>
+                    <p>エージェントが OpenAI ホストのブラウザ内でウェブタスクを完了。開発者が自前でブラウザ環境を構築・運用する必要がない。</p>
+                    <div class="quote">"Agents can complete tasks in an OpenAI-hosted browser, with website access approvals and sign-in handled by your application."</div>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ アプリケーション側の承認制御</h3>
+                    <p>エージェントがどのウェブサイトにアクセスできるかの承認 (approval) はアプリケーション側でハンドリング。意図しないサイトへのアクセスを防ぐガードレールを設けられる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔐 サインインの分離</h3>
+                    <p>認証が必要なサイトへのサインインもアプリケーション側で処理する設計。認証情報をエージェントのプロンプトに直接渡す必要がない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ GPT-6 Astra Ultrafast モード</h3>
+                    <p>Responses API で <code>model: "gpt-6-astra"</code> と <code>service_tier: "ultrafast"</code> を組み合わせて指定。最初のトークンだけでなく、ストリーミング中のトークン供給速度が向上し、長い応答でも体感速度が改善する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>☀️ GPT-6.1 Sol (同日リリース)</h3>
+                    <p>複雑なコーディングとプロフェッショナルワーク向けの新モデル。Responses API リクエスト内でのサブエージェントへの委任 (ベータ版マルチエージェント機能) に対応。詳細は別レポートを参照。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Changes -->
+        <section class="section">
+            <h2 class="section-title">API 変更点</h2>
+
+            <h3 class="subsection-title">🆕 新パラメータ値: service_tier: "ultrafast"</h3>
+            <p style="font-size: 14px; color: var(--text-secondary);"><code>service_tier</code> は Responses API のリクエストパラメータで、リクエストの処理優先度・レイテンシ特性を制御する。今回のアップデートで GPT-6 Astra に対して <code>"ultrafast"</code> が指定可能になった。</p>
+            <table class="spec-table">
+                <tr>
+                    <th>項目</th>
+                    <th>内容</th>
+                </tr>
+                <tr>
+                    <td>パラメータ</td>
+                    <td><code>service_tier</code></td>
+                </tr>
+                <tr>
+                    <td>新しい値</td>
+                    <td><code>"ultrafast"</code></td>
+                </tr>
+                <tr>
+                    <td>対象モデル</td>
+                    <td><code>gpt-6-astra</code></td>
+                </tr>
+                <tr>
+                    <td>対象エンドポイント</td>
+                    <td>Responses API (<code>v1/responses</code>)</td>
+                </tr>
+                <tr>
+                    <td>効果</td>
+                    <td>出力トークン間レイテンシの短縮</td>
+                </tr>
+                <tr>
+                    <td>データレジデンシー</td>
+                    <td>グローバル処理と米国のみ (EU などの地域推論レジデンシーは非対応)</td>
+                </tr>
+                <tr>
+                    <td>料金</td>
+                    <td>Ultrafast 専用料金 (料金ページ参照)</td>
+                </tr>
+            </table>
+
+            <h3 class="subsection-title">⚠️ 制約事項</h3>
+            <div class="callout warning">
+                <span class="callout-icon">⚠️</span>
+                <div>
+                    <strong>レート制限の対象:</strong> Ultrafast ティアはレート制限の対象となる。想定トラフィックに対するレート制限の確認が必要。
+                </div>
+            </div>
+            <div class="callout warning">
+                <span class="callout-icon">🌍</span>
+                <div>
+                    <strong>データレジデンシーの制限:</strong> グローバル処理 (global processing) と米国データレジデンシー (US data residency) のみ対応。Changelog 原文では "EU and other regional inference residency aren't supported." と案内されている。
+                </div>
+            </div>
+            <div class="callout info">
+                <span class="callout-icon">💰</span>
+                <div>
+                    <strong>専用料金:</strong> Ultrafast ティア専用の料金が適用される。レイテンシ要件と予算に応じて標準ティアとの使い分けが必要。
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">今回の 2 つのアップデートの位置づけを図示する。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph App["開発者アプリケーション"]
+        SDK["OpenAI SDK"]
+        Approval["アクセス承認 / サインイン処理\n(アプリケーション側で制御)"]
+    end
+
+    subgraph OpenAI["OpenAI API"]
+        subgraph AgentsAPI["Agents API"]
+            Agent["エージェント"]
+            Browser["OpenAI ホストのブラウザ\n(computer use)"]
+        end
+        subgraph ResponsesAPI["Responses API"]
+            Tier["service_tier: ultrafast"]
+            Astra["GPT-6 Astra"]
+        end
+    end
+
+    Web(["ウェブサイト"])
+    User(["エンドユーザー"])
+
+    User --> SDK
+    SDK --> Agent
+    Agent --> Browser
+    Browser -->|"タスク実行"| Web
+    Browser -.->|"アクセス承認 /\nサインイン要求"| Approval
+    Approval -.->|"承認 / 認証"| Browser
+
+    SDK --> Tier
+    Tier -->|"トークン間レイテンシ短縮"| Astra
+    Astra -->|"高速ストリーミング応答"| SDK
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Agent,Browser,Astra openai
+    class Tier,SDK dark
+    class Approval,Web,User light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">GPT-6 Astra を Ultrafast モードで呼び出す</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# service_tier に "ultrafast" を指定して
+# 出力トークン間のレイテンシを短縮する
+stream = client.responses.create(
+    model="gpt-6-astra",
+    service_tier="ultrafast",
+    input="リアルタイム対話アプリの応答を生成してください。",
+    stream=True,
+)
+
+for event in stream:
+    if event.type == "response.output_text.delta":
+        print(event.delta, end="", flush=True)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JavaScript</span>
+                    <span class="code-title">GPT-6 Astra を Ultrafast モードで呼び出す</span>
+                </div>
+                <pre><code class="language-javascript">import OpenAI from "openai";
+
+const client = new OpenAI();
+
+const stream = await client.responses.create({
+  model: "gpt-6-astra",
+  service_tier: "ultrafast",
+  input: "リアルタイム対話アプリの応答を生成してください。",
+  stream: true,
+});
+
+for await (const event of stream) {
+  if (event.type === "response.output_text.delta") {
+    process.stdout.write(event.delta);
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🤖 ブラウザ操作を伴うエージェントの構築</h4>
+                <p>フォーム入力、情報収集、ウェブ上の手続き代行など、ブラウザ操作を伴うエージェントを低コストで構築・運用できる。アクセス承認をアプリケーション側でハンドリングする設計のため、許可リストや人間による確認 (human-in-the-loop) を実装しやすく、認証情報もモデルへの入力から分離できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🎙️ 音声アシスタント・リアルタイム対話</h4>
+                <p><code>service_tier: "ultrafast"</code> により、音声対話やライブチャットなどトークン供給速度が体感品質に直結するユースケースで GPT-6 Astra を使いやすくなる。長い応答でもストリーミング中のトークン供給速度が向上し、体感速度が改善する。</p>
+            </div>
+            <div class="use-case">
+                <h4>⌨️ コーディング補完・リアルタイム UI</h4>
+                <p>コーディング補完やリアルタイム UI など、応答の即時性が求められるアプリケーションに適する。ただし Ultrafast は専用料金が適用されるため、レイテンシ要件と予算に応じて標準ティアと使い分ける。</p>
+            </div>
+        </section>
+
+        <!-- Checklist -->
+        <section class="section">
+            <h2 class="section-title">導入時のチェックポイント</h2>
+            <ul class="checklist">
+                <li>Ultrafast はレート制限の対象となるため、想定トラフィックに対するレート制限の確認を行う</li>
+                <li>EU などの地域推論レジデンシーが必要なワークロードでは Ultrafast モードを利用できないため、コンプライアンス要件を事前に確認する</li>
+                <li>computer use を有効にする場合は、アクセス承認フローとサインイン処理の実装が前提となる</li>
+                <li>Ultrafast は専用料金が適用されるため、料金ページで具体的な金額を確認する</li>
+            </ul>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>2026 年 9 月 29 日の API Changelog では、<strong>エージェント</strong>と<strong>低レイテンシ推論</strong>という 2 つの方向でのアップデートが発表された。Agents API のコンピュータ操作機能は、OpenAI ホストのブラウザでエージェントがウェブタスクを完了できるようにし、アクセス承認とサインインをアプリケーション側で制御する設計により<strong>安全性と構築の容易さを両立</strong>している。GPT-6 Astra の Ultrafast モードは、<code style="background: rgba(255,255,255,0.2); color: white;">service_tier: "ultrafast"</code> を指定するだけで出力トークン間のレイテンシを短縮でき、リアルタイム性が求められるアプリケーションでの GPT-6 Astra 活用を後押しする。ただし Ultrafast は<strong>専用料金とレート制限の対象</strong>であり、<strong>EU などの地域推論レジデンシーには対応しない</strong>点に注意が必要である。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📄 <a href="https://developers.openai.com/api/docs/pricing?latest-pricing=ultrafast" target="_blank" rel="noopener noreferrer">Ultrafast の料金ページ</a></li>
+                <li>📚 <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI API ドキュメント</a></li>
+                <li>🔍 <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
