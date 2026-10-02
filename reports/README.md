@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-01](2026/2026-10-01-the-eternal-complement.md) - The eternal complement: 実行力が次の経済を形作る
+- [2026-10-01](2026/2026-10-01-the-den-family-social.md) - 導入事例: ソーシャルクラブ The Den が ChatGPT Work で週 10-15 時間を創出し事業成長へ
+- [2026-10-01](2026/2026-10-01-albertsons-reimagining-retail.md) - Albertsons Companies が小売業務を内側から再構築: ChatGPT Enterprise と OpenAI API の全社活用事例
 - [2026-09-30](2026/2026-09-30-helping-small-businesses-put-ai-to-work.md) - 中小企業の AI 活用を支援: OpenAI が America's SBDC と提携し研修と地域支援を拡大
 - [2026-09-30](2026/2026-09-30-disrupting-model-distillation-campaign.md) - 組織的なモデル蒸留キャンペーンの阻止 — 保護された推論の抽出攻撃への対応
 - [2026-09-29](2026/2026-09-29-introducing-gpt-6-1-sol.md) - GPT-6.1 Sol 発表: Astra 級の知能を 1/5 のコストで提供する新モデル
