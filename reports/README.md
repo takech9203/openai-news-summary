@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-02](2026/2026-10-02-gpt-6-model-guide.md) - GPT-6 ファミリーのモデルガイド: スタートアップ向けにモデル選択から本番運用までを解説
+- [2026-10-02](2026/2026-10-02-chatham-financial.md) - Chatham Financial が資本市場の専門知識をスケール: Codex と GPT-5.6 で取引検証を 30 分から 4 分未満に短縮
 - [2026-10-01](2026/2026-10-01-the-eternal-complement.md) - The eternal complement: 実行力が次の経済を形作る
 - [2026-10-01](2026/2026-10-01-the-den-family-social.md) - 導入事例: ソーシャルクラブ The Den が ChatGPT Work で週 10-15 時間を創出し事業成長へ
 - [2026-10-01](2026/2026-10-01-albertsons-reimagining-retail.md) - Albertsons Companies が小売業務を内側から再構築: ChatGPT Enterprise と OpenAI API の全社活用事例
