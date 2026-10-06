@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-05](2026/2026-10-05-eu-text-provenance.md) - EU テキスト来歴ルールへの OpenAI のアプローチ: テキスト透かし "textGrain" の段階的展開
+- [2026-10-05](2026/2026-10-05-chatgpt-ads-format-measurement.md) - ChatGPT の新ビジュアル広告フォーマットと計測基盤の拡充
+- [2026-10-05](2026/2026-10-05-api-hipaa-baa-flow.md) - API 組織設定に HIPAA コンプライアンス対応のプロダクト内フローを追加
 - [2026-10-02](2026/2026-10-02-gpt-6-model-guide.md) - GPT-6 ファミリーのモデルガイド: スタートアップ向けにモデル選択から本番運用までを解説
 - [2026-10-02](2026/2026-10-02-chatham-financial.md) - Chatham Financial が資本市場の専門知識をスケール: Codex と GPT-5.6 で取引検証を 30 分から 4 分未満に短縮
 - [2026-10-01](2026/2026-10-01-the-eternal-complement.md) - The eternal complement: 実行力が次の経済を形作る
