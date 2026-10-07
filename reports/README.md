@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-06](2026/2026-10-06-sharing-ai-progress-in-mathematics.md) - 数学における AI の進展を共有: 内部フロンティアモデルによる新しい数学的成果の公開
+- [2026-10-06](2026/2026-10-06-jump-trading-quant-research.md) - Jump Trading が ChatGPT でクオンツリサーチをスケール: 長時間 AI ワークフローと人間によるレビューの組み合わせ
+- [2026-10-06](2026/2026-10-06-atlassian-partnership.md) - Atlassian と OpenAI がパートナーシップを拡大 — エンタープライズナレッジをアクションへ
+- [2026-10-06](2026/2026-10-06-api-update-decisions-api-usage-tiers.md) - OpenAI API アップデート (2026-10-06): Decisions API ベータリリースと利用ティアの簡素化
+- [2026-10-06](2026/2026-10-06-advancing-computer-use-with-ironclad.md) - Ironclad との協業によるコンピュータ使用 (Computer Use) の進化
 - [2026-10-05](2026/2026-10-05-eu-text-provenance.md) - EU テキスト来歴ルールへの OpenAI のアプローチ: テキスト透かし "textGrain" の段階的展開
 - [2026-10-05](2026/2026-10-05-chatgpt-ads-format-measurement.md) - ChatGPT の新ビジュアル広告フォーマットと計測基盤の拡充
 - [2026-10-05](2026/2026-10-05-api-hipaa-baa-flow.md) - API 組織設定に HIPAA コンプライアンス対応のプロダクト内フローを追加

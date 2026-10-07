@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decisions API ベータリリースと利用ティアの簡素化 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .category-badge.secondary {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header .lead {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .subsection-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--openai-dark);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .comparison-card li {
+            padding: 4px 0;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table.info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table.info-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        table.info-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        table.info-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        table.info-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        table.info-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        table.info-table code {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12.5px;
+            color: var(--openai-dark);
+        }
+
+        .endpoint-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin: 8px 0 16px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 15px;
+            color: white;
+        }
+
+        .endpoint-badge .method {
+            background: var(--openai-green);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Notes / Warning */
+        .note-box {
+            background: #FFF7ED;
+            border: 2px solid rgba(245, 158, 11, 0.4);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .note-box h4 {
+            color: #B45309;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .note-box ul {
+            padding-left: 20px;
+        }
+
+        .note-box li {
+            margin: 4px 0;
+        }
+
+        .check-list {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .check-list li {
+            padding: 8px 0 8px 32px;
+            position: relative;
+            border-bottom: 1px dashed var(--openai-gray);
+        }
+
+        .check-list li:last-child {
+            border-bottom: none;
+        }
+
+        .check-list li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14.5px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            padding: 2px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API Update</span>
+                <span class="category-badge secondary">Beta</span>
+                <h1>Decisions API ベータリリースと利用ティアの簡素化</h1>
+                <p class="lead">テキストと画像から型付きの回答を Responses API 比 10 倍の速度で生成する新 API が登場。利用ティアも 5 段階から 3 段階 (Build / Launch / Grow) に再編</p>
+                <p class="date">📅 2026-10-06 | OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>Decisions API がベータリリース</h3>
+                        <p>テキスト・画像を評価して型付きの回答 (typed answers) を返す「判断」特化の新 API。<code>gpt-6-luna</code> に対応し、Responses API 比で約 10 倍高速</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>3 つの質問タイプで確率付きの判断</h3>
+                        <p>predicate (真偽判定)、choice (選択肢からの分類)、score (順序付きレベル評価) の 3 タイプ。回答は確率・信頼度付きで返り、しきい値設計が可能</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>入力トークンのみ課金のシンプルな料金</h3>
+                        <p>$0.10 / 100 万入力トークン。キャッシュ読み書きや出力トークンの課金はなく、分類・ルーティングの大量処理でコスト効率が高い</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>利用ティアが 5 段階から 3 段階へ</h3>
+                        <p>Build / Launch / Grow の 3 段階に簡素化。クレジット購入総額がしきい値に達すると自動的に上位ティアへアップグレード</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🗓️</div>
+                    <div class="key-point-content">
+                        <h3>数週間以内に GA 予定</h3>
+                        <p>現在はパブリックベータ。platform.openai.com/decisions の Playground で事前に試用可能。ZDR と HIPAA 利用、米国・欧州のデータレジデンシーにも対応</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るアップデート</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">10x</div>
+                    <div class="stat-label">Responses API 比の速度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$0.10</div>
+                    <div class="stat-label">100 万入力トークンあたり</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">質問タイプ (predicate / choice / score)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5 → 3</div>
+                    <div class="stat-label">利用ティアの段階数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">Decisions API の主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🚀 専用エンドポイント</h3>
+                    <p><code>POST /v1/decisions</code> として提供。対応モデルはベータ期間中 <code>gpt-6-luna</code> のみ。利用には SDK の更新が必要 (Python 3.26.0 以上など)</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🖼️ テキスト + 画像の評価</h3>
+                    <p>共有の証拠 (input) としてテキスト文字列、またはテキストと画像を含むユーザーメッセージを渡せる。画像はインライン base64 データ URL のみ対応</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📦 複数質問の一括評価</h3>
+                    <p>独立した質問は同一リクエストの questions 配列にまとめられる (タイプ混在可)。前の回答に依存する判断は別リクエストに分ける設計</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 確率ベースの制御</h3>
+                    <p>probability、probabilities、confidence が返るため、偽陽性 / 偽陰性のコストに応じたしきい値調整が可能。refusal (拒否) の分岐処理も実装する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔒 コンプライアンス対応</h3>
+                    <p>対象顧客向けに ZDR (Zero Data Retention) と HIPAA 利用をサポート。米国および欧州 (EEA + スイス) での地域処理に対応</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Changes -->
+        <section class="section">
+            <h2 class="section-title">API 変更点</h2>
+            <div class="endpoint-badge">
+                <span class="method">POST</span>
+                <span>/v1/decisions</span>
+            </div>
+
+            <h3 class="subsection-title">リクエスト構造</h3>
+            <div class="table-wrapper">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>フィールド</th>
+                            <th>内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>model</code></td>
+                            <td>評価に使うモデル (<code>gpt-6-luna</code> のみ)</td>
+                        </tr>
+                        <tr>
+                            <td><code>input</code></td>
+                            <td>共有の証拠。テキスト文字列、またはテキスト + 画像を含むユーザーメッセージ</td>
+                        </tr>
+                        <tr>
+                            <td><code>questions</code></td>
+                            <td>評価内容。各質問の <code>type</code>、<code>instructions</code>、選択肢やスコアレベル</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="subsection-title">3 つの質問タイプ</h3>
+            <div class="table-wrapper">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>タイプ</th>
+                            <th>用途</th>
+                            <th>返却値</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>predicate</code></td>
+                            <td>条件判定 (真偽)</td>
+                            <td><code>probability</code> (真である確率、0〜1)</td>
+                        </tr>
+                        <tr>
+                            <td><code>choice</code></td>
+                            <td>固定選択肢から 1 つ選択 (順序のないカテゴリ)</td>
+                            <td><code>choice</code> + <code>probabilities</code> 配列 + <code>confidence</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>score</code></td>
+                            <td>順序付き <code>levels</code> に対する評価</td>
+                            <td>確率加重平均の <code>score</code> + <code>probabilities</code> + <code>confidence</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">※ <code>score</code> の結果はレベルインデックス (0 始まり) の確率加重平均で、レベル間の中間値になり得る。独自 JSON スキーマの生成には Structured Outputs、ツール呼び出しには function calling を使うことが推奨されている。</p>
+
+            <h3 class="subsection-title">設計上のポイント</h3>
+            <ul class="check-list">
+                <li>独立した質問は同一リクエストの questions 配列にまとめる (タイプ混在可)</li>
+                <li>前の回答に依存する判断は別リクエストに分ける</li>
+                <li>質問は観察可能な基準で記述し、選択肢や隣接レベルの意味を明確に区別する</li>
+                <li>しきい値は自アプリのラベル付きデータで調整し、偽陽性 / 偽陰性のコストに基づいて選ぶ</li>
+                <li>回答タイプが refusal (拒否) の場合の分岐処理を実装する</li>
+            </ul>
+
+            <div class="note-box">
+                <h4>⚠️ ベータ段階での制限事項</h4>
+                <ul>
+                    <li>画像はインライン base64 データ URL のみ対応。HTTP/HTTPS のホスト済み URL と <code>file_id</code> は非対応</li>
+                    <li>対応モデルは <code>gpt-6-luna</code> のみ</li>
+                    <li>必要 SDK バージョン: Python 3.26.0 以上、JavaScript 7.30.0 以上、Go 3.73.0 以上、Ruby 0.101.0 以上、Java 4.78.0 以上</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section">
+            <h2 class="section-title">料金情報</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">💵</div>
+                    <div class="key-point-content">
+                        <h3>$0.10 / 100 万入力トークン</h3>
+                        <p><code>gpt-6-luna</code> の入力トークンのみ課金。キャッシュ読み書きや出力トークンの課金はなし。地域処理プレミアムと長文コンテキストの価格乗数は適用される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📌</div>
+                    <div class="key-point-content">
+                        <h3>適用範囲は /v1/decisions のみ</h3>
+                        <p>この料金は <code>/v1/decisions</code> エンドポイントのみに適用され、他用途の <code>gpt-6-luna</code> は通常の料金体系に従う</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: 利用ティアの再編</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 5 段階ティア</h4>
+                    <ul>
+                        <li>📊 有料ティアが 5 段階 (Tier 1〜5)</li>
+                        <li>🔀 段階が多く、自組織の位置づけが分かりにくい</li>
+                        <li>⏳ 上位ティアの条件確認に手間がかかる</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: 3 段階ティア</h4>
+                    <ul>
+                        <li>📊 Build / Launch / Grow の 3 段階に簡素化</li>
+                        <li>⚡ クレジット購入総額に応じて自動アップグレード</li>
+                        <li>🖱️ ダッシュボードから手動アップグレードも可能</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage Tiers -->
+        <section class="section">
+            <h2 class="section-title">利用ティア比較 (Build / Launch / Grow)</h2>
+            <div class="table-wrapper">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>ティア</th>
+                            <th>条件 (クレジット購入総額)</th>
+                            <th>月間利用上限</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Free</strong></td>
+                            <td>許可された地域のユーザー</td>
+                            <td>$100/月</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Build</strong></td>
+                            <td>$5</td>
+                            <td>$500/月</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Launch</strong></td>
+                            <td>$100</td>
+                            <td>$5,000/月</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Grow</strong></td>
+                            <td>$500</td>
+                            <td>$200,000/月</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="subsection-title">ティア別の標準レート制限 (抜粋)</h3>
+            <div class="table-wrapper">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>ティア</th>
+                            <th>モデル</th>
+                            <th>RPM</th>
+                            <th>TPM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Build</td>
+                            <td>Astra, Sol, Terra</td>
+                            <td>5,000</td>
+                            <td>1,000,000</td>
+                        </tr>
+                        <tr>
+                            <td>Build</td>
+                            <td>Luna</td>
+                            <td>5,000</td>
+                            <td>2,000,000</td>
+                        </tr>
+                        <tr>
+                            <td>Launch</td>
+                            <td>Astra, Sol, Terra</td>
+                            <td>10,000</td>
+                            <td>4,000,000</td>
+                        </tr>
+                        <tr>
+                            <td>Launch</td>
+                            <td>Luna</td>
+                            <td>10,000</td>
+                            <td>10,000,000</td>
+                        </tr>
+                        <tr>
+                            <td>Grow</td>
+                            <td>Astra, Sol, Terra</td>
+                            <td>15,000</td>
+                            <td>40,000,000</td>
+                        </tr>
+                        <tr>
+                            <td>Grow</td>
+                            <td>Luna</td>
+                            <td>30,000</td>
+                            <td>180,000,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note-box">
+                <h4>📌 補足</h4>
+                <ul>
+                    <li>自組織のモデル別制限は Settings &gt; Organization &gt; Limits の「Rate limits」で確認できる</li>
+                    <li>月間利用上限は、組織・プロジェクト単位で設定できる支出制限 (spend limits) とは別の仕組み。標準レート制限は Ultrafast レート制限とも別物</li>
+                    <li>Pay-as-you-go トラフィックが頻繁にレート制限へ達するエンタープライズ顧客向けには、Scale Tier (GPT-5.6 以降は Reserved Tier) が案内されている</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["クライアントアプリケーション"]
+        SDK["OpenAI SDK<br/>(Python / JS / Go / Ruby / Java)"]
+    end
+
+    subgraph API["OpenAI API"]
+        Decisions["Decisions API<br/>POST /v1/decisions<br/>(ベータ)"]
+        Responses["Responses API<br/>POST /v1/responses"]
+        Luna["gpt-6-luna"]
+    end
+
+    subgraph Answers["型付きの回答"]
+        Predicate["predicate<br/>probability (0-1)"]
+        Choice["choice<br/>choice + probabilities"]
+        Score["score<br/>確率加重平均スコア"]
+    end
+
+    SDK -->|"テキスト + 画像 (base64)"| Decisions
+    SDK -.->|"自由形式の生成"| Responses
+    Decisions --> Luna
+    Luna --> Predicate
+    Luna --> Choice
+    Luna --> Score
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#ECECF1,stroke:#C5C5D2,stroke-width:2px,color:#343541
+
+    class Decisions,Luna openai
+    class Responses,SDK dark
+    class Predicate,Choice,Score light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">例 1: 苦情のルーティング (choice)</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+decision = client.decisions.create(
+    model="gpt-6-luna",
+    input="I was charged twice for my order.",
+    questions=[
+        {
+            "name": "route",
+            "type": "choice",
+            "instructions": "Classify the customer complaint into a support queue.",
+            "choices": [
+                {"name": "billing", "description": "Charges, refunds, invoices"},
+                {"name": "technical", "description": "Bugs, errors, outages"},
+                {"name": "shipping", "description": "Delivery, tracking, delays"},
+                {"name": "other", "description": "Anything else"},
+            ],
+        }
+    ],
+)
+
+answer = decision.answers[0]
+if answer.type == "refusal":
+    print(f"Refused: {answer.name}")
+else:
+    # choice: "billing", confidence: 0.93
+    print(answer.choice, answer.confidence)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">例 2: 画像の損傷チェック (predicate)</span>
+                </div>
+                <pre><code class="language-python">import base64
+from openai import OpenAI
+
+client = OpenAI()
+
+with open("package.png", "rb") as f:
+    image_b64 = base64.b64encode(f.read()).decode()
+
+decision = client.decisions.create(
+    model="gpt-6-luna",
+    input=[
+        {
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": "Delivered package photo"},
+                {
+                    "type": "input_image",
+                    "image_url": f"data:image/png;base64,{image_b64}",
+                },
+            ],
+        }
+    ],
+    questions=[
+        {
+            "name": "visible_damage",
+            "type": "predicate",
+            "instructions": (
+                "Is there visible damage such as cracks, tears, or dents? "
+                "Ignore shadows and packaging wear."
+            ),
+        }
+    ],
+)
+
+# probability: 0.92
+print(decision.answers[0].probability)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">例 3: 深刻度スコア (score)</span>
+                </div>
+                <pre><code class="language-python">decision = client.decisions.create(
+    model="gpt-6-luna",
+    input="Export fails in Safari but works in Chrome.",
+    questions=[
+        {
+            "name": "severity",
+            "type": "score",
+            "instructions": "Rate the severity of this bug report.",
+            "levels": [
+                {"name": "Cosmetic"},
+                {"name": "Workaround available"},
+                {"name": "Fully blocked"},
+            ],
+        }
+    ],
+)
+
+# probabilities: [0.1, 0.7, 0.2] -> score: 1.1, confidence: 0.55
+print(decision.answers[0].score)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>🔀 コンテンツ分類・リクエストルーティングの高速化とコスト削減</h4>
+                <p>これまで Responses API + Structured Outputs で実装していた分類、ルーティング、優先順位付けのワークロードを Decisions API に移行することで、約 10 倍の高速化が見込める。入力トークンのみの課金で出力トークンが課金されないため、大量処理のコスト構造も有利になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚖️ 確率ベースのしきい値設計による柔軟な判断制御</h4>
+                <p>回答が確率 (probability、probabilities、confidence) 付きで返るため、アプリケーション側で偽陽性 / 偽陰性のコストに応じたしきい値調整ができる。従来の「ラベルのみ」の分類実装より柔軟な制御が可能になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>📋 利用ティアの再確認と自動アップグレードの活用</h4>
+                <p>3 段階への再編により、自組織のティアと月間利用上限、モデル別レート制限が変わっている可能性がある。Settings &gt; Organization &gt; Limits での確認を推奨。クレジット購入総額 ($5 / $100 / $500) に応じた自動アップグレードにより、申請や待機期間なしで上位ティアのレート制限を利用できる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>2026 年 10 月 6 日の API アップデートは、「判断」に特化した新 API の提供と課金体系の簡素化という、開発体験の両面を改善する内容である。Decisions API は、テキストと画像から型付きの回答 (predicate / choice / score) を Responses API 比 10 倍の速度で返し、入力トークンのみの課金で分類・ルーティング用途のコスト効率を大きく高める。現時点ではベータ (<code>gpt-6-luna</code> のみ対応) だが、数週間以内の GA が予定されている。また、利用ティアは Build / Launch / Grow の 3 段階に簡素化され、クレジット購入総額に応じた自動アップグレードにより、スケール時の運用負荷が軽減される。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📖 <a href="https://developers.openai.com/api/docs/guides/decisions" target="_blank" rel="noopener noreferrer">Decisions API ガイド</a></li>
+                <li>📖 <a href="https://developers.openai.com/api/docs/guides/rate-limits#usage-tiers" target="_blank" rel="noopener noreferrer">Rate Limits / Usage Tiers ガイド</a></li>
+                <li>🧪 <a href="https://platform.openai.com/decisions" target="_blank" rel="noopener noreferrer">Decisions Playground</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
