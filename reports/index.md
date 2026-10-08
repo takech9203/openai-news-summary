@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-07](2026/2026-10-07-teens-learn-and-plan.md) - ChatGPT for Teens に College Planner などの学習・進学支援機能が追加、ティーン AI 協議会も発足
+- [2026-10-07](2026/2026-10-07-radisson-hotel-discovery-chatgpt.md) - Radisson Hotel Group がホテル検索・予約体験を ChatGPT に統合
+- [2026-10-07](2026/2026-10-07-gpt-6-intelligent-ui-for-everyone.md) - GPT-6 と Intelligent UI が ChatGPT で全ユーザーに展開
+- [2026-10-07](2026/2026-10-07-chat-latest-snapshot-update.md) - chat-latest スナップショット更新 (2026 年 10 月): ChatGPT 最新モデルを参照
 - [2026-10-06](2026/2026-10-06-sharing-ai-progress-in-mathematics.md) - 数学における AI の進展を共有: 内部フロンティアモデルによる新しい数学的成果の公開
 - [2026-10-06](2026/2026-10-06-jump-trading-quant-research.md) - Jump Trading が ChatGPT でクオンツリサーチをスケール: 長時間 AI ワークフローと人間によるレビューの組み合わせ
 - [2026-10-06](2026/2026-10-06-atlassian-partnership.md) - Atlassian と OpenAI がパートナーシップを拡大 — エンタープライズナレッジをアクションへ

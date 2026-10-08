@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-6 と Intelligent UI が ChatGPT で全ユーザーに展開 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-sub {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-note {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Metadata Table */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .meta-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 16px;
+            text-align: left;
+            font-weight: 700;
+            width: 30%;
+        }
+
+        .meta-table tr:first-child th {
+            border-radius: 10px 0 0 0;
+        }
+
+        .meta-table tr:first-child td {
+            border-radius: 0 10px 0 0;
+        }
+
+        .meta-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .meta-table a {
+            color: var(--openai-green);
+            word-break: break-all;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tag inside feature card */
+        .tag {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            color: #B45309;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .tag.official {
+            background: rgba(16, 163, 127, 0.12);
+            color: #0D8A6A;
+            border-color: rgba(16, 163, 127, 0.4);
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: grid;
+            gap: 8px;
+        }
+
+        .comparison-card ul li::before {
+            content: '・';
+        }
+
+        /* Principle Banner */
+        .principle-banner {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.8;
+        }
+
+        .principle-banner span {
+            display: block;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        /* Caution Box */
+        .caution-box {
+            background: #FFFBEB;
+            border: 2px dashed rgba(245, 158, 11, 0.5);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: #92400E;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .caution-box::before {
+            content: '⚠️';
+            flex-shrink: 0;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--openai-light);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meta-table {
+                font-size: 12px;
+            }
+
+            .meta-table th,
+            .meta-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">新機能</span>
+                <span class="category-badge">製品アップデート</span>
+                <h1>GPT-6 と Intelligent UI が ChatGPT で全ユーザーに展開</h1>
+                <p class="date">📅 2026-10-07 | ソース: OpenAI News (Product)</p>
+                <p class="lead">GPT-6 が Intelligent UI とともに ChatGPT で世界展開。より高速な応答と、ビジュアルかつ対話型の体験を提供。API 側でも同日に chat-latest スナップショットが更新</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">メタデータ</h2>
+            <table class="meta-table">
+                <tr>
+                    <th>発表日</th>
+                    <td>2026-10-07</td>
+                </tr>
+                <tr>
+                    <th>ソース</th>
+                    <td>OpenAI News (Product)</td>
+                </tr>
+                <tr>
+                    <th>カテゴリ</th>
+                    <td>新機能 / 製品アップデート</td>
+                </tr>
+                <tr>
+                    <th>公式リンク</th>
+                    <td><a href="https://openai.com/index/gpt-6-for-everyone" target="_blank" rel="noopener noreferrer">https://openai.com/index/gpt-6-for-everyone</a></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🌍</div>
+                    <div class="key-point-content">
+                        <h3>GPT-6 が ChatGPT で世界展開</h3>
+                        <p>2026 年 10 月 7 日、「GPT-6 and Intelligent UI for everyone」が発表された。GPT-6 が Intelligent UI とともに ChatGPT で世界展開 (global rollout) され、消費者向けプロダクトの標準体験として全ユーザーに届く節目のアップデートである。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎨</div>
+                    <div class="key-point-content">
+                        <h3>Intelligent UI によるビジュアル・対話型体験</h3>
+                        <p>従来の静的なテキスト応答に代わり、ビジュアルかつ対話型の体験 (visual and interactive experiences) を提供する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>より高速な応答</h3>
+                        <p>公式の紹介文では、より高速な応答 (faster responses) が挙げられている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔗</div>
+                    <div class="key-point-content">
+                        <h3>API 側も同日更新: chat-latest スナップショット</h3>
+                        <p>OpenAI API Changelog (2026-10-07) で chat-latest スナップショットが更新され、ChatGPT の Plus/Pro/Business/Enterprise で利用可能な最新モデルを参照するようになった。API 側でも今回の刷新に追従できる体制が整えられている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>GPT-6 世代の集大成</h3>
+                        <p>2026 年 9 月 3 日の GPT-6 Astra 発表以降、API 向けにファミリー (Astra / Sol / Luna / 6.1 Sol) が拡充されてきた GPT-6 世代が、ChatGPT の一般ユーザーにも届くようになる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: ChatGPT の標準体験</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <ul>
+                        <li>GPT-6 ファミリーは主に API と開発者向けの文脈で展開</li>
+                        <li>ChatGPT の応答は従来の静的なテキスト中心</li>
+                        <li>chat-latest は旧世代のスナップショットを参照</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <ul>
+                        <li>GPT-6 が ChatGPT で全ユーザーに世界展開</li>
+                        <li>Intelligent UI によるビジュアル・対話型の応答体験</li>
+                        <li>より高速な応答</li>
+                        <li>chat-latest が刷新後の最新モデルを参照 (2026-10-07 更新)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🌍 GPT-6 の ChatGPT への世界展開</h3>
+                    <p>これまで GPT-6 ファミリー (Astra / Sol / Luna / 6.1 Sol) は主に API と開発者向けに展開が進んできたが、今回の発表により ChatGPT の一般ユーザーも GPT-6 世代のモデルを利用できるようになる。「for everyone」というタイトルから、無料ユーザーを含む広範な提供が示唆されるが、プランごとの提供条件や利用上限の詳細は未確認。</p>
+                    <span class="tag">一部推測を含む</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🎨 Intelligent UI: ビジュアル・対話型の応答体験</h3>
+                    <p>今回の発表のもう 1 つの柱。名称と説明文から、ChatGPT がプロンプトの内容に応じて図表・カード・操作可能なウィジェットなどの UI 要素を動的に生成・表示する仕組みと考えられる。具体的な UI コンポーネントの種類、生成の仕組み、開発者によるカスタマイズ可否などの詳細は未確認。</p>
+                    <span class="tag">紹介文からの推測</span>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ より高速な応答</h3>
+                    <p>GPT-6 世代では reasoning effort による推論量の制御や、強化されたプロンプトキャッシングが導入されており (2026-09-03 の API 更新)、こうした基盤改善が ChatGPT の応答速度向上にも寄与していると考えられる。</p>
+                    <span class="tag">推測</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🔗 chat-latest スナップショットの更新</h3>
+                    <p>chat-latest は ChatGPT で稼働中の最新モデルを常に参照する動的エイリアスで、2026 年 3 月の初期リリース以降、定期的に更新されてきた。今回の更新により、API 開発者は chat-latest を指定するだけで、GPT-6 世代に刷新された ChatGPT と同等のモデル挙動をテストできる。</p>
+                    <span class="tag official">API Changelog (2026-10-07)</span>
+                </div>
+            </div>
+            <div class="caution-box">
+                chat-latest はスナップショットが予告なく変更され得るため、OpenAI は従来から本番環境では固定バージョンの利用を推奨している。
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+
+            <h3 class="section-sub">🧭 ChatGPT と API の関係 (今回のアップデート後)</h3>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph ChatGPT["ChatGPT (世界展開)"]
+        GPT6["GPT-6<br/>(最新モデル)"]
+        IUI["Intelligent UI<br/>ビジュアル・対話型応答"]
+        GPT6 --> IUI
+    end
+
+    subgraph API["OpenAI API"]
+        ChatLatest["chat-latest<br/>(動的エイリアス)"]
+        Fixed["固定バージョン<br/>(gpt-6.1-sol など)"]
+    end
+
+    FreeUser(["無料 / 有料ユーザー"]) --> ChatGPT
+    Dev(["API 開発者"]) --> ChatLatest
+    Dev --> Fixed
+    ChatLatest -. "参照 (2026-10-07 更新)<br/>Plus/Pro/Business/Enterprise の最新モデル" .-> GPT6
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class GPT6,IUI openai
+    class ChatLatest,Fixed dark
+                </pre>
+            </div>
+
+            <h3 class="section-sub">💻 コードサンプル</h3>
+            <p class="section-note">ChatGPT で展開された最新モデルの挙動を API からテストする例。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">chat-latest で最新モデルの挙動をテスト</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# chat-latest は ChatGPT (Plus/Pro/Business/Enterprise) の
+# 最新モデルを参照する動的エイリアス (2026-10-07 更新)
+response = client.responses.create(
+    model="chat-latest",
+    input=[
+        {"role": "user", "content": "GPT-6 の新機能を教えてください。"}
+    ],
+)
+print(response.output_text)</code></pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>📐 ユーザー体験の基準が変わる</h4>
+                <p>ChatGPT の標準体験が GPT-6 と Intelligent UI に刷新されることで、エンドユーザーが期待する AI アプリケーションの応答品質・表現力の水準が上がり、API を使う自社プロダクトの UI/UX 設計にも影響し得る。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔍 chat-latest で ChatGPT の挙動を追跡可能</h4>
+                <p>API Changelog (2026-10-07) の更新により、chat-latest エイリアスで刷新後の ChatGPT と同等のモデル挙動をテストできる。本番環境では引き続き固定バージョンの利用が推奨される。</p>
+            </div>
+            <div class="use-case">
+                <h4>❓ Intelligent UI の API 提供は未確認</h4>
+                <p>Intelligent UI に相当する機能が API 経由で提供されるかどうかは、本レポート作成時点では確認できていない。公式ドキュメントや今後の API Changelog での続報を確認する必要がある。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="principle-banner">
+                GPT-6 と Intelligent UI が ChatGPT の標準体験に
+                <span>全ユーザーへの世界展開 + ビジュアル・対話型の応答体験 + より高速な応答</span>
+            </div>
+            <div class="summary-box" style="margin-top: 20px;">
+                <p>「GPT-6 and Intelligent UI for everyone」は、GPT-6 を ChatGPT の全ユーザーに世界展開し、あわせて Intelligent UI によるビジュアル・対話型の応答体験と、より高速な応答を提供するアップデートである。API 側でも同日に chat-latest スナップショットが更新され、ChatGPT の Plus/Pro/Business/Enterprise で利用可能な最新モデルを参照するようになったため、開発者は API 経由で刷新後の挙動を追跡できる。Intelligent UI の具体的な仕組みや API での提供有無は未確認であり、公式ドキュメントでの続報確認が推奨される。</p>
+            </div>
+            <div class="caution-box">
+                注記: 本レポートは、公式記事ページが取得できなかったため (HTTP 403)、提供された公式紹介文の概要、OpenAI API Changelog (2026-10-07)、および関連する公式発表 (GPT-6 ファミリー、chat-latest の過去更新) の情報に基づいて作成している。推測に基づく箇所はその旨を明示した。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/gpt-6-for-everyone" target="_blank" rel="noopener noreferrer">https://openai.com/index/gpt-6-for-everyone</a></p>
+            <p><strong>関連リンク:</strong></p>
+            <p>・<a href="https://openai.com/index/gpt-6-for-everyone" target="_blank" rel="noopener noreferrer">GPT-6 and Intelligent UI for everyone (公式発表)</a></p>
+            <p>・<a href="https://openai.com/index/practical-guide-building-gpt-6" target="_blank" rel="noopener noreferrer">A model guide for the GPT-6 family (公式ガイド)</a></p>
+            <p>・<a href="https://platform.openai.com/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></p>
+            <p>・<a href="https://platform.openai.com/docs/models/chat-latest" target="_blank" rel="noopener noreferrer">chat-latest モデルドキュメント</a></p>
+            <p>・<a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></p>
+            <p>・<a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
