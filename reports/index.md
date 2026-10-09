@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-08](2026/2026-10-08-ultrafast-mode-gpt-6-1-sol.md) - Responses API に GPT-6.1 Sol 向け Ultrafast モードを追加
+- [2026-10-08](2026/2026-10-08-pollo-ai-creative-campaigns.md) - Pollo AI が OpenAI のモデルでクリエイティブなアイデアを広告キャンペーンに変換
+- [2026-10-08](2026/2026-10-08-oracle-chatgpt-codex-workflows.md) - Oracle が ChatGPT と Codex で数日かかる業務を数分に短縮: 採用・エンジニアリング・オペレーションを横断するワークフロー変革
+- [2026-10-08](2026/2026-10-08-legalon-halves-codex-costs.md) - LegalOn が開発スピードを維持したまま Codex のコストを半減: モデルの使い分けと予算管理で推定日次コストを 65% 削減
+- [2026-10-08](2026/2026-10-08-disrupting-false-front-operations.md) - AI を悪用した「偽装フロント」影響工作の摘発
 - [2026-10-07](2026/2026-10-07-teens-learn-and-plan.md) - ChatGPT for Teens に College Planner などの学習・進学支援機能が追加、ティーン AI 協議会も発足
 - [2026-10-07](2026/2026-10-07-radisson-hotel-discovery-chatgpt.md) - Radisson Hotel Group がホテル検索・予約体験を ChatGPT に統合
 - [2026-10-07](2026/2026-10-07-gpt-6-intelligent-ui-for-everyone.md) - GPT-6 と Intelligent UI が ChatGPT で全ユーザーに展開
