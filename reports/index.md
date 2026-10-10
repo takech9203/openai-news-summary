@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-09](2026/2026-10-09-sophos-daybreak-threat-investigation.md) - Sophos が OpenAI Daybreak で脅威調査時間を 96% 短縮: MDR 案件の 52% を自動化
+- [2026-10-09](2026/2026-10-09-asana-browser-agent-cost-reduction.md) - Asana がブラウザテストのモデルコストを 76 分の 1 に削減: Codex と GPT-6.1 Sol でブラウザエージェントを 5 倍高速化
 - [2026-10-08](2026/2026-10-08-ultrafast-mode-gpt-6-1-sol.md) - Responses API に GPT-6.1 Sol 向け Ultrafast モードを追加
 - [2026-10-08](2026/2026-10-08-pollo-ai-creative-campaigns.md) - Pollo AI が OpenAI のモデルでクリエイティブなアイデアを広告キャンペーンに変換
 - [2026-10-08](2026/2026-10-08-oracle-chatgpt-codex-workflows.md) - Oracle が ChatGPT と Codex で数日かかる業務を数分に短縮: 採用・エンジニアリング・オペレーションを横断するワークフロー変革
