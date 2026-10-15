@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Third Moment Research が 10,000 エージェントを 36 時間以上稼働させる方法 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card .big-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .comparison-card.before .big-number {
+            color: #DC2626;
+        }
+
+        .comparison-card.after .big-number {
+            color: #059669;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .comparison-arrow {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Evolution Table */
+        .evolution-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .evolution-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .evolution-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .evolution-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .evolution-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .evolution-table td:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .evolution-table tr:last-child td {
+            background: rgba(16, 163, 127, 0.08);
+        }
+
+        /* Model Cards */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px;
+        }
+
+        .model-card {
+            background: white;
+            border: 2px solid rgba(16, 163, 127, 0.25);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .model-card .model-name {
+            font-weight: 700;
+            color: var(--openai-green);
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .model-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote {
+            background: var(--openai-gray);
+            border-left: 4px solid var(--openai-green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .quote .quote-author {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Startup</span>
+                <h1>Third Moment Research が 10,000 エージェントを 36 時間以上稼働させる方法</h1>
+                <p class="subtitle">GPT-6 系モデル + Codex + Daybreak で構築した自己改善型 AI 研究基盤</p>
+                <p class="date">📅 2026-10-14 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-lead">
+                AI ラボの Third Moment Research は、GPT-6 Astra、GPT-6.1 Sol、Codex、サイバーセキュリティ向けの Daybreak を組み合わせ、<span class="highlight">10,000 体のエージェントを同時に 36〜48 時間稼働</span>させる自己改善型 AI システムを構築した。初期の応用分野は、成功指標が明確な定量金融 (クオンツファイナンス)。
+            </p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>10,000 エージェントの同時自律稼働</h3>
+                        <p>Docker 化された研究環境で 10,000 体のエージェントが 36〜48 時間連続稼働し、計算研究を自律的に進める。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>使うほど性能が向上する自己改善ループ</h3>
+                        <p>エージェントの弱点を特定し、数千の合成シナリオを自動生成して改善を繰り返す研究基盤を実現。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>人間が見落とした知見の発見</h3>
+                        <p>数日間一貫した研究スレッドを維持する長時間フォーカス型エージェントが、人間の研究チームが想定していなかった非自明な結果 (非表示取引の影響) を特定。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>エージェント自身によるボトルネック解消</h3>
+                        <p>Codex がシミュレーションログを分析してキャッシュ最適化とメモリパッキングを特定し、バックテストを約 3 時間から約 3〜5 分に短縮。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>Daybreak による大規模自律実行の安全確保</h3>
+                        <p>自律稼働の前提として、エージェントが環境から脱出できないかのセキュリティテストを Daybreak で自動化。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る規模と改善</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">10,000</div>
+                    <div class="stat-label">同時稼働エージェント数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">36〜48h</div>
+                    <div class="stat-label">連続自律稼働時間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1 TB</div>
+                    <div class="stat-label">各エージェントへの提供データ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">数百</div>
+                    <div class="stat-label">サブエージェントによる並列実験数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: バックテスト時間の短縮</h2>
+            <p class="section-lead">
+                Codex と GPT-5.6 が数千のシミュレーション記録 (エージェントの行動と環境応答) をタイムスタンプ・コードベースと共に分析。1 年分の米国株式注文データのバックテストに数時間かかり、エージェントが完了確認のポーリングでトークンを浪費していた問題を発見した。
+            </p>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <div class="big-number">約 3 時間</div>
+                    <p>1 年分の米国株式注文データのバックテストに数時間を要し、エージェントが完了待ちのポーリングでトークンを浪費。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <div class="big-number">約 3〜5 分</div>
+                    <p>Codex が特定したキャッシュ最適化とメモリパッキング技術を本番環境に展開し、約 36〜60 倍の高速化を達成。</p>
+                </div>
+            </div>
+            <p class="comparison-arrow">エージェント自身がログ分析からインフラ改善までを実施 ✍️</p>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な仕組み</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🐳 Docker 化された研究環境</h3>
+                    <p>デフォルトの Codex ハーネスを Docker 環境で実行。各エージェントに 1 テラバイトのデータ、ドキュメント、研究リポジトリ (特徴量エンジニアリング、GPU 対応モデル訓練、取引戦略、シミュレーション用モジュール) を提供する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 推論とツール操作の分担</h3>
+                    <p>GPT-6 系モデルが推論を担当し、Codex ハーネスがツール操作・計画作成・サブエージェント生成・コンテキスト圧縮を担当する役割分担で長時間タスクを安定実行。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎛️ 外部オーケストレーション層</h3>
+                    <p>タスク未完了対策として、GPT-6 Sol / GPT-6.1 Sol による外部ハーネスが Codex をサブエージェントとして扱い、再試行・終了・人間へのエスカレーションを判断する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Codex によるボトルネック分析</h3>
+                    <p>Codex と GPT-5.6 が数千のシミュレーション記録を分析し、バックテストの遅延原因を特定。キャッシュ最適化とメモリパッキングで約 3 時間 → 約 3〜5 分に短縮した。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ Daybreak によるセキュリティ検証</h3>
+                    <p>10,000 エージェントの自律稼働前に、研究環境のセキュリティテストを自動化。エージェントが環境から脱出して広域ネットワークへアクセスできないかを検証する。</p>
+                </div>
+            </div>
+            <div class="quote">
+                「Daybreak がなければ、この規模での自律テストは不可能だった」
+                <span class="quote-author">— Adam Khakhar 氏 (Third Moment Research)</span>
+            </div>
+        </section>
+
+        <!-- Model Evolution -->
+        <section class="section">
+            <h2 class="section-title">モデル進化と研究能力の変遷</h2>
+            <table class="evolution-table">
+                <thead>
+                    <tr>
+                        <th>世代</th>
+                        <th>能力</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GPT-5.5 以前</td>
+                        <td>ユーザー指定の実験のみ実行可能</td>
+                    </tr>
+                    <tr>
+                        <td>GPT-5.5 / 5.6</td>
+                        <td>結果に基づく追実験の設計が可能に</td>
+                    </tr>
+                    <tr>
+                        <td>GPT-6 系</td>
+                        <td>サブエージェントで数百の実験を並列実行し根本原因を調査</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="quote">
+                GPT-6.1 Sol が非表示取引 (non-displayed trades) の影響を特定。「これは当初、我々の研究チームが想定していなかった、自明ではない結果だった」
+                <span class="quote-author">— Adam Khakhar 氏</span>
+            </div>
+        </section>
+
+        <!-- Model Selection -->
+        <section class="section">
+            <h2 class="section-title">用途別のモデル選択</h2>
+            <div class="model-grid">
+                <div class="model-card">
+                    <div class="model-name">GPT-6.1 Sol</div>
+                    <p>トークン効率が最も高く、最も多用される主力モデル。GPT-6 Astra と同等の性能を最少トークンで実現。</p>
+                </div>
+                <div class="model-card">
+                    <div class="model-name">GPT-6 Astra</div>
+                    <p>スコアボードサービスの遅延削減ベンチマークで最大の高速化を達成。</p>
+                </div>
+                <div class="model-card">
+                    <div class="model-name">GPT-5.6 Terra</div>
+                    <p>セキュリティ弱点チェックなど、対象を絞った軽量タスク向け。</p>
+                </div>
+                <div class="model-card">
+                    <div class="model-name">GPT-6 Luna</div>
+                    <p>現在テスト中の新モデル。</p>
+                </div>
+            </div>
+            <div class="quote">
+                「GPT-6 Astra と同等の性能を保ちながら、最少のトークンでタスクを完了する」
+                <span class="quote-author">— Jeffrey Yan 氏 (GPT-6.1 Sol について)</span>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="section-lead">
+                GPT-6 系モデルは単一セッションで数日間の計算研究にわたり一貫したスレッドを維持できる。Codex ハーネスが実行基盤 (ツール実行・計画・サブエージェント生成・コンテキスト圧縮) を担い、さらに外側の GPT-6 Sol / GPT-6.1 Sol オーケストレーション層が長時間タスクの未完了や逸脱を監視・制御する多層構成を採用している。
+            </p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Orchestration["外部ハーネス (オーケストレーション層)"]
+        Sol["GPT-6 Sol / GPT-6.1 Sol<br/>再試行・終了・エスカレーション判断"]
+    end
+
+    subgraph Env["Docker 化された研究環境 x 10,000"]
+        Harness["Codex ハーネス<br/>ツール操作・計画・コンテキスト圧縮"]
+        Models["GPT-6 Astra / GPT-6.1 Sol<br/>推論エンジン"]
+        Data["1 TB データ + 研究リポジトリ<br/>特徴量・訓練・取引戦略・シミュレーション"]
+        Sub["サブエージェント群<br/>数百の並列実験"]
+    end
+
+    subgraph Security["セキュリティ"]
+        Daybreak["Daybreak<br/>環境脱出テストの自動化"]
+    end
+
+    Human(["人間の研究者"]) --> Sol
+    Sol --> Harness
+    Harness --> Models
+    Harness --> Sub
+    Harness --> Data
+    Daybreak -.検証.-> Env
+    Sol -.エスカレーション.-> Human
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef gray fill:#ECECF1,stroke:#C5C5D2,stroke-width:2px,color:#343541
+
+    class Models,Sol,Daybreak openai
+    class Harness,Sub dark
+    class Data gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響・ユースケース</h2>
+            <div class="use-case">
+                <h4>📐 長時間稼働エージェントの設計パターン</h4>
+                <p>推論モデル + Codex ハーネス + 外部オーケストレーション層という多層構成は、36 時間を超える長時間タスクを安定稼働させる実践的なリファレンスとなる。</p>
+            </div>
+            <div class="use-case">
+                <h4>💰 トークン効率によるモデル選択とコスト最適化</h4>
+                <p>性能が同等なら、GPT-6.1 Sol のようにトークン効率が高いモデルを主力にし、GPT-5.6 Terra のような軽量モデルを限定タスクに充てる使い分けが大規模運用でのコスト最適化に有効。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔧 エージェント自身によるボトルネック分析</h4>
+                <p>シミュレーションログを Codex に分析させてインフラ改善 (バックテスト約 3 時間 → 約 3〜5 分) につなげる手法は、エージェント運用の継続的改善に応用できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ 大規模自律実行の前提としてのセキュリティ検証</h4>
+                <p>Daybreak による環境脱出テストの自動化のように、エージェントのサンドボックス境界の検証を運用プロセスに組み込む必要がある。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめと今後の展望</h2>
+            <div class="summary-box">
+                Third Moment Research は、GPT-6 系モデルの長時間フォーカス能力と Codex ハーネスの汎用性を軸に、10,000 エージェントが 36〜48 時間自律的に研究を進める基盤を構築した。モデルの世代が進むごとに「指示された実験の実行」から「数百の実験を自律設計・並列実行」へと能力が拡大しており、同社は今後、数十万の協調サブエージェントと数兆トークン規模への拡大を計画している。目標は、人間が研究の実行者ではなく、研究の最適化を担う立場へ移行することである。
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/third-moment-research" target="_blank" rel="noopener noreferrer">https://openai.com/index/third-moment-research</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📰 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li>📚 <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></li>
+                <li>🔗 <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

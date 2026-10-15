@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block が OpenAI 技術で構築する AI セキュリティ - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section .lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .quote .speaker {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .comparison-card li {
+            padding: 6px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .comparison-card.before li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-value .unit {
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: grid;
+            gap: 12px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .process-step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .process-step p {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .summary-box h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--openai-green);
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer p {
+            margin-bottom: 6px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">顧客事例 (カスタマーストーリー)</span>
+                <h1>Block が OpenAI 技術で構築する AI セキュリティ</h1>
+                <p class="subtitle">脅威調査の高速化とパッチ提案の分単位化 — Defense Factory と Daybreak で防御側に優位性をシフト</p>
+                <p class="date">📅 2026-10-14 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">Square、Cash App、Afterpay を運営する Block のセキュリティチームが、OpenAI の「Defense Factory」と AI システム「Daybreak」を活用し、脆弱性の発見・検知・対応を人間のチームでは不可能な規模で実行している。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>数週間の作業が数時間に</h3>
+                        <p>ソフトウェアバグのレビューやログ解析など、従来は数日から数週間かかっていた作業が大幅に短縮。レッドチーム演習では脆弱性報告から自動パッチ提案までわずか 18 分を達成</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>スケールできる新しいチームメイト</h3>
+                        <p>ステップごとの定義が必要な従来型の自動化と異なり、「かなり曖昧な問題をそのまま提示して、一緒に解決を進められる」のが AI の本質。すべての結果は人間が検証する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>防御側が攻撃者と同じ速さで対抗</h3>
+                        <p>「AI は人間の意図から行動までの時間を圧縮している。Daybreak や OpenAI のツールの進化により、防御側も同じ速さで対抗できる (fight fire with fire)」(CISO James Nettesheim 氏)</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔀</div>
+                    <div class="key-point-content">
+                        <h3>タスク別モデル選択とセキュリティハーネス</h3>
+                        <p>常に最新モデルを使うのではなく、タスクごとに最適なモデルを使い分け。Daybreak 上に独自ハーネスを構築し、ルーティング・相互検証・人間への引き継ぎを実装</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👁️</div>
+                    <div class="key-point-content">
+                        <h3>Human-in-the-loop の段階的拡大</h3>
+                        <p>エージェントは組織のコンテキストを持たないため人間のレビュー層が補完。AI の判断力が実証されるにつれ、より機密性の高いシステムへ段階的に適用範囲を拡大</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 人手による対応</h4>
+                    <ul>
+                        <li>バグレビューやログ解析に数日〜数週間</li>
+                        <li>検知ルール変更の検証は数百件の過去ケースを手作業で再クエリ。時間がかかりすぎて実際にはほとんど実施されず</li>
+                        <li>レッドチームの攻撃パス連結に通常数日</li>
+                        <li>複数製品のログを横断する結合は単一ツールでは不可能</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: AI との協働</h4>
+                    <ul>
+                        <li>同じ作業が数時間で完了 (人間が検証)</li>
+                        <li>7 か月分の本番テレメトリに対する検知変更のリプレイが 1 時間以内</li>
+                        <li>完全な攻撃パス連結を約 2 時間、パッチ提案まで 18 分</li>
+                        <li>アイデンティティログとの突合でキャンペーンを摘発</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">18 <span class="unit">分</span></div>
+                    <div class="stat-label">脆弱性報告から自動パッチ提案まで (レッドチーム演習)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt; 1 <span class="unit">時間</span></div>
+                    <div class="stat-label">検知変更の 7 か月分テレメトリ再実行</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">50%</div>
+                    <div class="stat-label">トリアージのスループット向上 / 情報収集・調査の増加</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,100 <span class="unit">時間</span></div>
+                    <div class="stat-label">四半期あたりの完了した調査作業量 (アナリスト時間相当)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">600 <span class="unit">時間</span></div>
+                    <div class="stat-label">誤検知トリアージから取り戻した時間 (四半期あたり)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 2 <span class="unit">時間</span></div>
+                    <div class="stat-label">完全な攻撃パス連結 (人間なら通常数日)</div>
+                </div>
+            </div>
+            <div class="quote">
+                「すべてのアラートが、関係するすべての要素にわたって完全かつ深い調査を受けるようになった。我々のシステムは、すべてのアラートをその日唯一のアラートであるかのように扱う」。新機能として完全自律型ハンティング能力も獲得。
+                <span class="speaker">— James Nettesheim 氏 (Block CISO)</span>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な取り組み</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🤖 新しいチームメイトとしての AI</h3>
+                    <p>コード生成からセキュリティオペレーションまでワークフロー全体に AI を責任を持って導入。曖昧な問題をそのまま提示して一緒に解決でき、従来数日〜数週間のプロジェクトが大幅に短縮。すべての結果は人間が検証する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 検知チューニングの高速化</h3>
+                    <p>各調査で生のクエリ証拠を保存し、提案された検知ルール変更を 7 か月分の本番テレメトリに対して 1 時間以内でリプレイ可能に。従来は時間がかかりすぎてほとんど行われていなかった検証作業が日常化した。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔀 タスク別モデル選択とハーネス</h3>
+                    <p>Daybreak 上に構築したセキュリティハーネスが、タスクを適切なモデルへルーティングし、人間の引き継ぎフック、エージェント相互検証、内部ベンチマークと実運用パフォーマンスによる継続的評価を提供する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🕵️ キャンペーンの発見</h3>
+                    <p>1 台のラップトップの軽微に見えたアラートから、ピアレビュー中にモデルが偶発的な指標を追跡し、アイデンティティログと突合して大きな問題群を発見。「シグナルは 2 つの製品のログを横断して初めて存在する」。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚔️ レッドチーム演習での攻撃パス連結</h3>
+                    <p>わずかなヒントから、SQL インジェクション、権限昇格、足がかりの確保、認証情報の列挙、他システムへのピボットという完全な攻撃パスを約 2 時間で連結。人間なら通常数日かかる作業である。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Remediation Process -->
+        <section class="section">
+            <h2 class="section-title">修復プロセスと人間の役割</h2>
+            <p class="lead">すべての発見事項に対して、チームは次のプロセスを実行する。</p>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="process-step-number">1</div>
+                    <p>問題がコードのどこにあるかを特定し、所有者を明らかにする</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-step-number">2</div>
+                    <p>パッチを提案する</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-step-number">3</div>
+                    <p>悪用可能性 (エクスプロイタビリティ) を確認する</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-step-number">4</div>
+                    <p>修正されたことを検証する (人間がループに入り、コード変更をガイド・デプロイ)</p>
+                </div>
+            </div>
+            <div class="quote">
+                エージェントは技術的には有能だが、組織のコンテキストや過去の意思決定の背景を持たない。それを補うのが人間のレビュー層であり、AI の判断力が実運用で実証されるにつれ、より機密性の高いシステムへ段階的にリスクレベルを引き上げていく方針。
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Factory["OpenAI Defense Factory"]
+        Daybreak["OpenAI Daybreak"]
+        Models["タスク別モデル群"]
+    end
+
+    subgraph Harness["Block セキュリティハーネス"]
+        Router["モデルルーティング"]
+        Verify["エージェント相互検証"]
+        Hooks["人間引き継ぎフック"]
+    end
+
+    subgraph Ops["セキュリティオペレーション"]
+        Triage["アラートトリアージ"]
+        Detect["検知チューニング<br/>(7 か月分テレメトリ再実行)"]
+        RedTeam["レッドチーム<br/>(攻撃パス連結)"]
+        Patch["パッチ提案<br/>(18 分)"]
+    end
+
+    Human(["人間のアナリスト<br/>(検証・コンテキスト・デプロイ)"])
+
+    Alert(["アラート / 脆弱性報告"]) --> Router
+    Router --> Daybreak
+    Daybreak --> Models
+    Models --> Triage
+    Models --> Detect
+    Models --> RedTeam
+    Models --> Patch
+    Verify --> Hooks
+    Triage --> Verify
+    Patch --> Verify
+    Hooks --> Human
+    Human -->|承認・デプロイ| Patch
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#ECECF1,stroke:#C5C5D2,stroke-width:2px,color:#343541
+
+    class Daybreak,Models openai
+    class Router,Verify,Hooks dark
+    class Triage,Detect,RedTeam,Patch light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>🏗️ セキュリティへの AI 適用パターンの参考例</h4>
+                <p>単一モデルの利用ではなく、タスク別モデルルーティング、エージェント相互検証、人間への引き継ぎフックを備えたハーネスを構築するアーキテクチャは、エージェントシステムを設計する開発者にとって実践的な参考になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>👥 Human-in-the-loop の段階的拡大</h4>
+                <p>すべての結果を人間が検証しつつ、AI の判断力が実証されるにつれて機密性の高いシステムへ適用範囲を広げるという、リスクを管理した導入モデルを示している。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔁 証拠の保存によるリプレイ可能性</h4>
+                <p>調査ごとに生のクエリ証拠を保存することで、検知ルール変更を過去テレメトリに対して再実行できる設計は、セキュリティ基盤に限らず評価・回帰テストの考え方として応用できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🌍 防御技術の民主化</h4>
+                <p>「OpenAI は優位性を防御側にシフトさせている。これまで高度な防御能力は著名テック企業や政府の手にしかなかったが、重要インフラ、学校、中小企業も自らのネットワーク防御にこの技術を使い始められる」(Nettesheim 氏)。小規模組織でも高度なセキュリティ自動化が現実的になりつつある。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="summary-box">
+            <h2>まとめ</h2>
+            <p>Block は OpenAI の Defense Factory と Daybreak を中核に、独自のセキュリティハーネスを構築し、検知チューニング、脅威ハンティング、レッドチーム演習、パッチ提案までを AI で高速化した。7 か月分のテレメトリ再実行が 1 時間未満、パッチ提案まで 18 分、四半期あたり約 1,100 アナリスト時間相当の調査を実現しつつ、すべての結果を人間が検証する Human-in-the-loop 体制を維持している。攻撃者優位とされてきたセキュリティ領域で、AI によって防御側へ優位性がシフトしつつあることを示す事例である。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/block-ai-powered-security" target="_blank" rel="noopener noreferrer">https://openai.com/index/block-ai-powered-security</a></p>
+            <p><strong>関連リンク:</strong></p>
+            <p>・<a href="https://openai.com/index/block-ai-powered-security" target="_blank" rel="noopener noreferrer">How Block is building AI-powered security with OpenAI technology (原文)</a></p>
+            <p>・<a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></p>
+            <p>・<a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-14](2026/2026-10-14-third-moment-research-agents.md) - Third Moment Research が 10,000 エージェントを 36 時間以上稼働させる方法
+- [2026-10-14](2026/2026-10-14-sentinelone-malware-analysis.md) - SentinelOne が OpenAI Daybreak でマルウェア解析を数週間から数時間に短縮
+- [2026-10-14](2026/2026-10-14-eu-agentic-ai-adoption.md) - EU における AI の次章はエージェント型へ: EU 企業のエージェント型 AI 導入分析
+- [2026-10-14](2026/2026-10-14-block-ai-powered-security.md) - Block が OpenAI 技術で構築する AI セキュリティ: 脅威調査の高速化とパッチ提案の分単位化
+- [2026-10-14](2026/2026-10-14-amp-beyond-coding.md) - Amp が OpenAI モデルでコーディングを超えた AI エージェント活用を推進
 - [2026-10-13](2026/2026-10-13-higgsfield-longer-videos-voice.md) - Higgsfield、AI 動画を 1 分から 10 分超へ
 - [2026-10-09](2026/2026-10-09-sophos-daybreak-threat-investigation.md) - Sophos が OpenAI Daybreak で脅威調査時間を 96% 短縮: MDR 案件の 52% を自動化
 - [2026-10-09](2026/2026-10-09-asana-browser-agent-cost-reduction.md) - Asana がブラウザテストのモデルコストを 76 分の 1 に削減: Codex と GPT-6.1 Sol でブラウザエージェントを 5 倍高速化
