@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sullivan &amp; Cromwell の Agreement Analyzer - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section .lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .quote .speaker {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .comparison-card li {
+            padding: 6px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .comparison-card.before li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+            font-weight: 700;
+        }
+
+        .comparison-card.after li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: grid;
+            gap: 12px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .process-step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .process-step p {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .process-step p strong {
+            color: var(--openai-dark);
+        }
+
+        /* Verdict Tags */
+        .verdict-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .verdict-card {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .verdict-card.supported {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .verdict-card.rejected {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .verdict-card.unverified {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid #F59E0B;
+        }
+
+        .verdict-card .verdict-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .verdict-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .verdict-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .summary-box h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--openai-green);
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer p {
+            margin-bottom: 6px;
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">導入事例 (リーガル)</span>
+                <h1>Sullivan &amp; Cromwell、法務の専門知識を契約書レビューに組み込む「Agreement Analyzer」を開発</h1>
+                <p class="subtitle">先例・プレイブック・事務所ワークフローと ChatGPT Enterprise を統合 — 敵対的マルチエージェントで契約書ドラフトの問題点を特定</p>
+                <p class="date">📅 2026-10-15 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">米大手法律事務所 Sullivan &amp; Cromwell は、OpenAI との協業により、契約書ドラフトの問題点を特定する AI ツール「Agreement Analyzer」を開発した。先例 (プレシデント) との比較、事務所の経験に基づくアプローチ、クライアントの優先事項といった契約書レビューに必要な要素を単一のワークフローに統合し、分析結果と修正提案を生成する。弁護士はその内容を検証・修正したうえで最終判断を下す。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📑</div>
+                    <div class="key-point-content">
+                        <h3>専門知識を単一ワークフローに統合</h3>
+                        <p>先例との比較、事務所の経験に基づくアプローチ、クライアントの優先事項を統合し、契約書ドラフトからメモランダムと変更履歴付きの修正提案を生成する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>敵対的マルチエージェント設計</h3>
+                        <p>専門化されたエージェントが並列レビューし、別のエージェントが敵対的プロセスで異議を申し立てて検証。指摘を信頼度別に分類して提示する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>完全な透明性で信頼を担保</h3>
+                        <p>「AI ツールが市場慣行について主張をするなら、その情報の出典を確認できる必要がある」(Savva 氏)。各指摘の根拠と関連先例を弁護士が確認できる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛠️</div>
+                    <div class="key-point-content">
+                        <h3>Codex による PoC が起点</h3>
+                        <p>パートナーの John Savva 氏が Codex でシングルユーザー向け概念実証を開発。OpenAI との協業で出力品質向上・並列処理による効率化・マルチユーザー対応を実現した</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚖️</div>
+                    <div class="key-point-content">
+                        <h3>弁護士を置き換えないツール</h3>
+                        <p>「弁護士を置き換えるのではなく、より深い分析を可能にし、クライアントにより高品質な成果物を提供するためのツール」と Savva 氏は位置づける</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">AI 活用の変化 (Before / After)</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: 反復的・管理的タスク</h4>
+                    <ul>
+                        <li>メール返信の下書き</li>
+                        <li>カレンダー確認</li>
+                        <li>定型業務が中心で、専門性の高いタスクには未適用</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: 高度な法務タスク</h4>
+                    <ul>
+                        <li>複雑な契約の深い分析</li>
+                        <li>先例間の対応条項の比較と相互作用の追跡</li>
+                        <li>AI モデルの分析能力向上で「難易度の高い法務タスクでの活用機会が大幅に増えている」</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features: ツールの構成要素 -->
+        <section class="section">
+            <h2 class="section-title">ツールの構成要素</h2>
+            <p class="lead">Agreement Analyzer は、先例間で対応する条項を比較し、それらの条項がどのように相互作用するかを追跡する作業を支援する。弁護士が契約書ドラフトを入力すると、複数の視点から複数回のレビューサイクルを実行し、出力を統合して潜在的な問題の特定を支援する。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🏢 Sullivan &amp; Cromwell のワークフロー</h3>
+                    <p>事務所の実務プロセスに沿ったレビュー手順を組み込み、弁護士の実際の仕事の進め方に合わせた分析を実行する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📚 厳選された事務所の先例</h3>
+                    <p>弁護士が自ら選択した先例 (プレシデント) を追加可能。関連する先例との比較が分析の土台となる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📖 交渉プレイブック</h3>
+                    <p>事務所およびクライアントのポジション、市場慣行の情報を保持し、交渉上の優先事項を反映した指摘を可能にする。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 ChatGPT Enterprise</h3>
+                    <p>基盤となる AI プラットフォーム。複数の弁護士が同時利用できるエンタープライズ環境を提供する。</p>
+                </div>
+            </div>
+            <div class="quote">
+                最終的に、メモランダム (分析メモ) と変更履歴付きの修正提案が返され、弁護士がレビュー・修正・却下を判断する。
+            </div>
+        </section>
+
+        <!-- 技術詳細: マルチエージェント敵対的レビュー -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: マルチエージェントによる敵対的レビュー</h2>
+            <p class="lead">Agreement Analyzer の特徴的な設計は、エージェントが結論を導き、別のエージェントがそれに敵対的プロセスで異議を申し立てる仕組みである。</p>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="process-step-number">1</div>
+                    <p><strong>並列レビュー</strong>: 専門化された複数のエージェントが、市場慣行からの逸脱とリスク配分、条項間の相互作用、訴訟に影響しうる曖昧な記述という異なる観点から契約書を同時に分析</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-step-number">2</div>
+                    <p><strong>敵対的検証</strong>: あるエージェントの結論に対し、別のエージェントが異議を申し立てて妥当性を検証 (チャレンジ)</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-step-number">3</div>
+                    <p><strong>結果の分類</strong>: 検証を通過した指摘 / 棄却された指摘 / 留保付きの未検証論点を明示的に区別して提示</p>
+                </div>
+                <div class="process-step">
+                    <div class="process-step-number">4</div>
+                    <p><strong>出典の提示</strong>: 各指摘の根拠となる説明と関連先例を弁護士が確認し、最終的なマークアップに反映すべき指摘を判断</p>
+                </div>
+            </div>
+            <div class="verdict-grid">
+                <div class="verdict-card supported">
+                    <div class="verdict-icon">✅</div>
+                    <h4>支持された指摘</h4>
+                    <p>他エージェントによる検証 (チャレンジ) を経て支持された論点</p>
+                </div>
+                <div class="verdict-card rejected">
+                    <div class="verdict-icon">❌</div>
+                    <h4>棄却された指摘</h4>
+                    <p>検証の結果、妥当性が否定された論点</p>
+                </div>
+                <div class="verdict-card unverified">
+                    <div class="verdict-icon">⚠️</div>
+                    <h4>留保付き未検証</h4>
+                    <p>検証されていないが留保付きで保持された論点</p>
+                </div>
+            </div>
+            <div class="quote">
+                開発プロセスでは Codex による PoC 構築から始まり、OpenAI との協業で並列処理による効率化とマルチユーザー対応を実現している。
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    Lawyer(["弁護士"]) --> Input["契約書ドラフト + 先例 + プレイブック入力"]
+
+    subgraph Analyzer["Agreement Analyzer (ChatGPT Enterprise 基盤)"]
+        Input --> Agents
+        subgraph Agents["専門エージェントによる並列レビュー"]
+            A1["市場逸脱・リスク配分"]
+            A2["条項間の相互作用"]
+            A3["曖昧性・訴訟リスク"]
+        end
+        Agents --> Challenge["敵対的検証 (エージェント同士のチャレンジ)"]
+        Challenge --> Synth["統合: 支持された指摘 / 棄却 / 留保付き未検証"]
+    end
+
+    Synth --> Output["メモランダム + 変更履歴付き修正提案"]
+    Output --> Review["弁護士がレビュー・修正・却下を判断"]
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class A1,A2,A3,Challenge openai
+    class Input,Synth,Output dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- 今後の展望 -->
+        <section class="section">
+            <h2 class="section-title">今後の展望</h2>
+            <p class="lead">Sullivan &amp; Cromwell は、特定の法務タスクに合わせたツールの開発を継続している。Savva 氏は、分析能力の向上がリサーチや文書作成プロセスのより広い範囲を支援する機会につながるとみている。</p>
+            <div class="quote">
+                「Astra は利用可能な推論の品質を大きく前進させた。それこそが従来のボトルネックだった」— GPT‑6 Astra の推論能力の進歩に言及
+                <span class="speaker">— John Savva 氏 (Sullivan &amp; Cromwell パートナー)</span>
+            </div>
+        </section>
+
+        <!-- Use Cases / Business Impact -->
+        <section class="section">
+            <h2 class="section-title">ビジネス / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>⚖️ 高度な法務タスクへの AI 適用</h4>
+                <p>AI の活用領域が、メール下書きなどの定型業務から複雑な契約分析のような専門性の高いタスクへ拡大していることを示す事例。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧑‍⚖️ 「人間の判断を支援する」設計</h4>
+                <p>AI が最終判断を下すのではなく、分析結果・根拠・先例を提示し、弁護士が採否を決める人間中心のワークフローは、規制産業での AI 導入の参考モデルとなる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ 敵対的マルチエージェントの実用例</h4>
+                <p>エージェント同士が結論を検証し合い、指摘を信頼度別に分類する設計は、ハルシネーション対策として他ドメインにも応用可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>🚀 現場主導の開発</h4>
+                <p>ドメイン専門家 (パートナー弁護士) が Codex で PoC を構築し、OpenAI と協業して本格的なツールへ発展させた開発プロセスは、エンタープライズでの AI 内製化の好例。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔍 透明性の重視</h4>
+                <p>出典の明示と不確実性の可視化が、専門職による AI 出力の信頼・採用の前提条件であることを示唆。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="summary-box">
+            <h2>まとめ</h2>
+            <p>Sullivan &amp; Cromwell の Agreement Analyzer は、事務所の先例・プレイブック・ワークフローと ChatGPT Enterprise を統合し、契約書レビューを支援する AI ツールである。専門化されたエージェントによる並列レビューと敵対的検証により、指摘を信頼度別に分類し、出典と根拠を可視化することで、弁護士が最終判断を下せる透明性の高い設計を実現した。パートナー弁護士自身が Codex で構築した PoC を OpenAI との協業で発展させた経緯も含め、「弁護士の置き換えではなく、より深い分析と高品質な成果物のためのツール」という思想が貫かれた、専門職向け AI 導入の代表的な事例といえる。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/sullivan-cromwell" target="_blank" rel="noopener noreferrer">https://openai.com/index/sullivan-cromwell</a></p>
+            <p><strong>関連リンク:</strong></p>
+            <p>・<a href="https://openai.com/index/sullivan-cromwell" target="_blank" rel="noopener noreferrer">Sullivan &amp; Cromwell brings legal expertise into agreement review (OpenAI 公式)</a></p>
+            <p>・<a href="https://openai.com/chatgpt/enterprise/" target="_blank" rel="noopener noreferrer">ChatGPT Enterprise</a></p>
+            <p>・<a href="https://openai.com/codex/" target="_blank" rel="noopener noreferrer">Codex</a></p>
+            <p>・<a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

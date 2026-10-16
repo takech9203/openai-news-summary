@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-Live に Decisions のネイティブ統合を追加 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .category-badge.secondary {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header .lead {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .subsection-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--openai-dark);
+        }
+
+        .section p.body-text {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        code.inline {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12.5px;
+            color: var(--openai-dark);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote-box {
+            background: var(--openai-light);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .comparison-card li {
+            padding: 4px 0;
+        }
+
+        /* Flow steps */
+        .flow-steps {
+            display: grid;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--openai-light);
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .flow-step .step-num {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table.info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table.info-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        table.info-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        table.info-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        table.info-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        table.info-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        table.info-table code {
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12.5px;
+            color: var(--openai-dark);
+        }
+
+        .endpoint-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--openai-dark);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin: 8px 0 16px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 15px;
+            color: white;
+        }
+
+        .endpoint-badge .method {
+            background: var(--openai-green);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Notes / Warning */
+        .note-box {
+            background: #FFF7ED;
+            border: 2px solid rgba(245, 158, 11, 0.4);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .note-box h4 {
+            color: #B45309;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .note-box ul {
+            padding-left: 20px;
+        }
+
+        .note-box li {
+            margin: 4px 0;
+        }
+
+        .check-list {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .check-list li {
+            padding: 8px 0 8px 32px;
+            position: relative;
+            border-bottom: 1px dashed var(--openai-gray);
+        }
+
+        .check-list li:last-child {
+            border-bottom: none;
+        }
+
+        .check-list li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14.5px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            padding: 2px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API Update</span>
+                <span class="category-badge secondary">New Feature</span>
+                <h1>GPT-Live に Decisions のネイティブ統合を追加</h1>
+                <p class="lead">音声会話中にアプリが「判断」できる時代へ。ユーザーが話している最中にアプリが行動したり、Live の発話に反応したりできるようになる、低レイテンシ Decisions 統合</p>
+                <p class="date">📅 2026-10-15 | OpenAI API Changelog | カテゴリ: 新機能 / API 更新</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎙️</div>
+                    <div class="key-point-content">
+                        <h3>GPT-Live に Decisions API をネイティブ統合</h3>
+                        <p>対象は <code class="inline">gpt-live-1</code> と <code class="inline">gpt-6-luna</code>、エンドポイントは <code class="inline">v1/live/sessions</code>。ユーザーが話している最中にアプリが行動したり、Live の発話に反応したりできるようになる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>ネイティブ委譲 (native delegation)</h3>
+                        <p>Live が Decisions を直接呼び出す方式。従来のカスタム委譲で必要だったアプリ経由の往復 (Live → アプリ → Decisions) が省略され、レイテンシが削減される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>トランスクリプトデルタによるトリガー</h3>
+                        <p>入力 (ユーザー発話) または出力 (Live の発話) のトランスクリプトのデルタが届いた時点で Decisions を自動的にトリガー。発話の完了を待たずにリアルタイムで判断できる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧩</div>
+                    <div class="key-point-content">
+                        <h3>Decisions API の低レイテンシな「判断」を Live から直接利用</h3>
+                        <p>Decisions API は 2026 年 10 月 6 日に <code class="inline">gpt-6-luna</code> でベータ公開された、テキストと画像を Responses API 比 10 倍高速に型付きの回答へ変換する API。音声会話というリアルタイム性が重要な場面で直接利用可能になった</p>
+                    </div>
+                </div>
+            </div>
+            <div class="quote-box">
+                Changelog 原文: "Added native Decisions integration in GPT-Live. Your app can act while your user is speaking or react to what Live says." — "Let Live call Decisions directly through native delegation, or trigger decisions as input or output transcript deltas arrive."
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: 委譲時のレイテンシ</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: カスタム委譲</h4>
+                    <ul>
+                        <li>🔁 Live がアプリに通知 → アプリが Decisions を呼び出す往復が必要</li>
+                        <li>⏳ アプリ経由の往復分だけレイテンシが増加</li>
+                        <li>🛠️ アプリ側に委譲処理の実装負荷</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: ネイティブ委譲</h4>
+                    <ul>
+                        <li>⚡ Live が Decisions を直接呼び出す</li>
+                        <li>🚀 アプリ経由の往復が省略され、レイテンシを削減</li>
+                        <li>📨 さらにトランスクリプトデルタでの自動トリガーも可能 (委譲とは独立して動作)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な内容: 2 つの利用方式 + コンテキスト管理</h2>
+
+            <h3 class="subsection-title">1️⃣ ネイティブ委譲 (native delegation)</h3>
+            <p class="body-text">Live が Decisions を直接呼び出す方式。公式ガイドでは、車載アシスタントが「車内を暖めて」「フロントガラスの曇りを取って」といった運転者の発話を判断し、アプリが車両操作を実行する例が示されている。</p>
+            <div class="flow-steps">
+                <div class="flow-step"><span class="step-num">1</span><span>セッション設定の <code class="inline">session.delegation</code> に <code class="inline">type: "decisions"</code> と質問 (choice タイプ) を定義する</span></div>
+                <div class="flow-step"><span class="step-num">2</span><span>Live への指示 (instructions) で「いつ委譲するか」を指定する</span></div>
+                <div class="flow-step"><span class="step-num">3</span><span>委譲タイプはセッション作成時に固定され、セッション中は変更不可。ただし質問自体は <code class="inline">session.update</code> → <code class="inline">session.updated</code> の確認後に変更できる</span></div>
+                <div class="flow-step"><span class="step-num">4</span><span>結果は <code class="inline">session.delegation.created</code> と <code class="inline">decision.event</code> (<code class="inline">event.type</code> が <code class="inline">decision.completed</code>) で受信し、<code class="inline">session.commentary.append</code> で実行結果を Live に報告する</span></div>
+            </div>
+
+            <h3 class="subsection-title">2️⃣ トランスクリプトデルタによるトリガー</h3>
+            <p class="body-text">入力 (ユーザー発話) または出力 (Live の発話) のトランスクリプトのデルタが届いた時点で Decisions を自動的にトリガーする方式。委譲とは独立して動作する。公式ガイドでは、デジタルヒューマンがユーザーの発話を聞きながら表情 (happy / sad / concerned など)、強度、ジェスチャーをリアルタイムに判断する例が示されている。</p>
+            <div class="flow-steps">
+                <div class="flow-step"><span class="step-num">1</span><span><code class="inline">session.triggers</code> に <code class="inline">event_type</code> として <code class="inline">session.input_transcript.delta</code> または <code class="inline">session.output_transcript.delta</code> を指定する</span></div>
+                <div class="flow-step"><span class="step-num">2</span><span>トリガー時のモデルとトリガー ID は Live 側が提供する (委譲時のようにアプリ側でモデルを指定しない)</span></div>
+                <div class="flow-step"><span class="step-num">3</span><span>結果の <code class="inline">decision.event</code> には <code class="inline">trigger_id</code>、<code class="inline">source_event_type</code>、<code class="inline">source_event_id</code> が含まれ、<code class="inline">delegation_id</code> は null になる</span></div>
+            </div>
+
+            <h3 class="subsection-title">🗂️ コンテキスト管理</h3>
+            <p class="body-text">Decisions に判断材料となるアプリの状態を渡すために、専用のイベントが用意されている。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>➕ コンテキストの追加</h3>
+                    <p><code class="inline">decision.item.create</code> でコンテキストアイテムを追加し、<code class="inline">decision.item.created</code> で返される <code class="inline">item.id</code> を保持する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 状態変更時の更新</h3>
+                    <p>状態が変わったら <code class="inline">decision.item.delete</code> → <code class="inline">decision.item.deleted</code> を待ってから新しい状態を追加する</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: 対象モデルとエンドポイント</h2>
+            <div class="endpoint-badge">
+                <span class="method">WS</span>
+                <span>v1/live/sessions</span>
+            </div>
+            <div class="table-wrapper">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Live セッション</td>
+                            <td><code>gpt-live-1</code></td>
+                        </tr>
+                        <tr>
+                            <td>Decisions (委譲時に指定)</td>
+                            <td><code>gpt-6-luna</code></td>
+                        </tr>
+                        <tr>
+                            <td>エンドポイント</td>
+                            <td><code>v1/live/sessions</code></td>
+                        </tr>
+                        <tr>
+                            <td>必要な権限</td>
+                            <td><code>api.decisions.write</code> (Live 接続側)。サーバー側で Responses API を併用する場合は <code>api.responses.write</code></td>
+                        </tr>
+                        <tr>
+                            <td>追加ヘッダー</td>
+                            <td>不要。公式ガイド原文: "You don't need a Decisions-specific alpha header." (通常の Live 接続ヘッダーを使用)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Code Samples -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+
+            <p class="body-text">WebRTC セッションリクエストの <code class="inline">session</code> 配下に、既存の <code class="inline">transport</code> と並べて <code class="inline">delegation</code> オブジェクトを設定する。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">例 1: ネイティブ委譲の設定 (車載アシスタント)</span>
+                </div>
+                <pre><code class="language-json">{
+  "model": "gpt-live-1",
+  "instructions": "Delegate requests to warm the cabin or clear windshield fog, and questions about windshield fogging. Wait for the app to report the result before describing it.",
+  "delegation": {
+    "type": "decisions",
+    "decisions": {
+      "model": "gpt-6-luna",
+      "questions": [
+        {
+          "type": "choice",
+          "name": "cabin_temperature",
+          "instructions": "Choose increase if the driver asks to make the cabin warmer. Otherwise choose none.",
+          "choices": [{ "value": "increase" }, { "value": "none" }]
+        },
+        {
+          "type": "choice",
+          "name": "windshield_defogger",
+          "instructions": "Choose on if the driver asks to clear windshield fog or asks why the windshield is fogging up. Otherwise choose none.",
+          "choices": [{ "value": "on" }, { "value": "none" }]
+        }
+      ]
+    }
+  }
+}</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">例 2: コンテキストの追加 (decision.item.create)</span>
+                </div>
+                <pre><code class="language-json">{
+  "type": "decision.item.create",
+  "event_id": "evt_cabin_70",
+  "item": {
+    "type": "message",
+    "role": "user",
+    "content": [
+      {
+        "type": "input_text",
+        "text": "Cabin set to 70°F. Windshield defogger off."
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <p class="body-text">アプリが操作を実行した後、<code class="inline">session.commentary.append</code> で結果を Live に伝える。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">例 2 続き: 結果報告 (session.commentary.append)</span>
+                </div>
+                <pre><code class="language-json">{
+  "type": "session.commentary.append",
+  "delegation_id": "del_cabin_1",
+  "content": "The dashboard now shows the cabin is set to 71°F."
+}</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">例 3: トランスクリプトトリガーの設定 (デジタルヒューマン)</span>
+                </div>
+                <pre><code class="language-json">{
+  "type": "decisions",
+  "event_type": "session.input_transcript.delta",
+  "decisions": {
+    "questions": [
+      {
+        "type": "choice",
+        "name": "expression",
+        "instructions": "Choose your expression as you listen to the person's latest words.",
+        "choices": [
+          { "value": "neutral" },
+          { "value": "happy" },
+          { "value": "sad" },
+          { "value": "concerned" }
+        ]
+      },
+      {
+        "type": "choice",
+        "name": "gesture",
+        "instructions": "Choose a gesture that fits what you just heard.",
+        "choices": [
+          { "value": "none" },
+          { "value": "nod" },
+          { "value": "shake" },
+          { "value": "lean" }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+
+            <p class="body-text">トリガー結果は以下の形式で届く。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">例 3 続き: トリガー結果 (decision.event)</span>
+                </div>
+                <pre><code class="language-json">{
+  "type": "decision.event",
+  "delegation_id": null,
+  "trigger_id": "trg_listening_1",
+  "source_event_type": "session.input_transcript.delta",
+  "source_event_id": "evt_input_42",
+  "event": {
+    "type": "decision.completed",
+    "decision": {
+      "answers": [
+        { "type": "choice", "name": "expression", "choice": "happy" },
+        { "type": "choice", "name": "gesture", "choice": "nod" }
+      ]
+    }
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Implementation Notes -->
+        <section class="section">
+            <h2 class="section-title">実装上の注意点</h2>
+            <ul class="check-list">
+                <li><strong>委譲タイプは固定</strong>: <code class="inline">delegation.type</code> はセッション作成時に設定し、そのセッション中は変更できない</li>
+                <li><strong>質問の更新手順</strong>: アクティブセッション中の質問変更は、<code class="inline">session.update</code> を送信し、対応する <code class="inline">session.updated</code> を待ってから decision item を追加する</li>
+                <li><strong>イベントフィルタ</strong>: WebRTC イベントをフィルタする場合、<code class="inline">session.delegation.created</code> と <code class="inline">decision.event</code> の両方を許可する必要がある。またトリガー結果は、ソースとなるトランスクリプトイベントも許可されている場合にのみ配信される</li>
+                <li><strong>デルタの結合と順序</strong>: Live は保留中のデルタを結合することがあり、結果は順不同で届く可能性がある。各方向で最新の関連結果のみを適用し、口の動き (リップシンク) は音声側から駆動することが推奨されている</li>
+                <li><strong>質問の独立性</strong>: 1 回のネイティブ決定リクエストで、すべての質問に独立して回答される</li>
+            </ul>
+            <div class="note-box">
+                <h4>💰 料金について</h4>
+                <ul>
+                    <li>今回参照した Changelog および Decisions voice ガイドには、この統合に固有の料金に関する記述はない (不明)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    User(["ユーザー (音声)"])
+
+    subgraph App["クライアントアプリケーション"]
+        WebRTC["WebRTC セッション<br/>v1/live/sessions"]
+        Handler["decision.event ハンドラ<br/>(アクション実行 / 表情制御)"]
+    end
+
+    subgraph API["OpenAI API"]
+        Live["GPT-Live<br/>gpt-live-1"]
+        Decisions["Decisions API<br/>gpt-6-luna"]
+    end
+
+    User -->|"発話"| WebRTC
+    WebRTC --> Live
+    Live -->|"1 ネイティブ委譲<br/>(session.delegation)"| Decisions
+    Live -->|"2 トランスクリプトデルタ<br/>でトリガー (session.triggers)"| Decisions
+    Decisions -->|"decision.event<br/>(型付きの回答)"| Handler
+    Handler -->|"session.commentary.append<br/>(結果報告)"| Live
+    Live -->|"音声応答"| User
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#ECECF1,stroke:#C5C5D2,stroke-width:2px,color:#343541
+
+    class Live,Decisions openai
+    class WebRTC,Handler dark
+    class User light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>🚗 車載アシスタント: 発話を聞きながら操作する</h4>
+                <p>「車内を暖めて」「フロントガラスの曇りを取って」といった運転者の発話をネイティブ委譲で判断し、アプリが車両操作を実行。実行結果は <code class="inline">session.commentary.append</code> で Live に報告し、音声で応答させる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧑‍🎤 デジタルヒューマン: 聞きながら表情を変える</h4>
+                <p>ユーザーの発話トランスクリプトのデルタをトリガーに、表情 (happy / sad / concerned など)、強度、ジェスチャーをリアルタイムに判断。リップシンクは音声側から駆動し、判断結果は最新のもののみを適用する。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚡ 音声アプリの応答性が向上</h4>
+                <p>ユーザーの発話が完了するのを待たずに、トランスクリプトのデルタ単位で判断を実行できる。発話中のリアルタイムな UI 更新 (表情、ジェスチャー、画面操作) や、発話と並行したアクション実行が可能になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔁 アプリ経由の往復が不要に</h4>
+                <p>従来のカスタム委譲では Live → アプリ → Decisions という往復が必要だったが、ネイティブ委譲では Live が Decisions を直接呼び出すため、レイテンシとアプリ側の実装負荷が削減される。</p>
+            </div>
+            <div class="use-case">
+                <h4>🎯 型付きの回答による確実な分岐処理</h4>
+                <p>Decisions API の choice タイプによる回答が返るため、音声からの意図判定を自由形式テキストのパースなしで実装できる。「該当なし」を表す <code class="inline">none</code> 選択肢を用意し、no-op として扱う設計が公式ガイドで示されている。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧱 イベント駆動の実装が必要</h4>
+                <p><code class="inline">decision.item.create</code> / <code class="inline">decision.item.delete</code> によるコンテキスト管理、<code class="inline">session.commentary.append</code> による結果報告、順不同で届く結果への対応など、イベントのライフサイクルを意識した実装が求められる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔑 権限設定の確認</h4>
+                <p>Live 接続に <code class="inline">api.decisions.write</code> 権限が必要。既存の GPT-Live アプリに統合する際は API キーの権限を確認したい。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>2026 年 10 月 15 日のアップデートにより、10 月 6 日にベータ公開された Decisions API が GPT-Live (<code class="inline">gpt-live-1</code>) にネイティブ統合された。ネイティブ委譲 (<code class="inline">session.delegation</code>) により Live が <code class="inline">gpt-6-luna</code> の Decisions を直接呼び出せるほか、入出力トランスクリプトのデルタをトリガー (<code class="inline">session.triggers</code>) として発話中の判断を実行できる。これにより、車載アシスタントのような「発話を聞きながら操作する」アプリや、デジタルヒューマンのような「聞きながら表情を変える」アプリを、低レイテンシかつ型付きの回答に基づいて実装できるようになる。本統合に固有の料金については、現時点で参照したドキュメントに記述がなく不明である。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📖 <a href="https://developers.openai.com/api/docs/guides/decisions-voice" target="_blank" rel="noopener noreferrer">Decisions voice ガイド (GPT-Live 統合)</a></li>
+                <li>📖 <a href="https://developers.openai.com/api/docs/guides/decisions" target="_blank" rel="noopener noreferrer">Decisions API ガイド</a></li>
+                <li>📄 関連レポート: Decisions API ベータリリース (2026-10-06)</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

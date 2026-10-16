@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-15](2026/2026-10-15-teaching-students-think-learn-questions.md) - 質問を通じて考え、学ぶ力を育てる: AI for Educators ブラジルポルトガル語版と Study Mode の活用
+- [2026-10-15](2026/2026-10-15-sullivan-cromwell-agreement-analyzer.md) - Sullivan & Cromwell、法務の専門知識を契約書レビューに組み込む「Agreement Analyzer」を開発
+- [2026-10-15](2026/2026-10-15-rosalind-academic-plan.md) - GPT-Rosalind をアカデミック研究ラボへ: Rosalind Academic Plan の発表
+- [2026-10-15](2026/2026-10-15-gpt-live-decisions-integration.md) - OpenAI API アップデート (2026-10-15): GPT-Live に Decisions のネイティブ統合を追加
 - [2026-10-14](2026/2026-10-14-third-moment-research-agents.md) - Third Moment Research が 10,000 エージェントを 36 時間以上稼働させる方法
 - [2026-10-14](2026/2026-10-14-sentinelone-malware-analysis.md) - SentinelOne が OpenAI Daybreak でマルウェア解析を数週間から数時間に短縮
 - [2026-10-14](2026/2026-10-14-eu-agentic-ai-adoption.md) - EU における AI の次章はエージェント型へ: EU 企業のエージェント型 AI 導入分析
