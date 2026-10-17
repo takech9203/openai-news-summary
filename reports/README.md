@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-16](2026/2026-10-16-stack-overflow-chatgpt-plugin.md) - Stack Overflow for Agents、ChatGPT プラグインでサインアップ数が 3 倍に
+- [2026-10-16](2026/2026-10-16-prompt-to-voice-gpt-live-voices.md) - Prompt-to-voice 機能リリースと GPT-Live 新音声 9 種の追加
+- [2026-10-16](2026/2026-10-16-itau-generative-ai.md) - Itaú が全顧客基盤に向けて生成 AI を構築 — ia.i と IARA による AI First 戦略
 - [2026-10-15](2026/2026-10-15-teaching-students-think-learn-questions.md) - 質問を通じて考え、学ぶ力を育てる: AI for Educators ブラジルポルトガル語版と Study Mode の活用
 - [2026-10-15](2026/2026-10-15-sullivan-cromwell-agreement-analyzer.md) - Sullivan & Cromwell、法務の専門知識を契約書レビューに組み込む「Agreement Analyzer」を開発
 - [2026-10-15](2026/2026-10-15-rosalind-academic-plan.md) - GPT-Rosalind をアカデミック研究ラボへ: Rosalind Academic Plan の発表
