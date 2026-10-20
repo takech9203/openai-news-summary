@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-19](2026/2026-10-19-low-resource-programming-languages.md) - 低リソースプログラミング言語におけるコーディング能力の進化
 - [2026-10-16](2026/2026-10-16-stack-overflow-chatgpt-plugin.md) - Stack Overflow for Agents、ChatGPT プラグインでサインアップ数が 3 倍に
 - [2026-10-16](2026/2026-10-16-prompt-to-voice-gpt-live-voices.md) - Prompt-to-voice 機能リリースと GPT-Live 新音声 9 種の追加
 - [2026-10-16](2026/2026-10-16-itau-generative-ai.md) - Itaú が全顧客基盤に向けて生成 AI を構築 — ia.i と IARA による AI First 戦略
