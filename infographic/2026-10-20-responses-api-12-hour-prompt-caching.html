@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses API で 12 時間プロンプトキャッシュが選択可能に - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section p.lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card code,
+        .use-case code,
+        .key-point-content code,
+        .note-list code,
+        .pricing-table code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: rgba(16, 163, 127, 0.1);
+            color: #0D8A6A;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Pricing Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .pricing-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .pricing-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .pricing-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .pricing-table .rate {
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        .pricing-table .rate.warn {
+            color: var(--warning);
+        }
+
+        /* Note list */
+        .note-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .note-list li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 12px 16px 12px 40px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .note-list li::before {
+            content: '✏️';
+            position: absolute;
+            left: 12px;
+            top: 11px;
+            font-size: 15px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+            display: grid;
+            gap: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-table th,
+            .pricing-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API アップデート</span>
+                <h1>Responses API で 12 時間プロンプトキャッシュが選択可能に</h1>
+                <p class="subtitle">共有インストラクション、ツール定義、コンテキストをより長くキャッシュに保持。間欠的なワークロードでも低価格のキャッシュ入力料金を活用可能に</p>
+                <p class="date">📅 2026-10-20 | ソース: OpenAI API Changelog (Feature · API: v1/responses)</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">⏰</div>
+                    <div class="key-point-content">
+                        <h3>12 時間のキャッシュ保持期間が選択可能に</h3>
+                        <p>Responses API で 12 時間のプロンプトキャッシュ保持期間を選択できるようになった。「長い間隔を挟んで再利用される安定したプレフィックス」向けで、12 時間は「最低保持期間」であり削除期限ではない。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚙️</div>
+                    <div class="key-point-content">
+                        <h3><code>prompt_cache_options.ttl</code> で指定</h3>
+                        <p>GPT-5.6 以降のモデルで、リクエスト単位に <code>"30m"</code> (デフォルト) または <code>"12h"</code> を指定。ブレークポイント <code>prompt_cache_breakpoint.ttl</code> で部分ごとの上書きも可能。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>書き込みは入力単価の 2.5 倍、読み取りは 0.1 倍</h3>
+                        <p>12 時間キャッシュの書き込みコストは未キャッシュ入力トークン価格の 2.5 倍 (30 分保持は 1.25 倍)。読み取りは保持期間に関係なく 0.1 倍 (GPT-6.1 Sol は 0.05 倍)。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>30 分と 12 時間の使い分けでコスト最適化</h3>
+                        <p>30 分保持は「頻繁に再利用される会話・エージェントの文脈」向け、12 時間保持は「長い間隔を挟んで再利用される安定したプレフィックス」向け。再利用パターンに応じた使い分けが可能。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>保持期間別の使用量レポート</h3>
+                        <p>レスポンスの <code>input_tokens_details.cache_write_tokens_details</code> で、書き込みトークンが <code>ttl_30m_tokens</code> と <code>ttl_12h_tokens</code> に分解され、保持期間別のコストをモニタリングできる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⏳ 12 時間 TTL オプション</h3>
+                    <p>共有インストラクション、ツール定義、コンテキストを 12 時間以上キャッシュに保持。リクエストの間隔が数時間空くワークロードでも、低価格のキャッシュ入力料金の恩恵を受けられる。12 時間保持は Responses API のみの提供。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛠️ 指定方法</h3>
+                    <p>Responses API のリクエストに <code>prompt_cache_options.ttl</code> を指定。値は <code>"30m"</code> (デフォルト) または <code>"12h"</code>。非対応の値は <code>400 invalid_request_error</code> が返る。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📍 ブレークポイントで上書き</h3>
+                    <p>リクエスト単位の設定を、コンテンツ内の個別ブレークポイント <code>prompt_cache_breakpoint.ttl</code> で上書き可能。明示ブレークポイントは 1 リクエストあたり最大 4 つの書き込みスロット (暗黙モード併用時は暗黙が 1 枠を消費)。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 対象モデルと前提条件</h3>
+                    <p><code>ttl</code> オプションは GPT-5.6 以降のモデルで対応。最小キャッシュ可能トークン数は可視入力トークン 1,024 (非表示システムトークンは含まない)。キャッシュは KV テンソルを保存する方式で、組織間やリージョン境界を越えた共有は不可。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔁 タイマーの挙動の違い</h3>
+                    <p>30 分キャッシュへの読み取りは有効期限を少なくとも読み取り後 30 分に更新する。一方、12 時間キャッシュのタイマーは読み取りで再始動せず、追加の書き込み課金も発生しない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔀 旧パラメータからの移行</h3>
+                    <p>旧モデルの <code>prompt_cache_retention</code> (値は <code>in_memory</code> または <code>24h</code>) には 12 時間設定はなく、ドキュメントでは <code>prompt_cache_options.ttl</code> への置き換えが移行時の指針として示されている。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section">
+            <h2 class="section-title">料金比較 (GPT-5.6 以降)</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1.25x</div>
+                    <div class="stat-label">キャッシュ書き込み (30 分)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2.5x</div>
+                    <div class="stat-label">キャッシュ書き込み (12 時間)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0.1x</div>
+                    <div class="stat-label">キャッシュ読み取り</div>
+                </div>
+            </div>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>料率 (未キャッシュ入力単価比)</th>
+                        <th>備考</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>キャッシュ書き込み (30 分)</td>
+                        <td class="rate">1.25 倍</td>
+                        <td>デフォルト。頻繁に再利用される会話・エージェントの文脈向け</td>
+                    </tr>
+                    <tr>
+                        <td>キャッシュ書き込み (12 時間)</td>
+                        <td class="rate warn">2.5 倍</td>
+                        <td>長い間隔を挟んで再利用される安定プレフィックス向け</td>
+                    </tr>
+                    <tr>
+                        <td>キャッシュ読み取り</td>
+                        <td class="rate">0.1 倍</td>
+                        <td>GPT-6.1 Sol は 0.05 倍。保持期間に関係なく同一</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 class="section-subtitle">💡 料金に関する注意点</h3>
+            <ul class="note-list">
+                <li>書き込み料金は通常入力への加算サーチャージではなく、総額レート ("These are total write rates, not surcharges on top of ordinary input")</li>
+                <li>30 分カバレッジを 12 時間に格上げすると、該当トークン分の 12 時間書き込みが新たに課金される (旧書き込み分のクレジットはなし)</li>
+                <li>1 リクエスト内で各トークンは、それをカバーする書き込みのうち最長の保持期間で一度だけ課金される</li>
+            </ul>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="lead"><code>prompt_cache_options.ttl</code> の指定に応じて、30 分キャッシュと 12 時間キャッシュに書き込まれる。読み取りは保持期間に関係なく 0.1 倍。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["Client Application"]
+        SDK["OpenAI SDK"]
+    end
+
+    subgraph API["OpenAI API (v1/responses)"]
+        Responses["Responses API"]
+        subgraph Cache["Prompt Cache"]
+            TTL30["30 分キャッシュ<br/>書き込み 1.25x"]
+            TTL12["12 時間キャッシュ<br/>書き込み 2.5x"]
+        end
+    end
+
+    SDK -->|"prompt_cache_options.ttl"| Responses
+    Responses -->|"ttl: 30m"| TTL30
+    Responses -->|"ttl: 12h"| TTL12
+    TTL30 -->|"読み取り 0.1x"| Responses
+    TTL12 -->|"読み取り 0.1x"| Responses
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class TTL30,TTL12 openai
+    class Responses dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">コードサンプル</h2>
+            <p class="lead">公式ドキュメントに掲載されているリクエスト例。リクエスト全体のデフォルト TTL を <code>30m</code> とし、共有インストラクション部分のみブレークポイントで <code>12h</code> に上書きしている。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JSON</span>
+                    <span class="code-title">Responses API リクエスト例 (TTL のブレークポイント上書き)</span>
+                </div>
+                <pre><code class="language-json">{
+  "model": "gpt-6.1-sol",
+  "prompt_cache_options": { "mode": "explicit", "ttl": "30m" },
+  "input": [
+    {
+      "role": "developer",
+      "content": [{
+        "type": "input_text",
+        "text": "Shared instructions and reference material reused throughout the day...",
+        "prompt_cache_breakpoint": { "mode": "explicit", "ttl": "12h" }
+      }]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "Session context reused over the next few minutes...",
+          "prompt_cache_breakpoint": { "mode": "explicit" }
+        },
+        { "type": "input_text", "text": "The current question, which does not need a cache write..." }
+      ]
+    }
+  ]
+}</code></pre>
+            </div>
+            <h3 class="section-subtitle">📊 使用量レポート</h3>
+            <ul class="note-list">
+                <li>レスポンスの <code>input_tokens_details.cache_write_tokens_details</code> で、書き込みトークンが <code>ttl_30m_tokens</code> と <code>ttl_12h_tokens</code> に分解される。両者は重複せず、合計が <code>cache_write_tokens</code> と一致する</li>
+                <li>コスト計算では、30 分書き込みに入力単価 × 1.25、12 時間書き込みに × 2.5、<code>cached_tokens</code> にはキャッシュ入力単価を適用する</li>
+            </ul>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>🕐 間欠的なワークロードのコスト削減</h4>
+                <p>数時間おきに実行されるバッチ処理、カスタマーサポート、日中に断続的に利用される社内ツールなどで、リクエスト間隔が 30 分を超えてもキャッシュヒット (読み取り 0.1 倍) を維持できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧮 コスト設計の見直し</h4>
+                <p>12 時間書き込みは入力単価の 2.5 倍のため、再利用頻度が低いプレフィックスに適用すると逆にコスト増になり得る。安定した共有プレフィックスにのみ <code>12h</code> を適用し、セッション文脈は <code>30m</code> に留める設計が有効。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔀 移行と使用量の可視化</h4>
+                <p>旧モデルの <code>prompt_cache_retention</code> から <code>prompt_cache_options.ttl</code> への置き換えがドキュメントで案内されており、GPT-5.6 以降への移行時はパラメータの変更が必要。<code>cache_write_tokens_details</code> の <code>ttl_30m_tokens</code> / <code>ttl_12h_tokens</code> により、保持期間別の書き込みコストをモニタリングできる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="lead">Responses API に 12 時間のプロンプトキャッシュ保持期間が追加され、<code>prompt_cache_options.ttl</code> (または <code>prompt_cache_breakpoint.ttl</code>) に <code>"12h"</code> を指定することで利用できるようになった。書き込みコストは入力単価の 2.5 倍 (30 分保持は 1.25 倍)、読み取りは保持期間に関係なく 0.1 倍。対象は GPT-5.6 以降のモデルで、12 時間保持は Responses API のみの提供となる。長い間隔を挟んで再利用される安定プレフィックスに適用することで、間欠的なワークロードのコストを効果的に削減できる。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📄 <a href="https://developers.openai.com/api/docs/guides/prompt-caching" target="_blank" rel="noopener noreferrer">プロンプトキャッシュガイド (公式ドキュメント)</a></li>
+                <li>📄 <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

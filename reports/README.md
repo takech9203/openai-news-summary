@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-20](2026/2026-10-20-terminal-x.md) - Terminal X の Eval Agent が GPT-6.1 Sol でシニア投資家の判断と 88.6% 一致 — 投資判断を「データとして所有する」Capital Memory OS
+- [2026-10-20](2026/2026-10-20-ted-taylor-restaurant.md) - フランチャイズ経営者が ChatGPT Work で現金照合時間を 94% 削減
+- [2026-10-20](2026/2026-10-20-responses-api-12-hour-prompt-caching.md) - Responses API で 12 時間プロンプトキャッシュが選択可能に
+- [2026-10-20](2026/2026-10-20-openai-to-acquire-orchestra-bio.md) - OpenAI が Orchestra Bio の買収を発表 - ライフサイエンス R&D に AI オペレーションを導入
 - [2026-10-19](2026/2026-10-19-low-resource-programming-languages.md) - 低リソースプログラミング言語におけるコーディング能力の進化
 - [2026-10-16](2026/2026-10-16-stack-overflow-chatgpt-plugin.md) - Stack Overflow for Agents、ChatGPT プラグインでサインアップ数が 3 倍に
 - [2026-10-16](2026/2026-10-16-prompt-to-voice-gpt-live-voices.md) - Prompt-to-voice 機能リリースと GPT-Live 新音声 9 種の追加
