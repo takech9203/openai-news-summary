@@ -5,6 +5,16 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-21](2026/2026-10-21-scaling-ai-research-for-complex-biological-data.md) - 数千の AI エージェントで生物学データから新たな研究リードを発掘 - OpenAI、PerturbAI、Scripps Research の共同研究
+- [2026-10-21](2026/2026-10-21-patch-the-planet-coordinated-disclosure.md) - Patch the Planet - AI エージェントが発見した重大脆弱性への世界的な対応調整
+- [2026-10-21](2026/2026-10-21-openai-models-google-cloud.md) - OpenAI モデルが Google Cloud に登場 - Model Garden でフロンティアモデルと Codex を提供へ
+- [2026-10-21](2026/2026-10-21-empowering-cyber-defenders.md) - フロンティア AI の民主的ガバナンス第 2 弾 - サイバー防御者を強化するブループリントを公開
+- [2026-10-21](2026/2026-10-21-cloudflare-cyber.md) - Cloudflare が OpenAI Daybreak と Codex で脆弱性の発見から防御までを接続
+- [2026-10-21](2026/2026-10-21-chatgpt-ads-expands-26-new-countries.md) - ChatGPT Ads が新たに 26 カ国へ拡大 - 利用広告主は累計 10 万社を突破
+- [2026-10-21](2026/2026-10-21-building-chatgpt-ad-stack.md) - ChatGPT の新しい広告スタックの構築 - ユーザーの信頼と関連性を支える LLM ベースのアーキテクチャ
+- [2026-10-21](2026/2026-10-21-broad-access-through-consistent-standards.md) - 一貫した基準による広範なアクセス - OpenAI が配信パートナー全体で安全基準を統一
+- [2026-10-21](2026/2026-10-21-att-legal.md) - AT&T が OpenAI と連携して社内法務業務を再構築 - LegalEdge チームによるインテーク改革と法的判断のスケール化
+- [2026-10-21](2026/2026-10-21-api-service-tier-selection.md) - プラットフォーム設定でプロジェクトごとのサービスティア選択が可能に
 - [2026-10-20](2026/2026-10-20-terminal-x.md) - Terminal X の Eval Agent が GPT-6.1 Sol でシニア投資家の判断と 88.6% 一致 — 投資判断を「データとして所有する」Capital Memory OS
 - [2026-10-20](2026/2026-10-20-ted-taylor-restaurant.md) - フランチャイズ経営者が ChatGPT Work で現金照合時間を 94% 削減
 - [2026-10-20](2026/2026-10-20-responses-api-12-hour-prompt-caching.md) - Responses API で 12 時間プロンプトキャッシュが選択可能に
