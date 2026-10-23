@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-22](2026/2026-10-22-uber-chatgpt-work-rollout.md) - Uber が全従業員 30,000 人超に ChatGPT Work を全社展開
+- [2026-10-22](2026/2026-10-22-forward-deployed-engineering-means.md) - OpenAI における FDE (Forward Deployed Engineering) とは - 「デプロイメントギャップ」を埋め、自らを不要にするチームの働き方
+- [2026-10-22](2026/2026-10-22-decisions-api.md) - Decisions API が一般提供開始: 高速・低コストな意思決定をアプリケーションに
 - [2026-10-21](2026/2026-10-21-scaling-ai-research-for-complex-biological-data.md) - 数千の AI エージェントで生物学データから新たな研究リードを発掘 - OpenAI、PerturbAI、Scripps Research の共同研究
 - [2026-10-21](2026/2026-10-21-patch-the-planet-coordinated-disclosure.md) - Patch the Planet - AI エージェントが発見した重大脆弱性への世界的な対応調整
 - [2026-10-21](2026/2026-10-21-openai-models-google-cloud.md) - OpenAI モデルが Google Cloud に登場 - Model Garden でフロンティアモデルと Codex を提供へ

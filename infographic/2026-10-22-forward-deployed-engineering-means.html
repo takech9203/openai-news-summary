@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI における FDE (Forward Deployed Engineering) とは - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-right: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .sub-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 28px 0 12px;
+        }
+
+        .sub-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Quote */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.06) 0%, rgba(29, 183, 145, 0.1) 100%);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+
+        .quote-card blockquote {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .quote-card .quote-author {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px 16px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1DB791;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+        }
+
+        .comparison-card li {
+            font-size: 14px;
+            color: var(--text-primary);
+            padding-left: 1.4em;
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .comparison-card.before li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #DC2626;
+        }
+
+        .comparison-card.after li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: #059669;
+        }
+
+        /* Steps */
+        .steps {
+            display: grid;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 20px;
+            background: #FFFFFF;
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 12px;
+        }
+
+        .step-num {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step p {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .use-case ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .use-case li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 1.4em;
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .use-case li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+        }
+
+        /* Table */
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .result-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .result-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .result-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .result-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .result-table td strong {
+            color: var(--openai-green);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(29, 183, 145, 0.12) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">AI Adoption</span>
+                <span class="category-badge">AI 導入</span>
+                <h1>OpenAI における FDE (Forward Deployed Engineering) とは</h1>
+                <p class="subtitle">「デプロイメントギャップ」を埋め、自らを不要にするチームの働き方 - Colin Jarvis 氏 (Head of Forward Deployed Engineering at OpenAI) による解説</p>
+                <p class="date">📅 2026-10-22 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🌉</div>
+                    <div class="key-point-content">
+                        <h3>使命は「デプロイメントギャップ」を埋めること</h3>
+                        <p>FDE チームは 2025 年初頭に設立。「モデルが持つように見える能力」と「人々が実際の業務で信頼して使えるもの」との距離 (deployment gap) を埋めることを使命とする。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>顧客と並走し、本番環境で信頼できるソリューションを構築</h3>
+                        <p>顧客の最難関の問題を理解し、本番水準で解決するとともに、そこで得た学びを製品開発や Research チームへの具体的な課題提供につなげる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎯</div>
+                    <div class="key-point-content">
+                        <h3>中核的価値観は「成果から始める」</h3>
+                        <p>「成果から始め、成功に必要なことは何でもやり、その後にスケールを続ける (Start with the outcome, do what it takes to succeed, then follow with scale)」が行動指針。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏭</div>
+                    <div class="key-point-content">
+                        <h3>業種横断の定量的成果</h3>
+                        <p>半導体企業・John Deere・通信事業者・Thrive Holdings (会計事務所向け Tax AI) などの具体的な取り組みと数値成果が紹介されている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">♻️</div>
+                    <div class="key-point-content">
+                        <h3>成功の定義は「自らを不要にすること」</h3>
+                        <p>「数カ月ごとに自分たちを不要 (obsolete) にできているなら、FDE チームは仕事をうまく果たしている」。Codex がユースケースを一発で解決できるようになることがチームの成功。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Principles (Feature Cards) -->
+        <section class="section">
+            <h2 class="section-title">FDE の 4 つの行動原理</h2>
+            <p class="section-lead">モデルの能力は、それを活用するためのシステムやプロセスの整備よりも速く進化してきた。欠けているのが製品の場合もあれば、ベンチマークでは高性能でも実世界の変数や制約の下では仕事をこなせないモデルの場合もある。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🎯 Start with the outcome (成果から始める)</h3>
+                    <p>印象的なデモは実世界で機能するかを問われる前に独り歩きしがち。FDE の仕事は「本番環境で保証できる水準で顧客の問題を解決すること」。モデルが今日こなせる領域では、Product チームと顧客とともにソリューションを反復可能 (repeatable) にする。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔁 Make success repeatable (成功を反復可能にする)</h3>
+                    <p>価値を実証したワークフローを共通ハーネス化。カスタムアプリケーションを Codex プリミティブ上のプラグインとスキルに再構築し、各プロジェクトから約 90% のカスタムコードを削減。AI CoE (Center of Excellence) による集中管理も容易に。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 Close the intelligence gaps (インテリジェンスギャップを埋める)</h3>
+                    <p>モデルが届かない領域では、顧客と Research チームとともにギャップを定義しモデル改善につなげる。今日のモデルで可能なことだけを作っていては、Research が次に埋めるべきギャップは見つからない。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🚀 Go find the harder problem (より難しい問題を探しに行く)</h3>
+                    <p>「LLM 開発の大半のケースではオッカムの剃刀が当てはまる。最もシンプルな解が最良だ」。Codex がユースケースを一発でこなせるようになったら、より難しい問題を探しに行く。</p>
+                </div>
+            </div>
+
+            <h3 class="sub-title" style="margin-top: 28px;">キーパーソンの発言</h3>
+            <div class="quote-card">
+                <blockquote>「数カ月ごとに自分たちを不要 (obsolete) にできているなら、FDE チームは仕事をうまく果たしている」</blockquote>
+                <p class="quote-author">— Colin Jarvis 氏 (Head of Forward Deployed Engineering at OpenAI)</p>
+            </div>
+            <div class="quote-card">
+                <blockquote>「この種の問題の次回の解決に FDE が不要になるまで床 (floor) を引き上げられれば、仕事を果たしたことになる」</blockquote>
+                <p class="quote-author">— 各エンゲージメントが次の顧客により良いスタート地点を残すことが目標</p>
+            </div>
+            <div class="quote-card">
+                <blockquote>「君たちは入社前にチップ設計者だったのか?」</blockquote>
+                <p class="quote-author">— 半導体企業の Chief Hardware Officer。FDE は初日から業界知識を持つ必要はないが、それを学ぶのは本人の責任</p>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る FDE の成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">約 48%</div>
+                    <div class="stat-label">AI 指向性テスト生成による時間削減 (半導体)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">22%</div>
+                    <div class="stat-label">カーネル最適化の性能改善 (中央値)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 90%</div>
+                    <div class="stat-label">各プロジェクトのカスタムコード削減</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2 カ月 → 1 日</div>
+                    <div class="stat-label">ユースケース展開期間 (初回 → 2 チーム目)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7,000 件</div>
+                    <div class="stat-label">Tax AI がパイロット期間中に処理した税務申告</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 50%</div>
+                    <div class="stat-label">税務申告のスループット向上</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">90%</div>
+                    <div class="stat-label">賃貸不動産申告自動化の精度・再現率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">60 → 90%+</div>
+                    <div class="stat-label">通信事業者の音声評価スコア (6 カ月で到達)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Repeatable (Before/After) -->
+        <section class="section">
+            <h2 class="section-title">成功を反復可能にする: Codex 共通ハーネス化</h2>
+            <p class="section-lead">半導体企業でのワークフローは価値を実証したものの、他チームへの展開には過剰なカスタム統合が必要だった。Codex の能力向上を受け、1 人の FDE がアプリケーションを Codex 中心に再構築するテストを行い、各ユースケースを Codex をコアとする共通ハーネスに移行した。</p>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>BEFORE: カスタム統合</h4>
+                    <ul>
+                        <li>ユースケースごとに個別のターミナル UI / CLI を実装</li>
+                        <li>他チームへの展開に過剰なカスタム統合が必要</li>
+                        <li>初回デプロイに 2 カ月を要した</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>AFTER: Codex 共通ハーネス</h4>
+                    <ul>
+                        <li>カスタムアプリは共通の Codex プリミティブ上のプラグインとスキルに</li>
+                        <li>Codex 自体がインターフェイスとなり個別 UI を廃止</li>
+                        <li>約 90% のカスタムコードを削減</li>
+                        <li>AI CoE による集中管理・共有が容易に</li>
+                        <li>2 番目のチームへは 1 日で展開 (2026 年 8 月の例)</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="section-lead" style="margin-top: 16px; margin-bottom: 0;">別チームへの展開は、新しいコネクタ / MCP サーバーの差し替えと評価の新規構築 (これもスキル化済み) だけで済むようになった。</p>
+        </section>
+
+        <!-- Mermaid: Engagement Loop -->
+        <section class="section">
+            <h2 class="section-title">FDE の働き方 (エンゲージメントループ)</h2>
+            <p class="section-lead">顧客の最難関の問題から始まり、製品とモデル能力の改善を経て「次の顧客のより良いスタート地点」を残すループを回す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    Customer(["顧客の最難関の問題"]) --> Outcome["成果から始める&lt;br/&gt;(本番水準での問題解決)"]
+
+    subgraph FDELoop["FDE エンゲージメント"]
+        Outcome --> Check{"モデルは今日&lt;br/&gt;仕事をこなせるか"}
+        Check -->|"こなせる"| Repeat["成功を反復可能にする&lt;br/&gt;(Product と協働、共通ハーネス化)"]
+        Check -->|"こなせない"| Gap["インテリジェンスギャップの定義&lt;br/&gt;(Research と協働、評価で進捗検証)"]
+    end
+
+    Repeat --> Product["製品の改善&lt;br/&gt;(例: Codex スキル / プラグイン、Presence)"]
+    Gap --> Model["モデル能力の改善&lt;br/&gt;(例: 音声での関数呼び出し・指示追従)"]
+
+    Product --> Next["次の顧客の&lt;br/&gt;より良いスタート地点"]
+    Model --> Next
+    Next --> Harder(["より難しい問題を探しに行く"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Outcome,Repeat,Gap openai
+    class Product,Model,Next dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 事例</h2>
+
+            <div class="use-case">
+                <h4>🔬 大手半導体企業: 検証プロセスの AI ネイティブ化 (2025 年中頃)</h4>
+                <p>この業界では検証 (verification) がプロジェクト工数の<span class="highlight">約 70%</span> を占めることもある。約 15 名の FDE が 10 以上のユースケースに取り組み、指向性テスト生成 (directed test generation)、根本原因分析とデバッグ、アーキテクチャアシスタントを対象に推進。入社数日の FDE もいたが、顧客の検証チームに入り込み (embed)、空き時間にチップ設計を学び、エンジニアとともに評価 (eval) を構築した。<span class="highlight">最初の 3-6 カ月で全ユースケースが本番稼働と初期ユーザー採用に到達</span>。</p>
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>指標</th>
+                            <th>成果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AI による指向性テスト生成</td>
+                            <td><strong>約 48% の時間削減</strong></td>
+                        </tr>
+                        <tr>
+                            <td>カーネル最適化</td>
+                            <td><strong>中央値 22% の性能改善</strong></td>
+                        </tr>
+                        <tr>
+                            <td>デバッグ</td>
+                            <td><strong>数週間の作業を数時間に短縮</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 12px;">チームはジェネラリストとドメインエキスパートを混成。ライフサイエンス分野では FDE の科学的バックグラウンドが、標的検証・優先順位付け、遺伝子発現解析、化学合成経路の再構築といった前臨床創薬タスクに取り組む研究者からの信頼獲得に役立っている。</p>
+            </div>
+
+            <div class="use-case">
+                <h4>🚜 John Deere: 農家向けパーソナライズアドバイスのスケール化</h4>
+                <p>創業 200 年の農業機械企業 John Deere の課題は、農家向けのパーソナライズされたアドバイスのスケール化。精密除草技術「See &amp; Spray」はカメラと機械学習で雑草を特定して散布し、<span class="highlight">農薬使用量を最大 70% 削減</span>するが、その効果は農家が技術を正しく設定・運用できるかに依存する。OpenAI の API 導入により以下を実現した。</p>
+                <ul>
+                    <li>自然言語での質問応答</li>
+                    <li>個別のセットアップガイダンスと推奨</li>
+                    <li>機器が本来の性能を発揮していない場合の検知</li>
+                    <li>技術から得ている価値の理解支援</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>📞 大手通信事業者: カスタマーサービスの音声対応</h4>
+                <p>既に構築済みのカスタマーサービスプラットフォームを音声に拡張する取り組み。音声はカスタマーサービス量の<span class="highlight">約 90%</span> を占め、チャットより封じ込めコストが高く、アクセント・トーン・レイテンシ / 精度を本番品質にする新たな技術課題があった。</p>
+                <ul>
+                    <li>スコーピング時点で、本番投入可否を判断する主要評価でのモデルスコアは約 60% にとどまり、モデル能力の限界に達していた。カスタマーサービスシナリオでの関数呼び出しと指示追従の改善が必要だった</li>
+                    <li>FDE は顧客とともにプラットフォームを構築してモデルに必要な要件を定義し、Research が能力ギャップの解消に取り組んだ。連続的なモデルスナップショットで顧客要件に対する進捗を検証</li>
+                    <li><span class="highlight">6 カ月で主要評価のスコアは約 60% から 80%、そして 90% 以上に向上</span>し、本番に必要な水準へ到達</li>
+                    <li>この音声モデルは現在、当該顧客のデプロイに加え、他のカスタム顧客サービスデプロイや Presence 経由のマネージドデプロイも支えている</li>
+                </ul>
+            </div>
+
+            <div class="use-case">
+                <h4>🧾 OpenAI Presence と Thrive Holdings: 顧客デプロイから生まれた製品</h4>
+                <ul>
+                    <li>エンタープライズ向け音声・チャットエージェント製品「OpenAI Presence」は、実際の顧客デプロイから誕生。Swarm に始まり Agents API を経て進化し、現在ではある顧客が<span class="highlight">通話の半数以上を AI で処理</span>している</li>
+                    <li>Thrive Holdings との協業では、FDE と研究者がエンジニア・会計士とともに Crete の会計事務所向けに「Tax AI」を構築。パイロット期間中に <span class="highlight">7,000 件の税務申告を処理し、スループットを約 50% 向上</span></li>
+                    <li>最難関だった賃貸不動産申告の自動化は、6 週間のエンジニアリングと実務家レビューを経て<span class="highlight">精度 (precision)・再現率 (recall) 90%</span> に到達。この作業で生まれた再利用可能なパターンにより、他の複雑な税務スケジュールへの拡張が容易になった。現在は簿記・監査・IT サポートにも同じアプローチを適用中</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Impact -->
+        <section class="section">
+            <h2 class="section-title">影響</h2>
+
+            <h3 class="sub-title">企業の AI 導入への影響</h3>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🧭</div>
+                    <div class="key-point-content">
+                        <h3>「デプロイメントギャップ」概念の明示</h3>
+                        <p>ベンチマーク性能と実務での信頼性の差を埋める専門職能 (FDE) の具体的な働き方が公開された。AI 導入を進める企業にとって、デモではなく本番水準の成果から始めるアプローチの参考になる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>業種横断の定量的成果</h3>
+                        <p>半導体 (テスト生成で約 48% の時間削減)、税務 (スループット約 50% 向上)、カスタマーサービス (通話の半数以上を AI 化) など、業種横断の定量的成果が示された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧱</div>
+                    <div class="key-point-content">
+                        <h3>社内横展開のモデルケース</h3>
+                        <p>Codex を共通ハーネスとし、カスタムコードを約 90% 削減してスキル / プラグイン化するパターンは、社内横展開 (初回 2 カ月 → 2 チーム目 1 日) のモデルケースとなる。</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="sub-title">OpenAI の製品・研究開発への影響</h3>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔄</div>
+                    <div class="key-point-content">
+                        <h3>能力ギャップが Research の改善対象に</h3>
+                        <p>FDE が顧客現場で特定した能力ギャップ (例: 音声での関数呼び出し・指示追従) が Research の改善対象となり、その成果が Presence などの製品として他の顧客にも還元される好循環が示された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📦</div>
+                    <div class="key-point-content">
+                        <h3>個別ソリューションの製品化経路</h3>
+                        <p>顧客個別のソリューションが Swarm → Agents API → Presence のように製品へ昇華される経路が明らかになった。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI の FDE チームは、モデルの見かけの能力と実務での信頼性の間にある「デプロイメントギャップ」を埋めるために 2025 年初頭に設立された。「成果から始め、成功に必要なことは何でもやり、その後にスケールする」を中核的価値観とし、半導体検証の AI ネイティブ化 (テスト生成で約 48% の時間削減)、John Deere の農家支援、通信事業者の音声対応 (評価スコアを 6 カ月で約 60% から 90% 以上へ)、Thrive Holdings の Tax AI (7,000 件の申告処理、スループット約 50% 向上) などの成果を上げてきた。モデルが解ける問題は製品化・共通化で反復可能にし、解けない問題は Research と協働して将来のモデル能力に転換する。<strong>「自らを数カ月ごとに不要にすること」が成功の定義</strong>であり、その先には常に<strong>「より難しい問題を探しに行く」</strong>という姿勢がある。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/forward-deployed-engineering-means" target="_blank" rel="noopener noreferrer">https://openai.com/index/forward-deployed-engineering-means</a></p>
+            <p><strong>関連リンク:</strong> <a href="https://openai.com/index/forward-deployed-engineering-means" target="_blank" rel="noopener noreferrer">公式記事: What FDE means at OpenAI</a> | <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a> | <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI API ドキュメント</a></p>
+            <p style="margin-top: 8px;">著者: Colin Jarvis 氏 (Head of Forward Deployed Engineering at OpenAI) | 発表日: 2026-10-22 | カテゴリ: AI Adoption (AI 導入)</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

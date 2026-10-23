@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decisions API が一般提供開始 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section p.lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card code,
+        .use-case code,
+        .key-point-content code,
+        .note-list code,
+        .pricing-table code,
+        .comparison-card code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: rgba(16, 163, 127, 0.1);
+            color: #0D8A6A;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .comparison-card li {
+            font-size: 13px;
+            color: var(--text-primary);
+            padding-left: 22px;
+            position: relative;
+        }
+
+        .comparison-card.before li::before {
+            content: '•';
+            position: absolute;
+            left: 6px;
+            color: #DC2626;
+        }
+
+        .comparison-card.after li::before {
+            content: '✓';
+            position: absolute;
+            left: 2px;
+            color: #059669;
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Pricing / Answer Type Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .pricing-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .pricing-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .pricing-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .pricing-table .rate {
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        .pricing-table .type-name {
+            font-weight: 700;
+            color: var(--openai-dark);
+            white-space: nowrap;
+        }
+
+        /* Note list */
+        .note-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .note-list li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 12px 16px 12px 40px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .note-list li::before {
+            content: '✏️';
+            position: absolute;
+            left: 12px;
+            top: 11px;
+            font-size: 15px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+            display: grid;
+            gap: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-table th,
+            .pricing-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product / API (新機能 GA)</span>
+                <h1>Decisions API が一般提供開始: 高速・低コストな意思決定をアプリケーションに</h1>
+                <p class="subtitle">GPT-6 Luna 上に構築され、答えが限定された質問 (bounded answers) に知能を集中。テキスト・画像・構造化入力からほぼリアルタイムの意思決定を実現し、Responses API 経由の GPT-6 Luna より最大 10 倍高速に動作</p>
+                <p class="date">📅 2026-10-22 | ソース: OpenAI News / OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>Decisions API が一般提供 (GA) に</h3>
+                        <p>アプリケーションやエージェントが行う入力の分類、リクエストのルーティング、次のアクションの選択といった小さな意思決定を、GPT-6 Luna の知能でほぼリアルタイムに処理。個々は単純でも大規模化するとレイテンシとコストが積み上がる課題を解決する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>Responses API 経由の GPT-6 Luna より最大 10 倍高速</h3>
+                        <p>答えが限定された質問 (bounded answers) に Luna の知能を集中させることで、テキスト、画像、構造化入力からの意思決定を高速化。アジアの複数リージョンで容量を追加し、レイテンシを継続的に改善している。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>入力 $0.10 / 100 万トークン、出力トークンは課金なし</h3>
+                        <p>キャッシュ済み入力は $0.01 / 100 万トークン。課金は入力トークンのみで出力トークンへの課金はないため、コスト見積もりが入力トークンのみで完結する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧩</div>
+                    <div class="key-point-content">
+                        <h3>predicate / choice / score の 3 つの型付き回答</h3>
+                        <p>開発者は質問と許容される回答を定義し、テキスト、画像、ネイティブ JSON としてコンテキストを渡す。API は 3 種類のいずれかの回答タイプを返し、アプリケーションは次の動作を決定できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🎙️</div>
+                    <div class="key-point-content">
+                        <h3>GPT-Live とのネイティブ統合でリアルタイム音声体験に対応</h3>
+                        <p>ライブ会話中の高速で焦点を絞った意思決定を支援。エスカレーション判断やアバターの表情制御など、リアルタイム性が求められるユースケースに組み込める。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: ベータから GA へ</h2>
+            <p class="lead">2026 年 10 月 6 日のパブリックベータ公開 (gpt-6-luna、テキストと画像を Responses API の 10 倍速で型付き回答に変換) 以降、GA までに多くの機能が追加された。</p>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before (パブリックベータ: 2026-10-06)</h4>
+                    <ul>
+                        <li>テキストと画像の入力に対応</li>
+                        <li>Responses API の 10 倍速で型付き回答に変換</li>
+                        <li>質問数上限は 1 リクエストあたり 200 問</li>
+                        <li>GPT-Live 統合なし</li>
+                        <li>プロンプトキャッシュなし</li>
+                        <li>地域内処理 (inference residency) なし</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After (GA: 2026-10-22)</h4>
+                    <ul>
+                        <li>GPT-Live とのネイティブ統合でライブ会話中の意思決定に対応</li>
+                        <li>プロンプトキャッシュ (API Changelog ではプロンプトキャッシュ共有と記載) に対応</li>
+                        <li>米国と EU での推論の地域内処理が利用可能</li>
+                        <li>ネイティブ JSON 入力 (<code>input_json</code>) で構造化データをそのまま渡せる</li>
+                        <li>質問インストラクション内に画像を含められる</li>
+                        <li>質問数上限が 200 問から 400 問へ倍増</li>
+                        <li>アジアの複数リージョンで容量を追加しレイテンシを継続改善</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る Decisions API</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">10x</div>
+                    <div class="stat-label">Responses API 経由の GPT-6 Luna 比の最大速度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$0.10</div>
+                    <div class="stat-label">入力 100 万トークンあたり</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$0.01</div>
+                    <div class="stat-label">キャッシュ済み入力 100 万トークンあたり</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">400</div>
+                    <div class="stat-label">1 リクエストあたりの質問数上限 (ベータ時の 2 倍)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Changes -->
+        <section class="section">
+            <h2 class="section-title">API 変更点 (ベータ → GA)</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>✅ 一般提供 (GA) 開始</h3>
+                    <p>2026 年 10 月 22 日に GA を発表。GPT-6 Luna を専用 Decisions エンドポイント経由で利用し、本番ワークロードに組み込める。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 プロンプトキャッシュ共有</h3>
+                    <p>再利用されるコンテキストのキャッシュに対応 (API Changelog ではプロンプトキャッシュ共有と記載)。キャッシュ済み入力は $0.01 / 100 万トークンで処理でき、30 分および 12 時間のキャッシュ書き込みに対応する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🖼️ 質問インストラクション内の画像対応</h3>
+                    <p>質問の指示に画像を含められるようになり、視覚的な基準を使った意思決定の定義が可能になった。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📦 ネイティブ JSON 入力 (input_json)</h3>
+                    <p><code>input_json</code> により構造化データをそのまま渡せる。テキスト化の前処理なしで、構造化入力に基づく意思決定ができる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 質問数上限 400 問へ倍増</h3>
+                    <p>1 リクエストあたりの質問数上限が 200 問から 400 問に拡大。大量の分類・評価タスクをまとめて実行できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌍 推論の地域内処理</h3>
+                    <p>推論の地域内処理 (inference residency) が米国と EU で利用可能に。対象顧客には Zero Data Retention も提供される。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Answer Types -->
+        <section class="section">
+            <h2 class="section-title">3 つの回答タイプ</h2>
+            <p class="lead">開発者は質問と許容される回答を定義し、テキスト、画像、ネイティブ JSON としてコンテキストを渡す。API は以下 3 種類のいずれかの回答タイプを返し、アプリケーションは次の動作を決定できる。</p>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>タイプ</th>
+                        <th>用途</th>
+                        <th>主な結果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="type-name">predicate</td>
+                        <td>条件が真である確率の推定 (例: 商品に目に見える損傷があるか)</td>
+                        <td><code>probability</code>: 条件が真である確率の推定値 (0 から 1)</td>
+                    </tr>
+                    <tr>
+                        <td class="type-name">choice</td>
+                        <td>事前定義した選択肢から 1 つを選択 (例: エージェントが続行・リトライ・確認質問のいずれを行うべきか)</td>
+                        <td><code>choice</code>: 指定した値のいずれか。確率と信頼度も返される</td>
+                    </tr>
+                    <tr>
+                        <td class="type-name">score</td>
+                        <td>ルーブリックの順序付きレベルに対する評価 (例: 損傷の深刻度)</td>
+                        <td><code>score</code>: レベルインデックスの確率加重平均</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- GPT-Live Integration -->
+        <section class="section">
+            <h2 class="section-title">GPT-Live とのネイティブ統合によるリアルタイム音声体験</h2>
+            <p class="lead">Decisions API は GPT-Live とネイティブに統合され、ライブ会話中の高速で焦点を絞った意思決定を支援する。公式記事では以下のユースケースが挙げられている。</p>
+            <ul class="note-list">
+                <li>カスタマーサポートエージェントが、確認質問をするか、リクエストをルーティングするか、エスカレーションするかを判断</li>
+                <li>アバターがユーザーの発話に応じて表情を調整し、言葉に基づいてウインクや笑顔で応答するインタラクティブな体験</li>
+            </ul>
+            <p class="lead" style="margin-top: 16px;">実装としては、既存の GPT-Live セッションの <code style="font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85em; background: rgba(16, 163, 127, 0.1); color: #0D8A6A; padding: 2px 6px; border-radius: 4px;">session.triggers</code> に設定を追加する。Live 側が <code style="font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85em; background: rgba(16, 163, 127, 0.1); color: #0D8A6A; padding: 2px 6px; border-radius: 4px;">decision.event</code> を発行し、アプリケーションは選択された <code style="font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85em; background: rgba(16, 163, 127, 0.1); color: #0D8A6A; padding: 2px 6px; border-radius: 4px;">reaction</code> を読み取ってキャラクターをアニメーションさせる、という流れが紹介されている。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">JavaScript</span>
+                    <span class="code-title">GPT-Live 統合のイメージ (公式記事で紹介された流れに基づく概念例)</span>
+                </div>
+                <pre><code class="language-javascript">// 既存の GPT-Live セッションの session.triggers に設定を追加
+session.update({
+  triggers: [
+    {
+      type: "decision",
+      question: {
+        type: "choice",
+        instruction: "ユーザーの発話に合うアバターの表情は?",
+        choices: ["smile", "wink", "neutral", "surprised"]
+      }
+    }
+  ]
+});
+
+// Live 側が decision.event を発行し、
+// アプリケーションは選択された reaction を読み取って
+// キャラクターをアニメーションさせる
+session.on("decision.event", (event) => {
+  animateCharacter(event.reaction);
+});</code></pre>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: 料金と提供形態</h2>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>入力トークン</td>
+                        <td class="rate">$0.10 / 100 万トークン</td>
+                    </tr>
+                    <tr>
+                        <td>キャッシュ済み入力</td>
+                        <td class="rate">$0.01 / 100 万トークン</td>
+                    </tr>
+                    <tr>
+                        <td>出力トークン</td>
+                        <td>課金なし (入力トークンのみ課金)</td>
+                    </tr>
+                    <tr>
+                        <td>キャッシュ書き込み</td>
+                        <td>30 分および 12 時間のキャッシュ書き込みに対応 (料金は公式料金ガイドを参照)</td>
+                    </tr>
+                    <tr>
+                        <td>対応モデル</td>
+                        <td>GPT-6 Luna (専用 Decisions エンドポイント経由)</td>
+                    </tr>
+                    <tr>
+                        <td>地域内処理</td>
+                        <td>米国と EU で利用可能</td>
+                    </tr>
+                    <tr>
+                        <td>データ保持</td>
+                        <td>対象顧客には Zero Data Retention を提供</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 class="section-subtitle">🧭 利用の始め方</h3>
+            <ul class="note-list">
+                <li>アプリケーションが頻繁に行う意思決定を 1 つ選び、質問、可能な回答、それらを区別するのに必要なコンテキストを定義して、実際の利用を反映した例でテストする進め方が推奨されている</li>
+                <li><a href="https://platform.openai.com/decisions" target="_blank" rel="noopener noreferrer" style="color: #10A37F;">Decisions Playground</a> で自分のテキストや画像を使って試すか、<a href="https://developers.openai.com/api/docs/guides/decisions" target="_blank" rel="noopener noreferrer" style="color: #10A37F;">開発者ガイド</a> に従って最初のリクエストを作成できる</li>
+            </ul>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="lead">クライアントはテキスト・画像・ネイティブ JSON と質問 (最大 400 問/リクエスト) を Decisions API に渡す。GPT-Live セッションからのトリガーにも対応し、GPT-6 Luna が 3 種類の型付き回答を返す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["Client Application / Agent"]
+        Input["テキスト / 画像 / ネイティブ JSON<br/>+ 質問 (最大 400 問/リクエスト)"]
+        Live["GPT-Live セッション<br/>(session.triggers)"]
+    end
+
+    subgraph API["OpenAI API"]
+        Decisions["Decisions API<br/>(専用エンドポイント)"]
+        Luna["GPT-6 Luna"]
+        Cache["Prompt Cache<br/>(30 分 / 12 時間)"]
+    end
+
+    subgraph Answers["回答タイプ"]
+        Predicate["predicate<br/>probability (0-1)"]
+        Choice["choice<br/>選択肢 + 確率・信頼度"]
+        Score["score<br/>確率加重平均"]
+    end
+
+    Input --> Decisions
+    Live -->|"decision.event"| Decisions
+    Decisions --> Luna
+    Decisions <--> Cache
+    Luna --> Predicate
+    Luna --> Choice
+    Luna --> Score
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Luna,Predicate,Choice,Score openai
+    class Decisions,Cache dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">活用事例</h2>
+            <p class="lead">OpenAI 社内および顧客での早期採用事例として、以下が紹介されている。</p>
+            <div class="use-case">
+                <h4>🟢 dots チーム</h4>
+                <p>応答時間の短縮とインタラクティブ性の向上を実現。</p>
+            </div>
+            <div class="use-case">
+                <h4>💳 Personal Finance チーム</h4>
+                <p>取引明細の説明文の分類に活用。</p>
+            </div>
+            <div class="use-case">
+                <h4>📰 Communications チーム</h4>
+                <p>報道をテーマ別に分類し、主要なナラティブを補強するか疑問を呈するかをスコアリングして、精査すべき内容を特定。</p>
+            </div>
+            <div class="use-case">
+                <h4>🏢 顧客事例</h4>
+                <p>AI コストの正確な帰属づけ、語学学習体験のインタラクティブ化など。</p>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⚡ 小さな意思決定の高速化と低コスト化</h3>
+                    <p>分類、ルーティング、次アクション選択などの頻出タスクを、Responses API 経由の GPT-6 Luna より最大 10 倍高速に処理できる。出力トークン課金がないため、コスト見積もりが入力トークンのみで完結する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧩 型付き回答による後続処理の簡素化</h3>
+                    <p>predicate / choice / score の 3 タイプで回答形式が保証されるため、自由形式テキストのパースが不要になり、アプリケーションロジックに直接組み込める。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📚 バッチ的な質問処理</h3>
+                    <p>1 リクエストで最大 400 問 (ベータ時の 2 倍) を処理できるため、大量の分類・評価タスクをまとめて実行できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎙️ 音声アプリケーションへの組み込み</h3>
+                    <p>GPT-Live とのネイティブ統合により、ライブ会話中のエスカレーション判断や表情制御など、リアルタイム性が求められる意思決定を実装できる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ コンプライアンス要件への対応</h3>
+                    <p>米国・EU での地域内処理と Zero Data Retention (対象顧客向け) により、データ所在やデータ保持の要件があるワークロードでも採用しやすい。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💸 キャッシュによるコスト最適化</h3>
+                    <p>再利用されるコンテキストをプロンプトキャッシュ ($0.01 / 100 万トークン) で処理でき、同じ指示・ルーブリックを使い回す意思決定で効果が大きい。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p class="lead">Decisions API が GPT-6 Luna で一般提供開始となった。答えが限定された質問に特化することで、テキスト・画像・ネイティブ JSON からの意思決定を Responses API 経由の GPT-6 Luna より最大 10 倍高速に処理し、predicate / choice / score の 3 つの型付き回答を返す。料金は入力 $0.10 / 100 万トークン、キャッシュ済み入力 $0.01 / 100 万トークンで、出力トークンへの課金はない。ベータからの進化として、GPT-Live ネイティブ統合、プロンプトキャッシュ、米国・EU の地域内処理、ネイティブ JSON 入力、質問インストラクション内の画像対応、質問数上限の 400 問への倍増が加わり、分類・ルーティング・リアルタイム音声まで幅広いユースケースに対応する基盤が整った。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/decisions-api" target="_blank" rel="noopener noreferrer">https://openai.com/index/decisions-api</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📄 <a href="https://openai.com/index/decisions-api" target="_blank" rel="noopener noreferrer">Build more responsive apps with the Decisions API (公式発表)</a></li>
+                <li>📄 <a href="https://developers.openai.com/api/docs/guides/decisions" target="_blank" rel="noopener noreferrer">Decisions API 開発者ガイド</a></li>
+                <li>📄 <a href="https://developers.openai.com/api/docs/guides/decisions#pricing-and-availability" target="_blank" rel="noopener noreferrer">Decisions API 料金と提供状況</a></li>
+                <li>📄 <a href="https://developers.openai.com/api/docs/guides/decisions-voice" target="_blank" rel="noopener noreferrer">Decisions API と音声の連携ガイド (GPT-Live)</a></li>
+                <li>🧪 <a href="https://platform.openai.com/decisions" target="_blank" rel="noopener noreferrer">Decisions Playground</a></li>
+                <li>📄 <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener noreferrer">OpenAI API 料金ガイド</a></li>
+                <li>📄 <a href="https://developers.openai.com/api/docs/guides/your-data" target="_blank" rel="noopener noreferrer">データコントロール (Zero Data Retention)</a></li>
+                <li>📄 <a href="https://openai.com/index/introducing-gpt-6-sol-and-luna/" target="_blank" rel="noopener noreferrer">GPT-6 Sol / Luna 発表記事</a></li>
+                <li>📄 <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
