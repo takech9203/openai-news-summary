@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-23](2026/2026-10-23-securing-our-frontier-model-training-environment.md) - フロンティアモデル訓練環境のセキュリティ強化 - オフライン環境と高計算量レッドチーミングによる封じ込め
+- [2026-10-23](2026/2026-10-23-scaling-storage-one-billion-users-part-two.md) - 10 億人の ChatGPT ユーザーを支えるオンラインストレージの急速なスケーリング (Part 2)
+- [2026-10-23](2026/2026-10-23-openai-nask-ai-safety-security-partnership.md) - OpenAI とポーランド NASK が AI 安全性・セキュリティの推進で提携
 - [2026-10-22](2026/2026-10-22-uber-chatgpt-work-rollout.md) - Uber が全従業員 30,000 人超に ChatGPT Work を全社展開
 - [2026-10-22](2026/2026-10-22-forward-deployed-engineering-means.md) - OpenAI における FDE (Forward Deployed Engineering) とは - 「デプロイメントギャップ」を埋め、自らを不要にするチームの働き方
 - [2026-10-22](2026/2026-10-22-decisions-api.md) - Decisions API が一般提供開始: 高速・低コストな意思決定をアプリケーションに

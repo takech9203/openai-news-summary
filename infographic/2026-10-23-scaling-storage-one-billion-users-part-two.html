@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 億人の ChatGPT ユーザーを支えるストレージのスケーリング (Part 2) - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .note-banner {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px dashed var(--warning);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 8px 0 0 18px;
+            line-height: 1.7;
+        }
+
+        .pending-note {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--warning);
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 8px;
+            padding: 3px 10px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Tech Table */
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .tech-table th,
+        .tech-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .tech-table th {
+            background: var(--openai-gray);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tech-table td {
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary list */
+        .summary-list {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .summary-list li {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 12px 18px 12px 44px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        .summary-list li::before {
+            content: '✔';
+            position: absolute;
+            left: 16px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            margin: 8px 0 0 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">エンジニアリング</span>
+                <h1>10 億人の ChatGPT ユーザーを支えるオンラインストレージの急速なスケーリング (Part 2)</h1>
+                <p class="date">📅 2026-10-23 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <div class="note-banner">
+            ⚠️ <strong>注</strong>: レポート作成時点で記事ページへのアクセスが制限されていた (HTTP 403) ため、公式 RSS フィードの説明文および公開済みの概要をもとに作成しています。概要に含まれない技術的詳細は「公式情報での確認が必要」と明示しています。
+        </div>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🏗️</div>
+                    <div class="key-point-content">
+                        <h3>Habitat スケーリング記事シリーズの Part 2</h3>
+                        <p>OpenAI の社内ストレージ基盤「Habitat」のスケーリングを解説するエンジニアリング記事の第 2 回。Part 1 (2026-09-11) の続編として、基盤技術に踏み込む内容。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧱</div>
+                    <div class="key-point-content">
+                        <h3>スケーリングの 3 本柱</h3>
+                        <p>信頼性の高いマルチテナンシー (reliable multi-tenancy)、グローバルキャッシュ (global caching)、Azure Cosmos DB の 3 つを柱として Habitat をスケール。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>ChatGPT の読み取りを 12 倍高速化</h3>
+                        <p>公式概要で示された最も具体的な成果。グローバルキャッシュが読み取り (read) 処理の 12 倍高速化に寄与したとされている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌍</div>
+                    <div class="key-point-content">
+                        <h3>前提規模: 10 億ユーザー / 22M req/s</h3>
+                        <p>Part 1 より、Habitat は Python ライブラリから進化し、10 億人以上の ChatGPT ユーザーと秒間 2,200 万リクエストを支えるグローバル分散ストレージプラットフォームとなっている。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見るスケール</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">12 倍</div>
+                    <div class="stat-label">読み取りの高速化</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">10 億+</div>
+                    <div class="stat-label">ChatGPT ユーザー</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">22M</div>
+                    <div class="stat-label">秒間リクエスト (req/s)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 本柱</div>
+                    <div class="stat-label">マルチテナンシー / キャッシュ / Cosmos DB</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features: 3 pillars -->
+        <section class="section">
+            <h2 class="section-title">スケーリングを支える 3 つの柱</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🛡️ 信頼性の高いマルチテナンシー</h3>
+                    <p>単一のストレージ基盤を複数のサービス・ワークロード (テナント) で共有するための設計。一般に以下の課題への対応が必要。</p>
+                    <ul>
+                        <li>「ノイジーネイバー」問題の抑制</li>
+                        <li>テナントごとのクォータ、レート制限、優先度制御</li>
+                        <li>障害の影響範囲 (ブラストラディウス) の限定</li>
+                    </ul>
+                    <span class="pending-note">具体的な分離手法は公式記事での確認が必要</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 グローバルキャッシュ</h3>
+                    <p>ユーザーに近いロケーションでキャッシュを提供し、レイテンシ削減とバックエンド負荷軽減を両立。会話履歴の表示・継続など読み取りが支配的な ChatGPT のワークロードで、読み取りを <strong>12 倍高速化</strong>。</p>
+                    <span class="pending-note">整合性モデル・無効化戦略・ヒット率は公式情報での確認が必要</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🗄️ Azure Cosmos DB</h3>
+                    <p>Microsoft Azure のグローバル分散型マルチモデルデータベース。一般に以下の特性で知られる。</p>
+                    <ul>
+                        <li>複数リージョンへのレプリケーションとマルチリージョン書き込み</li>
+                        <li>複数の整合性レベル (strong から eventual まで)</li>
+                        <li>パーティションキーに基づく水平スケーリング</li>
+                    </ul>
+                    <span class="pending-note">API 種類・整合性レベル・パーティション設計は公式記事での確認が必要</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">公式 RSS の説明文および概要から確認できる事実は以下のとおりです。</p>
+            <table class="tech-table">
+                <tr>
+                    <th>項目</th>
+                    <th>内容</th>
+                </tr>
+                <tr>
+                    <td>対象基盤</td>
+                    <td>Habitat (OpenAI 社内ストレージプラットフォーム)</td>
+                </tr>
+                <tr>
+                    <td>スケーリングの柱</td>
+                    <td>マルチテナンシー、グローバルキャッシュ、Azure Cosmos DB</td>
+                </tr>
+                <tr>
+                    <td>成果</td>
+                    <td>ChatGPT の読み取りを 12 倍高速化</td>
+                </tr>
+                <tr>
+                    <td>前提規模 (Part 1 より)</td>
+                    <td>10 億人以上のユーザー、秒間 2,200 万リクエスト</td>
+                </tr>
+            </table>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 16px;">
+                12 倍という高速化は、単なるハードウェア増強ではなく、キャッシュ階層の導入やデータ配置の見直しといったアーキテクチャレベルの改善によって達成された可能性が高いと考えられますが、内訳 (どの施策が何倍寄与したか) は公式情報での確認が必要です。
+            </p>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ (概念図)</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">公式概要に記載された構成要素 (マルチテナンシー、グローバルキャッシュ、Azure Cosmos DB) を図示した概念図です。内部の詳細構成は公式記事での確認が必要です。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Clients["ChatGPT (10 億ユーザー)"]
+        U1(["ユーザー"])
+    end
+
+    subgraph Habitat["Habitat プラットフォーム (22M req/s)"]
+        MT["マルチテナンシー制御&lt;br/&gt;(テナント分離・流量制御)"]
+        subgraph Cache["グローバルキャッシュ"]
+            C1["キャッシュ (リージョン A)"]
+            C2["キャッシュ (リージョン B)"]
+        end
+    end
+
+    subgraph Cosmos["Azure Cosmos DB"]
+        D1[("レプリカ (リージョン A)")]
+        D2[("レプリカ (リージョン B)")]
+    end
+
+    U1 --> MT
+    MT --> C1
+    MT --> C2
+    C1 -- "キャッシュミス時" --> D1
+    C2 -- "キャッシュミス時" --> D2
+    D1 &lt;-. "レプリケーション" .-&gt; D2
+
+    Note["読み取りを 12 倍高速化"]
+    Cache -.- Note
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#ECECF1,stroke:#C5C5D2,stroke-width:1px,color:#343541
+
+    class MT,C1,C2 openai
+    class U1,Note dark
+    class D1,D2 light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響・示唆</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">本記事は API の変更ではなくエンジニアリング事例の共有であるため、OpenAI API 利用者への直接的な影響はありません。一方、大規模システムを設計・運用するエンジニアには以下の示唆があります。</p>
+            <div class="use-case">
+                <h4>📊 マネージドデータベースの大規模実績</h4>
+                <p>10 億ユーザー規模のワークロードで Azure Cosmos DB が採用されたことは、マネージド分散データベースの実用上限を考えるうえで有力な参照事例となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🚀 読み取り最適化の優先度</h4>
+                <p>対話型 AI サービスでは読み取りが支配的であり、グローバルキャッシュへの投資が 12 倍という大きなリターンを生み得ることを示している。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧩 マルチテナンシー設計の重要性</h4>
+                <p>社内共通基盤として複数ワークロードを収容する場合、テナント分離の信頼性がスケーラビリティの前提条件になる (具体的手法は公式情報での確認が必要)。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <ul class="summary-list">
+                <li>OpenAI がストレージ基盤「Habitat」のスケーリングを解説するエンジニアリング記事シリーズの Part 2 を公開した</li>
+                <li>信頼性の高いマルチテナンシー、グローバルキャッシュ、Azure Cosmos DB の 3 つを柱として Habitat をスケールさせた</li>
+                <li>その結果、ChatGPT の読み取り処理を 12 倍高速化した</li>
+                <li>キャッシュの整合性モデルやテナント分離の具体的手法などの詳細は、公式記事本文での確認が必要である</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/scaling-storage-one-billion-users-part-two" target="_blank" rel="noopener noreferrer">https://openai.com/index/scaling-storage-one-billion-users-part-two</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/scaling-storage-one-billion-users-part-one" target="_blank" rel="noopener noreferrer">Part 1: Rapidly scaling online storage to serve over 1 billion ChatGPT users</a></li>
+                <li><a href="https://learn.microsoft.com/azure/cosmos-db/" target="_blank" rel="noopener noreferrer">Azure Cosmos DB 公式ドキュメント</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
