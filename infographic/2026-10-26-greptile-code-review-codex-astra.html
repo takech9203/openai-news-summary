@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greptile、GPT-6 Astra でコードレビューを超えたバグ検出を実現 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .quote {
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: rgba(16, 163, 127, 0.15);
+            border-left: 3px solid var(--openai-green);
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .feature-card .model-tag {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">スタートアップ (顧客事例)</span>
+                <h1>Greptile、GPT-6 Astra でコードレビューを超えたバグ検出を実現</h1>
+                <p class="date">発表日: 2026-10-26 | ソース: OpenAI News/Blog</p>
+                <div class="quote">
+                    💬 「私たちはバグを減らし、世界のソフトウェアをより信頼できるものにするビジネスをしている」— 共同創業者兼 CEO、Daksh Gupta 氏
+                </div>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>コードベース全体の文脈を踏まえた AI エージェント</h3>
+                        <p>Greptile は、コードベース全体の文脈を踏まえてコード変更のレビューとテストを行う AI エージェントを開発するスタートアップ。その顧客事例が公開された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📱</div>
+                    <div class="key-point-content">
+                        <h3>GPT-6 Astra でユーザーワークフローを実機テスト</h3>
+                        <p>コードを読むだけでは見つからない問題 (iPhone 表示でボタンが消えるなど) を、実際にアプリを動かして検出する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>Daybreak で顧客のセキュリティ防御を強化</h3>
+                        <p>強力なモデルは攻撃者の悪用も容易にするため、スタートアップでも自社システムを簡単に守れる状態を目指す。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔁</div>
+                    <div class="key-point-content">
+                        <h3>Codex と MCP 連携で手戻り (リバート) を削減</h3>
+                        <p>Knowledge Base の文脈を MCP サーバー経由で Codex に提供し、AI 生成コードのリバート率を低減。時間と推論コストを節約する。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な取り組み</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📱 アプリケーションの大規模テスト <span class="model-tag">GPT-6 Astra</span></h3>
+                    <p>プルリクエストごとに開発サーバーを起動し、ブラウザを iPhone サイズのビューポートに変更してユーザー操作をシミュレート。モデルの視覚理解で画面を検査し、消えたボタンを発見できる。</p>
+                    <ul>
+                        <li>従来型の QA 会社のテストは現在の開発速度に対して「非現実的なほど遅い」と Gupta 氏は指摘</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ セキュリティ防御強化 <span class="model-tag">Daybreak</span></h3>
+                    <p>強力なモデルの普及で、従来は標的にならなかった企業もリスクに晒される。「スタートアップでも自社システムを簡単に守れるようにしたい」として、顧客の防御力が攻撃者の攻撃力を上回る状態を安全に実現することを目指す。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔁 バグと手戻りの削減 <span class="model-tag">Codex</span></h3>
+                    <p>Knowledge Base が企業のコードベースをインデックス化し、人間とエージェントの双方が読める形で文書化。MCP (Model Context Protocol) サーバー経由で Codex に提供し、顧客の既存パターンに沿ったコードを書けるようにする。</p>
+                    <ul>
+                        <li>「エージェントにコンテキストを与えるとリバートが減る」</li>
+                        <li>Greptile 自身も「Codex のヘビーユーザー」として全部門で利用</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🚀 今後の展望 <span class="model-tag">Ultrafast</span></h3>
+                    <p>真のボトルネックはアイデアを動くソフトウェアに変換する速度であり、多くのタスクでモデルの知能は既に十分と Gupta 氏は考える。Ultrafast を開発高速化の手段と位置付け、エンタープライズソフトウェアの変更・リリースをサイドプロジェクト並みに容易にする検証機能を OpenAI と共に構築する意向。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">統計情報</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">数千</div>
+                    <div class="stat-label">Codex を Greptile のナレッジベースに接続している顧客数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 つ</div>
+                    <div class="stat-label">活用する OpenAI モデルの軸 (Astra・Daybreak・Codex)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">リバート率</div>
+                    <div class="stat-label">AI 生成コードの効果測定指標として採用</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Greptile["Greptile"]
+        KB["Knowledge Base<br>(コードベースの文書化)"]
+        MCP["MCP サーバー"]
+        Test["ワークフローテスト<br>(開発サーバー + ブラウザ操作)"]
+    end
+
+    subgraph OpenAI["OpenAI モデル"]
+        Astra["GPT-6 Astra<br>(視覚理解・操作シミュレート)"]
+        Daybreak["Daybreak<br>(セキュリティ防御)"]
+        Codex["Codex<br>(コード生成)"]
+    end
+
+    PR(["プルリクエスト"]) --> Test
+    Test --> Astra
+    KB --> MCP
+    MCP --> Codex
+    Daybreak --> Customer(["顧客システムの防御"])
+    Codex --> Result(["リバート率の低減"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Astra,Daybreak,Codex openai
+    class KB,MCP,Test dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>📱 UI レベルのバグ検出をプルリクエストごとに自動化</h4>
+                <p>コードレビューに加え、実際のユーザー操作をシミュレートした UI レベルのバグ検出 (レスポンシブ表示の崩れなど) をプルリクエストごとに自動化できる事例が示された。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔗 MCP 経由の文脈提供でリバート率を低減</h4>
+                <p>MCP サーバー経由でコードベースの文脈をエージェントに提供することで、AI 生成コードのリバート率を下げ、時間と推論コストを削減できるパターンが実証された。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ あらゆる規模の組織でセキュリティ防御強化が重要に</h4>
+                <p>強力なモデルの普及により攻撃側の能力も向上するため、スタートアップを含むあらゆる規模の組織でセキュリティ防御の強化が重要になる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>Greptile は GPT-6 Astra による実アプリのワークフローテスト、Daybreak によるセキュリティ防御、Codex と MCP 連携による文脈提供という 3 つのアプローチで、コードレビューの枠を超えたバグ削減を実現している。数千の顧客が Codex を同社のナレッジベースに接続しており、エージェントへの文脈提供がリバート率低減につながることが示された。今後は Ultrafast を活用し、エンタープライズソフトウェアの変更・リリースを容易にする検証機能の構築を目指す。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/greptile-code-review-codex-astra" target="_blank" rel="noopener noreferrer">https://openai.com/index/greptile-code-review-codex-astra</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/greptile-code-review-codex-astra" target="_blank" rel="noopener noreferrer">Greptile takes bug detection beyond code review with GPT-6 Astra (OpenAI)</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li><a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

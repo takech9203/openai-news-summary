@@ -5,6 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-26](2026/2026-10-26-openai-cut-incident-investigation.md) - Ultrafast が OpenAI のインシデント調査を数時間から数分に短縮
+- [2026-10-26](2026/2026-10-26-introducing-gpt-6-1-terra.md) - GPT-6.1 Terra の発表 — 高速かつ高性能なコンピュータ操作をすべての人に
+- [2026-10-26](2026/2026-10-26-greptile-code-review-codex-astra.md) - Greptile、GPT-6 Astra でコードレビューを超えたバグ検出を実現
+- [2026-10-26](2026/2026-10-26-gpt-6-1-sol-coderabbit-code-security.md) - GPT-6.1 Sol が CodeRabbit の複雑なコードベースにおけるセキュリティ強化を支援
+- [2026-10-26](2026/2026-10-26-fanatics-streamline-fan-experience.md) - Fanatics と OpenAI によるファン体験の効率化: Shop the Look で MLB 商品のエンゲージメントが 10% 向上
+- [2026-10-26](2026/2026-10-26-chatgpt-expanding-world-of-work.md) - ChatGPT の広がる仕事の世界: OpenAI Signals が 165 の業務活動データを公開
+- [2026-10-26](2026/2026-10-26-building-scientific-understanding-with-academic-communities.md) - 学術コミュニティと協働し科学的理解を構築 - カケヤ予想・指数時間仮説・量子色力学に関するモデルの成果を公開
 - [2026-10-23](2026/2026-10-23-securing-our-frontier-model-training-environment.md) - フロンティアモデル訓練環境のセキュリティ強化 - オフライン環境と高計算量レッドチーミングによる封じ込め
 - [2026-10-23](2026/2026-10-23-scaling-storage-one-billion-users-part-two.md) - 10 億人の ChatGPT ユーザーを支えるオンラインストレージの急速なスケーリング (Part 2)
 - [2026-10-23](2026/2026-10-23-openai-nask-ai-safety-security-partnership.md) - OpenAI とポーランド NASK が AI 安全性・セキュリティの推進で提携
