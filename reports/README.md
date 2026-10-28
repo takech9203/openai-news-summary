@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-27](2026/2026-10-27-retell-ai.md) - Retell、OpenAI モデルを活用し月間 1 億件の通話を支援
+- [2026-10-27](2026/2026-10-27-oracle-apps-in-chatgpt.md) - OpenAI が Oracle とのパートナーシップを拡大、Oracle アプリを ChatGPT に統合へ
+- [2026-10-27](2026/2026-10-27-check-point-daybreak.md) - Check Point が OpenAI Daybreak で脆弱性リサーチを数時間から数分に短縮
 - [2026-10-26](2026/2026-10-26-openai-cut-incident-investigation.md) - Ultrafast が OpenAI のインシデント調査を数時間から数分に短縮
 - [2026-10-26](2026/2026-10-26-introducing-gpt-6-1-terra.md) - GPT-6.1 Terra の発表 — 高速かつ高性能なコンピュータ操作をすべての人に
 - [2026-10-26](2026/2026-10-26-greptile-code-review-codex-astra.md) - Greptile、GPT-6 Astra でコードレビューを超えたバグ検出を実現
