@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-28](2026/2026-10-28-the-future-of-the-firm.md) - The future of the firm: AI は組織図のどこに組み込まれるのか
+- [2026-10-28](2026/2026-10-28-openai-servicenow-partnership-expansion.md) - OpenAI と ServiceNow、エンタープライズワークフロー全体でパートナーシップを拡大
+- [2026-10-28](2026/2026-10-28-legora.md) - Legora: 法務業務のためのエージェント型オペレーティングシステムを構築
+- [2026-10-28](2026/2026-10-28-chatgpt-pro-business-free-api-credits.md) - ChatGPT Pro および Business の対象加入者向けに月額最大 $500 の無料 API クレジット特典を開始
 - [2026-10-27](2026/2026-10-27-retell-ai.md) - Retell、OpenAI モデルを活用し月間 1 億件の通話を支援
 - [2026-10-27](2026/2026-10-27-oracle-apps-in-chatgpt.md) - OpenAI が Oracle とのパートナーシップを拡大、Oracle アプリを ChatGPT に統合へ
 - [2026-10-27](2026/2026-10-27-check-point-daybreak.md) - Check Point が OpenAI Daybreak で脆弱性リサーチを数時間から数分に短縮
