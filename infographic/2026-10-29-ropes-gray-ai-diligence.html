@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ropes &amp; Gray: OpenAI と共同で取引デューデリジェンス AI ツールを開発 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 16px;
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section .lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Quote */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .quote-card .quote-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .quote-card .quote-author {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card .big {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .comparison-card.before .big {
+            color: #DC2626;
+        }
+
+        .comparison-card.after .big {
+            color: #059669;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .comparison-arrow {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .stat-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Lessons list */
+        .lesson-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .lesson-num {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .lesson-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .lesson-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .info-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .info-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .info-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .info-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .info-table td strong {
+            color: var(--openai-green);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .summary-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">導入事例</span>
+                <h1>Ropes &amp; Gray: OpenAI と共同で取引デューデリジェンス AI ツールを開発</h1>
+                <p class="date">📅 2026-10-29</p>
+                <div class="meta-row">
+                    <span>📰 ソース: OpenAI News</span>
+                    <span>⚖️ Ropes &amp; Gray (パートナー 340 名、弁護士 1,500 名)</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">大手法律事務所の Ropes &amp; Gray は、OpenAI とのパートナーシップのもと、取引デューデリジェンス (transactional diligence) 向けの独自 AI ツールを開発している。買収前のデューデリジェンスでは、弁護士チームが厳しい期限のなかで膨大な文書を精査する必要があるが、この AI ツールが「ファーストパス (一次レビュー)」を担うことで、弁護士はレビューと判断というより高付加価値な業務に集中できるようになる。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔍</div>
+                    <div class="key-point-content">
+                        <h3>デューデリジェンスの「ファーストパス」を AI が担当</h3>
+                        <p>数千ページの文書を精査し、関連文書をテーマ・論点ごとに自動グループ化。弁護士はレビューと判断というより高付加価値な業務に集中できる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📂</div>
+                    <div class="key-point-content">
+                        <h3>データルーム全体を構造化</h3>
+                        <p>データルームの文書をインベントリ化・分類し、テーマや論点ごとに関連文書をグループ化したうえで、要約と Ropes &amp; Gray 独自フォーマットのレポートを自動生成</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👩‍⚖️</div>
+                    <div class="key-point-content">
+                        <h3>弁護士による最終判断を前提とした設計</h3>
+                        <p>弁護士は中間要約と原文書を必ずレビューしてからクライアントに助言を提供。「AI による一次処理 + 弁護士による最終判断」という法務 AI の実践的な分業モデルを示す事例</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⭐</div>
+                    <div class="key-point-content">
+                        <h3>ジュニア〜ミッドレベルのアソシエイト相当の品質</h3>
+                        <p>品質は「有能なジュニアからミッドレベルのアソシエイト」の仕事に匹敵するとされ、ファーストパスとして一貫して高品質な成果物を提供</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⏱️</div>
+                    <div class="key-point-content">
+                        <h3>数週間を数時間に短縮する目標</h3>
+                        <p>詳細な論点レベルのデューデリジェンスレポートを「数週間ではなく数時間で」作成するという目標を公に掲げている</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: レポート作成時間の短縮目標</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <div class="big">数週間</div>
+                    <p>弁護士チーム全体が関与し、リスクと負債を洗い出すデータ集約的なリサーチを実施。短期間での入札準備には数日の集中的な作業を要する</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <div class="big">数時間</div>
+                    <p>AI ツールが一次レビュー・分類・要約・レポート生成を担当。弁護士はレビューと推敲により多くの時間を割け、最終的な判断の質が向上</p>
+                </div>
+            </div>
+            <p class="comparison-arrow">※ 詳細な論点レベルのデューデリジェンスレポート作成について、Ropes &amp; Gray が公に掲げる目標</p>
+        </section>
+
+        <!-- 主要機能 -->
+        <section class="section">
+            <h2 class="section-title">主な機能: 商業契約デューデリジェンスのファーストパス</h2>
+            <p class="lead">買収を確定する前に、買い手は売り手の財務・法務上の主張を検証する徹底的な調査を行う必要がある。ツールはこのプロセスの一次レビューを担い、以下の機能を提供する。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🤖 一次レビューの自動化</h3>
+                    <p>数千ページの文書を精査し、関連文書を特定してテーマ・論点ごとに自動グループ化</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🗂️ データルームの構造化</h3>
+                    <p>データルーム全体をインベントリ化・分類し、個別文書ではなく関係性全体をレビュー可能に</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📝 レポート生成</h3>
+                    <p>リサーチ結果に加え、要約と Ropes &amp; Gray 独自フォーマットの完成レポートを出力</p>
+                </div>
+                <div class="feature-card">
+                    <h3>✅ 検証可能性</h3>
+                    <p>弁護士がグループ化や分類を検査し、漏れがないことを確認できる</p>
+                </div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">「このツールのおかげで、当事務所のすべての弁護士が本来やるべき仕事に取り組めるようになっています。クライアントは契約をレビューするために私たちに報酬を払っているのではありません。契約の内容に基づいて判断を下すために払っているのです」</p>
+                <p class="quote-author">— Howard Glazer 氏 (Practice AI 責任者・パートナー)</p>
+            </div>
+        </section>
+
+        <!-- 人間のレポートと比較しながら改善 -->
+        <section class="section">
+            <h2 class="section-title">人間のレポートと比較しながら改善</h2>
+            <p class="lead">初期の開発は重要な商業契約 (material commercial contracts) に焦点を当てている。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📊 ルーブリックベースの評価</h3>
+                    <p>ワーキングセッションで、弁護士がツールのテスト出力を完了済み案件の人間作成デューデリジェンスレポートと比較。ドラフトの成功点と不足点に基づいて評価基準 (ルーブリック) とレポートフォーマットを改善</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔁 実際の手順を忠実に再現</h3>
+                    <p>一次レビューから要約、上位レビューまで、チームが実際に踏む手順を忠実に再現する一貫したクエリとフレームワークで設計</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎓 アソシエイト相当の品質</h3>
+                    <p>品質は「有能なジュニアからミッドレベルのアソシエイト」の仕事に匹敵。プロセスのファーストパスとして一貫して高品質な成果物を提供</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 弁護士によるレビューを前提とした設計 -->
+        <section class="section">
+            <h2 class="section-title">弁護士によるレビューを前提とした設計</h2>
+            <p class="lead">一次レビューをツールに任せることで、弁護士はレビューと推敲により多くの時間を割けるようになり、最終的な判断の質が向上する。</p>
+            <div class="quote-card">
+                <p class="quote-text">「弁護士は依然としてすべてをレビューする必要があります。クライアントに提供するものはすべて、100% の自信を持って保証できなければならないからです。だからこそ、このツールは弁護士が中間要約と実際の文書を容易にレビューできるように設計されています」</p>
+                <p class="quote-author">— Josh Lichtenstein 氏 (ERISA Fiduciary プラクティス責任者・パートナー)</p>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">AI は「品質と一貫性を維持しながらより速いペースで動くための鍵となる手段、おそらく唯一の手段」</p>
+                <p class="quote-author">— Josh Lichtenstein 氏</p>
+            </div>
+        </section>
+
+        <!-- 成果の概要 -->
+        <section class="section">
+            <h2 class="section-title">複雑な取引への適用と成果</h2>
+            <p class="lead">Ropes &amp; Gray は、独自のデューデリジェンスツールや GPT-6 Astra などのツールにより、クライアントの課題をこれまでより大幅に速く解決できるようになったとしている。</p>
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>データルーム処理</strong></td>
+                        <td>インベントリ化・分類し、テーマ・論点で関連文書をグループ化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>成果物</strong></td>
+                        <td>要約と Ropes &amp; Gray フォーマットのレポートを自動生成</td>
+                    </tr>
+                    <tr>
+                        <td><strong>品質保証</strong></td>
+                        <td>弁護士が中間要約と原文書をレビューしてからクライアントに提供</td>
+                    </tr>
+                    <tr>
+                        <td><strong>改善プロセス</strong></td>
+                        <td>ドラフト出力を弁護士作成レポートと比較し、ルーブリックとフォーマットを改善</td>
+                    </tr>
+                    <tr>
+                        <td><strong>目標</strong></td>
+                        <td>論点レベルの詳細レポートを数週間から数時間へ短縮</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">数千ページ</div>
+                    <div class="stat-label">AI が精査する文書の規模</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">数週間 → 数時間</div>
+                    <div class="stat-label">論点レベルの詳細レポート作成の短縮目標</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,500 名</div>
+                    <div class="stat-label">知識の結集 (集合知) を目指す弁護士数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- リーダーシップの教訓 -->
+        <section class="section">
+            <h2 class="section-title">リーダーシップの教訓</h2>
+            <p class="lead">Lichtenstein 氏と Glazer 氏は、AI 活用の経験から 2 つの教訓を共有している。</p>
+            <div class="lesson-list">
+                <div class="lesson-item">
+                    <div class="lesson-num">1</div>
+                    <div>
+                        <h4>あらゆることに AI を使って実験する</h4>
+                        <p>Lichtenstein 氏は靴探しから子ども向けゲームのバイブコーディングまで生活のあらゆる場面で AI を使用。「最も学びが大きいのはうまくいったときではなく、ミスを見つけて対処法を考えるとき。そこで遊び道具から本当に強力なプロフェッショナルツールに変わった」と語る</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-num">2</div>
+                    <div>
+                        <h4>クライアントを第一に考える</h4>
+                        <p>Glazer 氏は「どうすればクライアントの利益のために使えるかに集中している。それができれば、すべてうまくいく」と述べ、技術ではなくクライアント価値を起点に AI ツールとワークフローを設計する姿勢を強調</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技術的な詳細 / アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細とアーキテクチャ</h2>
+            <p class="lead">本事例は導入事例のため API レベルの詳細は公開されていないが、記事からは以下の構成が読み取れる。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧠 利用製品</h3>
+                    <p>ChatGPT (企業向け)。モデルとしては GPT-6 Astra への言及がある</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛠️ ワークフロー設計</h3>
+                    <p>弁護士チームの実際の手順 (一次レビュー → 要約 → 上位レビュー) を再現する一貫したクエリとフレームワーク</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📐 評価手法</h3>
+                    <p>完了案件の人間作成レポートを正解データとして、ルーブリックベースでツール出力を評価・改善</p>
+                </div>
+            </div>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    DataRoom[("データルーム&lt;br/&gt;(数千ページの文書)")] --> Tool
+
+    subgraph Tool["Ropes &amp; Gray デューデリジェンス AI ツール"]
+        Inventory["インベントリ化・分類"]
+        Grouping["テーマ・論点による&lt;br/&gt;文書グループ化"]
+        Summary["要約生成"]
+        Report["独自フォーマットの&lt;br/&gt;レポート生成"]
+    end
+
+    subgraph OpenAI["OpenAI"]
+        Models["OpenAI モデル&lt;br/&gt;(GPT-6 Astra など)"]
+    end
+
+    Inventory --> Grouping --> Summary --> Report
+    Tool --> Models
+
+    Report --> Lawyer(["弁護士&lt;br/&gt;(中間要約・原文書をレビュー)"])
+    Lawyer --> Client(["クライアントへの助言&lt;br/&gt;(100% 保証できる最終判断)"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Models openai
+    class Inventory,Grouping,Summary,Report dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 / ユースケース -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響とユースケース</h2>
+            <div class="use-case">
+                <h4>🧩 「ファーストパス + 人間レビュー」モデルの実例</h4>
+                <p>高リスク領域で AI を導入する際の実践的なパターンとして、AI が一次処理を行い、人間が中間成果物と原データを検証できる設計が参考になる</p>
+            </div>
+            <div class="use-case">
+                <h4>🔁 既存ワークフローの忠実な再現</h4>
+                <p>専門家チームの実際の手順をクエリとフレームワークに落とし込むアプローチは、ドメイン特化 AI ツールの設計手法として有効</p>
+            </div>
+            <div class="use-case">
+                <h4>📏 人間の成果物を基準とした評価</h4>
+                <p>過去の完了案件の人間作成レポートと比較してルーブリックを改善するという評価ループは、LLM アプリケーションの品質改善手法として応用可能</p>
+            </div>
+            <div class="use-case">
+                <h4>🗃️ 文書の関係性レビュー</h4>
+                <p>個別文書ではなくデータルーム全体を構造化して「関係性全体」をレビューする設計は、大規模文書処理システムの設計指針となる</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめと今後の展望</h2>
+            <div class="summary-box">
+                <h3>🔮 一次レビューの AI 化で弁護士を「判断」に集中させる</h3>
+                <p>Ropes &amp; Gray は OpenAI とのパートナーシップのもと、取引デューデリジェンスの一次レビューを担う独自 AI ツールを開発した。ツールはデータルームの文書をテーマ・論点ごとに分類・グループ化し、要約と事務所独自フォーマットのレポートを生成する。品質は有能なジュニアからミッドレベルのアソシエイト相当とされ、弁護士が中間要約と原文書を必ずレビューする設計により、クライアントへの助言品質を担保している。同事務所は論点レベルの詳細レポート作成を数週間から数時間に短縮することを目指しており、今後は 1,500 名の弁護士が持つ知識を結集する「集合知」の構築にも AI を活用していく構想である。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/ropes-gray-ai-diligence" target="_blank" rel="noopener noreferrer">https://openai.com/index/ropes-gray-ai-diligence</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📰 <a href="https://openai.com/index/ropes-gray-ai-diligence" target="_blank" rel="noopener noreferrer">How Ropes &amp; Gray is developing AI for transactional diligence (OpenAI 公式)</a></li>
+                <li>📰 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li>💼 <a href="https://openai.com/business/" target="_blank" rel="noopener noreferrer">ChatGPT for Work</a></li>
+                <li>⚖️ <a href="https://openai.com/index/sullivan-cromwell/" target="_blank" rel="noopener noreferrer">関連事例: Sullivan &amp; Cromwell brings legal expertise into agreement review</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
