@@ -5,9 +5,14 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-10-30](2026/2026-10-30-helping-websites-express-ai-training-preferences.md) - ウェブサイトによる AI 学習設定の表明を容易に: OpenAI が robots.txt の共有シグナルを尊重へ
+- [2026-10-30](2026/2026-10-30-gpt-6-rosalind-api-release.md) - GPT-6 Rosalind を API でリリース: 生命科学研究向けの生物学的推論特化モデル
+- [2026-10-30](2026/2026-10-30-fair-use-benefits-everyone.md) - フェアユースはすべての人に利益をもたらす: 各界からのアミカスブリーフ紹介
+- [2026-10-30](2026/2026-10-30-community-safety-report-and-new-protections-for-teens.md) - Community Safety Report の定期公開とティーン向け新保護策: ChatGPT の暴力防止策を強化
 - [2026-10-29](2026/2026-10-29-updated-model-spec.md) - Model Spec 更新: 5 つのコアバリューを軸に再構成された AI 行動規範
 - [2026-10-29](2026/2026-10-29-ropes-gray-ai-diligence.md) - Ropes & Gray: OpenAI と共同で取引デューデリジェンス AI ツールを開発
 - [2026-10-29](2026/2026-10-29-how-we-detect-frontier-model-misalignment.md) - フロンティアモデルのミスアライメントを検出する多層モニタリングシステム
+- [2026-10-29](2026/2026-10-29-credit-saison.md) - クレディセゾン、ChatGPT Enterprise パイロットで 954% の ROI を達成
 - [2026-10-28](2026/2026-10-28-the-future-of-the-firm.md) - The future of the firm: AI は組織図のどこに組み込まれるのか
 - [2026-10-28](2026/2026-10-28-openai-servicenow-partnership-expansion.md) - OpenAI と ServiceNow、エンタープライズワークフロー全体でパートナーシップを拡大
 - [2026-10-28](2026/2026-10-28-legora.md) - Legora: 法務業務のためのエージェント型オペレーティングシステムを構築

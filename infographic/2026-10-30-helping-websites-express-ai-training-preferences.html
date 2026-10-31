@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ウェブサイトによる AI 学習設定の表明を容易に: robots.txt の共有シグナル - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .comparison-card li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 22px;
+            position: relative;
+        }
+
+        .comparison-card.before li::before {
+            content: '📄';
+            position: absolute;
+            left: 0;
+            font-size: 12px;
+        }
+
+        .comparison-card.after li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+            font-size: 12px;
+        }
+
+        /* Callout */
+        .callout {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #92400E;
+        }
+
+        .callout strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #DBEAFE 0%, #EFF6FF 100%);
+            border: 2px solid #60A5FA;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #1E40AF;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0 0 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            line-height: 1.9;
+            opacity: 0.95;
+        }
+
+        .summary-highlight {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .summary-highlight .big {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            letter-spacing: 1px;
+        }
+
+        .summary-highlight .small {
+            display: block;
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 6px;
+        }
+
+        /* Metadata table */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .meta-table th,
+        .meta-table td {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .meta-table th {
+            width: 120px;
+            color: var(--openai-green);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .meta-table td {
+            color: var(--text-secondary);
+        }
+
+        .meta-table a {
+            color: var(--openai-green);
+            word-break: break-all;
+        }
+
+        /* Related links */
+        .related-links {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .related-links li {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0 0 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: #FFFFFF;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid,
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Company</span>
+                <h1>ウェブサイトによる AI 学習設定の表明を容易に<br>OpenAI が robots.txt の共有シグナルを尊重へ</h1>
+                <p class="subtitle">プロバイダーごとの個別ルールから、1 つの共有シグナルへ — IETF AI Preferences ワーキンググループの作業に基づく自主的な取り組み</p>
+                <p class="date">📅 2026-10-30 | ソース: OpenAI News | カテゴリ: 企業情報 (Company)</p>
+            </div>
+        </header>
+
+        <!-- Overview / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要 — キーポイント</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📜</div>
+                    <div class="key-point-content">
+                        <h3>robots.txt の共有シグナルを尊重すると発表</h3>
+                        <p>ウェブサイト運営者が基盤的な生成 AI の学習へのコンテンツ利用に関する意向を表明できる、robots.txt における共有シグナルを OpenAI が尊重する。自主的な取り組みである</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>単一の記述で複数の参加プロバイダーに意向を伝達</h3>
+                        <p>パブリッシャーやサイト運営者が同じ意向を複数の参加プロバイダーに一度に伝えることが容易になり、運営者の作業負担が軽減される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏛️</div>
+                    <div class="key-point-content">
+                        <h3>IETF AI Preferences ワーキンググループの作業に基づく</h3>
+                        <p>IETF (Internet Engineering Task Force) の AI Preferences ワーキンググループにおける進行中の作業に基づいており、OpenAI は他の参加者とともにこの共有シグナルの発表に加わった</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔒</div>
+                    <div class="key-point-content">
+                        <h3>既存の robots.txt コントロールは引き続き有効</h3>
+                        <p>新シグナルは OpenAI が既に提供している robots.txt 経由の既存コントロールを置き換えるものではなく、既存のクローラー制御は引き続き適用・尊重される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🗓️</div>
+                    <div class="key-point-content">
+                        <h3>今後数か月以内に実装予定</h3>
+                        <p>OpenAI は今後数か月以内のシグナル実装を目指しており、実装時に詳細を含む続報を共有する予定としている</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After — 従来のプロバイダー別 robots.txt vs 共有シグナル</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: プロバイダー別の個別ルール</h4>
+                    <ul>
+                        <li>各プロバイダーのクローラーを個別に特定する必要がある</li>
+                        <li>プロバイダーごとに別々のルールを robots.txt に維持</li>
+                        <li>プロバイダーが増えるたびに記述の追加・管理が必要</li>
+                    </ul>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: 共有シグナル</h4>
+                    <ul>
+                        <li>単一の記述で複数の参加プロバイダーに意向を伝達</li>
+                        <li>プロバイダー別の記述を個別に管理する必要がない</li>
+                        <li>運営者の作業負担が軽減される</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>ℹ️ 既存コントロールとの関係</strong>
+                共有シグナルは既存の OpenAI クローラー制御 (GPTBot など) を置き換えるものではなく、既存の設定は引き続き適用・尊重されるため、現在の設定を変更する必要はありません。
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📝 共有シグナルの仕組み</h3>
+                    <p>複数の参加プロバイダーに対して単一の記述で AI 学習へのコンテンツ利用に関する意向を伝えられるようになり、プロバイダーごとの個別ルール維持が不要になる</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏛️ IETF での標準化との関係</h3>
+                    <p>IETF の AI Preferences ワーキンググループの進行中の作業に基づく。OpenAI は今回の発表を標準化議論への継続的な参加を強化するものと位置づけ、議論の進展に応じて自社の慣行を適応させ続けるとしている</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 オープンなウェブに向けたビジョン</h3>
+                    <p>人々が情報を公開・発見でき、サイト所有者がコンテンツ利用についての選択をより明確かつ簡単に伝えられる、オープンなウェブに向けた実践的な一歩と位置づけている</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📣 他の AI プロバイダーへの呼びかけ</h3>
+                    <p>OpenAI は他の AI プロバイダーにもこの共有シグナルの尊重を呼びかけている</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical details -->
+        <section class="section">
+            <h2 class="section-title">技術詳細 — robots.txt の記述例</h2>
+            <p class="section-lead">共有シグナルの具体的な構文は記事では公開されておらず、実装時に詳細が共有される予定です。参考として、OpenAI が既に提供している robots.txt 経由の既存コントロール (こちらは引き続き有効) では、以下のようにクローラーごとにルールを記述します。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Text</span>
+                    <span class="code-title">robots.txt (既存のプロバイダー別コントロール)</span>
+                </div>
+                <pre><code class="language-plaintext"># 従来の方式: プロバイダーごとにクローラーを個別指定する必要がある
+User-agent: GPTBot
+Disallow: /
+
+# 他のプロバイダーのクローラーにも、それぞれ別のルールが必要
+User-agent: SomeOtherAICrawler
+Disallow: /</code></pre>
+            </div>
+            <div class="callout">
+                <strong>⚠️ 構文は未公開</strong>
+                共有シグナルが実装されると、このようなプロバイダー別の記述を個別に管理しなくても、単一のシグナルで複数の参加プロバイダーに AI 学習に関する意向を伝えられるようになります。具体的な構文や設定方法は実装時の続報を待つ必要があります。
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ — 意向伝達のフロー</h2>
+            <p class="section-lead">robots.txt の共有シグナルによる意向伝達のフローを以下に示します。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    Operator(["ウェブサイト運営者"])
+
+    subgraph Site["ウェブサイト"]
+        Robots["robots.txt<br>(共有シグナル)"]
+    end
+
+    subgraph Before["従来の方式"]
+        RuleA["プロバイダー A 向けルール"]
+        RuleB["プロバイダー B 向けルール"]
+        RuleC["プロバイダー C 向けルール"]
+    end
+
+    subgraph Providers["参加プロバイダー"]
+        OpenAI["OpenAI"]
+        Others["IETF AI Preferences WG<br>の他の参加者"]
+    end
+
+    Operator -->|"従来: 個別に記述・維持"| Before
+    Operator -->|"今後: 1 つのシグナルを記述"| Robots
+    Robots -->|"シグナルを尊重"| OpenAI
+    Robots -->|"シグナルを尊重"| Others
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef gray fill:#ECECF1,stroke:#C5C5D2,stroke-width:2px,color:#343541
+
+    class OpenAI,Others openai
+    class Robots dark
+    class RuleA,RuleB,RuleC gray
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース — ウェブサイト運営者・開発者への影響</h2>
+            <div class="use-case">
+                <h4>🧹 robots.txt の管理負担の軽減</h4>
+                <p>複数の参加プロバイダーに対し、単一の共有シグナルで AI 学習に関する意向を伝えられるようになり、プロバイダーごとに別々のルールを維持する必要がなくなるため、robots.txt の管理負担が軽減される。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔧 現在の設定は変更不要</h4>
+                <p>OpenAI の既存の robots.txt 経由のクローラー制御は置き換えられず、引き続き適用・尊重されるため、現在の設定を変更する必要はない。共有シグナルの実装は今後数か月以内に予定されており、具体的な構文や設定方法は実装時の続報を待つ必要がある。</p>
+            </div>
+            <div class="use-case">
+                <h4>📡 IETF 標準化の進展をウォッチ</h4>
+                <p>IETF の AI Preferences ワーキンググループでの標準化議論の進展によって、今後の慣行が適応・変更される可能性があるため、標準化の動向を注視する必要がある。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI は、ウェブサイト運営者が生成 AI の学習へのコンテンツ利用に関する意向を表明できる robots.txt の共有シグナルを尊重すると発表した。IETF の AI Preferences ワーキンググループの作業に基づく自主的な取り組みであり、従来のようにプロバイダーごとに個別のルールを維持する必要がなくなる。</p>
+                <div class="summary-highlight">
+                    <span class="big">1 つのシグナルで、複数の参加プロバイダーへ</span>
+                    <span class="small">既存の OpenAI クローラー制御は引き続き有効。実装は今後数か月以内に予定</span>
+                </div>
+                <p>OpenAI は他の AI プロバイダーにもシグナルの尊重を呼びかけており、人々が情報を公開・発見でき、サイト所有者がコンテンツ利用についての選択を明確かつ簡単に伝えられる、オープンなウェブに向けた実践的な一歩と位置づけている。</p>
+            </div>
+        </section>
+
+        <!-- Metadata / Related Links -->
+        <section class="section">
+            <h2 class="section-title">メタデータ・関連リンク</h2>
+            <table class="meta-table">
+                <tr>
+                    <th>発表日</th>
+                    <td>2026-10-30</td>
+                </tr>
+                <tr>
+                    <th>ソース</th>
+                    <td>OpenAI News</td>
+                </tr>
+                <tr>
+                    <th>カテゴリ</th>
+                    <td>企業情報 (Company)</td>
+                </tr>
+                <tr>
+                    <th>公式リンク</th>
+                    <td><a href="https://openai.com/index/helping-websites-express-ai-training-preferences" target="_blank" rel="noopener noreferrer">https://openai.com/index/helping-websites-express-ai-training-preferences</a></td>
+                </tr>
+            </table>
+            <ul class="related-links" style="margin-top: 20px;">
+                <li>🔗 <a href="https://openai.com/index/helping-websites-express-ai-training-preferences" target="_blank" rel="noopener noreferrer">公式発表: Making it easier for websites to express AI training preferences</a></li>
+                <li>🔗 <a href="https://datatracker.ietf.org/wg/aipref/about/" target="_blank" rel="noopener noreferrer">IETF AI Preferences ワーキンググループ</a></li>
+                <li>🔗 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/helping-websites-express-ai-training-preferences" target="_blank" rel="noopener noreferrer">https://openai.com/index/helping-websites-express-ai-training-preferences</a></p>
+            <p style="margin-top: 8px;">このインフォグラフィックは OpenAI News の記事レポートをもとに作成されました (2026-10-30)</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
