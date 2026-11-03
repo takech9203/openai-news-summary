@@ -5,6 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-02](2026/2026-11-02-scaling-git-at-openai.md) - Scaling Git at OpenAI: Codex 時代の開発規模に対応する Git 互換バックエンド「Pando」
+- [2026-11-02](2026/2026-11-02-rewarding-defenders-with-bigger-bug-bounties.md) - セキュリティバグバウンティ報奨金の大幅引き上げと新ボーナス制度の導入
+- [2026-11-02](2026/2026-11-02-qodo-codex-plugin.md) - Qodo が Codex プラグインで AI コードレビューに組織コンテキストを組み込む
+- [2026-11-02](2026/2026-11-02-preparing-our-next-security-sprint-to-harden-openai.md) - OpenAI を強化する次期セキュリティスプリントの準備
+- [2026-11-02](2026/2026-11-02-lifeval.md) - LifeVal: 日常生活のタスクで AI の実用性を測定する新ベンチマーク
+- [2026-11-02](2026/2026-11-02-grid-protectors-program.md) - Grid Protectors Program の発表: コンピュートキャンパスで電力網の信頼性を支える全国プログラム
+- [2026-11-02](2026/2026-11-02-dan-driscoll-joins-openai.md) - OpenAI、Dan Driscoll 氏を国家安全保障近代化担当シニアカウンセラーに任命
 - [2026-10-30](2026/2026-10-30-helping-websites-express-ai-training-preferences.md) - ウェブサイトによる AI 学習設定の表明を容易に: OpenAI が robots.txt の共有シグナルを尊重へ
 - [2026-10-30](2026/2026-10-30-gpt-6-rosalind-api-release.md) - GPT-6 Rosalind を API でリリース: 生命科学研究向けの生物学的推論特化モデル
 - [2026-10-30](2026/2026-10-30-fair-use-benefits-everyone.md) - フェアユースはすべての人に利益をもたらす: 各界からのアミカスブリーフ紹介
