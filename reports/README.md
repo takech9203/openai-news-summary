@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-03](2026/2026-11-03-jill-hazelbaker-chief-corporate-affairs-officer.md) - OpenAI、Jill Hazelbaker 氏を最高渉外責任者 (Chief Corporate Affairs Officer) に任命
+- [2026-11-03](2026/2026-11-03-heimstaden.md) - Heimstaden が AI で住宅不動産管理を変革
+- [2026-11-03](2026/2026-11-03-cisco-cyber.md) - How Cisco defends at machine speed with OpenAI: Cisco と OpenAI によるマシンスピードの企業セキュリティ防御
+- [2026-11-03](2026/2026-11-03-accelerating-engineering-for-the-physical-world.md) - 物理世界のエンジニアリングを加速する ChatGPT と Codex
 - [2026-11-02](2026/2026-11-02-scaling-git-at-openai.md) - Scaling Git at OpenAI: Codex 時代の開発規模に対応する Git 互換バックエンド「Pando」
 - [2026-11-02](2026/2026-11-02-rewarding-defenders-with-bigger-bug-bounties.md) - セキュリティバグバウンティ報奨金の大幅引き上げと新ボーナス制度の導入
 - [2026-11-02](2026/2026-11-02-qodo-codex-plugin.md) - Qodo が Codex プラグインで AI コードレビューに組織コンテキストを組み込む
