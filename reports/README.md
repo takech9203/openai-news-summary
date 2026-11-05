@@ -5,6 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-04](2026/2026-11-04-openai-to-acquire-pierre.md) - OpenAI が Pierre Computer Company, Inc. を買収へ
+- [2026-11-04](2026/2026-11-04-introducing-images-2-6.md) - Images 2.6 発表: ChatGPT・Codex・API 全体で高速画像生成、GIF 作成、精密編集に対応
+- [2026-11-04](2026/2026-11-04-devrev-enterprise-self-service.md) - DevRev が GPT-6.1 Sol で自律的なセルフサービスを実現
+- [2026-11-04](2026/2026-11-04-daybreak-red-aws-govcloud.md) - Daybreak Red is now available in AWS GovCloud (US-East): GPT-5.6 Cyber が AWS GovCloud (US-East) で利用可能に
+- [2026-11-04](2026/2026-11-04-a-thousand-fewer-paths-to-root.md) - A thousand fewer paths to root: Linux カーネル脆弱性の発見・検証・修正を自動化するパイプライン
 - [2026-11-03](2026/2026-11-03-jill-hazelbaker-chief-corporate-affairs-officer.md) - OpenAI、Jill Hazelbaker 氏を最高渉外責任者 (Chief Corporate Affairs Officer) に任命
 - [2026-11-03](2026/2026-11-03-heimstaden.md) - Heimstaden が AI で住宅不動産管理を変革
 - [2026-11-03](2026/2026-11-03-cisco-cyber.md) - How Cisco defends at machine speed with OpenAI: Cisco と OpenAI によるマシンスピードの企業セキュリティ防御

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevRev が GPT-6.1 Sol で自律的なセルフサービスを実現 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section > p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Metadata */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .meta-item {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .meta-item .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meta-item .value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote {
+            position: relative;
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin: 20px 0;
+        }
+
+        .quote::before {
+            content: '\201C';
+            position: absolute;
+            top: -4px;
+            left: 14px;
+            font-size: 56px;
+            color: var(--openai-green);
+            opacity: 0.4;
+            line-height: 1;
+        }
+
+        .quote p {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .quote cite {
+            display: block;
+            font-size: 13px;
+            font-style: normal;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Tech Details */
+        .tech-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+
+        .tech-item .tech-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .tech-item p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .tech-item p strong {
+            color: var(--text-primary);
+        }
+
+        /* Design Principles */
+        .principles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .principle {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .principle .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .principle h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 6px;
+        }
+
+        .principle p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Highlight keyword */
+        .kw {
+            display: inline-block;
+            background: rgba(16, 163, 127, 0.12);
+            color: var(--openai-green);
+            font-weight: 700;
+            border-radius: 6px;
+            padding: 0 6px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* Links */
+        .link-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .link-list li {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 14px;
+        }
+
+        .link-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .link-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Startup</span>
+                <h1>🤝 DevRev が GPT-6.1 Sol で自律的なセルフサービスを実現</h1>
+                <p class="date">📅 2026-11-04 | OpenAI News | 導入事例</p>
+                <p class="lead">ライブデータを横断して推論し、取り消し可能でソースに遡れるアクションを実行するエージェント「Computer」と「Operator」</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">📋 メタデータ</h2>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <div class="label">発表日</div>
+                    <div class="value">2026-11-04</div>
+                </div>
+                <div class="meta-item">
+                    <div class="label">ソース</div>
+                    <div class="value">OpenAI News</div>
+                </div>
+                <div class="meta-item">
+                    <div class="label">カテゴリ</div>
+                    <div class="value">Startup (導入事例)</div>
+                </div>
+                <div class="meta-item">
+                    <div class="label">企業</div>
+                    <div class="value">DevRev</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">💡 概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🖥️</div>
+                    <div class="key-point-content">
+                        <h3>「Computer」と「Operator」を構築</h3>
+                        <p>サービスチームやオペレーションチームが、顧客・従業員からの難易度の高いリクエストを完了まで遂行できるよう支援するプロダクト。ライブデータを横断して推論するよう設計され、アクションは取り消し可能、回答は情報ソースへ遡れる (CTO の Ahmed Bashir 氏)。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>OpenAI モデル + 自社ハーネス</h3>
+                        <p>GPT-6 Astra や GPT-6.1 Sol を含む OpenAI モデルを、企業ナレッジへの接続とエージェントが実行できるアクションの制御を担う自社ハーネスと組み合わせて活用。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>速度とコストを維持した推論能力</h3>
+                        <p>OpenAI モデルは、顧客・従業員へのサービス提供に求められる速度とコストを維持しつつ、推論能力と信頼性を提供するものと位置づけられている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>独自ベンチマーク Enterprise-Bench で評価</h3>
+                        <p>実企業環境を想定した独自ベンチマークで性能を評価。GPT-6.1 Sol は良好な結果を示している。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👨‍💻</div>
+                    <div class="key-point-content">
+                        <h3>社内開発は Codex に全面移行</h3>
+                        <p>エンジニアリングチーム全員が Codex を使用。複数のコーディングツールを検討した結果、Cursor のライセンスを解約し完全移行した。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="quote">
+                <p>「適切な推論能力を持ち、信頼でき、高度にアラインされていること。そして最も重要なのは、レイテンシの観点で機能しなければならないことです」</p>
+                <cite>— Ahmed Bashir 氏 (DevRev CTO)</cite>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <section class="section">
+            <h2 class="section-title">📌 主な内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔗 企業コンテキストと連携する AI</h3>
+                    <p>OpenAI モデルは、Computer と Operator の両方で<span class="kw">推論・プランニング・ツール選択</span>を担当。Agent Studio では、ユーザーが AI との対話を通じてツールの振る舞いを記述し、一部の挙動を固定ルールで定義できる。</p>
+                    <p>DevRev は、企業コンテキストの供給・権限の強制・アクションの制御を行うソフトウェアとモデルを組み合わせてテスト。Enterprise-Bench では、データに複数のバージョンが存在する、情報が異なるシステムに分散している、アクセス権がロールに依存するといった状況での性能を評価している。</p>
+                    <p>Bashir 氏によれば GPT-6.1 Sol はこれらの評価で良好な結果を示し、ニュアンス理解・応答速度・持続可能なコストについて「完璧にバランスが取れていると思います」と述べている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💻 Codex による開発とセールスデモ構築</h3>
+                    <p>DevRev 社内では、<span class="kw">エンジニアリングチーム全員が Codex を使用</span>。複数のコーディングツールを検討した結果、採用は自然発生的に広がり、インタビュー時点で完全に Codex へ移行し、Cursor のライセンスを解約していた。</p>
+                    <p>「開発者は本当に最高のツールだけを求めており、彼らを欺くことはできません」と Bashir 氏。エンジニアたちは Codex の継続利用を明確に望んだという。</p>
+                    <p>また、セールスエンジニアは国際カンファレンスのブース向けデモの作成に GPT-6 Astra を活用している。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🚀 顧客・従業員への迅速な対応</h3>
+                    <p>支援リクエストに応じて、Operator が問題を理解し<span class="kw">承認済みのアクションを実行</span>するか、適切な担当者が対応できるよう Computer にルーティング。Decisions API や Ultrafast が、各ステップで深い推論を必要とせずワークフローを迅速に完了させる助けになると Bashir 氏は見ている。</p>
+                    <p>依存する情報が変化し続けるため、固定ルールでの定義が困難かつ高コストな判断もある。ビルダーがロジックの多くを対話的に記述し、タスクごとに適切な種類のインテリジェンスを選択できるようにしたいという。「これらは数分ではなく数秒で実行・完了できなければなりません」</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 セルフサービスの約束を実現する</h3>
+                    <p>次の目標は、アクションの追跡可能性・権限管理・取り消し可能性を維持したまま、Operator が<span class="kw">より長く要求の厳しいリクエスト</span>を担えるようにすること。</p>
+                    <p>ナレッジベースの回答検索、プランのアップグレード、返金対応といった定番のサポートタスクは始まりに過ぎず、「セルフサービスの約束を本当に実現したい」と Bashir 氏。OpenAI のフロンティアインテリジェンスを活用し、Computer と Operator が企業ナレッジと制御機構を備えて本人に代わって行動し、より複雑なリクエストを解決まで遂行できる姿を目指す。</p>
+                </div>
+            </div>
+            <div class="quote">
+                <p>「Codex は圧倒的に最高の体験だと考えています」</p>
+                <cite>— Ahmed Bashir 氏 (DevRev CTO)</cite>
+            </div>
+        </section>
+
+        <!-- Tech Details -->
+        <section class="section">
+            <h2 class="section-title">🔧 技術的な詳細</h2>
+            <div class="tech-list">
+                <div class="tech-item">
+                    <span class="tech-icon">🤖</span>
+                    <p><strong>使用モデル</strong>: GPT-6 Astra、GPT-6.1 Sol を含む OpenAI モデル群。推論・プランニング・ツール選択を担当</p>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-icon">🛡️</span>
+                    <p><strong>自社ハーネス</strong>: 企業ナレッジへの接続と、エージェントが実行可能なアクションの制御を提供</p>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-icon">🎨</span>
+                    <p><strong>Agent Studio</strong>: AI との対話によるツール挙動の記述と、固定ルールによる挙動定義を組み合わせ可能</p>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-icon">📏</span>
+                    <p><strong>Enterprise-Bench</strong>: データの複数バージョン、システム間に分散した情報、ロールベースのアクセス制御といった実企業環境を想定した独自ベンチマーク</p>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-icon">💻</span>
+                    <p><strong>開発ツール</strong>: エンジニアリングチーム全体で Codex を採用 (Cursor から全面移行)</p>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-icon">⏱️</span>
+                    <p><strong>今後の活用候補</strong>: Decisions API、Ultrafast による低レイテンシなワークフロー完了</p>
+                </div>
+            </div>
+            <div class="principles">
+                <div class="principle">
+                    <div class="icon">↩️</div>
+                    <h4>Reversible</h4>
+                    <p>アクションの取り消し可能性</p>
+                </div>
+                <div class="principle">
+                    <div class="icon">🔍</div>
+                    <h4>Traceable</h4>
+                    <p>回答のソース遡及性</p>
+                </div>
+                <div class="principle">
+                    <div class="icon">🔐</div>
+                    <h4>Permissioned</h4>
+                    <p>権限管理</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">🏗️ アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    User(["顧客 / 従業員"]) --> Operator["Operator<br/>問題理解と承認済みアクションの実行"]
+    Operator -->|"ルーティング"| Computer["Computer<br/>担当者の対応準備"]
+
+    subgraph DevRev["DevRev ハーネス"]
+        Context["企業コンテキスト供給"]
+        Permissions["権限の強制"]
+        Actions["アクション制御<br/>(取り消し可能・ソース遡及)"]
+        Studio["Agent Studio<br/>対話 + 固定ルールで挙動定義"]
+    end
+
+    subgraph OpenAI["OpenAI モデル"]
+        Astra["GPT-6 Astra"]
+        Sol["GPT-6.1 Sol"]
+    end
+
+    Operator --> DevRev
+    Computer --> DevRev
+    DevRev --> OpenAI
+    Bench["Enterprise-Bench<br/>(複数バージョンのデータ・分散情報・ロール依存アクセス)"] -.->|"評価"| OpenAI
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Astra,Sol openai
+    class Operator,Computer dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact (Use Cases) -->
+        <section class="section">
+            <h2 class="section-title">👩‍💻 開発者への影響</h2>
+            <div class="use-case">
+                <h4>🧪 ハーネスと組み合わせた実環境評価</h4>
+                <p>エンタープライズ向け AI エージェントでは、モデル単体の性能だけでなく、企業コンテキストの供給・権限の強制・アクション制御を行うハーネスとの組み合わせでの評価 (DevRev の Enterprise-Bench のような実環境ベンチマーク) が重要になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚖️ GPT-6.1 Sol というバランス型の選択肢</h4>
+                <p>GPT-6.1 Sol は、推論能力・レイテンシ・コストのバランスが求められる顧客・従業員対応ユースケースでの選択肢となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ エージェント導入の設計原則</h4>
+                <p>アクションの取り消し可能性、ソースへの遡及性、ロールベースの権限管理は、本人に代わって行動するエージェントを企業に導入する際の設計原則として参考になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚡ タスクに応じたインテリジェンスの使い分け</h4>
+                <p>すべてのステップで深い推論を使うのではなく、タスクごとに適切な種類のインテリジェンス (Decisions API、Ultrafast など) を使い分ける設計が、秒単位でのワークフロー完了につながる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">📝 まとめ</h2>
+            <div class="summary-box">
+                <p>DevRev は、GPT-6 Astra と GPT-6.1 Sol を自社ハーネスと組み合わせ、ライブデータを横断して推論し、取り消し可能かつソースに遡れるアクションを実行する「Computer」と「Operator」を構築した。GPT-6.1 Sol は、独自ベンチマーク Enterprise-Bench の評価で、リクエストのニュアンス理解・応答速度・持続可能なコストのバランスに優れると評価されている。社内開発では Codex を全面採用し、今後は Decisions API や Ultrafast を活用して、より長く複雑な顧客・従業員リクエストを数秒で完了するセルフサービスの実現を目指している。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">🔗 関連リンク</h2>
+            <ul class="link-list">
+                <li>📰 <a href="https://openai.com/index/devrev-enterprise-self-service" target="_blank" rel="noopener noreferrer">記事原文: DevRev delivers autonomous self-service with GPT-6.1 Sol</a></li>
+                <li>🏢 <a href="https://devrev.ai/" target="_blank" rel="noopener noreferrer">DevRev 公式サイト</a></li>
+                <li>🗞️ <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li>📚 <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/devrev-enterprise-self-service" target="_blank" rel="noopener noreferrer">https://openai.com/index/devrev-enterprise-self-service</a></p>
+            <p style="margin-top: 8px;">このインフォグラフィックは OpenAI News の記事をもとに作成されたものです。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

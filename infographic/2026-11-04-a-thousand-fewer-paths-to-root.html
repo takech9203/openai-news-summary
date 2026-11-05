@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A thousand fewer paths to root - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-note {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-radius: 10px;
+            border: 1px dashed rgba(16, 163, 127, 0.4);
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Highlight marker (手書き風の囲み強調) */
+        .marker {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        /* Funnel (統計カード: 候補 → 再現 → LPE) */
+        .funnel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .funnel-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .funnel-bar {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            border: 2px solid rgba(16, 163, 127, 0.5);
+        }
+
+        .funnel-bar .stat-value {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            line-height: 1.2;
+        }
+
+        .funnel-bar .stat-label {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .funnel-bar .stat-sub {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .funnel-bar.w1 { width: 100%; }
+        .funnel-bar.w2 { width: 78%; }
+        .funnel-bar.w3 { width: 56%; }
+
+        .funnel-arrow {
+            font-size: 22px;
+            color: var(--openai-green);
+            font-weight: 700;
+            line-height: 1;
+            padding: 2px 0;
+        }
+
+        .funnel-arrow .arrow-note {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Pipeline Steps */
+        .pipeline-steps {
+            display: grid;
+            gap: 12px;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-light);
+            border: 2px solid rgba(16, 163, 127, 0.25);
+            border-radius: 14px;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .pipeline-step h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .pipeline-step p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .data-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .data-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .data-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        .data-table .num {
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 700;
+            color: var(--openai-green);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .use-case .insight {
+            display: block;
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            margin: 8px 0 0 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .funnel-bar .stat-value {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Security</span>
+                <h1>A thousand fewer paths to root</h1>
+                <p class="subtitle">Linux カーネル脆弱性の発見・検証・修正を自動化するパイプライン — 防御のための責任ある開示とパッチ生成</p>
+                <p class="date">📅 2026-11-04 | OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>防御的セキュリティリサーチの体系化</h3>
+                        <p>従来 1 件ごとに個別の継続的な調査を要したセキュリティリサーチを、管理された研究環境内で体系的なプロセスとして実行できることを実証。目的はソフトウェアを安全にすることにある。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔁</div>
+                    <div class="key-point-content">
+                        <h3>5 段階の自律パイプライン</h3>
+                        <p>発見 → 動的検証 → 影響評価 → パッチ生成 → 人間によるレビューを一気通貫で接続。2,308 件の候補から 1,724 件を再現し、ユニークな LPE (ローカル権限昇格) 948 件を実証した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🩹</div>
+                    <div class="key-point-content">
+                        <h3>メンテナー向けの候補パッチを開発</h3>
+                        <p>検証済みの各脆弱性に対して候補パッチを生成し、根本原因分析・最小構成の再現コードとともにバンドル。Linux カーネルコミュニティの助言に従い、重大度の高いものから責任ある開示を進めている。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>Patch the Planet との連携</h3>
+                        <p>残りの脆弱性は Patch the Planet のパートナーと協力して段階的に報告・パッチ提出を実施。2026 年 6 月の GPT-5.5 Cyber による 24 件の LPE 検証の発表を、完全なパイプラインへ拡張した形となる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>修正は迅速に進行中</h3>
+                        <p>スキャン完了から 10 日時点で、既に 61 件の LPE が upstream で修正済み、43 件が staging パッチあり、299 件が公開の場で報告・議論中。カーネルの安全性向上に直結している。</p>
+                    </div>
+                </div>
+            </div>
+            <p class="section-note">🔒 安全上の理由から、公開記事およびこのインフォグラフィックには脆弱性の悪用手順やエクスプロイト技術の詳細は含まれていません。</p>
+        </section>
+
+        <!-- Stats Funnel -->
+        <section class="section">
+            <h2 class="section-title">数字で見る成果 (検出 → 再現 → 実証)</h2>
+            <div class="funnel">
+                <div class="funnel-bar w1">
+                    <div class="stat-value">2,308 件</div>
+                    <div class="stat-label">候補検出結果</div>
+                    <div class="stat-sub">重複排除後の候補 (Analyst エージェント、12 時間)</div>
+                </div>
+                <div class="funnel-arrow">▼<span class="arrow-note">隔離 VM + KASAN で動的検証 (30 時間)</span></div>
+                <div class="funnel-bar w2">
+                    <div class="stat-value">1,724 件</div>
+                    <div class="stat-label">脆弱性を動的に再現</div>
+                    <div class="stat-sub">候補の約 74.7% を実行時の証拠つきで確認</div>
+                </div>
+                <div class="funnel-arrow">▼<span class="arrow-note">SMEP / SMAP / KASLR 有効環境で影響評価</span></div>
+                <div class="funnel-bar w3">
+                    <div class="stat-value">948 件</div>
+                    <div class="stat-label">ユニーク LPE の実証</div>
+                    <div class="stat-sub">それぞれに対応する個別パッチを開発</div>
+                </div>
+            </div>
+            <p class="section-note">📌 その他の実測値: 情報漏えいの実証 291 件 / エンドツーエンドの API コスト $1,213,430 / 監査対象 5,034 件・約 280 万行 (カーネル全体の約 7%)</p>
+        </section>
+
+        <!-- Main Content Cards -->
+        <section class="section">
+            <h2 class="section-title">主な内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🐧 なぜ Linux カーネルか</h3>
+                    <p>Linux カーネルは Android 端末、クラウドインフラ、スーパーコンピューターなど数十億人が利用するシステムの基盤。<span class="marker">4,000 万行超</span>のコードが広い攻撃面を持つため、フロンティアモデルの防御的な有効性を測る対象として選定された。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🚧 ボトルネックは「発見」ではなくトリアージ</h3>
+                    <p>初期段階で数千件の候補が生成され、人手のレビュー能力を超過。どれが再現可能で、どのセキュリティ境界を越え、どれを最優先でメンテナーに届けるかの判断が課題だった。パイプラインはこのトリアージを自動化する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧪 現実的な条件での検証</h3>
+                    <p>検証は KASAN 有効の隔離仮想マシンで実施。影響評価では標準的な Linux ディストリビューションの保護機構 (SMEP、SMAP、KASLR、HARDENED_USERCOPY) を有効化し、非現実的な前提での評価を排除した。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🩹 品質を担保したパッチ生成</h3>
+                    <p>静的チェック、近接コードの開発慣習への追従、同種の変種を取りこぼさない variant analysis を指示。AI 生成パッチが<span class="marker">正確かつ最小限で規約に沿ったもの</span>になり得ることを示し、人間の専門家のパッチの問題をマージ前に指摘した例も数件あった。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💰 コストの透明性</h3>
+                    <p>他のリサーチャーが再現・拡張できるよう段階ごとの API コストを公開。コスト最適化は目的外のため上限に近い値とされる。true positive と false positive の検証コストがほぼ同等のため、<span class="marker">早期の false positive 除去</span>が効率の鍵となる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 分析精度の高さ</h3>
+                    <p>再現に至らなかった候補の多くは、昇格権限の要求、困難なレース条件、時間のかかる検証 (refcount のラップアラウンドなど) が原因。モデルの分析自体が誤っていたケースは<span class="marker">わずか 3.1%</span> だった。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details: Pipeline -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: 5 段階のパイプライン構成</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">中核に次世代の cyber モデルを据えた、高レベルのパイプライン構成。最終段階では根本原因分析、最小構成の再現コード、候補パッチ、影響の実証をバンドルし、人間のリサーチャーによる深刻度評価と upstream への修正反映を支援する。</p>
+            <div class="pipeline-steps">
+                <div class="pipeline-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h4>Vulnerability Discovery (脆弱性発見)</h4>
+                        <p>エージェントがコードベースのセキュリティ関連箇所を特定し、候補検出結果をスキャン。Scout エージェントが監査対象を選定し、Analyst エージェントが候補を抽出する。</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h4>Dynamic Validation (動的検証)</h4>
+                        <p>隔離環境で各候補の再現を試み、実行時の証拠を保存。再現・検証済みの脆弱性が出力される。優先条件は低権限ユーザーから到達可能、特別な capability 不要、メモリ破壊の測定可能な証拠。</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h4>Exploitability Assessment (影響評価)</h4>
+                        <p>検証済みの脆弱性が情報漏えいや権限昇格につながり得るかを、標準的な保護機構を有効化した環境で評価する。</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <h4>Patch Generation (パッチ生成)</h4>
+                        <p>特定された各脆弱性に対処するパッチを生成。ベストプラクティスをプロンプトで指示し、反復により品質を改善した。</p>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <h4>Human Review (人間によるレビュー)</h4>
+                        <p>セキュリティリサーチャーが検証結果、パッチ、提案された深刻度をレビューし、メンテナーに報告する。</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin: 28px 0 8px;">🗺️ アーキテクチャ図</h3>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Target["対象コードベース"]
+        Kernel["Linux Kernel&lt;br/&gt;40M+ lines"]
+    end
+
+    subgraph Pipeline["自律リサーチパイプライン (cyber model)"]
+        subgraph Discovery["1. Vulnerability Discovery"]
+            Scout["Scout Agents&lt;br/&gt;5,034 targets / 2.8M lines"]
+            Analyst["Analyst Agents&lt;br/&gt;2,308 candidates"]
+        end
+        Validate["2. Dynamic Validation&lt;br/&gt;KASAN + 隔離 VM&lt;br/&gt;1,724 reproduced"]
+        Assess["3. Exploitability Assessment&lt;br/&gt;SMEP/SMAP/KASLR 有効&lt;br/&gt;313 leak + 1,238 LPE candidates"]
+        Patch["4. Patch Generation&lt;br/&gt;948 distinct patches"]
+    end
+
+    subgraph Output["5. Human Review &amp; Reporting"]
+        Review["Security Researchers"]
+        Maintainers["Linux Maintainers&lt;br/&gt;/ Patch the Planet"]
+    end
+
+    Kernel --&gt; Scout
+    Scout --&gt; Analyst
+    Analyst --&gt; Validate
+    Validate --&gt; Assess
+    Assess --&gt; Patch
+    Patch --&gt; Review
+    Review --&gt; Maintainers
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Scout,Analyst,Validate,Assess,Patch openai
+    class Review,Maintainers dark
+    class Kernel light
+                </pre>
+            </div>
+        </section>
+
+        <!-- Cost Table -->
+        <section class="section">
+            <h2 class="section-title">各段階の実測値と API コスト</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>段階</th>
+                        <th>主な結果</th>
+                        <th style="text-align: right;">API コスト</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Scout エージェント (監査対象の選定)</td>
+                        <td>5,034 件の監査対象、約 280 万行 (カーネル全体の約 7%)</td>
+                        <td class="num">$3,426</td>
+                    </tr>
+                    <tr>
+                        <td>Analyst エージェント (脆弱性スキャン)</td>
+                        <td>12 時間で重複排除後 2,308 件の候補</td>
+                        <td class="num">$316,549</td>
+                    </tr>
+                    <tr>
+                        <td>動的検証</td>
+                        <td>30 時間で 1,724 件を再現 (候補の約 74.7%)</td>
+                        <td class="num">$73,330</td>
+                    </tr>
+                    <tr>
+                        <td>初期スクリーニング</td>
+                        <td>情報漏えい候補 313 件、LPE 候補 1,238 件に絞り込み</td>
+                        <td class="num">$44,194</td>
+                    </tr>
+                    <tr>
+                        <td>影響評価 (ExploitDev)</td>
+                        <td>情報漏えいの実証 291 件、LPE の実証 1,169 件</td>
+                        <td class="num">$775,929</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="section-note">💡 1 件あたりの平均では LPE 候補 ($558) が情報漏えい候補 ($271) の約 2 倍。また成功ケース (1,169 件、平均 $360) より失敗ケース (69 件、平均 $3,922) の方が大幅に高コストで、「1 時間進捗がなければ中断する」といった打ち切り条件がコスト削減に有効とされる。報告値はコスト最適化を目的としていないため上限に近い値として扱う。</p>
+        </section>
+
+        <!-- Research Findings -->
+        <section class="section">
+            <h2 class="section-title">研究から得られた知見</h2>
+            <div class="use-case">
+                <h4>⏱️ メンテナーによる修正は迅速に進んでいる</h4>
+                <p>2026 年 10 月中旬の最新カーネルへのスキャン完了から 10 日時点で、61 件の LPE が upstream で修正済み、43 件が staging パッチあり、299 件が公開の場で報告・議論中だった。</p>
+                <span class="insight">示唆: 自動トリアージは迅速なパッチサイクルを前提に設計し、最新コードへの再検証で重複・陳腐化した報告を避ける。</span>
+            </div>
+            <div class="use-case">
+                <h4>📈 モデルが強くなるほど発見数が増える</h4>
+                <p>2026 年 7 月下旬の GPT-5.6 Sol は $513,690 で 166 件のユニーク LPE を発見・実証。10 月中旬のより新しい cyber モデルは $1,213,430 で 948 件を発見・実証した。いずれも当時の master ブランチ最新版が対象。</p>
+                <span class="insight">示唆: モデルの能力向上に合わせて、過去に監査済みのコードを再スキャンすべき。</span>
+            </div>
+            <div class="use-case">
+                <h4>🧠 新規の手法の出現</h4>
+                <p>実証コード 166 件のサンプル分析で、OpenAI の把握する限り 10 件の新しい手法を確認。第三者のカーネル専門家にとっても新規だった。安全上の理由から技術的詳細は非公開。</p>
+                <span class="insight">示唆: フロンティアモデルは既知パターンの照合に留まらず、創造性と新規のアプローチを示す。</span>
+            </div>
+            <div class="use-case">
+                <h4>⚖️ コスト比較から防御側が学べること</h4>
+                <p>Pwn2Own ($20,000) と TyphoonPWN ($70,000) の報奨金額を 948 件に当てはめると $18.9M〜$66.3M 相当で、パイプラインコストの約 16〜55 倍。Google kernelCTF の hardened 環境でも情報漏えい 25 件・LPE 21 件を実証 (112 時間、約 $32,936、83.7% が発見段階)。21 件受理なら報奨金約 $1.5M でコストの約 45 倍に相当する。</p>
+                <span class="insight">示唆: 防御側は自社ソフトウェアを能動的に分析し、攻撃者にとって割に合わない状態を作るべき。</span>
+            </div>
+            <div class="use-case">
+                <h4>🛤️ 結果だけでなく経路の検証が必要</h4>
+                <p>初期の影響評価で報告された 200 件の LPE 成功のうち、20 件は割り当てられた脆弱性とは別の 0-day 経由だったことが人間のレビューで判明。タスクの制約を厳格化し、独立したチェックを追加した。</p>
+                <span class="insight">示唆: 隔離、監視、独立したチェックは自律的なセキュリティリサーチに必須の統制。</span>
+            </div>
+            <div class="use-case">
+                <h4>🪶 高性能なモデルほどオーケストレーションは軽くできる</h4>
+                <p>GPT-5.5 Cyber では 103 件の手法集を環境に配置すると成功率が 76.2% から 88.9% に向上。一方 GPT-5.6 Cyber は自力で手法を探索・選択でき、軽量構成が重厚な足場つきの GPT-5.5 Cyber を上回った。手法レイヤーを戻しても改善は 1.5 ポイントに留まった。</p>
+                <span class="insight">示唆: モデル世代に合わせてハーネスを再評価し、足場の価値と保守コストのトレードオフを見直す。</span>
+            </div>
+            <div class="use-case">
+                <h4>🧱 テスト基盤自体の脆弱性</h4>
+                <p>kernelCTF の実行中、analyst エージェントが予期しないカーネルクラッシュの原因を QEMU TCG まで追跡して報告。upstream では修正済みだったが、実験に使ったリリースビルドには未反映だった。OpenAI は Kata、Moby/Docker、gVisor などの脆弱性も開示・修正してきた。</p>
+                <span class="insight">示唆: 脆弱性リサーチの前に、基盤の各構成要素を能動的にテストすることが推奨される。</span>
+            </div>
+        </section>
+
+        <!-- Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔄 ソフトウェア更新の重要性が一層高まる</h3>
+                    <p>脆弱性の開示とパッチ適用の速度が上がっているため、利用者と企業はソフトウェアを最新に保つ必要性が高まる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ 防御側の能動的な分析が現実的に</h3>
+                    <p>発見した脆弱性の影響度を検証するコストが低下し、優先順位付けの根拠を自前で得やすくなった。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>♻️ 自動トリアージ設計では再検証が前提</h3>
+                    <p>最新コードに対する再検証を組み込まないと、重複報告でメンテナーのレビュー負荷を増やしてしまう。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🚿 false positive の早期除去が効く</h3>
+                    <p>検証段階では true positive と false positive のコストがほぼ同じため、前段での絞り込みが全体のコスト効率を左右する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔎 パッチの敵対的レビューにモデルを活用</h3>
+                    <p>人間および AI が書いたパッチに対し、回避可能性や見落とされた攻撃経路・変種を洗い出す用途が推奨されている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧰 ハーネス設計の見直しが定期的に必要</h3>
+                    <p>モデル世代が進むと重厚なオーケストレーションの価値が下がるため、保守コストとの釣り合いを再評価する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">OpenAI は、Linux カーネルを対象に脆弱性の発見から動的検証、影響評価、パッチ生成、人間によるレビューまでを 5 段階で結ぶ自律パイプラインのプロトタイプを構築し、<span class="marker">2,308 件の候補から 1,724 件を再現、948 件分の個別パッチ</span>を開発した。公開されている報奨金額を基準にすると、防御側に有利な大きなコスト非対称性があることが示された。</p>
+            <p style="font-size: 14px; color: var(--text-secondary);">主要な知見は、迅速なパッチサイクルを前提とした再検証の必要性、モデル能力向上に伴う再スキャンの価値、結果に加えて経路を検証する統制の重要性、モデル世代に応じたハーネスの再評価である。OpenAI は Daybreak の一環である Patch the Planet を通じて他の重要なソフトウェアプロジェクトへ研究を拡張し、信頼性の高い自動パッチ適用の実現を目指す。</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/a-thousand-fewer-paths-to-root" target="_blank" rel="noopener noreferrer">https://openai.com/index/a-thousand-fewer-paths-to-root</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/patch-the-planet/" target="_blank" rel="noopener noreferrer">Patch the Planet initiative</a></li>
+                <li><a href="https://openai.com/daybreak/" target="_blank" rel="noopener noreferrer">Daybreak</a></li>
+                <li><a href="https://openai.com/index/securing-our-frontier-model-training-environment/" target="_blank" rel="noopener noreferrer">Securing our frontier model training environment</a></li>
+                <li><a href="https://github.com/openai/plugins/tree/main/plugins/codex-security" target="_blank" rel="noopener noreferrer">Codex Security plugin</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
