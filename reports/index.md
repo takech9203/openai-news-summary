@@ -5,6 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-05](2026/2026-11-05-setting-new-standard-responsible-ai-infrastructure.md) - 責任ある AI インフラの新基準: National Community Compact と Compute Campus Policy Blueprint の発表
+- [2026-11-05](2026/2026-11-05-merge-builds-with-openai.md) - Merge が OpenAI の技術でプロダクトとビジネスツールを構築
+- [2026-11-05](2026/2026-11-05-introducing-gpt-6-cyber.md) - GPT-6 Cyber: アラインされたサイバーセキュリティエージェントの最前線
+- [2026-11-05](2026/2026-11-05-franklin-templeton.md) - Franklin Templeton が OpenAI を活用して投資リサーチを支援
+- [2026-11-05](2026/2026-11-05-flipsnack-conversion-optimization.md) - Flipsnack がコンバージョン最適化で製品サインアップを拡大
+- [2026-11-05](2026/2026-11-05-cultfit-builds-with-codex.md) - Cult.fit が Codex で組織の実行力を強化: エンジニアリングから全社展開への導入事例
+- [2026-11-05](2026/2026-11-05-australian-universities-ai-native-graduates.md) - オーストラリアの大学が「AI ネイティブ」な卒業生を育成
 - [2026-11-04](2026/2026-11-04-openai-to-acquire-pierre.md) - OpenAI が Pierre Computer Company, Inc. を買収へ
 - [2026-11-04](2026/2026-11-04-introducing-images-2-6.md) - Images 2.6 発表: ChatGPT・Codex・API 全体で高速画像生成、GIF 作成、精密編集に対応
 - [2026-11-04](2026/2026-11-04-devrev-enterprise-self-service.md) - DevRev が GPT-6.1 Sol で自律的なセルフサービスを実現
