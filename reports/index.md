@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-06](2026/2026-11-06-partnering-with-hacktron.md) - OpenAI が Hacktron と提携し、自社システムの脆弱性発見を強化
+- [2026-11-06](2026/2026-11-06-measuring-how-ai-agents-handle-wet-lab-science.md) - BioBasicsBench: AI エージェントの日常的なウェットラボ科学への対応力を測定
 - [2026-11-05](2026/2026-11-05-setting-new-standard-responsible-ai-infrastructure.md) - 責任ある AI インフラの新基準: National Community Compact と Compute Campus Policy Blueprint の発表
 - [2026-11-05](2026/2026-11-05-merge-builds-with-openai.md) - Merge が OpenAI の技術でプロダクトとビジネスツールを構築
 - [2026-11-05](2026/2026-11-05-introducing-gpt-6-cyber.md) - GPT-6 Cyber: アラインされたサイバーセキュリティエージェントの最前線
