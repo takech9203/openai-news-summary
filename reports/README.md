@@ -5,6 +5,10 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-09](2026/2026-11-09-kuken.md) - 空研工業、70 年分の冷却塔図面を数分で検索可能に
+- [2026-11-09](2026/2026-11-09-control-room.md) - Control Room: 研究インフラ全体のモデルワークロードを追跡・停止する中央システム
+- [2026-11-09](2026/2026-11-09-coderabbit-codex-daybreak.md) - CodeRabbit、エージェント型ソフトウェア開発をスケールさせ 20 倍の出荷量を実現
+- [2026-11-09](2026/2026-11-09-chatgpt-enterprise-aws-marketplace.md) - ChatGPT Enterprise が AWS Marketplace で提供開始
 - [2026-11-06](2026/2026-11-06-partnering-with-hacktron.md) - OpenAI が Hacktron と提携し、自社システムの脆弱性発見を強化
 - [2026-11-06](2026/2026-11-06-measuring-how-ai-agents-handle-wet-lab-science.md) - BioBasicsBench: AI エージェントの日常的なウェットラボ科学への対応力を測定
 - [2026-11-05](2026/2026-11-05-setting-new-standard-responsible-ai-infrastructure.md) - 責任ある AI インフラの新基準: National Community Compact と Compute Campus Policy Blueprint の発表
