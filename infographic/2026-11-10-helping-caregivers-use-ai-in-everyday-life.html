@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>介護者の日常生活における AI 活用支援 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-top: 16px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1DB791;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Event Overview Table */
+        .event-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .event-table th,
+        .event-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+            vertical-align: top;
+        }
+
+        .event-table th {
+            width: 140px;
+            color: var(--openai-green);
+            font-weight: 700;
+            white-space: nowrap;
+            background: var(--openai-light);
+        }
+
+        .event-table td {
+            color: var(--text-secondary);
+        }
+
+        /* Cities */
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px;
+        }
+
+        .city-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.25);
+            border-radius: 14px;
+            padding: 18px 14px;
+            text-align: center;
+        }
+
+        .city-card .city-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .city-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        .city-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Partner Cards */
+        .partner-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--openai-light);
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+        }
+
+        .partner-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .partner-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .partner-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .partner-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Responsible AI */
+        .responsible-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .responsible-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #FFF7E6;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .responsible-item .mark {
+            color: var(--warning);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .policy-box {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+            border-radius: 14px;
+            padding: 20px 24px;
+            font-size: 14px;
+            color: #065F46;
+        }
+
+        .policy-box strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Academy Box */
+        .academy-box {
+            background: var(--openai-light);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .academy-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .academy-tag {
+            background: var(--openai-green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 14px;
+        }
+
+        .academy-tag.new {
+            background: var(--warning);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        .summary-box .highlight {
+            color: #1DB791;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            padding: 2px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-table th {
+                width: 110px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">社会貢献 / 教育</span>
+                <h1>介護者の日常生活における AI 活用支援: OpenAI Academy が米国 5 都市で無料ワークショップを開催</h1>
+                <p class="date">発表日: 2026-11-10 | ソース: OpenAI News</p>
+                <p class="lead">全米家族介護者月間 (National Family Caregivers Month) に合わせ、介護者向けの無料対面学習イベント「AI Skills Jam for Caregivers &amp; Community Health」を米国 5 都市で開催。介護者が ChatGPT を「自信を持って、安全に、実践的に」使えるようになることを目指します。</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🎗️</div>
+                    <div class="key-point-content">
+                        <h3>全米家族介護者月間に合わせた無料イベント</h3>
+                        <p>2026 年 11 月 10 日、OpenAI Academy の取り組みの一環として、介護者向け無料対面学習イベント「AI Skills Jam for Caregivers &amp; Community Health」の開催を発表。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏙️</div>
+                    <div class="key-point-content">
+                        <h3>米国 5 都市での対面開催</h3>
+                        <p>オークランド、タンパ、ピッツバーグ、アトランタ、デトロイトの 5 都市で開催。オンラインだけではリーチしにくい層にも AI スキル習得の機会を広げる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>週 4,000 万件以上の「他者のための医療」質問</h3>
+                        <p>OpenAI の分析では、米国内の ChatGPT における医療関連メッセージのうち、週 4,000 万件以上が「他者のための医療」に関する質問と推定。介護を担う人々がすでに AI に支援を求めている実態がうかがえる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>介護・医療分野の主要非営利団体と連携</h3>
+                        <p>Caregiver Action Network、アルツハイマー協会、米国糖尿病協会という介護・医療分野の主要な非営利団体と連携して実施。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>実践的活用と責任ある利用の両立</h3>
+                        <p>スケジュール整理や資料の平易化といった実践的な活用法に加え、個人情報の保護や AI の限界の理解など、安全で責任ある利用方法も重視。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Background Stats -->
+        <section class="section">
+            <h2 class="section-title">背景: 介護に伴う大きな負担</h2>
+            <p class="section-lead">介護者はスケジュール管理、情報の記録、仕事や家庭との両立をこなしながら、必要なサポートを探さなければなりません。介護における AI 活用のニーズはすでに大きくなっています。</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">4,000 万件+</div>
+                    <div class="stat-label">週あたりの「他者のための医療」に関する質問 (米国内 ChatGPT、推定)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5 都市</div>
+                    <div class="stat-label">無料対面ワークショップの開催都市数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3 団体</div>
+                    <div class="stat-label">連携する介護・医療分野の非営利パートナー</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Overview -->
+        <section class="section">
+            <h2 class="section-title">イベント概要</h2>
+            <table class="event-table">
+                <tr>
+                    <th>イベント名</th>
+                    <td>AI Skills Jam for Caregivers &amp; Community Health</td>
+                </tr>
+                <tr>
+                    <th>開催日</th>
+                    <td>2026 年 11 月 10 日</td>
+                </tr>
+                <tr>
+                    <th>形式</th>
+                    <td>無料の対面型学習イベント</td>
+                </tr>
+                <tr>
+                    <th>対象</th>
+                    <td>個人・家族介護者、介護者支援団体、慢性疾患や重篤な健康状態を抱える人々</td>
+                </tr>
+                <tr>
+                    <th>前提知識</th>
+                    <td>技術的な知識やコーディング経験は不要</td>
+                </tr>
+                <tr>
+                    <th>サポート体制</th>
+                    <td>OpenAI のファシリテーターとメンターが実践的に支援</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Cities -->
+        <section class="section">
+            <h2 class="section-title">開催都市 (米国 5 都市)</h2>
+            <div class="city-grid">
+                <div class="city-card">
+                    <div class="city-icon">🌉</div>
+                    <h3>オークランド</h3>
+                    <p>カリフォルニア州</p>
+                </div>
+                <div class="city-card">
+                    <div class="city-icon">🌴</div>
+                    <h3>タンパ</h3>
+                    <p>フロリダ州</p>
+                </div>
+                <div class="city-card">
+                    <div class="city-icon">🌁</div>
+                    <h3>ピッツバーグ</h3>
+                    <p>ペンシルベニア州</p>
+                </div>
+                <div class="city-card">
+                    <div class="city-icon">🍑</div>
+                    <h3>アトランタ</h3>
+                    <p>ジョージア州</p>
+                </div>
+                <div class="city-card">
+                    <div class="city-icon">🚗</div>
+                    <h3>デトロイト</h3>
+                    <p>ミシガン州</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Partners -->
+        <section class="section">
+            <h2 class="section-title">パートナー組織</h2>
+            <p class="section-lead">本イベントは、介護・医療分野の主要な非営利団体と連携して実施されます。</p>
+            <div class="partner-card">
+                <div class="partner-icon">🤲</div>
+                <div>
+                    <h3>Caregiver Action Network</h3>
+                    <p>家族介護者を支援する全米規模の団体</p>
+                </div>
+            </div>
+            <div class="partner-card">
+                <div class="partner-icon">🧠</div>
+                <div>
+                    <h3>Alzheimer's Association (アルツハイマー協会)</h3>
+                    <p>認知症患者とその家族を支援</p>
+                </div>
+            </div>
+            <div class="partner-card">
+                <div class="partner-icon">💙</div>
+                <div>
+                    <h3>American Diabetes Association (米国糖尿病協会)</h3>
+                    <p>糖尿病患者とその介護者を支援</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Program Content -->
+        <section class="section">
+            <h2 class="section-title">プログラム内容: 学べる ChatGPT 活用法</h2>
+            <p class="section-lead">参加者は、介護の日常業務に ChatGPT を活用する以下のような方法を学びます。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🗓️ スケジュールとチェックリストの整理</h3>
+                    <p>介護スケジュールとチェックリストを ChatGPT で整理し、日々のタスク管理の負担を軽減する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📖 教育資料のわかりやすい言葉への変換</h3>
+                    <p>信頼できる教育資料を、わかりやすい平易な言葉に変換して理解を助ける。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📍 地域リソースの検索</h3>
+                    <p>介護に役立つ地域のリソースやサポートを ChatGPT を使って探す。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 サポートグループ用ガイドの作成</h3>
+                    <p>サポートグループのディスカッションガイドを作成し、介護者同士の交流を支える。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Responsible AI -->
+        <section class="section">
+            <h2 class="section-title">責任ある AI 利用の指導</h2>
+            <p class="section-lead">プログラムでは実践的な活用法に加え、安全で責任ある利用方法も重視されています。</p>
+            <div class="responsible-list">
+                <div class="responsible-item"><span class="mark">🔒</span> 個人情報の保護方法</div>
+                <div class="responsible-item"><span class="mark">⚠️</span> AI ツールの限界の理解</div>
+                <div class="responsible-item"><span class="mark">🩺</span> 医療専門家に相談すべきタイミングの見極め</div>
+            </div>
+            <div class="policy-box">
+                <strong>OpenAI の位置づけ: "complement, not replace"</strong>
+                AI は医療・法律・金融のアドバイスを「補完するものであり、代替するものではない」という位置づけを明確にしています。
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">プログラムの全体像</h2>
+            <p class="section-lead">パートナー組織と連携した AI Skills Jam を通じて、5 都市の介護者が実践的なスキルを習得します。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Academy["OpenAI Academy"]
+        Jam["AI Skills Jam for<br>Caregivers & Community Health"]
+    end
+
+    subgraph Partners["パートナー組織"]
+        CAN["Caregiver Action<br>Network"]
+        ALZ["Alzheimer's<br>Association"]
+        ADA["American Diabetes<br>Association"]
+    end
+
+    subgraph Skills["習得スキル"]
+        Schedule["スケジュール・<br>チェックリスト整理"]
+        Plain["教育資料の<br>平易な言い換え"]
+        Local["地域リソースの検索"]
+        Guide["サポートグループ用<br>ガイド作成"]
+    end
+
+    Partners --> Jam
+    Jam --> Caregivers(["介護者<br>(5 都市で開催)"])
+    Caregivers --> Skills
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Jam openai
+    class CAN,ALZ,ADA dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- OpenAI Academy -->
+        <section class="section">
+            <h2 class="section-title">OpenAI Academy における位置づけ</h2>
+            <div class="academy-box">
+                <p>本イベントは、AI を誰にとっても実践的で利用しやすいものにするという OpenAI Academy の継続的な取り組みの一環です。OpenAI Academy はこれまでに、非営利団体、中小企業、K-12 教育者、高齢者を対象としたイベントを開催してきており、今回の介護者向けプログラムはその対象をさらに広げるものとなります。また、参加者から寄せられる質問、アイデア、経験は、今後の学習リソースの開発に活かされる予定です。</p>
+                <div class="academy-tags">
+                    <span class="academy-tag">非営利団体</span>
+                    <span class="academy-tag">中小企業</span>
+                    <span class="academy-tag">K-12 教育者</span>
+                    <span class="academy-tag">高齢者</span>
+                    <span class="academy-tag new">NEW: 介護者</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">介護者・支援団体への影響</h2>
+            <div class="use-case">
+                <h4>👨‍👩‍👧 個人・家族介護者</h4>
+                <p>技術的な前提知識なしで ChatGPT の実践的な活用法を無料で学べる機会が得られる。スケジュール管理や資料の理解など、日常の介護負担の軽減が期待できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🏢 介護者支援団体</h4>
+                <p>Caregiver Action Network などの団体と OpenAI の連携モデルは、支援団体が AI リテラシー教育を自組織のプログラムに組み込む際の参考になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🩺 医療・福祉関係者</h4>
+                <p>AI はあくまで専門家のアドバイスを補完するものという位置づけが明示されており、介護者に対して適切な AI 利用の指針を示す土台となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🌐 地域コミュニティ</h4>
+                <p>5 都市での対面開催により、オンラインだけではリーチしにくい層にも AI スキル習得の機会が広がる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI は全米家族介護者月間に合わせ、OpenAI Academy を通じて介護者向けの無料対面ワークショップ<span class="highlight">「AI Skills Jam for Caregivers &amp; Community Health」</span>をオークランド、タンパ、ピッツバーグ、アトランタ、デトロイトの 5 都市で開催します。Caregiver Action Network、アルツハイマー協会、米国糖尿病協会と連携し、スケジュール整理や資料の平易化といった実践的な ChatGPT 活用法に加え、<span class="highlight">個人情報の保護や AI の限界の理解といった責任ある利用方法</span>も指導します。週 4,000 万件以上と推定される「他者のための医療」に関する質問が示すとおり、介護における AI 活用のニーズはすでに大きく、本プログラムは<span class="highlight">そのニーズに安全かつ実践的に応える取り組み</span>と位置づけられます。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/helping-caregivers-use-ai-in-everyday-life" target="_blank" rel="noopener noreferrer">https://openai.com/index/helping-caregivers-use-ai-in-everyday-life</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li><a href="https://openai.com/index/helping-caregivers-use-ai-in-everyday-life" target="_blank" rel="noopener noreferrer">Helping caregivers use AI in everyday life (OpenAI 公式)</a></li>
+                <li><a href="https://academy.openai.com/" target="_blank" rel="noopener noreferrer">OpenAI Academy</a></li>
+                <li><a href="https://www.caregiveraction.org/" target="_blank" rel="noopener noreferrer">Caregiver Action Network</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
