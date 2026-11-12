@@ -6,8 +6,12 @@ OpenAI の最新ニュースレポート一覧
 ## 2026
 
 - [2026-11-12](2026/2026-11-12-gilbert-tobin-sam-nickless.md) - Gilbert + Tobin、AI で法務ビジネスを再考 - CEO Sam Nickless 氏との対談
+- [2026-11-11](2026/2026-11-11-jiostar-vijay-seshadri.md) - JioStar チーフアーキテクトが語る 5 億ユーザー規模の AI コンテンツディスカバリー
+- [2026-11-11](2026/2026-11-11-chatgpt-plus-for-veterans.md) - 退役軍人・現役軍人向け ChatGPT Plus: 2 万人超が無料提供を利用し、民間キャリアへの移行に活用
+- [2026-11-10](2026/2026-11-10-singapore-airlines-travel-work.md) - シンガポール航空、OpenAI 技術で旅行体験と業務を進化
 - [2026-11-10](2026/2026-11-10-introducing-businesses-chatgpt.md) - Businesses in ChatGPT の発表: ビジネスと 12 億人のユーザーをつなぐ新プラットフォーム
 - [2026-11-10](2026/2026-11-10-helping-caregivers-use-ai-in-everyday-life.md) - 介護者の日常生活における AI 活用支援: OpenAI Academy が米国 5 都市で無料ワークショップを開催
+- [2026-11-10](2026/2026-11-10-cogent-security.md) - Cogent と OpenAI、企業向けサイバー防御ファクトリーを構築
 - [2026-11-10](2026/2026-11-10-closing-ai-guidance-gap-education.md) - 教育における AI ガイダンス・ギャップの解消: ThinkYoung 調査と EMEA 教育パートナーシップの知見
 - [2026-11-10](2026/2026-11-10-ai-effect-on-freelance-work.md) - Work at the Frontier: AI がフリーランス業務に与える影響 — OpenAI と Upwork の共同研究
 - [2026-11-09](2026/2026-11-09-kuken.md) - 空研工業、70 年分の冷却塔図面を数分で検索可能に
