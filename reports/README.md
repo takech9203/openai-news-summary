@@ -5,7 +5,11 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-12](2026/2026-11-12-holidays-extras-codex.md) - Holiday Extras が Codex で「何を作れるか」を再定義 — アプリ刷新でコンバージョン 32.5% 向上
+- [2026-11-12](2026/2026-11-12-gondola.md) - Gondola、Codex の活用でチームの開発力を拡大し売上を倍増
 - [2026-11-12](2026/2026-11-12-gilbert-tobin-sam-nickless.md) - Gilbert + Tobin、AI で法務ビジネスを再考 - CEO Sam Nickless 氏との対談
+- [2026-11-12](2026/2026-11-12-children-first-declaration.md) - OpenAI、AI と子どもの安全に関する研究を支援 — パリ平和フォーラムで憲章に署名し 200 万ドルを拠出
+- [2026-11-12](2026/2026-11-12-amplitude.md) - Amplitude、OpenAI を活用し製品改善を 1〜2 日で出荷 — プロアクティブ製品エージェント「Wave」の導入事例
 - [2026-11-11](2026/2026-11-11-jiostar-vijay-seshadri.md) - JioStar チーフアーキテクトが語る 5 億ユーザー規模の AI コンテンツディスカバリー
 - [2026-11-11](2026/2026-11-11-chatgpt-plus-for-veterans.md) - 退役軍人・現役軍人向け ChatGPT Plus: 2 万人超が無料提供を利用し、民間キャリアへの移行に活用
 - [2026-11-10](2026/2026-11-10-singapore-airlines-travel-work.md) - シンガポール航空、OpenAI 技術で旅行体験と業務を進化

@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amplitude、OpenAI を活用し製品改善を 1〜2 日で出荷 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .sub-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 28px 0 14px;
+            color: var(--openai-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .section p.lead {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote */
+        .quote {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+            font-size: 14.5px;
+            color: var(--text-primary);
+        }
+
+        .quote .speaker {
+            display: block;
+            margin-top: 10px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: #1DB791;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Before/After Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 {
+            color: #DC2626;
+        }
+
+        .comparison-card.after h4 {
+            color: #059669;
+        }
+
+        .comparison-card .big {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: grid;
+            gap: 14px;
+            counter-reset: step;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .process-step h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .process-step p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card .model-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .data-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .data-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .data-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .data-table td strong {
+            color: var(--text-primary);
+        }
+
+        .data-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        /* Eval cards */
+        .eval-card {
+            background: var(--openai-light);
+            border: 2px solid rgba(16, 163, 127, 0.15);
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 18px;
+        }
+
+        .eval-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--openai-dark);
+        }
+
+        .eval-card .eval-criteria {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .eval-card ul {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .eval-card ul li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .eval-card ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Score bars */
+        .score-bar-group {
+            margin: 14px 0 6px;
+        }
+
+        .score-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .score-bar-label {
+            flex: 0 0 170px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .score-bar-track {
+            flex: 1;
+            height: 22px;
+            background: var(--openai-gray);
+            border-radius: 11px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: var(--gradient-accent);
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding-right: 10px;
+            min-width: 48px;
+        }
+
+        .score-bar-fill.other {
+            background: linear-gradient(135deg, #8E8EA0 0%, #A5A5B5 100%);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14.5px;
+            color: var(--text-primary);
+        }
+
+        /* Related Links */
+        .related-links {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .related-links li {
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 14px;
+        }
+
+        .related-links li::before {
+            content: '🔗 ';
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .score-bar-label {
+                flex: 0 0 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">導入事例</span>
+                <h1>Amplitude、OpenAI を活用し製品改善を 1〜2 日で出荷</h1>
+                <p class="subtitle">プロアクティブ製品エージェント「Wave」の導入事例 — 約 80% を OpenAI モデルで構築</p>
+                <p class="date">📅 2026-11-12 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- 概要 / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">プロダクトアナリティクス企業の Amplitude は、OpenAI モデルを基盤とするプロアクティブ製品エージェント「Wave」を構築し、製品改善の出荷期間を従来の約 1 か月から 1〜2 日に短縮した。Wave は製品インサイトを実装計画に変換し、Codex を含むコーディングエージェントに引き渡し、その効果を測定するまでを一貫して担う。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>出荷期間を約 1 か月から 1〜2 日に短縮</h3>
+                        <p>Wave が製品データの分析から実装計画の作成、コーディングエージェントへの引き渡し、効果測定までを閉ループで実行</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>約 80% が OpenAI モデルで構成</h3>
+                        <p>GPT‑6.1 Sol、GPT‑6 Luna、GPT‑Image‑2.5 Flare をタスクの品質・レイテンシ・コストに応じて使い分け</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📈</div>
+                    <div class="key-point-content">
+                        <h3>エンゲージメント 160% 向上を実証</h3>
+                        <p>自社ホームページのサジェスションカードをパーソナライズし、カード経由のメッセージ送信数が対照群比 160% 増加</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>Codex などコーディングエージェントと連携</h3>
+                        <p>技術計画と受け入れ基準を添えて、Wave から直接コーディングエージェントに作業を送信できる</p>
+                    </div>
+                </div>
+            </div>
+            <div class="quote">
+                「AI は、私たちが割り当てようと考えもしなかった有用な仕事を自ら見つけられるようになった」
+                <span class="speaker">— Spenser Skates 氏 (Amplitude CEO)</span>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">Before / After: 製品改善の出荷スピード</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before</h4>
+                    <div class="big">約 1 か月</div>
+                    <p>製品インサイトの発見から改善の出荷まで、従来のプロセスでは約 1 か月を要していた</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After</h4>
+                    <div class="big">1〜2 日</div>
+                    <p>Wave が機会の特定から実装計画、コーディングエージェントへの引き渡しまでを自動化し、1〜2 日で出荷</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数字で見る成果 -->
+        <section class="section">
+            <h2 class="section-title">数字で見る成果</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">+160%</div>
+                    <div class="stat-label">サジェスションカード経由のメッセージ送信数 (対照群比、1 日)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1〜2 日</div>
+                    <div class="stat-label">製品改善の出荷期間 (従来は約 1 か月)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 80%</div>
+                    <div class="stat-label">Wave に占める OpenAI モデルの構成比率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1/4</div>
+                    <div class="stat-label">顧客の公開した実験・フラグ・ガイドのうち、機会提示の当日に公開された割合</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主な内容 -->
+        <section class="section">
+            <h2 class="section-title">主な内容</h2>
+
+            <h3 class="sub-title">🌊 製品データから出荷済みの改善へ</h3>
+            <p class="lead">Wave は Amplitude のプロアクティブ製品エージェント。チームが対象の製品領域と改善したい目標・メトリクスを指定すると、Wave は Amplitude のデータ、セッションリプレイ、顧客フィードバック、コードを統合して分析し、以下を実行する。</p>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h4>機会の特定と優先順位付け</h4>
+                        <p>改善機会を発見し、優先度を決定</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h4>ソリューションの開発</h4>
+                        <p>修正案、技術計画、受け入れ基準を作成</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h4>実装の調整</h4>
+                        <p>人とコーディングエージェント (Codex を含む) に実装を引き渡し</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <h4>効果測定</h4>
+                        <p>結果を追跡し、学習を次の改善サイクルに反映</p>
+                    </div>
+                </div>
+            </div>
+            <p class="lead" style="margin-top: 16px;">機会が実装可能な状態になると、チームは Wave から直接、技術計画と受け入れ基準を添えてコーディングエージェントに作業を送信できる。</p>
+
+            <h3 class="sub-title">🎯 タスクごとに最適な OpenAI モデルを使い分け</h3>
+            <p class="lead">Amplitude はタスクごとに品質、レイテンシ、コストを評価し、モデルを割り当てている。専門化したエージェントに作業を分割することで、高価な推論モデルを本当に必要なタスクに集中させている。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔍 深い調査と高度な推論</h3>
+                    <span class="model-badge">GPT‑6.1 Sol</span>
+                    <p>機会マネージャーと、コード・データに対する深い調査を担当。高度な推論が必要なタスクに集中投入</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ 高頻度・低コストのタスク</h3>
+                    <span class="model-badge">GPT‑6 Luna</span>
+                    <p>コードのスキャンや小規模な評価チェックなど、高頻度で実行される軽量タスクを高速・低コストで処理</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎨 製品モックアップ生成</h3>
+                    <span class="model-badge">GPT‑Image‑2.5 Flare</span>
+                    <p>セッションリプレイのスクリーンショットを視覚参照として、製品モックアップを生成</p>
+                </div>
+            </div>
+            <div class="quote">
+                「OpenAI は強力な推論モデルと、より小さく高速なモデルの両方を提供してくれたため、製品全体で品質・レイテンシ・推論コストのバランスを取ることができた」
+                <span class="speaker">— Spenser Skates 氏 (Amplitude CEO)</span>
+            </div>
+
+            <h3 class="sub-title">📊 160% のエンゲージメント向上を実現した実例</h3>
+            <p class="lead">Amplitude は自社ホームページで Wave をテストした。同ページには AI エージェントとの会話を始めるための汎用的なサジェスションカードが設置されていたが、Wave は 100 件のセッションリプレイのサンプル分析から、<strong>80 人のユーザーが自分で質問を入力し、カードを選択したのはわずか 12 人</strong>であることを発見した。</p>
+            <p class="lead">Wave は、ユーザーの最近のチャート、ダッシュボード、遷移元ページに基づいてカードをパーソナライズすることを提案。自由入力の維持や、パーソナライズ用コンテキストがない場合の汎用サジェスション表示を含む技術計画を作成した。チームは簡単なレビューの後、コーディングエージェントに作業を引き渡して A/B テストを実施。その結果、ホームページのサジェスションカード経由のメッセージ送信数は、<strong>1 日で対照群比 160% 増加</strong>した。</p>
+            <div class="quote">
+                「画期的ではないが見過ごされがちな改善が、予想外の形で機能の採用を高める好例だ」
+                <span class="speaker">— Eric Carlson 氏 (Senior Principal AI Engineer)</span>
+            </div>
+        </section>
+
+        <!-- 技術的な詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細: モデル評価の結果</h2>
+            <p class="lead">Amplitude は各タスクに対してモデルを定量評価している。</p>
+
+            <div class="eval-card">
+                <h4>🔬 Opportunity Investigator (機会調査エージェント) の評価</h4>
+                <p class="eval-criteria">評価基準: 発見の裏付け / 偽陽性の回避 / 評価者フィードバックの反映 / ツール障害からの回復 / 証拠と主張の整合性の 5 つ</p>
+                <div class="score-bar-group">
+                    <div class="score-bar-row">
+                        <div class="score-bar-label">GPT‑6.1 Sol</div>
+                        <div class="score-bar-track"><div class="score-bar-fill" style="width: 81.2%;">4.06 / 5</div></div>
+                    </div>
+                    <div class="score-bar-row">
+                        <div class="score-bar-label">代替モデル A</div>
+                        <div class="score-bar-track"><div class="score-bar-fill other" style="width: 72.4%;">3.62</div></div>
+                    </div>
+                    <div class="score-bar-row">
+                        <div class="score-bar-label">代替モデル B</div>
+                        <div class="score-bar-track"><div class="score-bar-fill other" style="width: 70.4%;">3.52</div></div>
+                    </div>
+                    <div class="score-bar-row">
+                        <div class="score-bar-label">代替モデル C</div>
+                        <div class="score-bar-track"><div class="score-bar-fill other" style="width: 58.8%;">2.94</div></div>
+                    </div>
+                </div>
+                <ul>
+                    <li>5 つの調査基準すべてで GPT‑6.1 Sol がトップ</li>
+                    <li>調査時間の中央値も最速の 54 分</li>
+                </ul>
+            </div>
+
+            <div class="eval-card">
+                <h4>📐 Data Science Agent の評価</h4>
+                <ul>
+                    <li>GPT‑6.1 Sol: 67.5 / 100 (別の主要モデルは 69.3)</li>
+                    <li>ディスパッチあたりの平均モデルコスト: GPT‑6.1 Sol が 1.28 ドル、比較対象は 2.63 ドル (約半分のコスト)</li>
+                    <li>ツール契約の遵守、推定と不確実性、証拠の根拠付けでは GPT‑6.1 Sol が上回る</li>
+                </ul>
+            </div>
+
+            <div class="eval-card">
+                <h4>🖼️ ワイヤーフレーム生成の評価</h4>
+                <p class="eval-criteria">評価基準: コミュニケーション品質 / 製品忠実度 / 指示遵守 / テキストと UI の可読性 / 視覚的一貫性を 15 件の機会で評価</p>
+                <div class="score-bar-group">
+                    <div class="score-bar-row">
+                        <div class="score-bar-label">OpenAI 画像生成モデル</div>
+                        <div class="score-bar-track"><div class="score-bar-fill" style="width: 80.3%;">80.3 / 100</div></div>
+                    </div>
+                    <div class="score-bar-row">
+                        <div class="score-bar-label">別の画像生成モデル</div>
+                        <div class="score-bar-track"><div class="score-bar-fill other" style="width: 63.9%;">63.9</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- アーキテクチャ -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Inputs["入力データ"]
+        Analytics["Amplitude 分析データ"]
+        Replay["セッションリプレイ"]
+        Feedback["顧客フィードバック"]
+        Code["コード"]
+    end
+
+    subgraph Wave["Wave (プロアクティブ製品エージェント)"]
+        Investigator["Opportunity Investigator&lt;br/&gt;GPT-6.1 Sol"]
+        Scanner["コードスキャン / 評価チェック&lt;br/&gt;GPT-6 Luna"]
+        Mockup["モックアップ生成&lt;br/&gt;GPT-Image-2.5 Flare"]
+        Plan["技術計画 + 受け入れ基準"]
+    end
+
+    subgraph Delivery["実装と検証"]
+        Agents["コーディングエージェント&lt;br/&gt;(Codex など)"]
+        ABTest["A/B テスト / 効果測定"]
+    end
+
+    Analytics --> Investigator
+    Replay --> Investigator
+    Feedback --> Investigator
+    Code --> Scanner
+    Replay --> Mockup
+
+    Investigator --> Plan
+    Scanner --> Plan
+    Mockup --> Plan
+    Plan --> Agents
+    Agents --> ABTest
+    ABTest -->|学習を次サイクルへ| Investigator
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Investigator,Scanner,Mockup openai
+    class Agents,Plan dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- 開発者への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>🔄 自己改善型プロダクトの実践例</h4>
+                <p>データ分析から機会発見、実装計画、コーディングエージェントへの引き渡し、効果測定までを閉ループで回すエージェント設計の参考になる。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚖️ タスク別モデル選定の指針</h4>
+                <p>深い調査には高推論モデル (GPT‑6.1 Sol)、高頻度の軽量タスクには小型高速モデル (GPT‑6 Luna) という使い分けで、品質・レイテンシ・コストを最適化できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧑‍💼 人の統制を保った自動化</h4>
+                <p>バグ修正はコーディングエージェントに直行させ、新機能や大きな変更は人間がレビューするなど、自動化レベルをチームが制御する運用モデルが示されている。</p>
+            </div>
+            <div class="use-case">
+                <h4>🚢 出荷スピードの実績</h4>
+                <p>顧客が公開した実験・フラグ・ガイドのうち、4 分の 1 は Wave が機会を提示した当日に公開され、半数は 4 日以内、3 分の 2 は 1 週間以内に公開された。</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>Amplitude の Wave は、OpenAI モデル (GPT‑6.1 Sol、GPT‑6 Luna、GPT‑Image‑2.5 Flare) を約 80% の基盤として構築されたプロアクティブ製品エージェントであり、製品改善の出荷期間を約 1 か月から 1〜2 日に短縮した。自社ホームページでの検証では、サジェスションカードのパーソナライズにより 160% のエンゲージメント向上を達成している。タスクごとの厳密なモデル評価に基づく使い分けと、人間がレビュー範囲を制御する運用により、「自己改善するプロダクト」というビジョンを現実のワークフローとして示した事例である。</p>
+            </div>
+        </section>
+
+        <!-- 関連リンク -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://openai.com/business/customer-stories/amplitude" target="_blank" rel="noopener noreferrer">Amplitude 導入事例 (OpenAI 公式)</a></li>
+                <li><a href="https://openai.com/business/" target="_blank" rel="noopener noreferrer">OpenAI for Business</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li><a href="https://openai.com/codex/" target="_blank" rel="noopener noreferrer">Codex</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/business/customer-stories/amplitude" target="_blank" rel="noopener noreferrer">https://openai.com/business/customer-stories/amplitude</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-11-12 | カテゴリ: 導入事例 | ソース: OpenAI News</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
