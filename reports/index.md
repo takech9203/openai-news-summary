@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-13](2026/2026-11-13-shield.md) - Shield、OpenAI を活用して IT 技術者のレガシーポータル業務の引き継ぎを支援
+- [2026-11-13](2026/2026-11-13-introducing-chatgpt-wallet.md) - ChatGPT Wallet の発表: エージェントによる安全な購入手続きを実現
 - [2026-11-12](2026/2026-11-12-holidays-extras-codex.md) - Holiday Extras が Codex で「何を作れるか」を再定義 — アプリ刷新でコンバージョン 32.5% 向上
 - [2026-11-12](2026/2026-11-12-gondola.md) - Gondola、Codex の活用でチームの開発力を拡大し売上を倍増
 - [2026-11-12](2026/2026-11-12-gilbert-tobin-sam-nickless.md) - Gilbert + Tobin、AI で法務ビジネスを再考 - CEO Sam Nickless 氏との対談
