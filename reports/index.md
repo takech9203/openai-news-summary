@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-15](2026/2026-11-15-step-toward-defining-the-standard-model.md) - 標準模型の格子上での定義に向けた一歩 — GPT-6 Astra が支援した非摂動的定式化の提案
+- [2026-11-15](2026/2026-11-15-our-new-blog-for-science.md) - OpenAI が科学専門ブログ「OpenAI Science Blog」を開設
 - [2026-11-13](2026/2026-11-13-shield.md) - Shield、OpenAI を活用して IT 技術者のレガシーポータル業務の引き継ぎを支援
 - [2026-11-13](2026/2026-11-13-introducing-chatgpt-wallet.md) - ChatGPT Wallet の発表: エージェントによる安全な購入手続きを実現
 - [2026-11-12](2026/2026-11-12-holidays-extras-codex.md) - Holiday Extras が Codex で「何を作れるか」を再定義 — アプリ刷新でコンバージョン 32.5% 向上
