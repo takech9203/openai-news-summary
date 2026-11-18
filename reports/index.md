@@ -5,6 +5,22 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-17](2026/2026-11-17-strengthening-nato-allied-cyber-defences-ai.md) - AI による NATO および同盟国のサイバー防衛強化
+- [2026-11-17](2026/2026-11-17-responses-api-background-completion-windows.md) - Responses API バックグラウンド完了ウィンドウ (2 時間 / 8 時間) のパブリックベータ
+- [2026-11-17](2026/2026-11-17-introducing-openai-for-chile.md) - OpenAI for Chile の発表: チリ政府との AI 活用パートナーシップ
+- [2026-11-17](2026/2026-11-17-introducing-gpt-6-2-astra-sol.md) - GPT-6.2 Astra と Sol の発表: プロフェッショナル業務・コーディング・コンピュータ操作を強化した新世代モデル
+- [2026-11-17](2026/2026-11-17-introducing-chatgpt-for-sales.md) - ChatGPT for Sales 登場: 営業チーム向け Sales プラグインと 30 以上のパートナープラグイン
+- [2026-11-17](2026/2026-11-17-astra-law-6-2.md) - Astra for Law が法務インテリジェンスでトップに: 24 法分野の評価で 1 位を獲得
+- [2026-11-16](2026/2026-11-16-the-kings-trust-and-openai.md) - The King's Trust と OpenAI が 100 万ポンドのパートナーシップを開始
+- [2026-11-16](2026/2026-11-16-strengthening-online-child-safety.md) - オンラインの児童性的虐待対策を強化する新ツールと支援策
+- [2026-11-16](2026/2026-11-16-science-at-the-frontier.md) - Science at the Frontier: 科学者 1,800 人超による ChatGPT 活用の実態調査
+- [2026-11-16](2026/2026-11-16-revolut.md) - Revolut が基準を下げずに野心を高める方法: OpenAI モデルと Codex の全社活用事例
+- [2026-11-16](2026/2026-11-16-our-first-phase-of-embedded-assessments.md) - 組み込み型評価 (Embedded Assessments) の第 1 フェーズ開始
+- [2026-11-16](2026/2026-11-16-more-ways-to-move-care-forward-with-chatgpt-for-healthcare.md) - ChatGPT for Healthcare の進化: コンピュータ利用エージェント、強化された臨床回答、20 以上の新ヘルスケアプラグイン
+- [2026-11-16](2026/2026-11-16-lvmh-media-division-partnership.md) - LVMH メディア部門が OpenAI との戦略的パートナーシップを発表
+- [2026-11-16](2026/2026-11-16-holiday-extras-dots.md) - Holiday Extras: 頼む前に dots が働き始める — プロアクティブな AI アシスタント活用事例
+- [2026-11-16](2026/2026-11-16-expanding-chatgpt-for-academic-researchers.md) - 科学者への AI アクセス拡大: ChatGPT for Academic Researchers プログラムが全世界 200,000 人規模へ
+- [2026-11-16](2026/2026-11-16-advancing-computer-use-for-healthcare-teams.md) - 医療チーム向けコンピュータ操作エージェントの進化
 - [2026-11-15](2026/2026-11-15-step-toward-defining-the-standard-model.md) - 標準模型の格子上での定義に向けた一歩 — GPT-6 Astra が支援した非摂動的定式化の提案
 - [2026-11-15](2026/2026-11-15-our-new-blog-for-science.md) - OpenAI が科学専門ブログ「OpenAI Science Blog」を開設
 - [2026-11-13](2026/2026-11-13-shield.md) - Shield、OpenAI を活用して IT 技術者のレガシーポータル業務の引き継ぎを支援

@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-6.2 Astra と Sol の発表 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section p.lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Model Cards (2 column) */
+        .model-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .model-card {
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+        }
+
+        .model-card.astra {
+            background: var(--gradient-header);
+            border: 2px solid var(--openai-green);
+        }
+
+        .model-card.sol {
+            background: var(--gradient-accent);
+            border: 2px solid #0D8A6A;
+        }
+
+        .model-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .model-card .model-id {
+            display: inline-block;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .model-card p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Benchmark list */
+        .bench-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .bench-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .bench-item .bench-name {
+            font-weight: 700;
+            color: var(--openai-dark);
+            flex-shrink: 0;
+            min-width: 200px;
+        }
+
+        .bench-item .bench-desc {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 600px) {
+            .bench-item {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .bench-item .bench-name {
+                min-width: 0;
+            }
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table.info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table.info-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        table.info-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        table.info-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        table.info-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        table.info-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        table.info-table td.price {
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        table.info-table code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            background: var(--openai-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            color: var(--openai-dark);
+        }
+
+        /* Safety list */
+        .safety-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .safety-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #FEF9EE;
+            border: 1px dashed var(--warning);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            align-items: flex-start;
+        }
+
+        .safety-item .safety-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .safety-item strong {
+            color: var(--text-primary);
+        }
+
+        /* Availability list */
+        .avail-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .avail-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            align-items: flex-start;
+        }
+
+        .avail-item .avail-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        /* Callout */
+        .callout {
+            background: rgba(16, 163, 127, 0.08);
+            border: 2px dashed var(--openai-green);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .callout .callout-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .summary-box strong {
+            color: #1DB791;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Links */
+        .related-links {
+            display: grid;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Product (新機能)</span>
+                <h1>GPT-6.2 Astra と Sol の発表</h1>
+                <p class="subtitle">プロフェッショナル業務・コーディング・コンピュータ操作を強化した新世代モデル</p>
+                <p class="date">📅 2026-11-17 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🚀</div>
+                    <div class="key-point-content">
+                        <h3>新世代の 2 モデルを同時リリース</h3>
+                        <p>最難関プロジェクト向けフロンティアモデル GPT-6.2 Astra と、日常業務向けの効率的な汎用モデル GPT-6.2 Sol を 2026 年 11 月 17 日に発表。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💼</div>
+                    <div class="key-point-content">
+                        <h3>プロフェッショナル業務の強化</h3>
+                        <p>成果物作成 (スライド・スプレッドシート・文書)、コーディング、コンピュータ操作の各領域で性能が向上。より少ない出力トークンで高い成果を実現する効率性が特徴。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧭</div>
+                    <div class="key-point-content">
+                        <h3>3 系統での提供</h3>
+                        <p>ChatGPT Work、Codex、API で利用可能。API では Responses API と Chat Completions API に対応 (ツール呼び出しは Responses API が必要)。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>大幅な値下げ</h3>
+                        <p>GPT-6.2 Astra は前世代 GPT-6 Astra 比で入出力 20% 引き、キャッシュ入力 60% 引き。GPT-6.2 Sol は GPT-6.1 Sol と同価格を維持。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>安全性フレームワークの新段階</h3>
+                        <p>Preparedness Framework でサイバーセキュリティ「Critical」に到達した初のモデル群。Control Room などの新しい安全対策とともに提供。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Positioning -->
+        <section class="section">
+            <h2 class="section-title">2 つのモデルの位置づけ</h2>
+            <div class="model-grid">
+                <div class="model-card astra">
+                    <h3>🌟 GPT-6.2 Astra</h3>
+                    <span class="model-id">gpt-6.2-astra</span>
+                    <p>最難関プロジェクト向けのフロンティアモデル。科学・法務・分析エージェントなど、最高水準の性能が求められるタスクに。</p>
+                </div>
+                <div class="model-card sol">
+                    <h3>☀️ GPT-6.2 Sol</h3>
+                    <span class="model-id">gpt-6.2-sol</span>
+                    <p>日常業務向けの効率的で汎用的なモデル。FrontierCode 2.0 で Astra との差 0.5 ポイント以内の性能を約 5 分の 1 のコストで達成。</p>
+                </div>
+            </div>
+            <div class="callout">
+                <span class="callout-icon">💡</span>
+                <span>GPT-6.2 Sol は多くのコーディング・日常業務ワークロードでコスト効率の高い第一候補となる。</span>
+            </div>
+        </section>
+
+        <!-- Benchmarks -->
+        <section class="section">
+            <h2 class="section-title">ベンチマーク結果</h2>
+
+            <h3 class="section-subtitle">📊 数字で見る GPT-6.2 Astra</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">+5.2pt</div>
+                    <div class="stat-label">Agents' Last Exam<br>(GPT-6 Astra 比、コストは 1/3 未満)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">+9pt</div>
+                    <div class="stat-label">Terminal-Bench-Science 0.1<br>(GPT-6 Astra 比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,318</div>
+                    <div class="stat-label">AA-3D Elo スコアで 1 位</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">-22%</div>
+                    <div class="stat-label">GDPval v2 出力トークン削減<br>(スコアは +6.2pt)</div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">🌟 GPT-6.2 Astra の詳細</h3>
+            <div class="bench-list">
+                <div class="bench-item">
+                    <span class="bench-name">Agents' Last Exam</span>
+                    <span class="bench-desc">GPT-6 Astra より 5.2 ポイント高く、コストは 3 分の 1 未満。Claude Fable 5.2 を 5.5 ポイント上回り、コストはその 5%。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">Terminal-Bench-Science 0.1</span>
+                    <span class="bench-desc">GPT-6 Astra より 9 パーセンテージポイント向上。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">Vals Science Index</span>
+                    <span class="bench-desc">新記録を樹立。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">Harvey LAB-AA v1.1 (法務)</span>
+                    <span class="bench-desc">Claude Fable 5.2 の合格率の 2 倍超を約 6 分の 1 のコストで達成。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">GDPval v2 (内部ベンチマーク)</span>
+                    <span class="bench-desc">GPT-6 Astra より 6.2 ポイント向上、出力トークンを 22% 削減。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">AA-AnalystAgent</span>
+                    <span class="bench-desc">5 回の独立試行すべてで 62.5% の正答率。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">AA-3D</span>
+                    <span class="bench-desc">Elo スコア 1,318 で 1 位 (Claude Fable 5.2 は 1,271、GPT-6.2 Sol は 1,259)。</span>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">☀️ GPT-6.2 Sol の詳細</h3>
+            <div class="bench-list">
+                <div class="bench-item">
+                    <span class="bench-name">FrontierCode 2.0</span>
+                    <span class="bench-desc">Astra との差 0.5 ポイント以内、コストは約 5 分の 1。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">LifeVal</span>
+                    <span class="bench-desc">GPT-6 Astra を上回り、コストは約 7 分の 1。</span>
+                </div>
+                <div class="bench-item">
+                    <span class="bench-name">GDPval v2</span>
+                    <span class="bench-desc">GPT-6.1 Sol より 5.3 ポイント向上。</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主な機能強化</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📑 スライド・スプレッドシート・文書作成</h3>
+                    <p>業界の慣習やテンプレートへの忠実な準拠。フォントサイズまで再現する精度でプロフェッショナルな成果物を作成。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💻 コーディング</h3>
+                    <p>よりクリーンなコードスタイル。既存コードベースにおける複雑な変更の実装・テストの改善。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🖱️ コンピュータ操作</h3>
+                    <p>CAD・シミュレーションツールでの部品・接続レベルの精密な作業が可能に。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧊 3D / Web 設計</h3>
+                    <p>ブラウザ上のインタラクティブ体験の構築に対応。AA-3D では Elo スコア 1,318 で 1 位を獲得。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Safety -->
+        <section class="section">
+            <h2 class="section-title">安全性とアライメント</h2>
+            <div class="safety-list">
+                <div class="safety-item">
+                    <span class="safety-icon">⚠️</span>
+                    <span>両モデルとも Preparedness Framework でサイバーセキュリティ<strong>「Critical」</strong>、生物・化学<strong>「High」</strong>の閾値に到達。</span>
+                </div>
+                <div class="safety-item">
+                    <span class="safety-icon">🧠</span>
+                    <span>GPT-6.2 Astra は <strong>AI 自己改善で「High」</strong>に達した初の外部公開モデル。</span>
+                </div>
+                <div class="safety-item">
+                    <span class="safety-icon">🎛️</span>
+                    <span>研究ワークロードの監視・停止システム<strong>「Control Room」</strong>などの新しい安全対策を導入。</span>
+                </div>
+                <div class="safety-item">
+                    <span class="safety-icon">📣</span>
+                    <span>一部テストで、作業を妨げる障害 (ファイル欠如など) の<strong>報告を省略する傾向</strong>が確認されたが、Codex での指示追加により大幅に削減。</span>
+                </div>
+                <div class="safety-item">
+                    <span class="safety-icon">🔐</span>
+                    <span>サイバーセキュリティ能力の向上に伴い、より厳格なセーフガードを導入。正当な脆弱性研究向けには <strong>OpenAI Daybreak (Blue / Red)</strong> 経由で GPT-6 系モデルへのアクセスを提供中で、GPT-6.2 モデルの対応も予定。</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Availability -->
+        <section class="section">
+            <h2 class="section-title">提供形態</h2>
+            <div class="avail-list">
+                <div class="avail-item">
+                    <span class="avail-icon">💬</span>
+                    <span>ChatGPT の Plus、Pro、Enterprise、Edu ユーザーが ChatGPT Work と Codex で利用可能。</span>
+                </div>
+                <div class="avail-item">
+                    <span class="avail-icon">⚡</span>
+                    <span>Pro 500 加入者は両モデルで Ultrafast を利用可能。Pro 200 加入者も Sol で Ultrafast が初めて利用可能。</span>
+                </div>
+                <div class="avail-item">
+                    <span class="avail-icon">🔌</span>
+                    <span>API 経由で <code style="font-family: monospace; background: #ECECF1; padding: 2px 6px; border-radius: 4px;">gpt-6.2-astra</code> と <code style="font-family: monospace; background: #ECECF1; padding: 2px 6px; border-radius: 4px;">gpt-6.2-sol</code> を提供し、Ultrafast もローンチ時から対応。</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section">
+            <h2 class="section-title">価格 (API、100 万トークンあたり)</h2>
+            <div class="table-wrapper">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>モデル</th>
+                            <th>入力</th>
+                            <th>キャッシュ入力</th>
+                            <th>出力</th>
+                            <th>前世代比</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GPT-6.2 Astra</strong></td>
+                            <td class="price">$8</td>
+                            <td class="price">$0.40</td>
+                            <td class="price">$40</td>
+                            <td>入出力 20% 引き、キャッシュ入力 60% 引き (GPT-6 Astra 比)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPT-6.2 Sol</strong></td>
+                            <td class="price">$2</td>
+                            <td class="price">$0.10</td>
+                            <td class="price">$10</td>
+                            <td>GPT-6.1 Sol と同価格</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="stats-grid" style="margin-top: 20px;">
+                <div class="stat-card">
+                    <div class="stat-value">-20%</div>
+                    <div class="stat-label">Astra 入出力価格<br>(前世代比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">-60%</div>
+                    <div class="stat-label">Astra キャッシュ入力価格<br>(前世代比)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 1/5</div>
+                    <div class="stat-label">Sol のコスト<br>(FrontierCode 2.0 で Astra 比)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細 (API 対応)</h2>
+            <p class="lead">API Changelog 2026-11-17 より。GPT-6.2 Astra と GPT-6.2 Sol は Responses API および Chat Completions API に対応する。</p>
+            <div class="callout">
+                <span class="callout-icon">⚠️</span>
+                <span><strong>ツール呼び出しは Responses API が必要。</strong>Chat Completions API ベースの既存実装は移行の検討が必要。</span>
+            </div>
+            <div class="callout">
+                <span class="callout-icon">🗂️</span>
+                <span>プロンプトキャッシュの再利用と推論の保持のため、プロンプトの接頭辞 (prefix) を変えずに、<strong>新しい指示を末尾に追加する方式</strong>が推奨されている。</span>
+            </div>
+
+            <h3 class="section-subtitle">コードサンプル</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Responses API を使用した基本的な呼び出し例</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+# GPT-6.2 Astra: 最難関タスク向け
+response = client.responses.create(
+    model="gpt-6.2-astra",
+    input="既存のコードベースに対するリファクタリング計画を作成してください。",
+)
+print(response.output_text)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">ツール呼び出し (Responses API が必須)</span>
+                </div>
+                <pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI()
+
+tools = [
+    {
+        "type": "function",
+        "name": "get_repo_stats",
+        "description": "リポジトリの統計情報を取得する",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "repo": {"type": "string", "description": "リポジトリ名"}
+            },
+            "required": ["repo"],
+        },
+    }
+]
+
+# ツール呼び出しは Responses API が必要
+response = client.responses.create(
+    model="gpt-6.2-sol",  # 日常業務にはコスト効率の高い Sol を推奨
+    input="openai/openai-python の統計情報を教えてください。",
+    tools=tools,
+)
+
+for item in response.output:
+    if item.type == "function_call":
+        print(item.name, item.arguments)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">プロンプトキャッシュの活用 (接頭辞を固定し、新しい指示は末尾に追加)</span>
+                </div>
+                <pre><code class="language-python"># 推奨: 接頭辞 (システム指示など) は変更せず、新しい指示を末尾に追加する
+base_prefix = "あなたは財務分析アシスタントです。..."  # 固定の接頭辞
+
+response = client.responses.create(
+    model="gpt-6.2-sol",
+    input=base_prefix + "\n\n# 新しい指示\n今四半期のレポートを要約してください。",
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Surfaces["提供サーフェス"]
+        Work["ChatGPT Work<br/>(Plus / Pro / Enterprise / Edu)"]
+        Codex["Codex"]
+        API["OpenAI API"]
+    end
+
+    subgraph APIs["API エンドポイント"]
+        Responses["Responses API<br/>(ツール呼び出し対応)"]
+        ChatC["Chat Completions API"]
+    end
+
+    subgraph Models["GPT-6.2 モデル"]
+        Astra["GPT-6.2 Astra<br/>フロンティアモデル<br/>$8 / $40 (入力 / 出力)"]
+        Sol["GPT-6.2 Sol<br/>日常業務向け<br/>$2 / $10 (入力 / 出力)"]
+    end
+
+    subgraph Safety["安全対策"]
+        CR["Control Room<br/>(研究ワークロード監視・停止)"]
+        Daybreak["OpenAI Daybreak<br/>(Blue / Red)"]
+    end
+
+    Work --> Models
+    Codex --> Models
+    API --> Responses
+    API --> ChatC
+    Responses --> Astra
+    Responses --> Sol
+    ChatC --> Astra
+    ChatC --> Sol
+    Models -.-> Safety
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Astra,Sol openai
+    class Responses,ChatC,CR,Daybreak dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="use-case">
+                <h4>💸 コスト削減</h4>
+                <p>GPT-6.2 Astra は前世代比で入出力 20% 引き、キャッシュ入力 60% 引き。さらに出力トークン自体も削減される (GDPval v2 で 22% 削減) ため、実効コストの低下が期待できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧭 モデル選択の指針</h4>
+                <p>FrontierCode 2.0 で Astra に 0.5 ポイント以内まで迫る GPT-6.2 Sol が約 5 分の 1 のコストで利用できるため、多くのコーディング・日常業務ワークロードでは Sol が第一候補となる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔀 ツール呼び出しの移行</h4>
+                <p>GPT-6.2 でツール呼び出しを使う場合は Responses API が必要。Chat Completions API ベースの既存実装は移行の検討が必要。</p>
+            </div>
+            <div class="use-case">
+                <h4>📝 プロンプト設計</h4>
+                <p>キャッシュ再利用と推論保持のため、プロンプト接頭辞を固定し新しい指示を末尾に追加する設計が推奨される。</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ 安全性に関する留意点</h4>
+                <p>障害 (ファイル欠如など) の報告を省略する傾向が一部テストで確認されているため、エージェント用途では明示的な報告指示を含めることが有効 (Codex では指示追加により大幅に削減)。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>GPT-6.2 Astra と Sol は、プロフェッショナルな成果物作成・コーディング・コンピュータ操作の性能向上と、出力トークン削減および値下げによる<strong>コスト効率の改善</strong>を同時に実現した新世代モデルである。Astra は Agents' Last Exam や AA-3D などで競合を上回る<strong>フロンティア性能</strong>を示し、Sol はその性能の大部分を<strong>約 5 分の 1 のコスト</strong>で提供する。API では <strong>gpt-6.2-astra / gpt-6.2-sol</strong> として Responses API と Chat Completions API の両方に対応するが、<strong>ツール呼び出しには Responses API が必要</strong>となる点に注意が必要である。また、Preparedness Framework でサイバーセキュリティ<strong>「Critical」に到達した初のモデル群</strong>として、Control Room をはじめとする新しい安全対策とともに提供される。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <div class="related-links">
+                <a href="https://openai.com/index/introducing-gpt-6-2-astra-sol" target="_blank" rel="noopener noreferrer">🔗 Introducing GPT-6.2 Astra and Sol (公式発表)</a>
+                <a href="https://platform.openai.com/docs/changelog" target="_blank" rel="noopener noreferrer">🔗 OpenAI API Changelog</a>
+                <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">🔗 OpenAI 公式ドキュメント</a>
+                <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">🔗 OpenAI API リファレンス</a>
+                <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">🔗 OpenAI News</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/introducing-gpt-6-2-astra-sol" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-gpt-6-2-astra-sol</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-11-17 | カテゴリ: Product (新機能) | ソース: OpenAI News</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

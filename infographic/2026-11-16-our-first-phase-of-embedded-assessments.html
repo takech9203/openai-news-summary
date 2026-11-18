@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>組み込み型評価 (Embedded Assessments) の第 1 フェーズ開始 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Metadata table */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .meta-table th,
+        .meta-table td {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .meta-table th {
+            width: 30%;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        .meta-table a {
+            color: var(--openai-green);
+            word-break: break-all;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section p.lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card .card-tag {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            margin-top: 10px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .feature-card ul li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .feature-card ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        /* Detail blocks */
+        .detail-block {
+            margin-bottom: 28px;
+        }
+
+        .detail-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-block h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed rgba(16, 163, 127, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-block p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .detail-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            color: var(--text-primary);
+            padding: 0 2px;
+        }
+
+        /* Access resource chips */
+        .chip-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .chip {
+            background: var(--openai-gray);
+            border: 1px solid rgba(16, 163, 127, 0.3);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Numbered claim list */
+        .claim-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+            counter-reset: claim;
+            margin: 12px 0;
+        }
+
+        .claim-list li {
+            counter-increment: claim;
+            background: var(--openai-light);
+            border-radius: 10px;
+            padding: 12px 16px 12px 52px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        .claim-list li::before {
+            content: counter(claim);
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 26px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Protocol list */
+        .protocol-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .protocol-item {
+            background: var(--openai-light);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+        }
+
+        .protocol-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--openai-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .protocol-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child {
+            margin-bottom: 0;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: #FFFFFF;
+        }
+
+        /* Insight list */
+        .insight-list {
+            list-style: none;
+            display: grid;
+            gap: 14px;
+        }
+
+        .insight-list li {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .insight-list li .insight-emoji {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .insight-list li strong {
+            color: var(--text-primary);
+        }
+
+        /* Links */
+        .link-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .link-list li {
+            font-size: 14px;
+        }
+
+        .link-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .link-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.02) 100%);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .summary-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Safety</span>
+                <h1>🔍 組み込み型評価 (Embedded Assessments) の第 1 フェーズ開始</h1>
+                <p class="date">📅 2026-11-16 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">メタデータ</h2>
+            <table class="meta-table">
+                <tr>
+                    <th>発表日</th>
+                    <td>2026-11-16</td>
+                </tr>
+                <tr>
+                    <th>ソース</th>
+                    <td>OpenAI News</td>
+                </tr>
+                <tr>
+                    <th>カテゴリ</th>
+                    <td>Safety</td>
+                </tr>
+                <tr>
+                    <th>公式リンク</th>
+                    <td><a href="https://openai.com/index/our-first-phase-of-embedded-assessments" target="_blank" rel="noopener noreferrer">https://openai.com/index/our-first-phase-of-embedded-assessments</a></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Overview / Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead">OpenAI は、Apollo Research、METR、Transluce、Goodfire の 4 つの独立評価機関と契約を締結し、「組み込み型評価 (Embedded Assessments)」の第 1 フェーズを開始した。独立した外部の専門家にラボ内部のモデルやシステムへの深いアクセスを長期間にわたり提供し、モデルのアライメントやセーフガードの有効性を評価してもらう取り組みである。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🤝</div>
+                    <div class="key-point-content">
+                        <h3>4 つの独立評価機関と契約締結</h3>
+                        <p>Apollo Research、METR、Transluce、Goodfire の 4 機関が、それぞれ異なる専門性で OpenAI の内部モデル・システムを独立に評価する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔓</div>
+                    <div class="key-point-content">
+                        <h3>内部リソースへの深いアクセスを長期間提供</h3>
+                        <p>モデルチェックポイント、ソースコード、学習・評価データ、モニタリングシステム、技術文書、担当研究者との対話など、OpenAI の研究者が使用する内部リソースの一部にアクセスできる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>アライメントとセーフガードの独立検証</h3>
+                        <p>初期評価は学習中および内部利用中のモデルのアライメントとセーフガードに焦点を当て、OpenAI のセーフティケース (安全性の論証) を補完する。OpenAI 自身が予期していなかった失敗の発見につながる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏛️</div>
+                    <div class="key-point-content">
+                        <h3>ホワイトハウス合意のコミットメントを支援</h3>
+                        <p>超知能に関するホワイトハウス合意 (White House Accord on Super Intelligence) における安全管理の独立評価へのコミットメントを支え、業界全体での独立評価と公開透明性の共通基準強化に貢献する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📜</div>
+                    <div class="key-point-content">
+                        <h3>評価プロトコルの公開</h3>
+                        <p>深いアクセスとセキュリティ・機密性・監督・評価の独立性と完全性のバランスを取るプロトコルを策定し、まだ標準化されていない組み込み型評価の規範に関する議論を進めるため公開している。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What are Embedded Assessments -->
+        <section class="section">
+            <h2 class="section-title">組み込み型評価とは</h2>
+            <div class="detail-block">
+                <p>組み込み型評価は、独立した専門家がラボの内部モデルとシステムに深くアクセスし、特に<span class="highlight">セーフティケースに関連する領域</span>において、モデルのアライメントとセーフガードの有効性を<span class="highlight">長期間にわたり評価</span>する仕組みである。各評価のニーズに応じて、評価者は以下のような内部リソースへのアクセスを得る。</p>
+                <div class="chip-grid">
+                    <span class="chip">🧩 モデルチェックポイント</span>
+                    <span class="chip">💻 ソースコード</span>
+                    <span class="chip">📊 学習データおよび評価データ</span>
+                    <span class="chip">📡 モニタリングシステム</span>
+                    <span class="chip">📄 技術文書</span>
+                    <span class="chip">🗣️ 担当の研究者・エンジニアとの対話</span>
+                </div>
+                <p>このアクセスにより、評価者は独立した評価を実施し、OpenAI 自身が予期していなかった失敗を発見するための証拠とコンテキストを得ることができる。この取り組みは、第三者評価に関する優先事項と原則、および長年にわたる第三者評価者との協働 (内部モニタリングシステムのパイロット評価や Hugging Face インシデントの調査を含む) の上に構築されている。</p>
+            </div>
+        </section>
+
+        <!-- 4 Assessors (Feature Cards) -->
+        <section class="section">
+            <h2 class="section-title">4 つのパイロット評価機関と各評価の内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="card-tag">Apollo Research</span>
+                    <h3>🕵️ 秘密裏の subversion (破壊的行動) の評価</h3>
+                    <p>モデルが開発者の意図に反して秘密裏に行動する可能性と、OpenAI のセーフガードがそのような行動を検出できるかを評価。学習、安全性テスト、内部利用から得られる証拠に基づき、2 段階で 4 つの主張を検証する。</p>
+                    <ul>
+                        <li>学習が subversion を動機づけていないこと</li>
+                        <li>強力な評価とレッドチーミングでも subversion を誘発できないこと</li>
+                        <li>内部利用中にモデルが subversion を試みていないこと</li>
+                        <li>subversion の背後にある推論が検出可能であること</li>
+                    </ul>
+                    <p style="margin-top: 10px;">第 1 段階では、公開・未公開モデルや学習チェックポイント、関連する学習データと評価結果、学習介入の記録、モニタリングシステムとフラグされた挙動、研究者へのアクセスに加え、独立したテストに必要なツールと計算資源が提供される。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="card-tag">METR</span>
+                    <h3>📏 アライメント評価とモニター評価</h3>
+                    <p><strong>アライメント評価</strong>: 第 1 フェーズでは、OpenAI 史上最大の強化学習 (RL) ランにおけるミスアライメント挙動を評価 (既存のテストやモニターが見逃した可能性のある失敗も含む)。合意された取り決めの範囲内で、METR は独立して評価の優先順位を設定し、探索・分析・引き出し (elicitation) 実験を反復する。アクセスには、関連チェックポイントのサンプリング、学習・評価のロールアウト、当該ランのミスアライメントモニタリング記録が含まれる。</p>
+                    <p style="margin-top: 10px;"><strong>モニター評価</strong>: 最近のモニターのストレステスト演習に続き、より広範なモニター評価の実施に暫定合意 (評価スコープは相互合意が保留中)。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="card-tag">Transluce</span>
+                    <h3>🧪 ポストトレーニングのアライメント評価の品質検証</h3>
+                    <p>OpenAI のポストトレーニング (post-training) アライメント評価の品質とカバレッジを検証する初期評価を実施。公開・未公開モデル、ポストトレーニングのアライメント評価と関連結果、モデル挙動データとセーフティケース文書、研究者へのアクセスに加え、独立したテストに必要なツールと計算資源が提供される。</p>
+                    <p style="margin-top: 10px;">さらに 2027 年初頭に約 8 週間のフォローアップ評価を実施する意向を共有。追加モデルへのより広いアクセス、アライメント評価へのより深いアクセス、評価結果がモデルリリース判断にどう反映されるかの情報が提供される予定。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="card-tag">Goodfire</span>
+                    <h3>🔬 解釈可能性による学習ランのモニタリング</h3>
+                    <p>解釈可能性 (interpretability) の研究者を OpenAI に組み込み、Goodfire プラットフォームを用いてモデル内部を分析。評価の主目的は学習ランのモニタリング、デバッグ、アライメントである。評価結果の主な利用者は OpenAI 内部の研究者であり、その知見を安全性改善に活用する。Goodfire はコラボレーションの進展に応じて学びと発見を公開する予定。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Protocols -->
+        <section class="section">
+            <h2 class="section-title">組み込み型評価のプロトコル</h2>
+            <p class="lead">OpenAI は評価者からの意見を取り入れ、深いアクセスとセキュリティ・機密性・監督・評価の独立性と完全性のバランスを取るためのプロトコルとプロセスを策定した。まだ標準化されていない組み込み型評価の規範に関する議論を進めるため、これらを公開している。</p>
+            <div class="protocol-list">
+                <div class="protocol-item">
+                    <h4>🎯 スコープ設定と反復</h4>
+                    <p>各エンゲージメントは、合意されたスコープと、厳密な評価に必要なアクセス・リソース・安全性の取り決めから始まる。特定の安全性主張をテストする評価もあれば、定義されたシステムや学習ランの中で予期しない失敗モードを発見する余地を評価者に与える評価もある。モデルの重みやアーキテクチャなど最も機密性の高い IP への直接アクセスが必要な場合は、評価者と OpenAI 研究者をペアにして分析を実行するなどの代替手段を検討する。</p>
+                </div>
+                <div class="protocol-item">
+                    <h4>🏢 安全なオンサイト環境</h4>
+                    <p>機密情報へのアクセスが必要な評価者は、OpenAI のオフィスでオンサイト作業を行い、OpenAI のデバイスが提供される。評価者には、実験や評価の実行時に最低限 OpenAI 従業員と同等のセキュリティ基準に従うことが求められる。</p>
+                </div>
+                <div class="protocol-item">
+                    <h4>⚖️ 監督と紛争解決</h4>
+                    <p>OpenAI Foundation の理事会の独立監督委員会である Safety and Security Committee (SSC) が、評価の前・最中・終了時に監督責任を行使できる。SSC は編集されていない報告書を受け取り、評価者と SSC は評価期間中に非公開も含めて相互に対話できる。OpenAI と評価者の間の意見の相違は Safety Advisory Group と OpenAI 幹部にエスカレーションされ、指定期間内に解決されない場合は SSC に付託される。</p>
+                </div>
+                <div class="protocol-item">
+                    <h4>✍️ 従業員との対話と attestation (証明)</h4>
+                    <p>OpenAI は評価者と話せるスタッフを承認・ガイダンス提供し、対話はオフレコ (評価には活用できるが、公開や従業員への帰属は不可) とする。別途の attestation 経路を通じて、評価者は従業員との会話で得た情報を検証・修正・明確化する OpenAI 証明済みステートメントを要求でき、OpenAI が証明したステートメントの公開、または OpenAI が証明を拒否した事実の開示が可能である。</p>
+                </div>
+                <div class="protocol-item">
+                    <h4>🧊 利益相反の開示とクールオフ期間</h4>
+                    <p>個人的関係や金銭的利害を含む利益相反を明確かつ透明に管理する。評価者が競合情報を慎重に扱いながら複数のラボで責任を持って働けるよう、クールオフ期間の設計も含め、明確なプロセスを評価者と共同で策定中である。</p>
+                </div>
+                <div class="protocol-item">
+                    <h4>📢 公開と責任ある開示期間</h4>
+                    <p>評価者は評価結果の公開において独立性を維持するが、OpenAI は機密情報を編集 (redact) する権利を保持する。セキュリティや安全性のリスクをもたらす可能性のある発見については、対応と修復の時間を確保するため、責任ある開示の遅延を要請する場合がある。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <p class="lead">組み込み型評価の全体構造は以下のとおりである。各評価機関が異なる専門性で OpenAI の内部システムを評価し、その結果が SSC による監督と公開レポートにつながる。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph OpenAI["OpenAI 内部リソース"]
+        CKPT["モデルチェックポイント"]
+        DATA["学習・評価データ"]
+        MON["モニタリングシステム"]
+        DOC["技術文書・研究者との対話"]
+    end
+
+    subgraph Assessors["組み込み型評価機関"]
+        APOLLO["Apollo Research<br/>秘密裏の subversion 評価"]
+        METR["METR<br/>RL ランのアライメント / モニター評価"]
+        TRANS["Transluce<br/>ポストトレーニング評価の品質検証"]
+        GOOD["Goodfire<br/>解釈可能性による学習ラン分析"]
+    end
+
+    subgraph Oversight["監督・公開"]
+        SSC["Safety and Security Committee<br/>(独立監督委員会)"]
+        PUB["公開レポート"]
+    end
+
+    CKPT --> Assessors
+    DATA --> Assessors
+    MON --> Assessors
+    DOC --> Assessors
+
+    APOLLO --> SSC
+    METR --> SSC
+    TRANS --> SSC
+    GOOD --> SSC
+    Assessors --> PUB
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class APOLLO,METR,TRANS,GOOD openai
+    class SSC,PUB dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <p class="lead">本発表は API の変更ではなく安全性ガバナンスに関するものだが、OpenAI のモデルを利用する開発者・組織にとって以下の意味を持つ。</p>
+            <ul class="insight-list">
+                <li>
+                    <span class="insight-emoji">✅</span>
+                    <span><strong>モデルの信頼性に関する独立した検証</strong>: 利用するモデルのアライメントとセーフガードが、OpenAI 内部だけでなく独立した第三者によって検証されるため、安全性主張の信頼性を判断する材料が増える</span>
+                </li>
+                <li>
+                    <span class="insight-emoji">📊</span>
+                    <span><strong>公開レポートによる透明性向上</strong>: 評価者が独立して評価結果を公開するため、フロンティアモデルのリスクがどのように特定・対処されているかを外部から確認できるようになる</span>
+                </li>
+                <li>
+                    <span class="insight-emoji">🌐</span>
+                    <span><strong>業界標準の形成</strong>: 組み込み型評価のプロトコル (オンサイト環境、attestation、紛争解決など) が公開されており、AI 業界全体の独立評価の規範形成に影響を与える可能性がある</span>
+                </li>
+                <li>
+                    <span class="insight-emoji">🚀</span>
+                    <span><strong>今後の拡大</strong>: 第 1 フェーズを踏まえ、安全フレームワークへの準拠や組織文化・プロセスを対象とする将来の組み込み型評価も検討されており、より広範な安全性の検証が期待される</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🏢 企業のモデル採用時のリスク評価</h4>
+                <p>OpenAI のモデルを採用する企業は、Apollo Research や METR などの独立評価機関による公開レポートを、モデルのアライメントとセーフガードに関する安全性主張を検証する材料として活用できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔬 AI 安全性研究コミュニティへの知見提供</h4>
+                <p>Goodfire の解釈可能性分析や METR の大規模 RL ランのミスアライメント評価など、通常は外部からアクセスできない内部システムの評価知見が公開され、AI 安全性研究の発展に寄与する。</p>
+            </div>
+            <div class="use-case">
+                <h4>🏛️ 他の AI ラボ・規制当局によるプロトコル参照</h4>
+                <p>公開された組み込み型評価のプロトコル (スコープ設定、オンサイト環境、SSC 監督、attestation、責任ある開示期間など) は、他の AI ラボや規制当局が独立評価の枠組みを設計する際の参照モデルとなる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>OpenAI は Apollo Research、METR、Transluce、Goodfire の 4 機関と契約し、独立した専門家が内部モデル・システムに深くアクセスして安全性を評価する「組み込み型評価」の第 1 フェーズを開始した。Apollo Research は秘密裏の subversion の検証、METR は最大規模の RL ランのミスアライメント評価とモニター評価、Transluce はポストトレーニングのアライメント評価の品質検証、Goodfire は解釈可能性によるモデル内部の分析をそれぞれ担当する。</p>
+                <p>評価の独立性とセキュリティを両立するプロトコル (オンサイト環境、SSC による監督、attestation、責任ある開示期間など) も公開されており、超知能に関するホワイトハウス合意のコミットメントを支え、業界全体の独立評価と透明性の共通基準の形成につながる取り組みである。OpenAI は今後数ヶ月でより広範な安全性の問いに対する外部評価を支援し、長期的・継続的な組み込みエンゲージメントへの発展を見込んでいる。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="link-list">
+                <li>🔗 <a href="https://openai.com/index/our-first-phase-of-embedded-assessments" target="_blank" rel="noopener noreferrer">Our first phase of embedded assessments (公式発表)</a></li>
+                <li>🔗 <a href="https://openai.com/index/towards-safety-cases-for-frontier-ai-training/" target="_blank" rel="noopener noreferrer">Towards safety cases for frontier AI training</a></li>
+                <li>🔗 <a href="https://openai.com/index/priorities-principles-third-party-assessments/" target="_blank" rel="noopener noreferrer">Priorities and principles for third party assessments</a></li>
+                <li>🔗 <a href="https://openai.com/index/strengthening-safety-with-external-testing/" target="_blank" rel="noopener noreferrer">Strengthening safety with external testing</a></li>
+                <li>🔗 <a href="https://metr.org/blog/2026-10-22-red-teaming-openai-agent-monitoring/" target="_blank" rel="noopener noreferrer">METR: Red teaming OpenAI agent monitoring</a></li>
+                <li>🔗 <a href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/" target="_blank" rel="noopener noreferrer">METR: OpenAI Hugging Face incident investigation</a></li>
+                <li>🔗 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/our-first-phase-of-embedded-assessments" target="_blank" rel="noopener noreferrer">https://openai.com/index/our-first-phase-of-embedded-assessments</a></p>
+            <p style="margin-top: 8px;">このインフォグラフィックは OpenAI News のレポート (2026-11-16) を基に作成されました。</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

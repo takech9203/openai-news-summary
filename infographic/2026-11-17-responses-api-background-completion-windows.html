@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses API バックグラウンド完了ウィンドウ - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .beta-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section .lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .section .lead code,
+        .key-point-content p code,
+        .feature-card p code,
+        .use-case p code,
+        .constraint-item p code,
+        .pricing-table td code,
+        .param-table td code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            background: var(--openai-gray);
+            color: var(--openai-dark);
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Meta Table */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .meta-table th,
+        .meta-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--openai-gray);
+        }
+
+        .meta-table th {
+            width: 30%;
+            color: var(--openai-green);
+            font-weight: 700;
+            background: var(--openai-light);
+        }
+
+        .meta-table td {
+            color: var(--text-secondary);
+        }
+
+        .meta-table a {
+            color: var(--openai-green);
+            word-break: break-all;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-card.muted .stat-value {
+            color: #A0A0B0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-sublabel {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Discount Bars */
+        .discount-bars {
+            display: grid;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .discount-bar {
+            display: grid;
+            grid-template-columns: 140px 1fr 90px;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .discount-bar .bar-label {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .discount-bar .bar-label code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--openai-gray);
+            padding: 1px 6px;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .discount-bar .bar-track {
+            background: var(--openai-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 28px;
+        }
+
+        .discount-bar .bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .discount-bar .bar-fill.standard {
+            width: 100%;
+            background: linear-gradient(135deg, #565869 0%, #444654 100%);
+        }
+
+        .discount-bar .bar-fill.w2h {
+            width: 70%;
+            background: var(--gradient-accent);
+        }
+
+        .discount-bar .bar-fill.w8h {
+            width: 60%;
+            background: linear-gradient(135deg, #0D8A6A 0%, #10A37F 100%);
+        }
+
+        .discount-bar .bar-note {
+            text-align: right;
+            font-weight: 700;
+            color: var(--openai-green);
+        }
+
+        .discount-bar .bar-note.none {
+            color: var(--text-muted);
+        }
+
+        /* Pricing / Param Table */
+        .pricing-table,
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .pricing-table th,
+        .param-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .pricing-table th:first-child,
+        .param-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .pricing-table th:last-child,
+        .param-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .pricing-table td,
+        .param-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .pricing-table tr.highlight-row td {
+            background: rgba(16, 163, 127, 0.08);
+            font-weight: 500;
+        }
+
+        .discount-chip {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .discount-chip.none {
+            background: var(--text-muted);
+        }
+
+        /* Model Chips */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .model-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.25);
+            border-radius: 14px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .model-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .model-card code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 11px;
+            color: var(--openai-green);
+            background: rgba(16, 163, 127, 0.08);
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+
+        .prereq-box {
+            background: var(--openai-light);
+            border: 2px dashed rgba(16, 163, 127, 0.4);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .prereq-box strong {
+            color: var(--openai-dark);
+        }
+
+        .prereq-box code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            background: var(--openai-gray);
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Constraints */
+        .constraint-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .constraint-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #FEF3C7;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        .constraint-item .constraint-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .constraint-item p {
+            font-size: 13px;
+            color: #92400E;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        .summary-box .highlight {
+            color: #1DB791;
+            font-weight: 700;
+        }
+
+        .summary-box code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        /* Related Links */
+        .related-links {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .related-links li {
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .discount-bar {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .discount-bar .bar-note {
+                text-align: left;
+            }
+
+            .pricing-table,
+            .param-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">API 更新</span><span class="beta-badge">Public Beta</span>
+                <h1>⏱️ Responses API バックグラウンド完了ウィンドウ (2 時間 / 8 時間)</h1>
+                <p class="subtitle">完了までの猶予時間を指定して、トークン料金を最大 40% 割引</p>
+                <p class="date">📅 2026-11-17 | ソース: OpenAI API Changelog</p>
+            </div>
+        </header>
+
+        <!-- Metadata -->
+        <section class="section">
+            <h2 class="section-title">📋 メタデータ</h2>
+            <table class="meta-table">
+                <tr>
+                    <th>発表日</th>
+                    <td>2026-11-17</td>
+                </tr>
+                <tr>
+                    <th>ソース</th>
+                    <td>OpenAI API Changelog</td>
+                </tr>
+                <tr>
+                    <th>カテゴリ</th>
+                    <td>API 更新</td>
+                </tr>
+                <tr>
+                    <th>公式リンク</th>
+                    <td><a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">💡 概要</h2>
+            <p class="lead">OpenAI は 2026 年 11 月 17 日、Responses API のパブリックベータとして、2 時間または 8 時間の「バックグラウンド完了ウィンドウ (background completion window)」を選択できる機能を発表しました。即時の応答を必要としないワークロードに対して完了までの猶予時間を指定することで、モデルのトークン料金が標準 (Standard) よりも割引されます。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">⏱️</div>
+                    <div class="key-point-content">
+                        <h3>完了までの猶予時間を指定できる新パラメータ</h3>
+                        <p>バックグラウンドモード (<code>background: true</code>) に <code>background_options.completion_window</code> が追加され、<code>soonest</code> / <code>2h</code> / <code>8h</code> の 3 つから初回応答が必要な時期を選択できる</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">💰</div>
+                    <div class="key-point-content">
+                        <h3>2 時間で 30%、8 時間で 40% のトークン料金割引</h3>
+                        <p>2 時間ウィンドウで 30%、8 時間ウィンドウで 40% の割引が対象リクエストごとのモデルトークン料金に適用される。完了目標は API が初回リクエストを受理した時点から起算される</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🤖</div>
+                    <div class="key-point-content">
+                        <h3>GPT-6 系 4 モデルで利用可能</h3>
+                        <p>GPT-6.2 Astra、GPT-6.2 Sol、GPT-6.1 Terra、GPT-6 Luna の各モデルがパブリックベータで割引ウィンドウに対応する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔗</div>
+                    <div class="key-point-content">
+                        <h3>マルチステップ実行も割引対象</h3>
+                        <p><code>continuation_id</code> を用いたマルチステップ実行のフォローアップリクエストも割引対象となり、長時間のエージェント実行全体でコスト効率が向上する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📦</div>
+                    <div class="key-point-content">
+                        <h3>コスト効率優先のワークロード向け</h3>
+                        <p>バッチ的な大量処理や長時間のエージェント実行など、リアルタイム性よりもコスト効率を優先したいユースケースに向けた機能。結果はポーリング、ストリーミング再開、Webhook で受け取れる</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section">
+            <h2 class="section-title">💰 料金割引の比較</h2>
+            <p class="lead">割引は対象リクエストごとのモデルトークン料金に適用され、<code>continuation_id</code> を用いたマルチステップ実行のフォローアップリクエストも割引対象となります。</p>
+            <div class="stats-grid">
+                <div class="stat-card muted">
+                    <div class="stat-value">0%</div>
+                    <div class="stat-label"><code style="color: inherit; background: none; padding: 0;">soonest</code> (デフォルト)</div>
+                    <div class="stat-sublabel">可能な限り早く / 標準料金</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">30%</div>
+                    <div class="stat-label">2 時間ウィンドウ割引</div>
+                    <div class="stat-sublabel">受理から 2 時間以内に完了</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">40%</div>
+                    <div class="stat-label">8 時間ウィンドウ割引</div>
+                    <div class="stat-sublabel">受理から 8 時間以内に完了</div>
+                </div>
+            </div>
+            <div class="discount-bars">
+                <div class="discount-bar">
+                    <span class="bar-label"><code>soonest</code></span>
+                    <div class="bar-track"><div class="bar-fill standard">標準料金 (100%)</div></div>
+                    <span class="bar-note none">割引なし</span>
+                </div>
+                <div class="discount-bar">
+                    <span class="bar-label"><code>2h</code></span>
+                    <div class="bar-track"><div class="bar-fill w2h">標準の 70%</div></div>
+                    <span class="bar-note">30% 割引</span>
+                </div>
+                <div class="discount-bar">
+                    <span class="bar-label"><code>8h</code></span>
+                    <div class="bar-track"><div class="bar-fill w8h">標準の 60%</div></div>
+                    <span class="bar-note">40% 割引</span>
+                </div>
+            </div>
+            <table class="pricing-table">
+                <tr>
+                    <th>完了ウィンドウ</th>
+                    <th>完了目標</th>
+                    <th>モデルトークン料金</th>
+                    <th>割引率 (Standard 比)</th>
+                </tr>
+                <tr>
+                    <td><code>soonest</code> (デフォルト)</td>
+                    <td>可能な限り早く</td>
+                    <td>標準料金</td>
+                    <td><span class="discount-chip none">割引なし</span></td>
+                </tr>
+                <tr class="highlight-row">
+                    <td><code>2h</code></td>
+                    <td>受理から 2 時間以内</td>
+                    <td>標準の 70%</td>
+                    <td><span class="discount-chip">30% 割引</span></td>
+                </tr>
+                <tr class="highlight-row">
+                    <td><code>8h</code></td>
+                    <td>受理から 8 時間以内</td>
+                    <td>標準の 60%</td>
+                    <td><span class="discount-chip">40% 割引</span></td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Supported Models -->
+        <section class="section">
+            <h2 class="section-title">🤖 対応モデルと前提条件</h2>
+            <p class="lead">パブリックベータ時点で割引ウィンドウに対応するモデルは以下のとおりです。</p>
+            <div class="model-grid">
+                <div class="model-card">
+                    <h4>GPT-6.2 Astra</h4>
+                    <code>gpt-6.2-astra</code>
+                </div>
+                <div class="model-card">
+                    <h4>GPT-6.2 Sol</h4>
+                    <code>gpt-6.2-sol</code>
+                </div>
+                <div class="model-card">
+                    <h4>GPT-6.1 Terra</h4>
+                    <code>gpt-6.1-terra</code>
+                </div>
+                <div class="model-card">
+                    <h4>GPT-6 Luna</h4>
+                    <code>gpt-6-luna</code>
+                </div>
+            </div>
+            <div class="prereq-box">
+                <strong>⚠️ 前提条件:</strong> 割引ウィンドウの利用には Standard 処理が必須で、<code>service_tier</code> は <code>default</code> (Standard) または <code>auto</code> を指定します。<code>auto</code> の場合は API が Standard を選択した場合のみ割引対象となります。
+            </div>
+        </section>
+
+        <!-- API Changes / Parameters -->
+        <section class="section">
+            <h2 class="section-title">🔧 API 変更点 (主要パラメータ)</h2>
+            <p class="lead">Responses API のバックグラウンドモードでは、リクエストを非同期に実行し、ポーリング、ストリーミング再開、または Webhook で結果を受け取れます。今回のアップデートで <code>background_options.completion_window</code> が新たに追加されました。</p>
+            <table class="param-table">
+                <tr>
+                    <th>パラメータ</th>
+                    <th>値</th>
+                    <th>説明</th>
+                </tr>
+                <tr>
+                    <td><code>background</code></td>
+                    <td><code>true</code> / <code>false</code></td>
+                    <td>非同期実行を有効化</td>
+                </tr>
+                <tr>
+                    <td><code>background_options.completion_window</code></td>
+                    <td><code>soonest</code> / <code>2h</code> / <code>8h</code></td>
+                    <td>初回応答が必要な時期を指定</td>
+                </tr>
+                <tr>
+                    <td><code>background_options.continuation_id</code></td>
+                    <td>アプリ側で決める一意の ID</td>
+                    <td>マルチステップ実行の継続用。再利用でキュー優先度が上がる</td>
+                </tr>
+                <tr>
+                    <td><code>service_tier</code></td>
+                    <td><code>default</code> / <code>auto</code></td>
+                    <td>割引ウィンドウは Standard 処理が必須</td>
+                </tr>
+                <tr>
+                    <td><code>stream</code></td>
+                    <td><code>true</code> / <code>false</code></td>
+                    <td><code>2h</code> / <code>8h</code> では未設定か <code>false</code> にする</td>
+                </tr>
+                <tr>
+                    <td><code>previous_response_id</code></td>
+                    <td>前回の応答 ID</td>
+                    <td>会話履歴の引き継ぎ (前応答が有効な場合のみ)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Code Sample -->
+        <section class="section">
+            <h2 class="section-title">💻 コードサンプル</h2>
+            <p class="lead">2 時間の完了ウィンドウを指定してバックグラウンド実行し、ポーリングで結果を取得する例です。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">2 時間ウィンドウ (30% 割引) のバックグラウンド実行</span>
+                </div>
+                <pre><code class="language-python">from time import sleep
+
+from openai import OpenAI
+
+client = OpenAI()
+
+# 2 時間ウィンドウ (30% 割引) でバックグラウンド実行を開始
+resp = client.responses.create(
+    model="gpt-6.2-astra",
+    input="Write a very long novel about otters in space.",
+    background=True,
+    background_options={"completion_window": "2h"},
+    service_tier="default",
+)
+print(resp.status)  # queued
+
+# ステータスが queued / in_progress の間ポーリング
+while resp.status in {"queued", "in_progress"}:
+    sleep(2)
+    resp = client.responses.retrieve(resp.id)
+
+print(resp.status)
+print(resp.output_text)</code></pre>
+            </div>
+            <p class="lead" style="margin-bottom: 0;">キャンセルは <code>client.responses.cancel(response_id)</code> で行い、冪等に動作します。結果の受信にはポーリングのほか、Webhook (<code>response.completed</code> などのイベント購読) も利用できます。</p>
+        </section>
+
+        <!-- Constraints -->
+        <section class="section">
+            <h2 class="section-title">⚠️ 制約事項</h2>
+            <div class="constraint-list">
+                <div class="constraint-item">
+                    <span class="constraint-icon">🚦</span>
+                    <p><code>2h</code> / <code>8h</code> のリクエストは Batch API と「Batch/Background Rate Limit」を共有する。入力トークンは送信時にカウントされる (<code>soonest</code> は通常のレート制限)</p>
+                </div>
+                <div class="constraint-item">
+                    <span class="constraint-icon">📡</span>
+                    <p>ストリーミングは <code>soonest</code> のみ対応。<code>2h</code> / <code>8h</code> では <code>stream</code> を未設定か <code>false</code> にする</p>
+                </div>
+                <div class="constraint-item">
+                    <span class="constraint-icon">🔐</span>
+                    <p><code>store: false</code> や Zero Data Retention の場合でも、バックグラウンドモードは実行と取得のために応答データを一時保存する (全ウィンドウで保存時に暗号化)</p>
+                </div>
+                <div class="constraint-item">
+                    <span class="constraint-icon">🗂️</span>
+                    <p>割引ウィンドウ外の Standard リクエストは、<code>2h</code> / <code>8h</code> リクエストが作成したプロンプトキャッシュを再利用できない</p>
+                </div>
+                <div class="constraint-item">
+                    <span class="constraint-icon">🔁</span>
+                    <p><code>2h</code> / <code>8h</code> の受理後、対象となる容量エラーは API が自動リトライする</p>
+                </div>
+                <div class="constraint-item">
+                    <span class="constraint-icon">⏳</span>
+                    <p>バックグラウンド応答は、同期応答よりも最初のトークンまでの時間が長くなる場合がある</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">🗺️ アーキテクチャ</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Client["Client Application"]
+        SDK["OpenAI SDK"]
+        Poll["ポーリング / Webhook 受信"]
+    end
+
+    subgraph API["OpenAI Responses API (Public Beta)"]
+        BG["background: true"]
+        subgraph Windows["completion_window"]
+            Soonest["soonest<br/>割引なし"]
+            W2["2h<br/>30% 割引"]
+            W8["8h<br/>40% 割引"]
+        end
+        Queue["Batch/Background<br/>Rate Limit キュー"]
+    end
+
+    subgraph Models["対応モデル"]
+        Astra["GPT-6.2 Astra"]
+        Sol["GPT-6.2 Sol"]
+        Terra["GPT-6.1 Terra"]
+        Luna["GPT-6 Luna"]
+    end
+
+    SDK --> BG
+    BG --> Soonest
+    BG --> W2
+    BG --> W8
+    W2 --> Queue
+    W8 --> Queue
+    Queue --> Models
+    Models --> Poll
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class W2,W8,Astra,Sol,Terra,Luna openai
+    class BG,Soonest,Queue dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Developer Impact / Use Cases -->
+        <section class="section">
+            <h2 class="section-title">🎯 開発者への影響</h2>
+            <div class="use-case">
+                <h4>💰 コスト削減</h4>
+                <p>即時性が不要なワークロード (大量のコンテンツ生成、ドキュメント処理、評価ジョブなど) を <code>8h</code> ウィンドウに回すだけで、モデルトークン料金を最大 40% 削減できる</p>
+            </div>
+            <div class="use-case">
+                <h4>🤝 エージェントワークフローとの親和性</h4>
+                <p><code>continuation_id</code> によるマルチステップ実行のフォローアップも割引対象となるため、長時間のエージェント処理全体でコスト効率が向上する</p>
+            </div>
+            <div class="use-case">
+                <h4>📐 設計上の考慮が必要</h4>
+                <p>ストリーミングが使えない、プロンプトキャッシュが Standard リクエストと分離される、Batch API とレート制限を共有するなど、既存の同期的な設計からの移行には制約の確認が必要</p>
+            </div>
+            <div class="use-case">
+                <h4>🛡️ 信頼性の向上</h4>
+                <p>受理後の容量エラーは API が自動リトライするため、クライアント側のリトライ実装を簡素化できる</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">📝 まとめ</h2>
+            <div class="summary-box">
+                <p>Responses API のバックグラウンド完了ウィンドウは、<span class="highlight">「いつまでに応答が必要か」をコストと引き換えに選択できる</span>新しい仕組みです。<code>2h</code> で 30%、<code>8h</code> で 40% のトークン料金割引はパブリックベータとして <span class="highlight">GPT-6.2 Astra / Sol、GPT-6.1 Terra、GPT-6 Luna</span> で利用可能で、Batch API に近いコスト効率を Responses API の非同期実行モデル (ポーリング、Webhook、継続実行) のまま享受できます。即時性が不要なワークロードを持つ開発者は、<code>background_options.completion_window</code> の指定を検討する価値があります。</p>
+            </div>
+        </section>
+
+        <!-- Related Links -->
+        <section class="section">
+            <h2 class="section-title">🔗 関連リンク</h2>
+            <ul class="related-links">
+                <li>📰 <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">OpenAI API Changelog</a></li>
+                <li>📘 <a href="https://developers.openai.com/api/docs/guides/background#use-discounted-completion-windows" target="_blank" rel="noopener noreferrer">バックグラウンドモードガイド (割引付き完了ウィンドウ)</a></li>
+                <li>📚 <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API リファレンス</a></li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://developers.openai.com/api/docs/changelog" target="_blank" rel="noopener noreferrer">https://developers.openai.com/api/docs/changelog</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-11-17 | ソース: OpenAI API Changelog | カテゴリ: API 更新</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
