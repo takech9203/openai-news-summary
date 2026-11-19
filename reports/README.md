@@ -5,6 +5,13 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-18](2026/2026-11-18-the-silent-consensus.md) - The Silent Consensus — 「沈黙の合意」を拒み、人間が主導権を握り続けるために
+- [2026-11-18](2026/2026-11-18-sumitomo-life.md) - 住友生命の経営層が牽引した ChatGPT Enterprise の全社導入
+- [2026-11-18](2026/2026-11-18-research-acceleration-jagged-frontier.md) - Research acceleration: The jagged frontier — コーディングエージェントによる AI 研究加速の内部測定
+- [2026-11-18](2026/2026-11-18-managing-frontier-ai-risk.md) - フロンティア AI リスクの管理: トレーニングからデプロイメントまで
+- [2026-11-18](2026/2026-11-18-le-groupe-figaro-and-openai-announce-partnership.md) - Le Groupe Figaro と OpenAI が提携、Le Figaro のジャーナリズムを ChatGPT へ
+- [2026-11-18](2026/2026-11-18-inside-the-codex-sandbox.md) - Codex サンドボックスの内部構造: OS ネイティブ機構によるファイルシステム・ネットワーク制限の実装
+- [2026-11-18](2026/2026-11-18-advancing-chip-design-with-our-models.md) - OpenAI モデルによるチップ設計の進化 — Jalapeño シリコンと RISC-V コア最適化の成果
 - [2026-11-17](2026/2026-11-17-strengthening-nato-allied-cyber-defences-ai.md) - AI による NATO および同盟国のサイバー防衛強化
 - [2026-11-17](2026/2026-11-17-responses-api-background-completion-windows.md) - Responses API バックグラウンド完了ウィンドウ (2 時間 / 8 時間) のパブリックベータ
 - [2026-11-17](2026/2026-11-17-introducing-openai-for-chile.md) - OpenAI for Chile の発表: チリ政府との AI 活用パートナーシップ

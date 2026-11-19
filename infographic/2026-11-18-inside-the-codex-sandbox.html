@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex サンドボックスの内部構造 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .sub-badge {
+            display: inline-block;
+            background: var(--info);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            margin-left: 8px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .sub-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 28px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sub-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* OS Cards */
+        .os-card {
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-light) 100%);
+        }
+
+        .os-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .os-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-header);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .os-card-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .os-card-header .os-tech {
+            display: block;
+            font-size: 12px;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        .os-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .os-card ul {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .os-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Tags & inline code */
+        .tag {
+            display: inline-block;
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--openai-green);
+            border: 1px solid rgba(16, 163, 127, 0.3);
+            border-radius: 6px;
+            padding: 1px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 2px;
+        }
+
+        code.inline {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: var(--openai-gray);
+            border-radius: 4px;
+            padding: 1px 6px;
+            color: var(--openai-dark);
+        }
+
+        /* Workspace default list */
+        .pillar-list {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .pillar {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+
+        .pillar-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--gradient-accent);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .pillar p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .pillar p strong {
+            color: var(--text-primary);
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: #92400E;
+        }
+
+        .warning-box strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Impact list */
+        .impact-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .impact-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .impact-item .impact-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+            margin-top: 1px;
+        }
+
+        .impact-item strong {
+            color: var(--text-primary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .summary-box strong {
+            color: #1DB791;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Engineering</span>
+                <span class="sub-badge">技術解説</span>
+                <h1>Codex サンドボックスの内部構造</h1>
+                <p class="subtitle">OS ネイティブ機構によるファイルシステム・ネットワーク制限の実装 — VM でもコンテナでもない、ユーザー環境内での多層防御</p>
+                <p class="date">📅 2026-11-18 | OpenAI News (Engineering)</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="section-lead">OpenAI は、Codex がユーザーのマシン上でコマンドを実行する際にファイルシステム・ネットワーク制限をどのように強制しているかを解説する技術記事を公開した。開発者のラップトップは iOS ビルドツールチェーンや iPhone シミュレータなど Docker では再現できないホスト依存ツールを含むため、VM / コンテナではなく OS ネイティブのサンドボックス機構を採用している。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>OS ネイティブサンドボックスによる多層防御</h3>
+                        <p>モデルの訓練・アラインメントに加え、ハーネス側でも保護を実装する「defense in depth」の思想。macOS Seatbelt、Linux bubblewrap + seccomp-bpf、Windows MXC を採用し、ユーザーの既存環境内でコマンドを制約する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📁</div>
+                    <div class="key-point-content">
+                        <h3>:workspace プロファイルがデフォルト</h3>
+                        <p>ワークスペース内の書き込み許可 (<code class="inline">.git</code> / <code class="inline">.codex</code> は読み取り専用)、広範なファイルシステム読み取り許可、ネットワーク無効化の 3 点を柱とする。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚙️</div>
+                    <div class="key-point-content">
+                        <h3>config.toml でカスタムプロファイル定義</h3>
+                        <p><code class="inline">[permissions]</code> セクションで <code class="inline">read</code> / <code class="inline">write</code> / <code class="inline">deny</code> のルールを定義。既存プロファイルの継承 (<code class="inline">extends</code>) や管理者向け <code class="inline">requirements.toml</code> による強制も可能。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌐</div>
+                    <div class="key-point-content">
+                        <h3>codex-network-proxy でドメイン単位の制御</h3>
+                        <p>HTTP / SOCKS5 プロキシがドメインルール (allow / deny / 承認保留) を適用。ホスト名は許可または承認後にのみ解決し、DNS 漏洩を防止する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📦</div>
+                    <div class="key-point-content">
+                        <h3>codex sandbox コマンドで MCP サーバーも保護</h3>
+                        <p>任意のコマンドをプロファイルの下で実行可能。デフォルトでは制約されない stdio MCP サーバーもラップして制限下で起動できる。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- :workspace defaults -->
+        <section class="section">
+            <h2 class="section-title">:workspace プロファイルの 3 つの柱</h2>
+            <div class="pillar-list">
+                <div class="pillar">
+                    <div class="pillar-num">1</div>
+                    <p><strong>ワークスペース内の書き込みを許可</strong>: ただし <code class="inline">.git</code> や <code class="inline">.codex</code> は読み取り専用とし、<code class="inline">.codex/config.toml</code> や <code class="inline">.git/hooks</code> の直接改変を防止</p>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-num">2</div>
+                    <p><strong>広範なファイルシステム読み取りを許可</strong>: コンパイラやビルドツールがリポジトリ外の SDK やライブラリに依存するため。トレードオフとして API キーを含む設定ファイルなども読める可能性がある</p>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-num">3</div>
+                    <p><strong>ネットワークアクセスを無効化</strong>: データ流出や外部アップロードを防止。依存関係のダウンロードなど正当な操作にも追加許可が必要になる</p>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>⚠️ 残存リスクの例</strong>
+                <code class="inline">node_modules/prettier</code> のようなローカルパッケージへの悪意あるコード注入。<code class="inline">node_modules</code> は Git に無視されることが多く <code class="inline">git status</code> に現れないため、エディタの保存時フォーマッタ経由でサンドボックス外で実行され得る。
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主要機能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔧 共通サンドボックス API</h3>
+                    <p><code class="inline">spawn_command_under_sandbox()</code> がコマンドと permission profile (限定的なネットワーク許可時はプロキシも) を受け取り、OS 固有実装が制約を適用。子プロセスは親の制約を継承し、プロセスツリー全体に適用される。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎚️ exec_command の権限エスカレーション</h3>
+                    <p>モデルはコマンド単位で <code class="inline">use_default</code> / <code class="inline">with_additional_permissions</code> / <code class="inline">require_escalated</code> を指定可能。エスカレーション要求はユーザープロンプトまたは auto-review で処理される。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📝 プロファイルのカスタマイズと継承</h3>
+                    <p><code class="inline">extends = ":workspace"</code> で組み込みプロファイルを拡張。<code class="inline">:workspace_roots</code> テーブルでワークスペースルート相対のルールを定義できる。複数の config.toml は階層的にマージ (テーブルは再帰マージ、配列は全体置換)。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏢 管理者向けガードレール</h3>
+                    <p><code class="inline">requirements.toml</code> と <code class="inline">allowed_permission_profiles</code> で利用可能なプロファイルを制約。<code class="inline">":danger-full-access" = false</code> のような明示的な禁止は上書き不可。クラウド配布の要件は <code class="inline">/etc/codex/requirements.toml</code> に優先する。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔒 DNS 漏洩対策付きプロキシ</h3>
+                    <p><code class="inline">HTTP_PROXY</code> / <code class="inline">HTTPS_PROXY</code> / <code class="inline">ALL_PROXY</code> に加え <code class="inline">PIP_PROXY</code> などアプリ固有の環境変数も注入。環境変数を無視するプログラムの直接接続は OS サンドボックスが遮断。ホスト名の解決は許可・承認後のみ。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="section-lead">3 つの OS すべてで共通のサンドボックス API を通じてコマンドを起動し、プラットフォーム固有の実装が制約を適用する。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    Model(["Codex モデル"]) -->|"exec_command ツール呼び出し"| Harness
+
+    subgraph Harness["Codex ハーネス"]
+        Profile["Permission Profile<br/>(:workspace / config.toml)"]
+        Spawn["spawn_command_under_sandbox()"]
+        Proxy["codex-network-proxy<br/>(HTTP / SOCKS5)"]
+        Profile --> Spawn
+        Spawn -.->|"ドメインルール適用"| Proxy
+    end
+
+    Spawn --> Mac
+    Spawn --> Linux
+    Spawn --> Win
+
+    subgraph OS["OS ネイティブサンドボックス"]
+        Mac["macOS: Seatbelt<br/>(sandbox-exec + SBPL)"]
+        Linux["Linux: bubblewrap<br/>+ seccomp-bpf"]
+        Win["Windows: MXC<br/>(mxc-sdk)"]
+    end
+
+    Mac --> Cmd(["ユーザーコマンド<br/>(プロセスツリー全体に制約を継承)"])
+    Linux --> Cmd
+    Win --> Cmd
+
+    Proxy -->|"allow / deny / 承認保留<br/>DNS は許可後に解決"| Net(["外部ネットワーク"])
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Profile,Spawn,Proxy openai
+    class Mac,Linux,Win dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Technical details: API & config -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: サンドボックス API と設定</h2>
+
+            <h3 class="sub-title">🔌 サンドボックス API と exec_command ツール</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">共通サンドボックス API (簡略版)</span>
+                </div>
+                <pre><code class="language-python"># This is a simplified version of the actual API.
+def spawn_command_under_sandbox(
+    program_and_args: list[str],
+    cwd: Path,
+    env: dict[str, str],
+    permission_profile: PermissionProfile,
+    network_proxy: NetworkProxy | None,
+) -> Child:</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">exec_command ツールのコマンド単位の権限指定</span>
+                </div>
+                <pre><code class="language-python">class ExecCommandToolCall:
+    # ...command-related fields...
+
+    # Per-command sandbox override. Defaults to "use_default".
+    sandbox_permissions: Literal[
+        "use_default",
+        "with_additional_permissions",
+        "require_escalated",
+    ] = "use_default"
+
+    # User-facing approval question; only for "require_escalated".
+    justification: str | None = None
+
+    # Expand network or filesystem access; only for "with_additional_permissions".
+    additional_permissions: AdditionalPermissions | None = None</code></pre>
+            </div>
+
+            <h3 class="sub-title">🗂️ カスタムプロファイルの定義 (config.toml)</h3>
+            <p class="section-lead">ファイルシステムエントリは <code class="inline">read</code> / <code class="inline">write</code> / <code class="inline">deny</code> の 3 種類。CLI は作業ディレクトリを唯一のワークスペースルートとし、ChatGPT デスクトップアプリはプロジェクトのソースフォルダを使用する。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">TOML</span>
+                    <span class="code-title">config.toml — カスタムプロファイル dev の定義</span>
+                </div>
+                <pre><code class="language-toml"># Use the dev profile by default.
+default_permissions = "dev"
+
+[permissions.dev]
+# This is displayed when /permissions is run in the Codex CLI.
+description = "Development with extra read-only protections."
+
+# A profile can be derived from an existing profile.
+# Profiles starting with ":" are provided by Codex.
+extends = ":workspace"
+
+[permissions.dev.filesystem]
+"~/build-cache" = "write"
+
+[permissions.dev.filesystem.":workspace_roots"]
+".devcontainer" = "read"
+".vscode" = "read"
+"**/*.env" = "deny"
+"secrets" = "deny"</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">TOML</span>
+                    <span class="code-title">組み込み :workspace プロファイルの保護 (参考)</span>
+                </div>
+                <pre><code class="language-toml">[permissions.":workspace".filesystem.":workspace_roots"]
+".agents" = "read"
+".aws" = "read"
+".codex" = "read"
+".git" = "read"</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">TOML</span>
+                    <span class="code-title">requirements.toml — 管理者によるプロファイル制約</span>
+                </div>
+                <pre><code class="language-toml">default_permissions = ":read-only"
+
+[allowed_permission_profiles]
+":read-only" = true
+":danger-full-access" = false</code></pre>
+            </div>
+
+            <h3 class="sub-title">🌐 ネットワーク設定とドメインルール</h3>
+            <p class="section-lead">ネットワークには「全ネットワーク無効 (<code class="inline">:workspace</code> のデフォルト)」「完全な直接アクセス (<code class="inline">:danger-full-access</code> のデフォルト)」「プロキシ経由に制限」の 3 オプションがある。ドメインルールは完全一致とワイルドカードをサポートし、明示的な deny が allow に優先する。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">TOML</span>
+                    <span class="code-title">config.toml — ドメインルールとプロキシの有効化</span>
+                </div>
+                <pre><code class="language-toml">[permissions.dev.network]
+enabled = true
+
+[permissions.dev.network.domains]
+"*.openai.com" = "allow"
+# Allow requests to local services by hostname or by IPv4/IPv6 loopback address.
+"localhost" = "allow"
+"127.0.0.1" = "allow"
+"::1" = "allow"
+"evil.example" = "deny"
+
+[features]
+# If neither local config nor managed requirements enable the proxy,
+# this profile allows direct network access; domain rules are not enforced.
+network_proxy = true</code></pre>
+            </div>
+            <div class="warning-box">
+                <strong>⚠️ DNS 漏洩に関する注意</strong>
+                プロキシは許可または承認後にのみホスト名を解決するが、広範なワイルドカードや DNS サービスへのアクセスを許可すると DNS ベースの情報流出が可能になる。
+            </div>
+
+            <h3 class="sub-title">🧪 codex sandbox コマンドと MCP サーバーの保護</h3>
+            <p class="section-lead"><code class="inline">codex sandbox</code> は任意のコマンドをプロファイルの下で実行でき、プロファイルのテストに利用できる。デフォルトで <code class="inline">cwd</code> をワークスペースルートとして扱う。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Console</span>
+                    <span class="code-title">プロファイルの動作テスト</span>
+                </div>
+                <pre><code class="language-console">$ codex sandbox --permission-profile dev -- \
+    bash -c 'cat > .vscode/settings.json'
+bash: .vscode/settings.json: Operation not permitted</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">TOML</span>
+                    <span class="code-title">stdio MCP サーバーのサンドボックス化</span>
+                </div>
+                <pre><code class="language-toml">[permissions.memory-mcp.filesystem]
+# Allow broad reads for Node.js/npm dependencies and configuration.
+":root" = "read"
+"~/.npm" = "write"
+"~/mcp-data" = "write"
+
+[permissions.memory-mcp.network]
+enabled = false
+
+[mcp_servers.memory]
+command = "codex"
+args = [
+  "sandbox",
+  "--permission-profile",
+  "memory-mcp",
+  "--",
+  "npx",
+  "--offline",
+  "@modelcontextprotocol/server-memory@1.0.0"
+]
+
+[mcp_servers.memory.env]
+MEMORY_FILE_PATH = "~/mcp-data/memory.jsonl"</code></pre>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">事前準備 — npm キャッシュへのパッケージ投入</span>
+                </div>
+                <pre><code class="language-bash"># The sandbox can write to this folder, but it cannot create it.
+mkdir -p ~/mcp-data
+
+# Installing the MCP server requires network access.
+npx -y --package=@modelcontextprotocol/server-memory@1.0.0 -c true</code></pre>
+            </div>
+        </section>
+
+        <!-- OS implementations -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: OS 別サンドボックス実装</h2>
+
+            <div class="os-card">
+                <div class="os-card-header">
+                    <div class="os-icon">🍎</div>
+                    <h3>macOS<span class="os-tech">Seatbelt (sandbox-exec + SBPL)</span></h3>
+                </div>
+                <p>Apple のカーネル強制サンドボックス機構 Seatbelt を <code class="inline">/usr/bin/sandbox-exec</code> 経由で使用。ポリシーは Scheme ベースの SBPL (Sandbox Profile Language) で記述する。</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Scheme</span>
+                        <span class="code-title">SBPL — /dev/null と /dev/zero の読み書き許可</span>
+                    </div>
+                    <pre><code class="language-scheme">(allow file-read* file-test-existence file-write-data
+  (literal "/dev/null")
+  (literal "/dev/zero"))</code></pre>
+                </div>
+                <ul>
+                    <li>ベースプロファイルは <code class="inline">(deny default)</code> で開始し、明示的に許可した以外のアウトバウンド接続を遮断</li>
+                    <li>プロキシ有効時はローカルポート (例: <code class="inline">localhost:3128</code>、<code class="inline">localhost:8081</code>) への接続許可ルールを注入</li>
+                    <li><code class="inline">(param)</code> プレースホルダと <code class="inline">-Dkey=value</code> オプションで値を埋め込める</li>
+                    <li>SBPL は非公開かつ <code class="inline">man sandbox-exec</code> に DEPRECATED 表記があるが、macOS はプロファイルを同梱し続けており Chrome / Chromium も依存しているため、当面 Seatbelt を継続使用する方針</li>
+                </ul>
+            </div>
+
+            <div class="os-card">
+                <div class="os-card-header">
+                    <div class="os-icon">🐧</div>
+                    <h3>Linux<span class="os-tech">bubblewrap + seccomp-bpf</span></h3>
+                </div>
+                <p><code class="inline">codex-linux-sandbox</code> ヘルパーが <code class="inline">bwrap</code> でマウント名前空間内のファイルシステムビューを構築し、その中で seccomp-bpf を適用してからユーザーコマンドを実行する。</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Shell</span>
+                        <span class="code-title">起動構造</span>
+                    </div>
+                    <pre><code class="language-bash">bwrap BWRAP_ARGS... -- \
+  codex-linux-sandbox --apply-seccomp-then-exec CODEX_LINUX_SANDBOX_ARGS... -- \
+  PROG ARGS...</code></pre>
+                </div>
+                <ul>
+                    <li><code class="inline">bwrap</code> は自前のベンダー版を同梱するが、PATH 上の互換インストールを優先 (一部ディストリビューションがユーザー名前空間を無効化しつつシステム bwrap に例外を与えるため)</li>
+                    <li><code class="inline">--bind</code> (書き込み可) / <code class="inline">--ro-bind</code> (読み取り専用) でパスを公開し、<code class="inline">--perms 000 --tmpfs</code> などでディレクトリ・ファイルを拒否</li>
+                    <li><code class="inline">--unshare-ipc</code>、<code class="inline">--unshare-pid</code> で他リソースも隔離し、ネットワーク無効時またはプロキシ使用時は <code class="inline">--unshare-net</code> で新しいネットワーク名前空間を作成</li>
+                    <li>deny グロブは起動前に具体パスへ展開 (実行中に新たに一致するパスは追加されない)</li>
+                    <li>seccompiler crate で BPF プログラムを動的コンパイルし、プロセスツリー全体に継承。<code class="inline">no_new_privs</code> フラグで setuid 実行による権限昇格も防止</li>
+                    <li>ネットワーク無効時は <code class="inline">connect(2)</code>、<code class="inline">bind(2)</code> などを遮断。プロキシ有効時は IP ソケットを許可しつつ、スタンドアロン Unix ドメインソケットの作成をデフォルトで遮断</li>
+                    <li>プロキシ接続は FD ハンドオフ方式: サンドボックス内で作成したループバック TCP リスナーの FD を Unix ソケットペア経由でホスト側プロセスへ引き渡し、ホストのネットワーク名前空間を晒さずに中継する</li>
+                </ul>
+            </div>
+
+            <div class="os-card">
+                <div class="os-card-header">
+                    <div class="os-icon">🪟</div>
+                    <h3>Windows<span class="os-tech">MXC (Microsoft eXecution Container)</span></h3>
+                </div>
+                <p>従来の自前サンドボックス (管理者権限が必要、ACL 操作が高コスト、ホストに永続状態が残る) から、Microsoft の MXC ベース実装へ移行中。MXC は JSON 設定スキーマを公開しており、Codex は mxc-sdk crate で実行リクエストを構築する。</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">JSON</span>
+                        <span class="code-title">MXC 設定の例 (ファイルシステム + ネットワーク)</span>
+                    </div>
+                    <pre><code class="language-json">{
+  "filesystem": {
+    "readwritePaths": [
+      "C:\\work\\demo",
+      "D:\\Users\\dev\\build-cache"
+    ],
+    "readonlyPaths": [
+      "C:\\",
+      "D:\\",
+      "Z:\\",
+      "C:\\work\\demo\\.agents",
+      "C:\\work\\demo\\.aws",
+      "C:\\work\\demo\\.codex",
+      "C:\\work\\demo\\.devcontainer",
+      "C:\\work\\demo\\.git",
+      "C:\\work\\demo\\.vscode"
+    ],
+    "deniedPaths": [
+      "C:\\work\\demo\\config\\dev.env",
+      "C:\\work\\demo\\config\\prod.env",
+      "C:\\work\\demo\\secrets"
+    ]
+  },
+  "network": {
+    "egress": {
+      "default": "deny",
+      "allow": [{
+        "to": [
+          {"cidr": "127.0.0.0/8"},
+          {"cidr": "::1/128"}
+        ]
+      }]
+    },
+    "ingress": {
+      "default": "deny",
+      "hostLoopback": "allow"
+    }
+  }
+}</code></pre>
+                </div>
+                <ul>
+                    <li><strong>固定設定</strong>: レジストリ読み取りと PowerShell 起動に必要な Win32k / デスクトップアクセスを保持しつつ、クリップボード、入力注入、デスクトップ / システム設定の制御は無効化。ホストのファイルシステム権限改変へのフォールバックも禁止</li>
+                    <li><strong>ドライブルート</strong>: MXC はデフォルト拒否のため、広範な読み取りを実現するためにローカルドライブルートへ読み取り専用グラントを再帰的に追加</li>
+                    <li><strong>競合解決</strong>: より具体的なパスが祖先のグラントを上書き。エイリアス / シンボリックリンク / ジャンクションが同一パスを指す場合は厳しい方が優先 (deny &gt; read-only &gt; read-write)</li>
+                    <li><strong>ネットワーク</strong>: 直接の外部接続を遮断しつつホストループバック接続 (プロキシを含む) を許可し、ドメインルールは共有プロキシが外部で強制</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="section">
+            <h2 class="section-title">ユースケース</h2>
+            <div class="use-case">
+                <h4>🗂️ プロジェクトに合わせた権限設計</h4>
+                <p><code class="inline">:workspace</code> を <code class="inline">extends</code> で継承し、<code class="inline">**/*.env</code> や <code class="inline">secrets</code> の deny、<code class="inline">~/build-cache</code> への write 追加など、プロジェクト固有の要件に合わせたカスタムプロファイルを定義。<code class="inline">codex sandbox</code> コマンドで事前に動作を検証できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔌 stdio MCP サーバーのサンドボックス化</h4>
+                <p>ハーネスは MCP サーバーの起動コマンドをデフォルトではサンドボックス化しないが、<code class="inline">codex sandbox</code> でラップすることで制約下で実行できる。npm キャッシュへ事前にパッケージを投入すれば、<code class="inline">npx --offline</code> によりネットワーク無効のまま起動可能。</p>
+            </div>
+            <div class="use-case">
+                <h4>🏢 組織ポリシーの強制</h4>
+                <p>管理者は <code class="inline">requirements.toml</code> で利用可能なプロファイルを制約し、<code class="inline">:danger-full-access</code> の禁止など上書き不可能なガードレールを組織全体に配布できる。クラウド配布の要件は <code class="inline">/etc/codex/requirements.toml</code> に優先する。</p>
+            </div>
+        </section>
+
+        <!-- Developer impact -->
+        <section class="section">
+            <h2 class="section-title">開発者への影響</h2>
+            <div class="impact-list">
+                <div class="impact-item">
+                    <span class="impact-icon">🔍</span>
+                    <span><strong>サンドボックス挙動の透明性向上</strong>: Codex がローカル環境で何を許可し何を遮断しているかが明確になり、エージェントにタスクを委任する際のリスク評価がしやすくなる</span>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">🎛️</span>
+                    <span><strong>カスタムプロファイルによる細かな制御</strong>: <code class="inline">.env</code> ファイルの deny やビルドキャッシュへの write 追加など、プロジェクトに合わせた権限設計ができる</span>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">🌐</span>
+                    <span><strong>ドメイン単位のネットワーク制御</strong>: 全面許可 / 全面禁止の二択ではなく、必要なドメインのみ許可する運用が可能になる</span>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">🛡️</span>
+                    <span><strong>MCP サーバーの保護</strong>: デフォルトでは制約されない stdio MCP サーバーにもファイルシステム・ネットワーク制限を適用できる</span>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">🏢</span>
+                    <span><strong>組織ポリシーの強制</strong>: 上書き不可能なガードレールを管理者が配布できる</span>
+                </div>
+                <div class="impact-item">
+                    <span class="impact-icon">⚠️</span>
+                    <span><strong>残存リスクの認識</strong>: 広範な読み取り許可による秘密情報の読み取り、<code class="inline">node_modules</code> 経由のサンドボックス外コード実行、広いワイルドカード許可時の DNS ベース流出など、サンドボックスでも防げないリスクを理解した上で運用する必要がある</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>Codex のサンドボックスは VM やコンテナではなく、<strong>OS ネイティブ機構</strong> (macOS の Seatbelt、Linux の bubblewrap + seccomp-bpf、Windows の MXC) の上に構築されている。3 つの OS で共通のサンドボックス API と permission profile を通じて、ワークスペース書き込み許可・広範な読み取り・ネットワーク遮断というデフォルトを強制しつつ、<strong>config.toml によるカスタマイズ</strong>、<strong>codex-network-proxy によるドメイン単位の制御と DNS 漏洩対策</strong>、管理者向けの <strong>requirements.toml</strong> まで多層的な制御を提供する。OpenAI は今後、権限設定の簡易化と OS 保護機構の活用拡大により、ユーザーの制御を保ったままエージェントの能力を広げることを目標としている。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/inside-the-codex-sandbox" target="_blank" rel="noopener noreferrer">https://openai.com/index/inside-the-codex-sandbox</a></p>
+            <ul>
+                <li>関連: <a href="https://developers.openai.com/codex" target="_blank" rel="noopener noreferrer">Codex ドキュメント</a></li>
+                <li>関連: <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
