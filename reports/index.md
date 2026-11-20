@@ -5,6 +5,9 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-19](2026/2026-11-19-how-openai-performance-factory-keeps-chatgpt-fast.md) - OpenAI の Performance Factory が ChatGPT を高速に保つ仕組み
+- [2026-11-19](2026/2026-11-19-gpt-live-1-1-webrtc-standby.md) - GPT-Live-1.1 リリースと WebRTC スタンバイ設定の導入
+- [2026-11-19](2026/2026-11-19-deploying-daybreak-red.md) - Daybreak Red のデプロイ: 監督付きセキュリティ調査のためのリファレンスアーキテクチャ
 - [2026-11-18](2026/2026-11-18-the-silent-consensus.md) - The Silent Consensus — 「沈黙の合意」を拒み、人間が主導権を握り続けるために
 - [2026-11-18](2026/2026-11-18-sumitomo-life.md) - 住友生命の経営層が牽引した ChatGPT Enterprise の全社導入
 - [2026-11-18](2026/2026-11-18-research-acceleration-jagged-frontier.md) - Research acceleration: The jagged frontier — コーディングエージェントによる AI 研究加速の内部測定

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI の Performance Factory が ChatGPT を高速に保つ仕組み - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--openai-dark);
+        }
+
+        .section p.desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Timeline (6 stages of evolution) */
+        .timeline {
+            position: relative;
+            padding-left: 36px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: linear-gradient(180deg, var(--openai-gray) 0%, var(--openai-green) 100%);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .timeline-item::before {
+            content: attr(data-step);
+            position: absolute;
+            left: -36px;
+            top: 16px;
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 0 0 4px white;
+        }
+
+        .timeline-item h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .timeline-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Workflow detail cards */
+        .workflow-card {
+            background: var(--openai-light);
+            border: 2px dashed rgba(16, 163, 127, 0.35);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+
+        .workflow-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .workflow-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .callout {
+            background: #FFF7ED;
+            border-left: 4px solid var(--warning);
+            border-radius: 0 12px 12px 0;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        /* Lessons */
+        .lesson {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 18px 20px;
+            border-radius: 12px;
+            background: var(--openai-gray);
+            margin-bottom: 14px;
+        }
+
+        .lesson:last-child { margin-bottom: 0; }
+
+        .lesson-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .lesson h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .lesson p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child { margin-bottom: 0; }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Engineering</span>
+                <h1>🏭 OpenAI の Performance Factory が ChatGPT を高速に保つ仕組み</h1>
+                <p class="date">📅 2026-11-19 | ソース: OpenAI News</p>
+                <p class="lead">Codex を中核に、パフォーマンスリグレッションの検出・調査・修正・回復検証をエンドツーエンドで自動化する社内システムを解説</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🏭</div>
+                    <div class="key-point-content">
+                        <h3>Codex によるパフォーマンス問題の自動修復</h3>
+                        <p>エージェンティック開発の急速なペースにより手動のパフォーマンスエンジニアリングは持続不可能に。クラウド上で動作する「Performance Factory」がリグレッション (性能劣化) の調査・修正・回復検証をエンドツーエンドで自動化。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>約 3 か月で 1,700 件以上の調査を自動実行</h3>
+                        <p>最初のワークフロー「Regression Workflow」は稼働開始から約 3 か月で 1,700 件以上の調査を追跡し、600 件以上の根本原因を特定。1 日あたり 17 件の自動調査に相当する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚔️</div>
+                    <div class="key-point-content">
+                        <h3>敵対的レビューで診断精度を担保</h3>
+                        <p>手動レビューした根本原因提案 100 件のうち 70% が正確と評価。別の Codex セッションが診断の反証を試みる敵対的レビュー (adversarial review) などのチェック機構で精度向上を図る。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧩</div>
+                    <div class="key-point-content">
+                        <h3>4 つの構成要素からなる汎用アーキテクチャ</h3>
+                        <p>タスクサービス、ディスパッチループ、クラウド上の Codex、サブスクリプションの 4 要素。タスクが状態と調査結果を保持し、エージェントとエンジニアの間で作業を引き継ぎながら再開できる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧑‍💻</div>
+                    <div class="key-point-content">
+                        <h3>人間の役割は「判断」へシフト</h3>
+                        <p>エンジニアの仕事は手動調査から「コンテキストの追加、トレードオフの検討、何を出荷するかの判断」へ。低リスクな変更を人間の介在なしに出荷することも検討中。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る Performance Factory</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1,700+</div>
+                    <div class="stat-label">約 3 か月で追跡した調査件数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">600+</div>
+                    <div class="stat-label">特定した根本原因の件数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">17 件/日</div>
+                    <div class="stat-label">1 日あたりの自動調査数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">70%</div>
+                    <div class="stat-label">根本原因提案の正確性 (100 件の手動レビュー)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">30+</div>
+                    <div class="stat-label">蓄積されたプロファイラ等の調査ツール</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evolution Timeline -->
+        <section class="section">
+            <h2 class="section-title">手動調査から自動ワークフローへの進化 (6 段階)</h2>
+            <p class="desc">OpenAI のパフォーマンスチームにおける Codex 活用は、次の 6 段階で進化した。</p>
+            <div class="timeline">
+                <div class="timeline-item" data-step="1">
+                    <h4>🔍 Codex 以前</h4>
+                    <p>エンジニアがメトリクスやログを手動で調べ、トレースを比較し、コードを読んで調査。サービスへの深い知識が必要で時間もかかった。頻出する問題 (ChatGPT の初回トークンレイテンシの劣化など) に対して、CPU プロファイラやアロケーションプロファイラなど 30 以上のツールを蓄積。</p>
+                </div>
+                <div class="timeline-item" data-step="2">
+                    <h4>🤝 パートナーとしての Codex</h4>
+                    <p>エンジニアが「なぜ遅くなったのか」と尋ね、Codex と協働して調査。巨大なコードベースの検索、関連メトリクスやトレースの発見、サービス間の相互作用の追跡が可能になったが、エンジニアによる誘導は依然必要だった。</p>
+                </div>
+                <div class="timeline-item" data-step="3">
+                    <h4>📚 再利用可能なスキル</h4>
+                    <p>調査プロセスを <code>perf-forensics</code> という共有スキルに体系化。利用可能なツール、使いどころ、調査の進め方を Codex に伝え、アラートを渡すだけで 1 回の実行で診断を得られるように。過去のリグレッションに基づく評価 (eval) でスキルをテスト・改良。</p>
+                </div>
+                <div class="timeline-item" data-step="4">
+                    <h4>📋 人間がプロキシ化</h4>
+                    <p>アラートが発火するたびに、エンジニアが Codex にコピー & ペーストし、結果を Slack に貼り戻すだけの存在になっていることに気づいた。</p>
+                </div>
+                <div class="timeline-item" data-step="5">
+                    <h4>⚡ 自動調査</h4>
+                    <p>アラートが自動的に Codex セッションを起動し、調査結果を Slack スレッドに投稿。ただし修正の作成とデプロイ後の確認は依然エンジニアの仕事だった。</p>
+                </div>
+                <div class="timeline-item" data-step="6">
+                    <h4>🏭 ファクトリー化</h4>
+                    <p>エンドツーエンドのエージェンティックワークフローを実行する Performance Factory を構築。各タスクが状態と調査結果を保持し、エージェントとエンジニアの間で作業を引き継ぎながら、コードレビューやデプロイをまたいで再開できる。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 Components (Feature Cards) -->
+        <section class="section">
+            <h2 class="section-title">Performance Factory の 4 つの構成要素</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🗂️ タスクサービス (設定可能なワークフロー)</h3>
+                    <p>エンジニアが Markdown で設定ファイルとプロンプトを記述してワークフローを定義。タスクが遷移できる状態、許可される遷移、エンジニアの介在が必要なステップを設定。全ワークフローは UI で可視化される。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 ディスパッチループ</h3>
+                    <p>次のステップに進める状態のタスクを定期的にチェックし、現在の状態に対応する指示とともに Codex ターンを開始してエージェントを割り当てる。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>☁️ クラウド上の Codex</h3>
+                    <p>社内ネットワーク内の環境で Codex ターンをプログラム的に起動する内部 API。コードリポジトリと、メトリクス・ログ・トレース・CPU プロファイル・メモリスナップショットなどの可観測性ツールにアクセス可能。エージェントはサービスアイデンティティで実行され、権限のスコープ設定と操作の追跡が可能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔔 サブスクリプション</h3>
+                    <p>人間の対応やデプロイを待つ間、エージェントを起動し続ける必要はない。GitHub のレビューコメントや CI チェックの失敗などのイベントを購読し、イベント発生時にタスクを再開可能な状態に戻す。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ</h2>
+            <p class="desc">Performance Factory の 4 つの構成要素と Regression Workflow の流れを示す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Factory["Performance Factory"]
+        TaskService["タスクサービス<br/>(設定可能なワークフロー)"]
+        Dispatch["ディスパッチループ<br/>(作業の割り当て)"]
+        Cloud["クラウド上の Codex<br/>(コード・可観測性ツールにアクセス)"]
+        Subs["サブスクリプション<br/>(イベントでエージェントを起動)"]
+    end
+
+    Alert(["パフォーマンスアラート"]) --> TaskService
+    TaskService --> Dispatch
+    Dispatch -->|Codex ターンを開始| Cloud
+    Cloud -->|進捗を記録・状態を遷移| TaskService
+    Events(["GitHub レビュー / CI / デプロイ"]) --> Subs
+    Subs -->|タスクを再開可能に| Dispatch
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class TaskService,Dispatch,Cloud,Subs openai
+    class Alert,Events dark
+                </pre>
+            </div>
+            <h3 class="section-subtitle">Regression Workflow の状態遷移</h3>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart LR
+    Detected["検出<br/>(システム)"] --> RootCause["根本原因の特定<br/>(エージェント)"]
+    RootCause --> AdvReview["敵対的レビュー<br/>(別の Codex セッション)"]
+    AdvReview -->|診断が不十分| RootCause
+    AdvReview -->|診断を承認| Fix["修正の提案 / PR 作成<br/>(エージェント)"]
+    Fix --> Deploy["レビューとデプロイ<br/>(エンジニア)"]
+    Deploy --> Verify["回復の検証<br/>(エージェント)"]
+    Verify -->|回復を確認| Resolved["解決"]
+    Verify -->|部分回復| NewTask["残りの劣化で<br/>新規タスク"]
+    Verify -->|改善なし| RootCause
+
+    classDef agent fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef human fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class RootCause,AdvReview,Fix,Verify agent
+    class Detected,Deploy,Resolved,NewTask human
+                </pre>
+            </div>
+        </section>
+
+        <!-- Regression Workflow details -->
+        <section class="section">
+            <h2 class="section-title">最初のワークフロー: アラートから回復まで</h2>
+            <p class="desc">Regression Workflow は、リグレッションの実際のライフサイクル (<span class="highlight">調査が必要 → 根本原因特定 → 修正提案 → 解決</span>) をそのまま状態遷移としてモデル化している。</p>
+            <div class="workflow-card">
+                <h4>🔎 根本原因の特定</h4>
+                <p>エージェントはどのメトリクスがいつから悪化し、どのリクエストが影響を受けたかを特定する。アラート発火より前にリグレッションが始まっている可能性を考慮してデータを遡り、「同種のリクエストが実際に遅くなったのか、もともと遅いリクエストの割合が増えたのか」を比較する。その後、デプロイやフィーチャーフラグの変更を調べ、関連コードを読み、ログやトレースで仮説を検証する。</p>
+            </div>
+            <div class="workflow-card">
+                <h4>⚔️ 敵対的レビュー</h4>
+                <p>初期には、エージェントが最初に見つけたもっともらしい説明で調査を止めてしまい、誤診となるケースがあった。これを防ぐため、別の Codex セッションが診断の反証を試みる敵対的レビューを追加。前提を再確認し、反事実 (ロールアウトが原因なら、曝露されていない類似リクエストは健全だったか等) をテストする。</p>
+                <div class="callout">💡 実例: 画像ダウンロードのエラーを原因と断定した診断に対し、レビュアーが「ファイル配置サービスは既に回復しているのに画像リクエストは失敗し続けている」矛盾を発見し、調査を再開させた。</div>
+            </div>
+            <div class="workflow-card">
+                <h4>🔧 修正こそが難所</h4>
+                <p>診断が敵対的レビューを通過すると、Codex が修正を実装して Pull Request を作成し、エンジニアがレビューしてマージを判断する。各タスクには、リグレッションの影響・根本原因・修正案の自動生成サマリーがあり、メトリクスの時系列、CPU フレームグラフ、トレースを含めてスキャンしやすく調整されている。デプロイ後はエージェントが起動してベースラインへの回復を検証し、部分回復なら残りの劣化に対して新規タスクを作成、未回復なら調査へ差し戻す。</p>
+            </div>
+        </section>
+
+        <!-- Lessons Learned -->
+        <section class="section">
+            <h2 class="section-title">得られた教訓</h2>
+            <div class="lesson">
+                <div class="lesson-icon">🧠</div>
+                <div>
+                    <h4>エンジニアの注意力を守る</h4>
+                    <p>Codex の生の調査出力は読み解きにくい「テキストの壁」になりがち。ワークフローは関連インシデントをリンクし、チームが重視するメトリクスでグルーピングし、推定インパクトでランク付けすることで、エンジニアが「コンテキストの追加、トレードオフの検討、何を出荷するかの判断」に集中できるようにした。</p>
+                </div>
+            </div>
+            <div class="lesson">
+                <div class="lesson-icon">🧪</div>
+                <div>
+                    <h4>エージェントへの変更を評価する</h4>
+                    <p>スキル更新やモデルのアップグレードは、あるケースで改善し別のケースで悪化し得る。調査能力とサマリーの有用性を分けてテストする。調査は過去の本番インシデントに対するバックテストで評価し、答えを示唆する情報を除去した元シグナルから開始する。発生時期・規模・影響リクエストの特定と、証拠に基づく原因のランク付けを別々に採点する。サマリーは保存済みタスクのスナップショットを使い、システムに不慣れなエンジニアでも理解できるかを別のグレーダーが確認する。</p>
+                </div>
+            </div>
+            <div class="lesson">
+                <div class="lesson-icon">🔁</div>
+                <div>
+                    <h4>繰り返す失敗を自己修復に変える</h4>
+                    <p>エージェント自体にも監視が必要。壊れたプロファイラや権限不足は最終レポートからは見つけにくいため、毎日エージェントが最近の実行ログからツール障害やアクセスエラーを探す。同じエラーが複数の調査をブロックしている場合、Performance Factory 自身にタスクを作成して修正を提案させる自己修復の仕組みを構築した。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Details -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細</h2>
+            <p class="desc">ワークフローの定義は、設定ファイル (TOML) と各ステップ用の Markdown プロンプトから構成される。</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Text</span>
+                    <span class="code-title">ワークフロー定義の構成例</span>
+                </div>
+                <pre><code class="language-plaintext">code-change/
+├── config.toml
+└── work/
+    ├── implementing.md
+    └── reviewing.md</code></pre>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>⚙️ config.toml</h3>
+                    <p>タスクが取り得る状態、許可される状態遷移、エンジニアの介在が必要なステップを定義。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📝 work/*.md</h3>
+                    <p>各ステップでエージェントが従うべき指示を記述。</p>
+                </div>
+            </div>
+            <p class="desc" style="margin-top: 16px; margin-bottom: 0;">タスクは状態と調査結果を<span class="highlight">エージェントのコンテキスト外に記録</span>するため、別のエージェントやエンジニアがいつでも作業を引き継げる。1 つのワークフローが発見した最適化候補を、別のワークフローのタスクとして起票する連携も可能。</p>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>🏗️ エージェンティックワークフロー構築の参考パターン</h4>
+                <p>「タスクの明示的な状態管理 + ディスパッチループ + クラウド実行 + イベントサブスクリプション」という構成は、パフォーマンス以外のドメイン (運用、セキュリティ、コスト最適化など) にも適用できる汎用的なエージェントファクトリーパターン。</p>
+            </div>
+            <div class="use-case">
+                <h4>⚔️ 敵対的レビューの有効性</h4>
+                <p>単一エージェントの結論をそのまま信頼せず、別セッションに反証させる設計は、エージェントの誤診断を防ぐ実践的な手法。大きなジョブを焦点の絞られた複数の Codex ターンに分割するアプローチも精度向上に寄与。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧪 評価 (eval) の重要性</h4>
+                <p>スキルやモデルの変更前に、過去インシデントのバックテストとサマリー品質の評価を分離して実施する手法は、エージェントを本番運用するチームに直接役立つ。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧑‍💻 人間の役割の変化</h4>
+                <p>エンジニアの仕事は手動調査から「コンテキストの追加、トレードオフの判断、出荷の決定」へとシフト。現在のボトルネックは修正のレビューとマージ待ちであり、OpenAI は低リスクな変更を人間の介在なしに出荷することも検討中。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔁 エージェント自身の監視と自己修復</h4>
+                <p>エージェントの実行基盤 (ツールや権限) の障害検知と自動修復をワークフロー化する発想は、エージェント運用の信頼性向上に示唆を与える。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>Performance Factory は、Codex を中核に据えてパフォーマンスリグレッションの検出・調査・修正・回復検証をエンドツーエンドで自動化する OpenAI の社内システム。約 3 か月で <strong>1,700 件以上の調査</strong>と <strong>600 件以上の根本原因特定 (1 日 17 件)</strong> を達成した。タスクサービス、ディスパッチループ、クラウド上の Codex、サブスクリプションの 4 要素からなるアーキテクチャと、敵対的レビューや eval による品質担保の手法は、エージェンティックワークフローを本番運用するあらゆるチームにとって有用な設計パターンである。今後はアラートに依存しないプロアクティブな劣化検出や、低リスク修正の完全自動出荷への拡張が計画されている。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast" target="_blank" rel="noopener noreferrer">https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📄 <a href="https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast" target="_blank" rel="noopener noreferrer">How OpenAI's Performance Factory keeps ChatGPT fast (公式記事)</a></li>
+                <li>🤖 <a href="https://openai.com/codex" target="_blank" rel="noopener noreferrer">OpenAI Codex</a></li>
+                <li>📰 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

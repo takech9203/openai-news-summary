@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daybreak Red のデプロイ: 監督付きセキュリティ調査のためのリファレンスアーキテクチャ - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--openai-dark);
+            margin: 28px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-subtitle:first-of-type {
+            margin-top: 0;
+        }
+
+        .lead-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px dashed var(--openai-green);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .highlight-box strong {
+            color: var(--openai-green);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Component table */
+        .component-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .component-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .component-table th:first-child {
+            border-radius: 10px 0 0 0;
+            white-space: nowrap;
+        }
+
+        .component-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .component-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        .component-table td:first-child {
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        .component-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        /* Steps */
+        .steps {
+            display: grid;
+            gap: 16px;
+            counter-reset: step;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-light);
+            border: 1px solid rgba(16, 163, 127, 0.2);
+            border-radius: 12px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .step-content ul {
+            margin: 8px 0 0 18px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .step-content ul li {
+            margin-bottom: 4px;
+        }
+
+        /* Decision cards (Continue / Pause / Stop) */
+        .decision-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .decision-card {
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid;
+        }
+
+        .decision-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .decision-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .decision-card.continue {
+            background: linear-gradient(135deg, #D1FAE5 0%, #ECFDF5 100%);
+            border-color: #34D399;
+        }
+
+        .decision-card.continue h4 { color: #059669; }
+
+        .decision-card.pause {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+            border-color: #FBBF24;
+        }
+
+        .decision-card.pause h4 { color: #B45309; }
+
+        .decision-card.stop {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FEF2F2 100%);
+            border-color: #F87171;
+        }
+
+        .decision-card.stop h4 { color: #DC2626; }
+
+        /* Checklist */
+        .checklist {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--openai-light);
+            border-left: 4px solid var(--openai-green);
+            border-radius: 0 10px 10px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .checklist-item .check {
+            color: var(--openai-green);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .checklist-item strong {
+            color: var(--text-primary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #343541;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #444654;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            color: var(--openai-green);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .code-title {
+            color: #a0a0b0;
+            font-size: 12px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px !important;
+        }
+
+        code.inline {
+            background: var(--openai-gray);
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--openai-dark);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 8px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 12px;
+        }
+
+        .summary-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-box strong {
+            color: #1DB791;
+        }
+
+        /* Related links */
+        .related-links {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .component-table td:first-child,
+            .component-table th:first-child {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Guides</span>
+                <h1>🛡️ Daybreak Red のデプロイ</h1>
+                <p class="subtitle">監督付きセキュリティ調査のためのリファレンスアーキテクチャ</p>
+                <p class="date">📅 2026-11-19 | OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <p class="lead-text">OpenAI は、サイバーセキュリティ調査向けモデル「Daybreak Red」を安全にデプロイするためのリファレンスアーキテクチャガイドを公開。監督付きセキュリティ調査 (supervised security investigations) のための隔離環境を、アーキテクチャ、安全制御、環境構築、調査の実行と監視という観点から解説している。</p>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🧭</div>
+                    <div class="key-point-content">
+                        <h3>構成より「制御の理解」を重視</h3>
+                        <p>リファレンスアーキテクチャは出発点に過ぎない。最も重要な成果は各制御の意図を把握し、自組織の環境で OpenAI のサイバーモデルを安全に実装できるようになること</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏝️</div>
+                    <div class="key-point-content">
+                        <h3>隔離環境での実行</h3>
+                        <p>アナリストはワークステーション上の Codex (Coordinator) から調査を指揮。実際のコマンドは分離された使い捨ての Agent VM 上で実行され、ラボのネットワークルールが到達範囲を制限する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧱</div>
+                    <div class="key-point-content">
+                        <h3>二重の境界による最小権限</h3>
+                        <p>Codex サンドボックス (bubblewrap) によるファイル制限と、ネットワーク制御 + 許可リストによる接続先制限を同時に適用する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>改変不能な独立ログ</h3>
+                        <p>Codex が何を行い、どのリクエストがテスト対象アプリに届いたかを、Codex アカウントの管理外にある独立したログストアが記録。何がいつ起きたかを立証する</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⏹️</div>
+                    <div class="key-point-content">
+                        <h3>可視性とガバナンスの維持</h3>
+                        <p>モデルにタスク遂行に必要な水準のアクセスを与えつつ、活動への可視性 (visibility) とガバナンスを維持する。Codex の外側からの停止手段も事前に検証する</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture components -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャの全体像</h2>
+            <p class="lead-text">ガイドが定義する 8 つの構成要素。コンテナを使う場合は、VM と同等のファイルおよびネットワーク制限を強制できることの検証が求められる。</p>
+            <table class="component-table">
+                <thead>
+                    <tr>
+                        <th>コンポーネント</th>
+                        <th>役割</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>👤 Analyst</td>
+                        <td>調査を監督する権限を持つ個人。調査の開始、テストのスコープ設定、調査の停止、結果の分析に責任を持つ</td>
+                    </tr>
+                    <tr>
+                        <td>🏝️ Isolated environment</td>
+                        <td>環境の論理的分離。本リファレンスでは隔離された VPC 上のホスト型 VM を想定。具体像は各組織のインフラに依存</td>
+                    </tr>
+                    <tr>
+                        <td>🎛️ Coordinator</td>
+                        <td>アナリストのマシンにローカルインストールされた Codex。リモートホストへの接続管理、結果提示、実行の監督を担う</td>
+                    </tr>
+                    <tr>
+                        <td>🖥️ Agent VM</td>
+                        <td>隔離環境内で非管理者ユーザーとして Codex を実行し、分析を実行する。使い捨て (disposable) の VM を前提</td>
+                    </tr>
+                    <tr>
+                        <td>🧠 Model inference</td>
+                        <td>モデル配信のための OpenAI への接続性。OpenAI モデルは AWS 経由でも利用可能</td>
+                    </tr>
+                    <tr>
+                        <td>🚧 Network controls</td>
+                        <td>リソースアクセスを制御する論理的なポイント。iptables、ファイアウォール、またはセキュリティグループで実現</td>
+                    </tr>
+                    <tr>
+                        <td>🎯 Target</td>
+                        <td>調査を実施する対象となる非本番 (non-prod) アプリケーション</td>
+                    </tr>
+                    <tr>
+                        <td>📡 Telemetry</td>
+                        <td>Target と Agent VM の外部にあるデータストア。何がいつ起きたかを立証するログを永続化する</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Safety controls (Feature cards) -->
+        <section class="section">
+            <h2 class="section-title">安全制御 (Safety controls)</h2>
+            <p class="lead-text">サイバーモデルのデプロイには複数層の安全制御が必要。本設計は OpenAI が推奨するサイバー業務向け構成に従っている。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📐 スコープ定義</h3>
+                    <p>対象 (target)、許可されるアクション、調査ウィンドウ、停止ポイントを定義。必要な証拠、匿名アクセスか専用アカウントかを事前に決定し、サインインする場合はアカウントを調査に必要なロールとリソースに限定する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🖥️ VM システム制御</h3>
+                    <p>Codex は専用の非管理者アカウントで実行し、サンドボックスで読み書き範囲を制限。書き込み可能なワークスペースは必要時のみ付与。秘密鍵、デプロイ用クレデンシャル、ホスト管理ソケットは手の届かない場所に置く</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🌐 ネットワークアクセス制御</h3>
+                    <p>Codex のネットワークプロキシで接続先を絞る。VM が 3 つのステージングアプリに到達可能でも、許可リストはスコープ内の 1 つだけを許可。ブラウザ、コネクタ、MCP ツールを有効化する場合は個別にアクセスを確認する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👀 機密アクションのレビュー</h3>
+                    <p>承認を要し Auto-review の対象となるアクションは、別のレビュアーが続行可否を判断。新しい対象やアカウント、スコープ外アクションの場合は一時停止し、アナリストが権限を確認してから続行する</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📡 テレメトリと制御</h3>
+                    <p>Codex のツール活動、対象のリクエストログ、アプリケーションのサインインイベントを、Codex アカウントの管理外にあるログストアに保持する</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture diagram (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ図</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Workstation["Analyst Workstation"]
+        Analyst(["Analyst"])
+        Coordinator["Codex (Coordinator)"]
+    end
+
+    subgraph Lab["Isolated Investigation Environment (VPC)"]
+        subgraph VM["Agent VM (non-admin user)"]
+            AgentCodex["Codex (Agent)"]
+            Sandbox["Sandbox (bubblewrap)"]
+            Profile["config.toml / requirements.toml"]
+        end
+        NetCtl["Network Controls&lt;br/&gt;iptables / Firewall / Security Groups"]
+        Target["Target&lt;br/&gt;non-prod application"]
+    end
+
+    subgraph External["Outside the Codex account"]
+        Telemetry["Telemetry / Log Store&lt;br/&gt;OTLP endpoint"]
+        Inference["Model Inference&lt;br/&gt;OpenAI / AWS"]
+    end
+
+    Analyst --> Coordinator
+    Coordinator -->|SSH| AgentCodex
+    AgentCodex --> Sandbox
+    Profile --> Sandbox
+    Sandbox --> NetCtl
+    NetCtl -->|allowlisted only| Target
+    NetCtl -->|model access| Inference
+    AgentCodex -->|codex.tool_result| Telemetry
+    Target -->|request / sign-in logs| Telemetry
+    Telemetry --> Analyst
+    Analyst -.->|out-of-band stop| VM
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef light fill:#F7F7F8,stroke:#ECECF1,stroke-width:2px,color:#343541
+
+    class Coordinator,AgentCodex,Inference openai
+    class Sandbox,NetCtl,Profile dark
+    class Target,Telemetry light
+                </pre>
+            </div>
+            <div class="checklist">
+                <div class="checklist-item"><span class="check">1.</span><span><strong>指揮と実行の分離</strong>: アナリストは Coordinator を介してのみ調査を指揮し、コマンド実行は隔離環境内の Agent VM に閉じ込められる</span></div>
+                <div class="checklist-item"><span class="check">2.</span><span><strong>二重の境界</strong>: Sandbox と Network Controls が、ファイルアクセスと到達先を同時に絞る</span></div>
+                <div class="checklist-item"><span class="check">3.</span><span><strong>外部テレメトリ</strong>: Telemetry は Target と Agent VM の外部に置かれ、Codex アカウントから書き換えられない。さらに Codex の外側から VM を停止できる経路 (破線) が監視喪失時の最終的な制御として確保される</span></div>
+            </div>
+        </section>
+
+        <!-- Environment building -->
+        <section class="section">
+            <h2 class="section-title">環境構築 (Building the environment)</h2>
+            <p class="lead-text">必要なものは、非本番の対象、Codex を入れたワークステーション、ラボ VM、独立したログストア。対象は合成データ (synthetic data) で準備し、サインインが必要な場合は専用のテストアカウントを作成する。</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Agent VM の準備</h3>
+                        <p>隔離ラボ内に Linux VM を作成し、専用の非管理者アカウントと Codex 用の作業ディレクトリを用意。Codex と調査ツールをインストールし、bubblewrap を導入してコマンドをサンドボックス内で実行。調査開始前にサンドボックスの動作を検証する。リスクの高い調査では新規の VM とラボを使用。ラボは承認済みテストアプリと、サインイン・モデルアクセス・ログエクスポートに必要なサービスのみに到達可能とし、ネットワーク制御は Codex アカウントが変更できないものを使う。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>ワークステーションからの接続</h3>
+                        <p>Agent VM のホストエイリアスと専用アカウントを <code class="inline">~/.ssh/config</code> に追加して SSH 接続。専用ユーザーとして <code class="inline">codex login</code> を実行し、Daybreak Red の利用が承認された ChatGPT アカウントとワークスペースでサインイン (ブラウザがない場合はデバイスコード、API アクセスの場合は承認済みプロジェクトのキー)。Codex の Settings → Connections で SSH ホストを追加し、Add new project でワークスペースフォルダを選択。接続確認として、ホスト名と作業ディレクトリを報告させて SSH で見た値と比較する。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Codex の権限設定</h3>
+                        <p>Agent VM 上の <code class="inline">~/.codex/config.toml</code> を編集する。</p>
+                        <ul>
+                            <li><strong>ファイルとフォルダ</strong>: 権限プロファイル内で読み書きできるワークスペースパスを指定</li>
+                            <li><strong>ネットワークアクセス</strong>: <code class="inline">[permissions.&lt;name&gt;.network]</code> で <code class="inline">enabled = true</code>。承認済みドメインを列挙し <code class="inline">network_proxy = true</code>。ラボ側の制限は維持</li>
+                            <li><strong>承認</strong>: <code class="inline">approval_policy = "on-request"</code> と <code class="inline">approvals_reviewer = "auto_review"</code>。サンドボックスは有効のまま</li>
+                            <li><strong>必須設定</strong>: 管理者が <code class="inline">requirements.toml</code> に配置し、VM アカウントが上書きできないようにする</li>
+                        </ul>
+                        <p style="margin-top: 8px;">プロファイルの有効化は <code class="inline">default_permissions</code> にプロファイル名を設定し、リモートチャットの権限メニューから選択。プリフライト実行前に選択内容を確認する。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>対象アクセスとロギングの設定</h3>
+                        <p>対象アプリへのサインインには専用テストアカウントと必要最小限の権限を使用。短命 (short-lived) のクレデンシャルを使い、再利用可能なシークレットは Codex の手の届かない場所に置く。Codex のログは <code class="inline">[otel]</code> で OpenTelemetry ログエクスポーターを設定し、OTLP エンドポイントまたは Collector 経由で送信。対象アプリのリクエストログとサインインイベントも同じストアへ送り、Codex アカウントが保存済みレコードを変更・削除できないようにする。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical details: config -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: config.toml の設定ポイント</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">TOML</span>
+                    <span class="code-title">~/.codex/config.toml</span>
+                </div>
+                <pre><code class="language-toml"># プロファイルの有効化 (ファイル先頭)
+default_permissions = "investigation"
+
+[features]
+# 接続先を承認済みドメインに限定する
+network_proxy = true
+
+[permissions.investigation]
+# Codex のコマンドが読み書きできるワークスペースパスを指定
+
+[permissions.investigation.network]
+# サンドボックス内コマンドにネットワークを許可
+enabled = true
+# 承認先として承認済みドメインを列挙
+
+[otel]
+# ログストアの OTLP エンドポイント、または
+# OpenTelemetry Collector へログを送信</code></pre>
+            </div>
+            <table class="component-table">
+                <thead>
+                    <tr>
+                        <th>設定</th>
+                        <th>値</th>
+                        <th>意味</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code class="inline">approval_policy</code></td>
+                        <td><code class="inline">"on-request"</code></td>
+                        <td>必要時に承認を要求する</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">approvals_reviewer</code></td>
+                        <td><code class="inline">"auto_review"</code></td>
+                        <td>Auto-review による別レビュアー判断を有効化</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="highlight-box">
+                🔒 <strong>ガバナンスの要</strong>: 管理者は必須設定を <code class="inline">requirements.toml</code> に配置することで VM アカウント側からの上書きを防ぐ。サンドボックスは常に有効のまま維持する。
+            </div>
+        </section>
+
+        <!-- Investigation execution -->
+        <section class="section">
+            <h2 class="section-title">調査の実行と監視</h2>
+
+            <h3 class="section-subtitle">✈️ プリフライトの実行</h3>
+            <p class="lead-text">調査本番と同じ承認済みモデル・同じ権限プロファイルを使い、制御が実際に効いているかを事前検証。検証用に、許可リスト外で自分が管理している URL と、ワークスペース外の使い捨てパスを用意する。</p>
+            <div class="checklist">
+                <div class="checklist-item"><span class="check">✔</span><span><strong>ワークスペース</strong>: ワークスペース内への書き込みが成功し、ワークスペース外への書き込みがブロックされること</span></div>
+                <div class="checklist-item"><span class="check">✔</span><span><strong>ネットワーク</strong>: 承認済みのヘルスチェックリクエストが成功し、許可リスト外へのリクエストがブロックされること</span></div>
+                <div class="checklist-item"><span class="check">✔</span><span><strong>ログ</strong>: 独立したログ側に、成功したツール実行イベント (<code class="inline">codex.tool_result</code>) と承認済みヘルスチェックリクエストが記録されていること</span></div>
+            </div>
+
+            <h3 class="section-subtitle">📝 調査の記述</h3>
+            <p class="lead-text">プリフライト通過後、対象、調査する問い、使用するテスト ID または匿名アクセス、許可されるアクション、除外する系やデータ、収集する証拠、終了時刻と停止条件を明示したブリーフをリモートの Codex プロジェクトへ送る。必要なルートやアカウントがあれば具体的に指定する。</p>
+
+            <h3 class="section-subtitle">🚦 実行の監督: 3 つの判断</h3>
+            <div class="decision-grid">
+                <div class="decision-card continue">
+                    <h4>▶️ Continue (続行)</h4>
+                    <p>合意済みスコープ内の定型的な作業はそのまま進めさせる</p>
+                </div>
+                <div class="decision-card pause">
+                    <h4>⏸️ Pause (一時停止)</h4>
+                    <p>別のホストに到達した、実際のユーザーデータに遭遇した、より広い権限を要求した場合は、続行前に何が起きたかを確認する</p>
+                </div>
+                <div class="decision-card stop">
+                    <h4>⏹️ Stop (停止)</h4>
+                    <p>必要な制御またはその監視が機能しなくなった場合は実行を終了する</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                🛑 <strong>キルスイッチの事前検証</strong>: 初回実行の前に、Codex の外側から Agent VM を停止する、あるいは対象へのアクセスを遮断できることを検証しておく。監視を失った場合、直ちに停止する必要がある場合、実行が停止したと確認できない場合には、その制御を使う。
+            </div>
+
+            <h3 class="section-subtitle">🏁 調査の終了: 4 ステップ</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>停止の指示</h3>
+                        <p>リモートチャットで停止を指示。何が停止したかと、クリーンアップが必要なジョブやファイルを報告させる</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>停止の検証</h3>
+                        <p>Agent VM のバックグラウンドジョブと対象のログを確認し、双方が停止したことを検証する</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>セッションの終了</h3>
+                        <p>ワークステーションからリモートの Codex セッションを終了する</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>クレデンシャルの失効</h3>
+                        <p>一時的なクレデンシャルを失効させる</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Optional walkthrough -->
+        <section class="section">
+            <h2 class="section-title">オプションのウォークスルーについて</h2>
+            <p class="lead-text">ガイド末尾には、使い捨ての Gitea インスタンスを対象に、本リファレンスアーキテクチャの設計を実際の既知 CVE の検証へ適用するオプションのウォークスルーが収録されている。本インフォグラフィックでは防御的な運用設計に焦点を当てるため、具体的な検証手順やプロンプトは扱わない (詳細は公式ガイド PDF を参照)。そこでも適用される原則は本文と一貫している。</p>
+            <div class="checklist">
+                <div class="checklist-item"><span class="check">✔</span><span>対象ホストと Agent VM 以外は対象アプリのポートに到達できないことの確認</span></div>
+                <div class="checklist-item"><span class="check">✔</span><span>セットアップ用クレデンシャルをエージェントの手の届かない場所に置くこと</span></div>
+                <div class="checklist-item"><span class="check">✔</span><span>合成データによるフィクスチャの利用</span></div>
+                <div class="checklist-item"><span class="check">✔</span><span>レート・試行回数・フェーズ時間の明示的な上限設定</span></div>
+                <div class="checklist-item"><span class="check">✔</span><span>クレデンシャルや生レスポンスを除いた形での結果報告</span></div>
+                <div class="checklist-item"><span class="check">✔</span><span>終了後のトークン失効とトークンを含むファイルの削除</span></div>
+            </div>
+        </section>
+
+        <!-- Use cases / developer impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者への影響</h2>
+            <div class="use-case">
+                <h4>🏗️ 高権限エージェント運用の基準設計として</h4>
+                <p>Coordinator と Agent を分離し、実行を使い捨ての非管理者 VM に閉じ込める構成は、Daybreak Red に限らずエージェントに高権限の作業をさせる場合の一般的な設計指針として参照できる。「VM は 3 つのステージングアプリに到達できても許可リストは 1 つだけ」という二重の境界は、権限の最小化を多層で実装する具体的なモデルを提供する。ブラウザ、コネクタ、MCP ツールを追加するたびにネットワークアクセスを個別検証する必要がある点も実務的な注意点である。</p>
+            </div>
+            <div class="use-case">
+                <h4>🔍 監査・コンプライアンス対応の参照モデルとして</h4>
+                <p><code class="inline">requirements.toml</code> による管理者側の必須設定、Codex アカウントが変更できないネットワーク制御、Codex アカウントの管理外にあるログストアという 3 点は、エージェントが自らの制約や監査証跡を改変できない構造を要求する。さらにプリフライトで「ワークスペース外への書き込みと許可リスト外へのリクエストが実際にブロックされ、それが独立したログに記録される」ことまで確認する手順は、「設定したつもりで動いていなかった」という失敗モードを運用手順として潰す設計になっている。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧪 安全なセキュリティ検証環境の構築に</h4>
+                <p>対象は非本番アプリ、データは合成データ、サインインは専用テストアカウントと短命クレデンシャルが前提。実際のユーザーデータに遭遇した時点で一時停止する判断基準が明示され、初回実行前に Codex の外側から VM を停止、または対象へのアクセスを遮断できることを検証しておくというキルスイッチの考え方は、エージェント運用一般に適用できる。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>本ガイドの中核は 3 つの構造である。<strong>(1)</strong> ワークステーション上の Coordinator と隔離環境内の Agent VM の分離、<strong>(2)</strong> Codex サンドボックスとネットワーク制御による二重の境界、<strong>(3)</strong> Codex アカウントの管理外に置かれたテレメトリ。</p>
+                <p>運用面では、スコープ定義 → プリフライトによる制御の実効性検証 → Continue / Pause / Stop の判断基準に基づく監督 → 停止・セッション終了・クレデンシャル失効という終了手順まで、ライフサイクル全体が規定されている。</p>
+                <p>OpenAI が繰り返し述べているように、このアーキテクチャは<strong>出発点</strong>であり、最も重要な成果は構成のコピーではなく<strong>制御の理解</strong>である。モデルに必要な水準のアクセスを与えながら可視性とガバナンスを失わないという原則は、高権限のエージェントを運用するあらゆる場面に適用できる。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/business/learn/deploying-daybreak-red" target="_blank" rel="noopener noreferrer">https://openai.com/business/learn/deploying-daybreak-red</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <div class="related-links">
+                <a href="https://cdn.openai.com/pdf/49112a33-7dc9-4fa7-89ea-095a57552ed2/supervised-investigations-with-daybreak-red-a-reference-architecture.pdf" target="_blank" rel="noopener noreferrer">Supervised investigations with Daybreak Red: A reference architecture (ガイド PDF)</a>
+                <a href="https://openai.com/codex" target="_blank" rel="noopener noreferrer">OpenAI Codex</a>
+                <a href="https://platform.openai.com/docs" target="_blank" rel="noopener noreferrer">OpenAI 公式ドキュメント</a>
+                <a href="https://openai.com/safety" target="_blank" rel="noopener noreferrer">OpenAI Safety Approach</a>
+                <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
