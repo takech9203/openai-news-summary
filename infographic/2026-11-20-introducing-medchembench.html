@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedChemBench — 医薬品化学における AI 推論能力のベンチマーク - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .lead {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 12px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--openai-dark);
+        }
+
+        .section p.desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, rgba(16, 163, 127, 0.25) 60%);
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Score bars */
+        .score-bars {
+            display: grid;
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .score-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 64px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .score-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-dark);
+        }
+
+        .score-track {
+            background: var(--openai-gray);
+            border-radius: 8px;
+            height: 22px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: var(--gradient-accent);
+            border-radius: 8px;
+        }
+
+        .score-fill.muted {
+            background: linear-gradient(135deg, #8E8EA0 0%, #A5A5B5 100%);
+        }
+
+        .score-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--openai-green);
+            text-align: right;
+        }
+
+        .score-value.muted {
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 600px) {
+            .score-row {
+                grid-template-columns: 110px 1fr 56px;
+            }
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card .score-tag {
+            display: inline-block;
+            margin-top: 10px;
+            background: var(--openai-green);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 12px;
+        }
+
+        .feature-card .score-tag.warn {
+            background: var(--warning);
+        }
+
+        /* Example / workflow cards */
+        .workflow-card {
+            background: var(--openai-light);
+            border: 2px dashed rgba(16, 163, 127, 0.35);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+
+        .workflow-card:last-child { margin-bottom: 0; }
+
+        .workflow-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .workflow-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .callout {
+            background: #FFF7ED;
+            border-left: 4px solid var(--warning);
+            border-radius: 0 12px 12px 0;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .comparison-card.before {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #F87171;
+        }
+
+        .comparison-card.after {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+        }
+
+        .comparison-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .comparison-card.before h4 { color: #DC2626; }
+        .comparison-card.after h4 { color: #059669; }
+
+        .comparison-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Limitations */
+        .limitation {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 18px 20px;
+            border-radius: 12px;
+            background: var(--openai-gray);
+            margin-bottom: 14px;
+        }
+
+        .limitation:last-child { margin-bottom: 0; }
+
+        .limitation-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .limitation h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .limitation p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .data-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .data-table th:first-child { border-radius: 10px 0 0 0; }
+        .data-table th:last-child { border-radius: 0 10px 0 0; }
+
+        .data-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:nth-child(even) td {
+            background: var(--openai-light);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case:last-child { margin-bottom: 0; }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .footer li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Research</span>
+                <h1>🧪 MedChemBench — 医薬品化学における AI 推論能力のベンチマーク</h1>
+                <p class="date">📅 2026-11-20 | ソース: OpenAI Research</p>
+                <p class="lead">公開された論文・特許 117 本、761 の分子構造から抽出した 99 問で、AI が分子構造と実験的証拠を結びつけて推論できるかを測定する新ベンチマーク</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🧬</div>
+                    <div class="key-point-content">
+                        <h3>実際の創薬研究に基づくベンチマーク</h3>
+                        <p>公開された論文・特許 117 本 (761 個の異なる分子構造) から抽出した 99 問で構成。実際の研究プログラムのある時点での情報 (生物学的標的、研究者の目標、既存化合物、実験結果) を文脈として与え、モデルの推論を評価する。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚖️</div>
+                    <div class="key-point-content">
+                        <h3>創薬の中心課題「トレードオフ」を推論できるか</h3>
+                        <p>標的タンパク質への強い作用が、必ずしも良好な膜透過性や遅い分解速度を伴うわけではない。AI が科学者を支援するには、この種のトレードオフを証拠から推論する能力が不可欠とされる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🏆</div>
+                    <div class="key-point-content">
+                        <h3>GPT-6.2 Astra が全体スコア 84.5% を達成</h3>
+                        <p>11 個の GPT モデルを複数の推論努力 (reasoning effort) 設定で評価。最新世代は GPT-5.6 世代 (58.2%) から大幅に向上し、世代間の進歩が明確に示された。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🔬</div>
+                    <div class="key-point-content">
+                        <h3>分子構造の再構築は 95.4% と高精度</h3>
+                        <p>GPT-6 Astra は分子構造の再構築で 95.4% を記録。構造の誤りは分析対象の分子そのものを変えてしまうため、構造再構築は推論の基盤として特に重要なコンポーネントと位置づけられる。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚠️</div>
+                    <div class="key-point-content">
+                        <h3>化合物の選択・数値予測は約 50% にとどまる</h3>
+                        <p>科学的説明は強みである一方、要件を満たす化合物の選択や測定値の数値予測は約 50% にとどまり、実験に基づくトレードオフの定量的判断には課題が残る。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る MedChemBench</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">99 問</div>
+                    <div class="stat-label">ベンチマークの問題数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">117 本</div>
+                    <div class="stat-label">出典となる公開論文・特許</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">761 個</div>
+                    <div class="stat-label">含まれる異なる分子構造</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">84.5%</div>
+                    <div class="stat-label">GPT-6.2 Astra の全体スコア (xhigh 設定)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">95.4%</div>
+                    <div class="stat-label">分子構造の再構築 (GPT-6 Astra)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 50%</div>
+                    <div class="stat-label">化合物の選択・数値予測の精度</div>
+                </div>
+            </div>
+            <h3 class="section-subtitle">モデル別の全体スコア (xhigh 設定)</h3>
+            <div class="score-bars">
+                <div class="score-row">
+                    <div class="score-name">GPT-6.2 Astra</div>
+                    <div class="score-track"><div class="score-fill" style="width: 84.5%;"></div></div>
+                    <div class="score-value">84.5%</div>
+                </div>
+                <div class="score-row">
+                    <div class="score-name">GPT-6 Astra</div>
+                    <div class="score-track"><div class="score-fill" style="width: 83.3%;"></div></div>
+                    <div class="score-value">83.3%</div>
+                </div>
+                <div class="score-row">
+                    <div class="score-name">GPT-6.1 Sol</div>
+                    <div class="score-track"><div class="score-fill" style="width: 82%;"></div></div>
+                    <div class="score-value">82.0%</div>
+                </div>
+                <div class="score-row">
+                    <div class="score-name">GPT-6.1 Terra</div>
+                    <div class="score-track"><div class="score-fill" style="width: 75.1%;"></div></div>
+                    <div class="score-value">75.1%</div>
+                </div>
+                <div class="score-row">
+                    <div class="score-name">GPT-5.6 Sol</div>
+                    <div class="score-track"><div class="score-fill muted" style="width: 58.2%;"></div></div>
+                    <div class="score-value muted">58.2%</div>
+                </div>
+            </div>
+            <p class="desc" style="margin-top: 16px; margin-bottom: 0;">GPT-6 Astra は max effort 設定では 83.8%。11 個の GPT モデルを複数の推論努力設定で評価し、GPT-5.6 以降の 9 モデル × 51 の組み合わせが図示された。</p>
+        </section>
+
+        <!-- 4 Components (Feature Cards) -->
+        <section class="section">
+            <h2 class="section-title">評価される 4 つのコンポーネント</h2>
+            <p class="desc">各問題では、実際の研究プログラムのある時点での情報が文脈として与えられ、モデルは以下の 4 つの観点で評価される。</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧬 分子構造の再構築</h3>
+                    <p>原子の結合と立体化学を正しく再構築できるか。分子の正確な表現は推論の基盤であり、構造の誤りは分析対象の分子そのものを変えてしまうため、特に重要なコンポーネントと位置づけられる。</p>
+                    <span class="score-tag">GPT-6 Astra: 95.4%</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🧠 科学的推論</h3>
+                    <p>証拠に基づく説明 (ある化合物を選んだ理由など) ができるか。科学的説明は現行モデルの強みの 1 つとされる領域。</p>
+                    <span class="score-tag">強みの領域</span>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 ランキングと選択</h3>
+                    <p>要件を満たす化合物の順位付け・選択ができるか。複数の特性のトレードオフを考慮した判断が求められる。</p>
+                    <span class="score-tag warn">約 50% (課題)</span>
+                </div>
+                <div class="feature-card">
+                    <h3>🔢 特性予測</h3>
+                    <p>測定値・計算値と一致するか。測定値への近さで部分点が与えられる。数値予測は現時点の主要な課題領域。</p>
+                    <span class="score-tag warn">約 50% (課題)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2 class="section-title">技術詳細: ベンチマークの構成</h2>
+            <p class="desc">問題の文脈から 4 つの評価コンポーネントを経て全体スコアが算出される流れを示す。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Input["問題の文脈 (公開研究 117 本 / 99 問)"]
+        Target["生物学的標的と研究目標"]
+        Compounds["既存化合物 761 構造"]
+        Data["選択された実験結果"]
+    end
+
+    subgraph Eval["4 つの評価コンポーネント"]
+        Struct["分子構造の再構築<br/>GPT-6 Astra: 95.4%"]
+        Reason["科学的推論<br/>証拠に基づく説明"]
+        Rank["ランキングと選択<br/>約 50%"]
+        Predict["特性予測<br/>約 50%"]
+    end
+
+    Score["全体スコア<br/>GPT-6.2 Astra: 84.5%"]
+
+    Input --> Eval
+    Struct --> Score
+    Reason --> Score
+    Rank --> Score
+    Predict --> Score
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Struct,Score openai
+    class Reason,Rank,Predict dark
+                </pre>
+            </div>
+            <h3 class="section-subtitle">評価の条件</h3>
+            <table class="data-table">
+                <tr>
+                    <th>項目</th>
+                    <th>内容</th>
+                </tr>
+                <tr>
+                    <td>問題数</td>
+                    <td>99 問</td>
+                </tr>
+                <tr>
+                    <td>出典</td>
+                    <td>公開された論文・特許 117 本</td>
+                </tr>
+                <tr>
+                    <td>分子構造</td>
+                    <td>761 個の異なる分子構造を含む</td>
+                </tr>
+                <tr>
+                    <td>評価方式</td>
+                    <td>ツール・フィードバック・新規実験なしの単発試行</td>
+                </tr>
+                <tr>
+                    <td>評価対象</td>
+                    <td>11 個の GPT モデル × 複数の推論努力設定 (GPT-5.6 以降の 9 モデル × 51 組み合わせを図示)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Examples -->
+        <section class="section">
+            <h2 class="section-title">具体例</h2>
+            <div class="workflow-card">
+                <h4>🎯 PRMT5 阻害剤問題 (がん創薬研究)</h4>
+                <p>3 つの化合物について、細胞内での PRMT5 阻害、細胞バリア透過性、肝酵素による分解速度を予測するタスク。実際には<span class="highlight">化合物 23 が阻害に優れ、化合物 24 が透過性・安定性に優れる</span>というトレードオフが存在しており、モデルは複数の特性を同時に推論する必要がある。</p>
+            </div>
+            <div class="workflow-card">
+                <h4>⚛️ 18 原子環の再構築問題</h4>
+                <p>GPT-6 Astra は 10 回すべて正解。一方、旧世代モデルは 10 回すべて失敗した。</p>
+                <div class="callout">💡 失敗例: GPT-5.6 Sol は 18 原子環の代わりに 15 原子環を生成し、GPT-5.6 Luna は分子を 2 つの断片に分断してしまった。世代間で構造理解の精度が大きく向上していることを示す。</div>
+            </div>
+        </section>
+
+        <!-- Before/After -->
+        <section class="section">
+            <h2 class="section-title">世代間の進歩: GPT-5.6 から GPT-6.2 へ</h2>
+            <div class="comparison">
+                <div class="comparison-card before">
+                    <h4>Before: GPT-5.6 世代</h4>
+                    <p>全体スコア <strong>58.2%</strong> (GPT-5.6 Sol、xhigh 設定)。18 原子環の再構築問題では 10 回すべて失敗 (15 原子環の生成、分子の断片化など)。</p>
+                </div>
+                <div class="comparison-card after">
+                    <h4>After: GPT-6.2 世代</h4>
+                    <p>全体スコア <strong>84.5%</strong> (GPT-6.2 Astra、xhigh 設定)。GPT-6 Astra は分子構造の再構築で 95.4% を達成し、18 原子環問題は 10 回すべて正解。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Limitations -->
+        <section class="section">
+            <h2 class="section-title">制限事項</h2>
+            <div class="limitation">
+                <div class="limitation-icon">🧪</div>
+                <div>
+                    <h4>新薬発見の能力は未立証</h4>
+                    <p>モデルが新薬を発見できるか、実験室での意思決定を改善できるかは立証されていない。</p>
+                </div>
+            </div>
+            <div class="limitation">
+                <div class="limitation-icon">📚</div>
+                <div>
+                    <h4>データ混入の可能性</h4>
+                    <p>出題元が公開済み文献であるため、学習データへの事前曝露 (データ混入) の可能性を排除できない。</p>
+                </div>
+            </div>
+            <div class="limitation">
+                <div class="limitation-icon">🔂</div>
+                <div>
+                    <h4>単発試行での評価</h4>
+                    <p>各回答はツール・フィードバック・新規実験なしの単発試行で評価されている。</p>
+                </div>
+            </div>
+            <div class="limitation">
+                <div class="limitation-icon">🔍</div>
+                <div>
+                    <h4>評価対象は「過去の証拠からの推論」</h4>
+                    <p>実際の創薬プロセスそのものではなく、過去の証拠からの推論能力を評価するものである。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases / Developer Impact -->
+        <section class="section">
+            <h2 class="section-title">ユースケース / 開発者・研究者への影響</h2>
+            <div class="use-case">
+                <h4>📏 創薬支援 AI の進捗測定基盤</h4>
+                <p>分子構造の再構築、科学的推論、化合物選択、特性予測という創薬の中核スキルを定量評価する共通基盤が提供され、ライフサイエンス分野の AI 応用の進捗を客観的に追跡できる。OpenAI はモデルの進化に伴う結果更新を共有するとしており、創薬 AI の能力トレンドを追う指標として活用できる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🧭 モデル選定の指針</h4>
+                <p>GPT-5.6 世代 (58.2%) から GPT-6.2 Astra (84.5%) への大幅なスコア向上が示され、化学・創薬ドメインのアプリケーションでは最新世代モデルの採用が有効であることが示唆される。</p>
+            </div>
+            <div class="use-case">
+                <h4>🤝 専門家レビューと組み合わせる運用</h4>
+                <p>化合物の選択や数値予測が約 50% にとどまることから、現時点では AI の予測を鵜呑みにせず、実験的検証や専門家のレビューと組み合わせる運用が必要である。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>MedChemBench は、公開された医薬品化学研究 (<strong>117 本、99 問、761 分子構造</strong>) に基づき、AI モデルの分子構造再構築・科学的推論・化合物選択・特性予測の能力を測定するベンチマークである。最新の GPT-6.2 Astra は全体 <strong>84.5%</strong> を達成し、特に分子構造の再構築 (GPT-6 Astra で <strong>95.4%</strong>) で高い精度を示した。一方、化合物の選択や数値予測は約 50% にとどまり、実験に基づくトレードオフの定量的な判断には課題が残る。OpenAI は「この作業を確実に支援できる AI の構築は、科学者がより良い医薬品を開発するのを助けるための一歩である」と位置づけ、モデルの進化に伴う結果の更新を予告している。</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/introducing-medchembench/" target="_blank" rel="noopener noreferrer">https://openai.com/index/introducing-medchembench/</a></p>
+            <p style="margin-top: 12px;"><strong>関連リンク:</strong></p>
+            <ul>
+                <li>📄 <a href="https://openai.com/index/introducing-medchembench/" target="_blank" rel="noopener noreferrer">Introducing MedChemBench (公式記事)</a></li>
+                <li>🔬 <a href="https://openai.com/research" target="_blank" rel="noopener noreferrer">OpenAI Research</a></li>
+                <li>📰 <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>
