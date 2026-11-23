@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perplexity and Intelligence - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .header .author {
+            font-size: 13px;
+            opacity: 0.75;
+            margin-top: 4px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px 16px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-card.highlight {
+            background: var(--gradient-accent);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--openai-green);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-card.highlight .stat-value {
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .stat-sublabel {
+            font-size: 12px;
+            opacity: 0.75;
+            margin-top: 4px;
+        }
+
+        /* Perplexity Timeline */
+        .ppl-timeline {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .ppl-row {
+            display: grid;
+            grid-template-columns: 130px 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .ppl-value {
+            font-weight: 700;
+            font-size: 14px;
+            text-align: right;
+            color: var(--openai-dark);
+        }
+
+        .ppl-value small {
+            display: block;
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .ppl-bar-track {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            height: 44px;
+        }
+
+        .ppl-bar {
+            height: 100%;
+            background: var(--gradient-accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .ppl-bar.dark {
+            background: var(--gradient-header);
+        }
+
+        .ppl-bar.future {
+            background: repeating-linear-gradient(45deg, #ECECF1, #ECECF1 8px, #F7F7F8 8px, #F7F7F8 16px);
+            color: var(--text-secondary);
+            border: 2px dashed var(--text-muted);
+        }
+
+        .ppl-note {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        .data-table th {
+            background: var(--openai-dark);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .data-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .data-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .data-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--openai-gray);
+            color: var(--text-secondary);
+        }
+
+        .data-table td strong {
+            color: var(--text-primary);
+        }
+
+        .data-table .ppl-num {
+            font-weight: 700;
+            color: var(--openai-green);
+            white-space: nowrap;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Numbered Challenge List */
+        .challenge-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .challenge-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .challenge-num {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .challenge-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .challenge-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Quote Box */
+        .quote-box {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .quote-box strong {
+            color: var(--text-primary);
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin: 16px 0;
+        }
+
+        .warning-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-box p, .warning-box li {
+            font-size: 13px;
+            color: #78350F;
+        }
+
+        .warning-box ul {
+            padding-left: 20px;
+            margin-top: 6px;
+        }
+
+        /* Proposal Box */
+        .proposal-box {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #34D399;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin: 16px 0;
+        }
+
+        .proposal-box h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #065F46;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .proposal-box p, .proposal-box li {
+            font-size: 13px;
+            color: #064E3B;
+        }
+
+        .proposal-box ul {
+            padding-left: 20px;
+            margin-top: 6px;
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.3);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Summary */
+        .summary-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-check {
+            color: var(--openai-green);
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Related Links */
+        .related-links {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .related-links li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 10px 16px;
+            background: var(--openai-gray);
+            border-radius: 10px;
+        }
+
+        .related-links a {
+            color: var(--openai-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .related-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ppl-row {
+                grid-template-columns: 90px 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Research</span>
+                <h1>Perplexity and Intelligence</h1>
+                <p class="subtitle">パープレキシティを AI 業界共通の指標・安全基準にする提案</p>
+                <p class="date">発表日: 2026-11-22 | ソース: OpenAI News (Research カテゴリ)</p>
+                <p class="author">著者: Jakub Pachocki (OpenAI Chief Scientist)</p>
+            </div>
+        </header>
+
+        <!-- 概要 -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">📏</div>
+                    <div class="key-point-content">
+                        <h3>パープレキシティを業界共通指標に</h3>
+                        <p>OpenAI チーフサイエンティストの Jakub Pachocki 氏が、パープレキシティ (クロスエントロピー損失) をモデル開発者間の比較と共通の安全基準策定のための指標として確立することを提案</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🧠</div>
+                    <div class="key-point-content">
+                        <h3>知能は「圧縮器の訓練」から生まれる</h3>
+                        <p>現代の AI は個別技術の寄せ集めではなく、大規模データコーパス上で圧縮器 (compressor、すなわち予測器) を訓練する単純なプロセスから生まれる知能を活用するもの。パープレキシティはその進捗を測る時の試練に耐えた指標</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">📊</div>
+                    <div class="key-point-content">
+                        <h3>内部測定値の異例の公開</h3>
+                        <p>事前学習 (pretraining) の進捗に関する内部測定値を公開。競合他社に手の内を明かす懸念よりも、業界横断の安全対策を確立する緊急性が上回ると判断</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">⚡</div>
+                    <div class="key-point-content">
+                        <h3>創発能力は事前に予測不能</h3>
+                        <p>流暢な会話や CoT 推論などの能力が特定のパープレキシティ閾値で出現することは事前には全く予測不能だった。これを「創発的な潜在能力 (emergent latent capabilities)」と表現</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛡️</div>
+                    <div class="key-point-content">
+                        <h3>共通の開発上限 (common limits) を提案</h3>
+                        <p>監視技術のマイルストーン達成を条件に、パープレキシティ等に基づく共通上限を越えないことを開発者間で約束する枠組みを提案</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数字で見る log-perplexity -->
+        <section class="section">
+            <h2 class="section-title">数字で見る log-perplexity と創発能力</h2>
+            <p class="section-lead">OpenAI 内部コードベース由来の評価データセットにおける log-perplexity の値。値が下がるほど能力が創発する。</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">≈ 0.99</div>
+                    <div class="stat-label">GPT-3.5</div>
+                    <div class="stat-sublabel">流暢な会話 (ChatGPT の基盤)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">≈ 0.91</div>
+                    <div class="stat-label">GPT-4</div>
+                    <div class="stat-sublabel">CoT 推論の有効活用</div>
+                </div>
+                <div class="stat-card highlight">
+                    <div class="stat-value">≈ 0.76</div>
+                    <div class="stat-label">現行水準</div>
+                    <div class="stat-sublabel">数学の未解決問題で画期的成果</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">≈ 0.68〜0.70</div>
+                    <div class="stat-label">次の閾値 (予測)</div>
+                    <div class="stat-sublabel">次の変革的能力 (内容は未知)</div>
+                </div>
+            </div>
+
+            <div class="ppl-timeline">
+                <div class="ppl-row">
+                    <div class="ppl-value">GPT-2<small>(旧データセットで SOTA)</small></div>
+                    <div class="ppl-bar-track"><div class="ppl-bar dark" style="width: 100%;">一貫した段落の生成</div></div>
+                </div>
+                <div class="ppl-row">
+                    <div class="ppl-value">GPT-3<small>(値は記事に記載なし)</small></div>
+                    <div class="ppl-bar-track"><div class="ppl-bar dark" style="width: 95%;">文脈内学習 (in-context learning)</div></div>
+                </div>
+                <div class="ppl-row">
+                    <div class="ppl-value">約 0.99<small>GPT-3.5</small></div>
+                    <div class="ppl-bar-track"><div class="ppl-bar" style="width: 99%;">流暢な会話 (ChatGPT の基盤)</div></div>
+                </div>
+                <div class="ppl-row">
+                    <div class="ppl-value">約 0.91<small>GPT-4</small></div>
+                    <div class="ppl-bar-track"><div class="ppl-bar" style="width: 91%;">思考連鎖 (CoT) 推論の有効活用</div></div>
+                </div>
+                <div class="ppl-row">
+                    <div class="ppl-value">0.8 未満</div>
+                    <div class="ppl-bar-track"><div class="ppl-bar" style="width: 80%;">サイバーセキュリティ・数学で変革的能力</div></div>
+                </div>
+                <div class="ppl-row">
+                    <div class="ppl-value">約 0.76<small>現行水準</small></div>
+                    <div class="ppl-bar-track"><div class="ppl-bar" style="width: 76%;">数学の未解決問題で画期的成果</div></div>
+                </div>
+                <div class="ppl-row">
+                    <div class="ppl-value">約 0.68〜0.70<small>(予測)</small></div>
+                    <div class="ppl-bar-track"><div class="ppl-bar future" style="width: 69%;">次の変革的能力 (内容は未知)</div></div>
+                </div>
+            </div>
+            <p class="ppl-note">💡 これらの能力が特定のパープレキシティ閾値で出現することは事前には全く予測不能だった = 「創発的な潜在能力 (emergent latent capabilities)」</p>
+        </section>
+
+        <!-- 創発フロー図 (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">log-perplexity の低下と創発能力の対応</h2>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Scale["log-perplexity の低下と創発能力"]
+        P99["約 0.99&lt;br/&gt;GPT-3.5"] --> P91["約 0.91&lt;br/&gt;GPT-4"]
+        P91 --> P80["0.8 未満"]
+        P80 --> P76["約 0.76&lt;br/&gt;現行水準"]
+        P76 --> P70["約 0.68〜0.70&lt;br/&gt;(予測)"]
+    end
+
+    C1["流暢な会話"]
+    C2["CoT 推論の有効活用"]
+    C3["サイバーセキュリティ・&lt;br/&gt;数学での変革的能力"]
+    C4["数学の未解決問題で&lt;br/&gt;画期的成果"]
+    C5["次の変革的能力&lt;br/&gt;(内容は未知)"]
+
+    P99 --- C1
+    P91 --- C2
+    P80 --- C3
+    P76 --- C4
+    P70 --- C5
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+    classDef unknown fill:#ECECF1,stroke:#444654,stroke-width:2px,color:#343541
+
+    class P99,P91,P80,P76 openai
+    class C1,C2,C3,C4 dark
+    class P70,C5 unknown
+                </pre>
+            </div>
+        </section>
+
+        <!-- 主な内容 -->
+        <section class="section">
+            <h2 class="section-title">主な内容</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔢 パープレキシティと創発能力の対応</h3>
+                    <p>OpenAI 内部コードベース由来の評価データセットにおける log-perplexity の値と、各閾値で創発した能力の対応を公開。GPT-3.5 (約 0.99) → GPT-4 (約 0.91) → 現行水準 (約 0.76) と低下し、約 0.68〜0.70 で次の変革的能力の出現を予測</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📐 数学研究での体験</h3>
+                    <p>著者は 1 年以上にわたり数学の未解決問題をモデルに提示して評価。log-perplexity 約 0.76 のモデルに更新した途端、画期的成果が連発し、長年考えてきた問題の解決が「1 つの Slack スレッドで次々と」出てくる様子を "deeply surreal" (深く非現実的) と表現</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚠️ AI 自己改善への懸念</h3>
+                    <p>「完全な再帰的自己改善 (full recursive self-improvement)」は人間の制御維持のため回避すべき。事前学習のアルゴリズム研究への AI の参加が特に重要な転換点となる可能性がある</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤝 共通の開発上限の提案</h3>
+                    <p>パープレキシティ等に基づく共通上限を設定し、AI の挙動の理解・監視能力が具体的マイルストーンを達成するまで上限を越えないことを開発者間で約束。フロンティア開発者が共同で評価規範、レッドチーム安全ケース、透明性基準を確立</p>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⏰ 2027 年の可能性: 根本的進歩の雪崩 (avalanche)</h4>
+                <ul>
+                    <li>深層学習研究には「単純な洞察が何年も見逃されてきた歴史」があり、早ければ 2027 年に事前学習の根本的進歩の雪崩が起こりうる</li>
+                    <li>アラインメントや監視の進歩は、この加速に追いつかない可能性が高いと懸念</li>
+                    <li>2026 年の損失の急激な改善は主に長期的な研究・計算資源投資の成果であり、自動化の寄与は小さい。ただし最新モデルでは AI による設計貢献も確認済み</li>
+                </ul>
+            </div>
+
+            <div class="proposal-box">
+                <h4>✅ 提案: 共通の開発上限 (common limits)</h4>
+                <ul>
+                    <li>パープレキシティ等に基づく共通上限を設定し、AI の挙動の理解・監視能力が具体的マイルストーン (例: CoT モニターの後継技術の開発) を達成するまで、その上限を越えないことを開発者間で約束する</li>
+                    <li>フロンティア開発者が共同で評価規範、レッドチーム安全ケース、透明性基準を確立する</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 技術的な詳細 -->
+        <section class="section">
+            <h2 class="section-title">技術的な詳細: 指標としてのパープレキシティが持つ 4 つの課題</h2>
+            <p class="section-lead">本記事はエッセイ・研究論考であり、API の変更やコードサンプルは含まれない。代わりに、指標としてのパープレキシティが持つ 4 つの課題が整理されている。</p>
+            <div class="challenge-list">
+                <div class="challenge-item">
+                    <div class="challenge-num">1</div>
+                    <div>
+                        <h4>ラボ間比較の困難さ</h4>
+                        <p>評価データセットと訓練データの混合が開発者ごとに異なる</p>
+                    </div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-num">2</div>
+                    <div>
+                        <h4>実用的評価との乖離</h4>
+                        <p>パープレキシティ自体は直接のタスク性能に対応しない</p>
+                    </div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-num">3</div>
+                    <div>
+                        <h4>事前学習以外の進歩を捕捉できない</h4>
+                        <p>CoT 推論はパープレキシティを下げないが、能力を劇的に向上させる</p>
+                    </div>
+                </div>
+                <div class="challenge-item">
+                    <div class="challenge-num">4</div>
+                    <div>
+                        <h4>下限 (floor) が不明</h4>
+                        <p>データの固有エントロピーは未知。下限に近づくと見かけの進捗は鈍化するが、小さな改善がより大きな知能向上に対応する</p>
+                    </div>
+                </div>
+            </div>
+            <div class="quote-box">
+                <strong>脚注の補足:</strong> ここでの「圧縮器」は GZIP のような圧縮ファイルを指すのではなく、未知データの予測によって圧縮を行う存在であり、コーパスの内容を必ずしも「記憶」していない (Shannon の情報源符号化定理に関連)
+            </div>
+        </section>
+
+        <!-- 開発者・業界への影響 -->
+        <section class="section">
+            <h2 class="section-title">開発者・業界への影響</h2>
+            <div class="use-case">
+                <h4>🔓 透明性の前例</h4>
+                <p>フロンティアラボが事前学習進捗の内部指標を公開するのは異例であり、他の開発者にも同様の透明性を促す可能性がある</p>
+            </div>
+            <div class="use-case">
+                <h4>🗣️ 安全基準の共通言語</h4>
+                <p>パープレキシティが共通指標として採用されれば、モデル間比較や規制・ガバナンスの議論に定量的な基盤が生まれる</p>
+            </div>
+            <div class="use-case">
+                <h4>🚧 開発上限という新しい枠組み</h4>
+                <p>能力の創発が予測不能である以上、特定の閾値を越える前に監視技術のマイルストーン達成を条件とする「共通上限」の考え方は、今後の業界合意形成の軸になりうる</p>
+            </div>
+            <div class="use-case">
+                <h4>🧪 評価設計への示唆</h4>
+                <p>パープレキシティだけでは捕捉できない進歩 (CoT 推論など) があるため、実タスク評価との併用が引き続き必要となる</p>
+            </div>
+        </section>
+
+        <!-- まとめ -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-list">
+                <div class="summary-item">
+                    <span class="summary-check">✔</span>
+                    <span>OpenAI のチーフサイエンティスト Jakub Pachocki 氏が、パープレキシティ (クロスエントロピー損失) を業界共通の進捗指標・安全基準とすることを提案した</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-check">✔</span>
+                    <span>GPT-3.5 (約 0.99) から現行水準 (約 0.76) までの log-perplexity と創発能力の対応を公開し、約 0.68〜0.70 で次の変革的能力が出現すると予測している (内容は未知)</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-check">✔</span>
+                    <span>早ければ 2027 年に事前学習の根本的進歩の雪崩が起こりうるとし、監視技術のマイルストーン達成を条件とする共通の開発上限を開発者間で約束することを提案している</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-check">✔</span>
+                    <span>競合への情報開示リスクよりも、業界横断の安全対策確立の緊急性が上回るという判断に基づく、異例の透明性を持った発表である</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 関連リンク -->
+        <section class="section">
+            <h2 class="section-title">関連リンク</h2>
+            <ul class="related-links">
+                <li><a href="https://openai.com/index/perplexity-and-intelligence/" target="_blank" rel="noopener noreferrer">Perplexity and Intelligence (公式記事)</a></li>
+                <li><a href="https://openai.com/research" target="_blank" rel="noopener noreferrer">OpenAI Research</a></li>
+                <li><a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">OpenAI News</a></li>
+                <li>記事内で言及: An alien mind (著者の過去記事)</li>
+                <li>記事内で言及: Dario Amodei 氏のブログ "we must pace the frontier"</li>
+                <li>記事内で言及: CoT monitorability に関する記事 (alignment.openai.com)</li>
+                <li>記事内で言及: Research acceleration: The jagged frontier (2026-11-18)</li>
+                <li>記事内で言及: Managing frontier AI risk (2026-11-18)</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>出典:</strong> <a href="https://openai.com/index/perplexity-and-intelligence/" target="_blank" rel="noopener noreferrer">https://openai.com/index/perplexity-and-intelligence/</a></p>
+            <p style="margin-top: 8px;">発表日: 2026-11-22 | 著者: Jakub Pachocki (OpenAI Chief Scientist) | カテゴリ: 研究成果 / 安全性</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>
