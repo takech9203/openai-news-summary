@@ -5,6 +5,7 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-23](2026/2026-11-23-introducing-shirudo.md) - OpenAI と Cisco が「Shirudo」を発表: パッチ適用前の稼働中 Linux システムを守るオープンソースランタイム
 - [2026-11-22](2026/2026-11-22-perplexity-and-intelligence.md) - Perplexity and Intelligence: パープレキシティを AI 業界共通の指標・安全基準にする提案
 - [2026-11-20](2026/2026-11-20-introducing-medchembench.md) - MedChemBench — 医薬品化学における AI 推論能力のベンチマーク
 - [2026-11-19](2026/2026-11-19-how-openai-performance-factory-keeps-chatgpt-fast.md) - OpenAI の Performance Factory が ChatGPT を高速に保つ仕組み
