@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astra による系外惑星探索 - OpenAI News Summary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* OpenAI Brand Colors */
+            --openai-green: #10A37F;
+            --openai-dark: #343541;
+            --openai-light: #F7F7F8;
+            --openai-gray: #ECECF1;
+
+            /* Semantic Colors */
+            --text-primary: #343541;
+            --text-secondary: #565869;
+            --text-muted: #8E8EA0;
+            --success: #10A37F;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+
+            /* Gradients */
+            --gradient-header: linear-gradient(135deg, #343541 0%, #444654 100%);
+            --gradient-accent: linear-gradient(135deg, #10A37F 0%, #1DB791 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background: var(--openai-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 48px 32px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 163, 127, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: var(--openai-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .header .date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(16, 163, 127, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--openai-green);
+            border-radius: 2px;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            gap: 16px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+        }
+
+        .key-point-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .key-point-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .key-point-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--openai-gray) 100%);
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-header);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1DB791;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Case Cards */
+        .case-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .case-card {
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .case-card.kepler {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.12) 0%, rgba(16, 163, 127, 0.05) 100%);
+            border: 2px solid var(--openai-green);
+        }
+
+        .case-card.tess {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.04) 100%);
+            border: 2px solid var(--info);
+        }
+
+        .case-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .case-card .case-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .case-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .case-card ul li {
+            margin-bottom: 8px;
+            padding-left: 1.4em;
+            position: relative;
+        }
+
+        .case-card ul li::before {
+            content: '★';
+            position: absolute;
+            left: 0;
+            color: var(--openai-green);
+            font-weight: 700;
+        }
+
+        .case-card.tess ul li::before {
+            color: var(--info);
+        }
+
+        /* Flow Steps */
+        .flow-steps {
+            display: grid;
+            gap: 12px;
+            counter-reset: flow;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--openai-gray);
+            border-radius: 12px;
+            counter-increment: flow;
+        }
+
+        .flow-step::before {
+            content: counter(flow);
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .flow-step p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding-top: 5px;
+        }
+
+        .flow-step p strong {
+            color: var(--text-primary);
+        }
+
+        /* Quote */
+        .quote {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 24px 28px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .quote::before {
+            content: '“';
+            font-size: 3rem;
+            color: var(--openai-green);
+            position: absolute;
+            top: 4px;
+            left: 16px;
+            line-height: 1;
+        }
+
+        .quote p {
+            font-size: 15px;
+            padding-left: 28px;
+            margin-bottom: 8px;
+        }
+
+        .quote .quote-author {
+            font-size: 13px;
+            opacity: 0.85;
+            text-align: right;
+            margin-bottom: 0;
+            padding-left: 0;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(16, 163, 127, 0.03) 100%);
+            border: 2px dashed var(--openai-green);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-top: 20px;
+        }
+
+        .highlight-box h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-green);
+        }
+
+        .highlight-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Use Cases */
+        .use-case {
+            background: linear-gradient(135deg, var(--openai-gray) 0%, #F7F7F8 100%);
+            border-left: 4px solid var(--openai-green);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .use-case h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--openai-dark);
+        }
+
+        .use-case p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mermaid */
+        .mermaid-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 2px solid rgba(16, 163, 127, 0.2);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Links */
+        .link-list {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .link-list li {
+            background: var(--openai-gray);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+
+        .link-list a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .link-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--gradient-header);
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            line-height: 1.9;
+            opacity: 0.95;
+        }
+
+        .summary-box .accent {
+            color: #1DB791;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding: 24px 32px;
+            background: var(--openai-gray);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--openai-green);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 24px;
+            }
+
+            .feature-grid,
+            .case-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="category-badge">Science</span>
+                <h1>🪐 Astra による系外惑星探索</h1>
+                <p class="subtitle">アマチュア天文家が AI で新候補を発見 — ケプラーと TESS の公開データから従来の探索で見逃された信号を検出</p>
+                <p class="date">📅 2026-11-24 | ソース: OpenAI News</p>
+            </div>
+        </header>
+
+        <!-- Key Points -->
+        <section class="section">
+            <h2 class="section-title">概要</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <div class="key-point-icon">🔭</div>
+                    <div class="key-point-content">
+                        <h3>アマチュア天文家が AI で惑星候補を発見</h3>
+                        <p>2026 年 11 月 24 日、OpenAI はアマチュア天文家が AI ツール「Astra」や「Codex」を活用して系外惑星の探索を設計・実行し、有望な惑星候補を発見した事例を公開した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🛰️</div>
+                    <div class="key-point-content">
+                        <h3>ケプラー・TESS の公開データを解析</h3>
+                        <p>ケプラー宇宙望遠鏡や TESS が蓄積した膨大な公開観測データを、専門家ではない個人が AI の支援によって解析し、従来の探索で見逃されていた可能性のある信号を検出した。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">🌌</div>
+                    <div class="key-point-content">
+                        <h3>確認済み系外惑星は 6,400 個以上</h3>
+                        <p>1992 年の最初の発表以来、確認済みの系外惑星は 6,400 個以上 (NASA Exoplanet Archive、2026 年 11 月 24 日時点) に達している。</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <div class="key-point-icon">👨‍🔬</div>
+                    <div class="key-point-content">
+                        <h3>SETI 研究所からも肯定的な評価</h3>
+                        <p>AI を備えた市民科学者が天文学の最前線に貢献できることを示す具体例として、SETI 研究所の天文学者からも肯定的な評価を受けている。独立した探索でも同じ 2 つの信号が発見された。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="section">
+            <h2 class="section-title">数字で見る探索の規模</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">6,400+</div>
+                    <div class="stat-label">確認済み系外惑星 (1992 年以降)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 10 万</div>
+                    <div class="stat-label">Bond 氏が探索したケプラーの恒星数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">約 1,900 万</div>
+                    <div class="stat-label">Byrd 氏が解析した恒星データ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">200+</div>
+                    <div class="stat-label">検出した信号 (うち 10 個は既知惑星)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">49</div>
+                    <div class="stat-label">Byrd 氏の初回探索での候補数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Method -->
+        <section class="section">
+            <h2 class="section-title">探索手法: トランジット法</h2>
+            <p class="section-lead">惑星が恒星の前を横切る (トランジットする) と、恒星の光がわずかに遮られる。この性質を利用して惑星候補を検出する。</p>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <p><strong>減光の検出</strong>: 明るさの時系列グラフである光度曲線に、周期的な減光として現れる信号を探す</p>
+                </div>
+                <div class="flow-step">
+                    <p><strong>周期性の確認</strong>: 減光が規則的に繰り返されれば、次の観測タイミングを予測できる</p>
+                </div>
+                <div class="flow-step">
+                    <p><strong>追加観測</strong>: 統計的検証や視線速度法 (惑星の重力による恒星の揺れを測定する手法) などで検証する</p>
+                </div>
+                <div class="flow-step">
+                    <p><strong>惑星として確認</strong>: 査読付き論文での公表を経て、惑星として正式に確認される</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cases -->
+        <section class="section">
+            <h2 class="section-title">2 つの探索事例</h2>
+            <div class="case-grid">
+                <div class="case-card kepler">
+                    <h3>🟢 Kevin Bond 氏 (OpenAI エンジニア)</h3>
+                    <p class="case-meta">Codex × ケプラーデータ (約 10 万恒星、2009-2018 年運用)</p>
+                    <ul>
+                        <li>公開済み手法を比較・統合した探索プログラムを構築</li>
+                        <li>走査と詳細検証の二段構成の AI エージェントを採用</li>
+                        <li>200 以上の信号を検出。うち 10 個は既知の確認済み惑星で妥当性を裏付け</li>
+                        <li><strong>KIC 5689121</strong>: こと座の低温星 (太陽の約半分)。13.8 日周期、直径は地球の約 2.4 倍と推定</li>
+                        <li><strong>KIC 6691030</strong>: 北天の暗い星。4.8 日周期、海王星より小さい惑星と整合</li>
+                    </ul>
+                </div>
+                <div class="case-card tess">
+                    <h3>🔵 Ethan Byrd 氏 (Primitive 創業者)</h3>
+                    <p class="case-meta">Astra × TESS など公開アーカイブ (約 1,900 万恒星)</p>
+                    <ul>
+                        <li>複数の AI モデルを試した後に Astra を選択</li>
+                        <li>広範な候補探索と、ハビタブルゾーン (液体の水が存在しうる領域) 探索の 2 つを設計</li>
+                        <li>初回の探索で 49 候補を検出</li>
+                        <li>最有力候補の 1 つを TESS ミッションの研究者に送付済み (解析待ち)</li>
+                        <li>さらに 2 候補が提出準備中</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <h4>🔎 独立探索による裏付け</h4>
+                <p>SETI 研究所の天文学者が独立した探索で Bond 氏と同じ 2 つの信号を発見している。惑星としての確認には数か月から数年かかる可能性がある。</p>
+            </div>
+            <div class="quote">
+                <p>「彼のパイプラインは、従来の探索では見逃されていた可能性のあるデータから有望な候補を浮かび上がらせた」</p>
+                <p class="quote-author">— Vishal Gajjar 氏 (SETI 研究所 国際 SETI プログラム副ディレクター)。AI を備えた市民科学者が Kepler Bonus Catalog の探索に貢献できることを示したと評価。初期チェックは有望で、追観測でさらに判明するとしている</p>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+            <h2 class="section-title">主要なポイント</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🌟 Astra</h3>
+                    <p>アマチュア天文家が独自の探索を設計・実行するのを支援する OpenAI のツール。記事フッターには「GPT-6 Astra」「GPT-6.2 Astra Sol」などのモデル名が記載されている。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💻 Codex による探索パイプライン構築</h3>
+                    <p>Bond 氏の事例では OpenAI のコーディングツールである Codex が探索パイプラインの構築に使用された。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 二段構成の AI エージェント</h3>
+                    <p>1 つの AI エージェントが光度曲線を走査し、別のエージェントが候補を詳細検証する役割分担を採用した。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧬 AI 探索の前例を更新</h3>
+                    <p>2017 年にはニューラルネットワークが Kepler-90 の 8 番目の惑星発見につながった。今回は研究機関ではなく個人が AI エージェントで同様の成果に迫った点が特徴。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture (Mermaid) -->
+        <section class="section">
+            <h2 class="section-title">アーキテクチャ: 二段構成の探索パイプライン</h2>
+            <p class="section-lead">Bond 氏が構築した探索パイプラインの流れを示す。AI が候補を抽出し、人間の専門家が検証する役割分担となっている。</p>
+            <div class="mermaid-container">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Data["公開観測データ"]
+        Kepler["Kepler アーカイブ<br/>(約 10 万恒星)"]
+        TESS["TESS アーカイブ<br/>(約 1,900 万恒星)"]
+    end
+
+    subgraph Pipeline["AI 探索パイプライン"]
+        Scan["エージェント 1<br/>光度曲線の走査"]
+        Verify["エージェント 2<br/>候補の詳細検証"]
+    end
+
+    subgraph Validation["科学的検証"]
+        Known["既知惑星との照合<br/>(10 個一致で妥当性確認)"]
+        Expert["研究者への提出<br/>(SETI 研究所 / TESS チーム)"]
+        FollowUp["追観測・視線速度法<br/>査読付き論文"]
+    end
+
+    Kepler --> Scan
+    TESS --> Scan
+    Scan -->|200 以上の信号| Verify
+    Verify --> Known
+    Verify --> Expert
+    Expert --> FollowUp
+
+    classDef openai fill:#10A37F,stroke:#0D8A6A,stroke-width:2px,color:white
+    classDef dark fill:#343541,stroke:#444654,stroke-width:2px,color:white
+
+    class Scan,Verify openai
+    class Known,Expert,FollowUp dark
+                </pre>
+            </div>
+        </section>
+
+        <!-- Use Cases / Impact -->
+        <section class="section">
+            <h2 class="section-title">開発者・研究者への影響</h2>
+            <div class="use-case">
+                <h4>🌍 市民科学の拡大</h4>
+                <p>専門的な天文学の訓練を受けていない個人でも、Astra や Codex を使って公開アーカイブから科学的に意味のある候補を検出できることが実証された。</p>
+            </div>
+            <div class="use-case">
+                <h4>📊 探索パイプラインの民主化</h4>
+                <p>公開済み手法を比較・統合した探索プログラムを AI エージェントで構築するアプローチは、他の時系列データ解析分野にも応用しうる。</p>
+            </div>
+            <div class="use-case">
+                <h4>🤝 人間と AI の協働モデル</h4>
+                <p>AI が候補を抽出し、人間の専門家 (SETI 研究所や TESS チーム) が検証する役割分担が、科学的な厳密性を保ちながらスループットを高める例となった。</p>
+            </div>
+            <div class="use-case">
+                <h4>🚪 参加の入口の広がり</h4>
+                <p>望遠鏡がなくても、NASA の Exoplanet Watch、AAVSO Exoplanet Observing Program、Unistellar Network (UNITE) などを通じて検証プロセスに参加できる。OpenAI は天文学に限らず、科学全般でこうした機会を広げたいとしている。</p>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="section">
+            <h2 class="section-title">まとめ</h2>
+            <div class="summary-box">
+                <p>
+                    OpenAI の <span class="accent">Astra</span> と <span class="accent">Codex</span> を活用した 2 人のアマチュア天文家が、ケプラーと TESS の公開データから複数の系外惑星候補 (<span class="accent">KIC 5689121</span>、<span class="accent">KIC 6691030</span> ほか) を発見した。SETI 研究所の独立探索でも同じ信号が確認されており、専門家による追観測と検証が進行中である。<span class="accent">AI エージェントによる探索</span>と<span class="accent">人間の専門家による検証</span>を組み合わせることで、市民科学者が天文学の発見プロセスに実質的に貢献できることを示した点で意義深い発表である。
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p style="margin-bottom: 12px;"><strong>出典:</strong> <a href="https://openai.com/index/searching-for-distant-planets-with-astra/" target="_blank" rel="noopener noreferrer">https://openai.com/index/searching-for-distant-planets-with-astra/</a></p>
+            <p style="margin-bottom: 6px;"><strong>関連リンク:</strong></p>
+            <ul class="link-list">
+                <li>📰 公式発表: <a href="https://openai.com/index/searching-for-distant-planets-with-astra/" target="_blank" rel="noopener noreferrer">Searching for distant planets with Astra (OpenAI 公式)</a></li>
+                <li>🗞️ OpenAI News: <a href="https://openai.com/news" target="_blank" rel="noopener noreferrer">https://openai.com/news</a></li>
+                <li>🌌 NASA Exoplanet Archive: <a href="https://exoplanetarchive.ipac.caltech.edu/" target="_blank" rel="noopener noreferrer">https://exoplanetarchive.ipac.caltech.edu/</a></li>
+                <li>🔭 NASA Exoplanet Watch: <a href="https://science.nasa.gov/citizen-science/exoplanet-watch/" target="_blank" rel="noopener noreferrer">https://science.nasa.gov/citizen-science/exoplanet-watch/</a></li>
+                <li>⭐ AAVSO Exoplanet Observing Program: <a href="https://www.aavso.org/" target="_blank" rel="noopener noreferrer">https://www.aavso.org/</a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#10A37F',
+                primaryTextColor: '#343541',
+                primaryBorderColor: '#10A37F',
+                lineColor: '#10A37F',
+                secondaryColor: '#F5F5F5',
+                tertiaryColor: '#FAFAFA',
+                background: '#FFFFFF',
+                mainBkg: '#F7F7F8',
+                nodeBorder: '#10A37F',
+                clusterBkg: '#F7F7F8',
+                clusterBorder: '#10A37F',
+                edgeLabelBackground: '#FFFFFF',
+                textColor: '#343541'
+            }
+        });
+    </script>
+</body>
+</html>

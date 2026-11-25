@@ -5,6 +5,8 @@ OpenAI の最新ニュースレポート一覧
 
 ## 2026
 
+- [2026-11-24](2026/2026-11-24-searching-for-distant-planets-with-astra.md) - Astra による系外惑星探索: アマチュア天文家が AI で新候補を発見
+- [2026-11-24](2026/2026-11-24-api-update-chat-latest-healthcare-models.md) - API Update: chat-latest スナップショット更新とヘルスケアモデル構成の公開
 - [2026-11-23](2026/2026-11-23-introducing-shirudo.md) - OpenAI と Cisco が「Shirudo」を発表: パッチ適用前の稼働中 Linux システムを守るオープンソースランタイム
 - [2026-11-22](2026/2026-11-22-perplexity-and-intelligence.md) - Perplexity and Intelligence: パープレキシティを AI 業界共通の指標・安全基準にする提案
 - [2026-11-20](2026/2026-11-20-introducing-medchembench.md) - MedChemBench — 医薬品化学における AI 推論能力のベンチマーク
